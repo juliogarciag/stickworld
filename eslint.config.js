@@ -12,6 +12,9 @@ import tseslint from 'typescript-eslint';
  *
  * `__testing__` exports may only be imported by *.test.ts files.
  *
+ * Pencil strokes (rule 12): in the client, only `render/strokes/` may make a Phaser object that draws
+ * lines or shapes. Everything else asks `createStrokeLayer` for a line.
+ *
  * Violations fail `pnpm lint`. Keep the lists below in step with AGENTS.md.
  */
 const group = (patterns, message) => ({ group: patterns, message });
@@ -40,6 +43,11 @@ const NEW_DATE = { selector: 'NewExpression[callee.name="Date"]', message: 'Non-
 const TESTING_IMPORT = {
   selector: 'ImportSpecifier[imported.name="__testing__"]',
   message: '`__testing__` exports are for *.test.ts files only.',
+};
+
+const DRAWN_OUTSIDE_STROKES = {
+  selector: 'CallExpression[callee.object.property.name="add"][callee.property.name=/^(graphics|rope|line|curve|polygon|arc|circle|ellipse|triangle|star|rectangle)$/]',
+  message: 'Only packages/client/src/render/strokes/ draws lines and shapes. Ask createStrokeLayer for a stroke instead (AGENTS.md rule 12).',
 };
 
 export default defineConfig([
@@ -89,6 +97,11 @@ export default defineConfig([
   },
   {
     files: ['packages/client/**/*.ts'],
+    ignores: ['**/*.test.ts'],
+    rules: { 'no-restricted-syntax': ['error', TESTING_IMPORT, DRAWN_OUTSIDE_STROKES] },
+  },
+  {
+    files: ['packages/client/src/render/strokes/**/*.ts'],
     ignores: ['**/*.test.ts'],
     rules: { 'no-restricted-syntax': ['error', TESTING_IMPORT] },
   },

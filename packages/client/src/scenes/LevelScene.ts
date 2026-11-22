@@ -1,4 +1,4 @@
-import { levelOf } from '@stickworld/sim';
+import { levelOf, type Level, type SimHandle } from '@stickworld/sim';
 import Phaser from 'phaser';
 import { walkAlongTheFloor, type WalkDemo } from '../demo/walkAlongTheFloor';
 import { watchWalkKeys, type HeldDirection } from '../input/walkKeys';
@@ -20,7 +20,7 @@ export class LevelScene extends Phaser.Scene {
   private stickMan!: StrokeLayer;
   private heldDirection!: () => HeldDirection;
   private demo: WalkDemo | undefined;
-  private demoLevel = -1;
+  private demoSim: SimHandle | undefined;
 
   constructor(private readonly loop: GameLoop) {
     super('level');
@@ -39,16 +39,21 @@ export class LevelScene extends Phaser.Scene {
     this.heldDirection = watchWalkKeys(this);
   }
 
+  /** The walk on `level`, started again whenever the loop plays a new sim (a level starts or restarts). */
+  private demoOn(level: Level): WalkDemo {
+    if (!this.demo || this.demoSim !== this.loop.sim) {
+      this.demo = walkAlongTheFloor(level);
+      this.demoSim = this.loop.sim;
+    }
+    return this.demo;
+  }
+
   override update(_time: number, deltaMs: number): void {
     const seconds = deltaMs / 1000;
     this.loop.advanceBy(seconds);
 
     const level = levelOf(this.loop.sim);
-    if (!this.demo || this.demoLevel !== level.id) {
-      this.demo = walkAlongTheFloor(level);
-      this.demoLevel = level.id;
-    }
-    const pose = this.demo.walkFor(seconds, this.heldDirection());
+    const pose = this.demoOn(level).walkFor(seconds, this.heldDirection());
 
     frameStickMan(this.cameras.main, pose.feet);
     this.paper.cover(this.cameras.main);

@@ -8,20 +8,45 @@ export const PAPER_COLOUR = '#f3eee2';
 /** How the sheet's grain looks. View detail only. */
 const GRAIN = {
   /** The side of the square tile that repeats across the sheet, in screen pixels. */
-  tileSize: 512,
+  tileSize: 1024,
   /** How much lighter or darker than the paper colour a single pixel can be, out of 255. */
   speckle: 7,
   /** How many paper fibres one tile has, and how long and how dark they are. */
-  fibres: 420,
+  fibres: 1700,
   fibreLength: 22,
   fibreAlpha: 0.05,
   /** How many soft uneven patches one tile has, and how dark they are. */
-  patches: 14,
-  patchRadius: 150,
-  patchAlpha: 0.035,
+  patches: 46,
+  patchRadius: 260,
+  patchAlpha: 0.022,
 } as const;
 
-const TEXTURE_KEY = 'paper-grain';
+/**
+ * The paper's tooth: the specks of the sheet that a pencil passing over does
+ * not reach. It is what makes a solid line look like graphite. Sizes are in
+ * world pixels, so the grain of a line is the same on every screen.
+ */
+const TOOTH = {
+  /** The side of the square tile that repeats across the sheet, in world pixels. */
+  tileSize: 256,
+  /** The share of the sheet's pixels that are specks. */
+  coverage: 0.3,
+  /** How much of what is drawn over a speck is missing, at most. */
+  depth: 0.85,
+  /** How much is missing everywhere else, at most: graphite is never solid. */
+  haze: 0.22,
+} as const;
+
+const SHEET_TEXTURE = 'paper-grain';
+const TOOTH_TEXTURE = 'paper-tooth';
+
+/**
+ * Everything drawn on the paper sits between these two depths: the sheet
+ * under it, the sheet's tooth showing through it. What is not on the paper
+ * (a HUD) goes above `TOOTH_DEPTH`.
+ */
+const SHEET_DEPTH = -1000;
+const TOOTH_DEPTH = 1000;
 
 export interface Paper {
   /** Lays the sheet under everything `camera` sees. Call after moving the camera, every frame. */
@@ -29,30 +54,52 @@ export interface Paper {
 }
 
 /**
- * The sheet of paper behind everything in `scene`. The grain is one tile
- * repeated at screen resolution, and it belongs to the world: when the camera
- * moves, the grain moves with the drawing on it.
+ * The sheet of paper `scene` is drawn on: the sheet under everything, and
+ * its tooth showing through whatever is drawn on it. The grain belongs to
+ * the world: when the camera moves, it moves with the drawing.
  */
 export function layPaper(scene: Phaser.Scene): Paper {
-  if (!scene.textures.exists(TEXTURE_KEY)) {
-    const tile = scene.textures.createCanvas(TEXTURE_KEY, GRAIN.tileSize, GRAIN.tileSize);
-    if (tile) {
-      paintGrain(tile.context);
-      tile.refresh();
-    }
-  }
-  const sheet = scene.add.tileSprite(0, 0, GRAIN.tileSize, GRAIN.tileSize, TEXTURE_KEY).setOrigin(0, 0).setDepth(-1);
+  paintOnce(scene, { key: SHEET_TEXTURE, size: GRAIN.tileSize, paint: paintGrain });
+  paintOnce(scene, { key: TOOTH_TEXTURE, size: TOOTH.tileSize, paint: paintTooth });
+  const sheet = scene.add.tileSprite(0, 0, GRAIN.tileSize, GRAIN.tileSize, SHEET_TEXTURE).setOrigin(0, 0).setDepth(SHEET_DEPTH);
+  const tooth = scene.add.tileSprite(0, 0, TOOTH.tileSize, TOOTH.tileSize, TOOTH_TEXTURE).setOrigin(0, 0).setDepth(TOOTH_DEPTH);
   return {
     cover(camera) {
       const seen = worldSeenBy(camera);
+      // The sheet's grain is painted in screen pixels, so it is as fine as the screen; the tooth in world pixels.
       sheet.setPosition(seen.x, seen.y).setSize(seen.width, seen.height);
       sheet.setTileScale(1 / seen.zoom);
       sheet.setTilePosition(seen.x * seen.zoom, seen.y * seen.zoom);
+      tooth.setPosition(seen.x, seen.y).setSize(seen.width, seen.height);
+      tooth.setTilePosition(seen.x, seen.y);
     },
   };
 }
 
 // ---- Helpers ----
+
+/** Makes the square texture `key` and paints it, unless the game already has it. */
+function paintOnce(scene: Phaser.Scene, { key, size, paint }: { key: string; size: number; paint: (context: CanvasRenderingContext2D) => void }): void {
+  if (scene.textures.exists(key)) return;
+  const tile = scene.textures.createCanvas(key, size, size);
+  if (!tile) return;
+  paint(tile.context);
+  tile.refresh();
+}
+
+/** Paints one repeatable tile of tooth: the paper's colour, clear where the pencil marks fully and showing where it does not. */
+function paintTooth(context: CanvasRenderingContext2D): void {
+  const size = TOOTH.tileSize;
+  const nextUnit = fixedUnits(0x51ec);
+  context.fillStyle = PAPER_COLOUR;
+  context.fillRect(0, 0, size, size);
+  const image = context.getImageData(0, 0, size, size);
+  for (let pixel = 0; pixel < size * size; pixel += 1) {
+    const missing = nextUnit() < TOOTH.coverage ? TOOTH.depth * nextUnit() : TOOTH.haze * nextUnit();
+    image.data[pixel * 4 + 3] = Math.round(255 * missing);
+  }
+  context.putImageData(image, 0, 0);
+}
 
 /** Paints one repeatable tile of paper: the colour, uneven patches, fibres, and a speckle on every pixel. */
 function paintGrain(context: CanvasRenderingContext2D): void {

@@ -25,10 +25,4 @@ export const PENCIL = {
   pressureLength: 70,
   /** How far past its start a closed loop goes on. */
   loopOverlap: 9,
-  /** The share of a line's pixels where the paper's tooth shows through. */
-  toothCoverage: 0.3,
-  /** How much of the graphite is missing at such a pixel, at most. */
-  toothDepth: 0.85,
-  /** How much is missing everywhere else, at most: graphite is never solid. */
-  toothHaze: 0.22,
 } as const;

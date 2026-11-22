@@ -1,0 +1,170 @@
+{
+  "game": {
+    "level": {
+      "id": 1,
+      "name": "A walk",
+      "floor": [
+        {
+          "from": {
+            "x": 0,
+            "y": 0
+          },
+          "to": {
+            "x": 12,
+            "y": 0
+          }
+        }
+      ],
+      "start": {
+        "x": 1,
+        "y": 0
+      },
+      "placements": []
+    },
+    "pose": {
+      "feet": {
+        "x": 1.7491800000000017,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "standing",
+      "walkCycle": 0
+    },
+    "stickManHeight": 1.8
+  },
+  "screen": {
+    "floorY": 388.79999999999995,
+    "feetX": 480,
+    "manHeight": 207.69230769230768,
+    "perMetre": 115.38461538461537,
+    "camera": {
+      "zoom": 1.1538461538461537,
+      "scrollX": -305.0819999999998,
+      "scrollY": -372.96,
+      "width": 960,
+      "height": 540
+    }
+  },
+  "paper": {
+    "pixels": 28800,
+    "meanLuminance": 234.4549937361214,
+    "luminanceSpread": 2.0507785307243176,
+    "distinctColours": 272,
+    "darkShare": 0,
+    "darkWidth": 0
+  },
+  "middleOfTheLine": {
+    "pixels": 300,
+    "meanLuminance": 95.60680599999995,
+    "luminanceSpread": 25.9188612329087,
+    "distinctColours": 169,
+    "darkShare": 0.9333333333333333,
+    "topDarkY": 388,
+    "bottomDarkY": 388,
+    "darkWidth": 300
+  },
+  "man": {
+    "pixels": 38014,
+    "meanLuminance": 229.19719747987344,
+    "luminanceSpread": 28.636032099466405,
+    "distinctColours": 840,
+    "darkShare": 0.03961698321670963,
+    "topDarkY": 185,
+    "bottomDarkY": 378,
+    "darkWidth": 44
+  },
+  "boil": {
+    "lineChanged": 661,
+    "manChanged": 832,
+    "paperChanged": 0
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "the paper is not a flat colour: it has a grain",
+      "pass": true,
+      "details": "272 colours, luminance spread 2.05"
+    },
+    {
+      "name": "the paper is still light, with nothing drawn where nothing is",
+      "pass": true,
+      "details": "mean luminance 234.5"
+    },
+    {
+      "name": "the floor is a pencil line where level 1 says the floor is",
+      "pass": true,
+      "details": "6 spots along it, dark share 0.25 0.29 0.22 0.25 0.23 0.19"
+    },
+    {
+      "name": "the line stays a line: nothing is drawn under it",
+      "pass": true
+    },
+    {
+      "name": "the line starts where the floor starts",
+      "pass": true,
+      "details": "dark share left of the floor 0.000"
+    },
+    {
+      "name": "the line has a grain: along its middle it is not one flat colour",
+      "pass": true,
+      "details": "luminance 96, spread 25.9 (a flat line has 0)"
+    },
+    {
+      "name": "the stick man is drawn standing on the floor line",
+      "pass": true,
+      "details": "dark share 0.040 around him, 0.000 beside him"
+    },
+    {
+      "name": "he is as tall on screen as the sim says he is",
+      "pass": true,
+      "details": "203.8 px drawn, 207.7 px expected"
+    },
+    {
+      "name": "his head is a drawn circle, not a filled one",
+      "pass": true,
+      "details": "dark share inside 0.000"
+    },
+    {
+      "name": "nothing moved between the two pictures",
+      "pass": true
+    },
+    {
+      "name": "a still line boils: the floor is redrawn a little differently",
+      "pass": true,
+      "details": "661 pixels changed"
+    },
+    {
+      "name": "a still stick man boils too",
+      "pass": true,
+      "details": "832 pixels changed"
+    },
+    {
+      "name": "the paper does not boil",
+      "pass": true,
+      "details": "0 pixels changed"
+    },
+    {
+      "name": "in a bigger window he fills the same share of the view",
+      "pass": true,
+      "details": "37.7% of the height, then 38.0%"
+    },
+    {
+      "name": "at pixel ratio 2 he is the same size against the view, mid-stride",
+      "pass": true,
+      "details": "165.0 px drawn, 173.1 px expected"
+    },
+    {
+      "name": "at pixel ratio 3 he is the same size against the view, mid-stride",
+      "pass": true,
+      "details": "110.3 px drawn, 115.4 px expected"
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

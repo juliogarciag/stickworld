@@ -1,5 +1,5 @@
 import type { Command, Def, Level, SimHandle, SimSnapshot } from '@stickworld/sim';
-import { defs, hashSnapshot, levelOf } from '@stickworld/sim';
+import { defs, hashSnapshot, levelOf, STICK_MAN_HEIGHT } from '@stickworld/sim';
 import type Phaser from 'phaser';
 import type { WalkDemo } from './demo/walkAlongTheFloor';
 import type { GameLoop } from './loop/GameLoop';
@@ -15,6 +15,8 @@ export interface GameDebugApi {
   readonly level: Level;
   readonly defs: readonly Def[];
   readonly pixelsPerMetre: number;
+  /** The stick man's height in metres, as the sim's tuning has it. */
+  readonly stickManHeight: number;
   snapshot(): SimSnapshot;
   hash(): string;
   /** The level camera right now, or undefined until the level scene runs. */
@@ -53,6 +55,7 @@ export function exposeDebugApi({ loop, game }: { loop: GameLoop; game: Phaser.Ga
     },
     defs,
     pixelsPerMetre: PIXELS_PER_METRE,
+    stickManHeight: STICK_MAN_HEIGHT,
     snapshot: () => loop.sim.snapshot(),
     hash: () => hashSnapshot(loop.sim.snapshot()),
     camera: () => {

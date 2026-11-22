@@ -1,5 +1,6 @@
 import { STICK_MAN_HEIGHT, type Point } from '@stickworld/sim';
-import { PENCIL, type Stroke, type StrokePoint } from './strokes';
+import type { Stroke, StrokePoint } from './strokes';
+import { PENCIL } from './strokes/pencil';
 import { toPixels } from './units';
 
 /**
@@ -15,7 +16,7 @@ export interface StickManPose {
   /** 1 when he looks right, -1 when he looks left. */
   readonly facing: 1 | -1;
   readonly action: 'standing' | 'walking';
-  /** How far along one walk cycle (two steps) he is, from 0 to 1. Ignored when standing. */
+  /** How far along one walk cycle (two steps) he is, from 0 to 1; at 0 a foot has just come down in front of him. Ignored when standing. */
   readonly walkCycle: number;
 }
 
@@ -29,10 +30,9 @@ export function stickManStrokes(pose: StickManPose): Stroke[] {
   ];
 }
 
-/** How far he travels in one walk cycle without his planted foot sliding, in metres. */
+/** How far he travels in one walk cycle (two steps), in metres: the distance at which his planted foot does not slide. */
 export function walkCycleLength(): number {
-  const plantedAt = (cycle: number): number => legFrom({ x: 0, y: 0 }, { facing: 1, cycle, walking: true })[2]!.x;
-  return 2 * (plantedAt(0.25) - plantedAt(0.75));
+  return 4 * STEP_REACH;
 }
 
 // ---- Helpers ----
@@ -49,13 +49,18 @@ const BODY = {
   /** How far below the neck the arms start. */
   shoulderDrop: 0.03 * STICK_MAN_HEIGHT,
   thighSwing: 0.46,
-  kneeBend: 0.95,
+  kneeBend: 1.1,
+  /** How much further forward the thigh is in the middle of its swing, so the knee leads the foot. */
+  kneeLift: 0.3,
   restingKnee: 0.06,
   armSwing: 0.5,
   elbowBend: 0.35,
   restingArm: 0.12,
   lean: 0.07,
 } as const;
+
+/** How far in front of his hips a foot comes down, and how far behind it lifts off, in metres. */
+const STEP_REACH = (BODY.thigh + BODY.shin) * Math.sin(BODY.thighSwing);
 
 interface Skeleton {
   readonly head: Point;
@@ -94,20 +99,31 @@ function skeletonOf({ feet, facing, action, walkCycle }: StickManPose): Skeleton
   };
 }
 
-/** Hip, knee and foot of one leg. The thigh swings forward and back; the knee bends while the leg comes forward. */
+/**
+ * Hip, knee and foot of one leg. For the first half of its cycle the foot is
+ * planted: it goes back under him at the speed he goes forward, on a straight
+ * leg. For the second half the leg swings forward again with the knee bent.
+ */
 function legFrom(hip: Point, { facing, cycle, walking }: LimbCycle): Point[] {
-  const turn = cycle * Math.PI * 2;
-  const thigh = walking ? BODY.thighSwing * Math.sin(turn) : 0;
-  const bend = BODY.restingKnee + (walking ? BODY.kneeBend * Math.max(0, Math.cos(turn)) : 0);
+  const within = ((cycle % 1) + 1) % 1;
+  let thigh = 0;
+  let bend = BODY.restingKnee;
+  if (walking && within < 0.5) {
+    thigh = Math.asin((STEP_REACH * (1 - 4 * within)) / (BODY.thigh + BODY.shin));
+  } else if (walking) {
+    const swing = (within - 0.5) * 2;
+    thigh = -BODY.thighSwing * Math.cos(Math.PI * swing) + BODY.kneeLift * Math.sin(Math.PI * swing);
+    bend += BODY.kneeBend * Math.sin(Math.PI * swing);
+  }
   const knee = stepFrom(hip, { angle: thigh, length: BODY.thigh, facing });
   return [hip, knee, stepFrom(knee, { angle: thigh - bend, length: BODY.shin, facing })];
 }
 
-/** Shoulder, elbow and hand of one arm. The elbow always bends forward. */
+/** Shoulder, elbow and hand of one arm, forward when the leg at `cycle` is forward. The elbow always bends forward. */
 function armFrom(shoulder: Point, { facing, cycle, walking }: LimbCycle): Point[] {
   const turn = cycle * Math.PI * 2;
-  const upper = walking ? BODY.armSwing * Math.sin(turn) : BODY.restingArm * (cycle % 1 < 0.5 ? 1 : -1);
-  const bend = walking ? BODY.elbowBend * (1 + 0.5 * Math.sin(turn)) : BODY.restingArm;
+  const upper = walking ? BODY.armSwing * Math.cos(turn) : BODY.restingArm * (((cycle % 1) + 1) % 1 < 0.5 ? 1 : -1);
+  const bend = walking ? BODY.elbowBend * (1 + 0.5 * Math.cos(turn)) : BODY.restingArm;
   const elbow = stepFrom(shoulder, { angle: upper, length: BODY.upperArm, facing });
   return [shoulder, elbow, stepFrom(elbow, { angle: upper + bend, length: BODY.forearm, facing })];
 }

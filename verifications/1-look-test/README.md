@@ -1,45 +1,22 @@
-# Verification template
+# 1 - Look test: how pencil strokes are drawn
 
-The starting point for a ticket's `verifications/<ticket>/` folder, and the only folder under `verifications/` that is kept working. Every other folder is the proof of one ticket, frozen when its PR merged: do not run, repair, read or copy from them.
+Proof for issue #1. Frozen when its PR merges: do not run, repair or copy from it afterwards.
 
-## Start a ticket's folder
+What is verified, on the real app in Chromium (`PORT=5912 pnpm dev`, started and stopped by each script): the paper has a grain, level 1's floor is a pencil line exactly where the level's data says the floor is, the stick man stands on it as tall as the sim's tuning says, the lines have a pencil's grain and boil while the paper does not, he walks by himself and with the arrow keys, and none of it is sim state. Expected positions come from `window.__game`, not from numbers in the scripts.
 
-From the repo root, in the ticket's worktree:
-
-```bash
-cp -R verifications/_template verifications/<ticketNumber>-<ticketKebabTitle>
-```
-
-If the template was run in place before, the copy carries its `proof/` and `node_modules/`: delete both from the copy.
-
-Then, in the copy:
-
-1. Rename `solo.mjs` after what it proves (`01-walks-to-the-flag.mjs`, ...), add more scripts beside it if the ticket needs them, and list them in `run.sh`.
-2. Change the port at the top of each script to one no other session uses. It must differ from the dev server you leave running for the human, because a pinned port refuses to start twice.
-3. Replace the example checks with what the ticket promises, from the point of view of the player. Derive expected numbers from `window.__game` (level, defs, camera, pixelsPerMetre), never from constants typed into the script.
-4. Replace this README with the ticket's own: what is verified, how to run it, and a table of script, what it proves, and proof file.
-
-Run it from anywhere; the first run installs Playwright in the folder:
+Whether it looks right cannot be asserted: look at the screenshots and the recording.
 
 ```bash
-bash verifications/<ticketNumber>-<ticketKebabTitle>/run.sh
+bash verifications/1-look-test/run.sh
 ```
 
-Each script prints `PASS`/`FAIL` lines, exits non-zero on failure and writes into `proof/`: the JSON report, the screenshots, and the console output as `proof/<script>.txt`. Commit `proof/` with the ticket. A change in how something looks needs before and after screenshots; a change in how something moves, a short screen recording (Playwright's `recordVideo` option on `browser.newContext`).
+| Script | What it proves | Proof |
+|---|---|---|
+| `00-before.mjs` | The look before this ticket: flat paper, nothing drawn. Run once on `origin/main`'s code, before the change. | `proof/00-before.png` |
+| `01-techniques.mjs` | One still picture per stroke technique tried, whole view and close up. Run once at commit `6321917`, the only one where `VITE_STROKES` picks a technique; it cannot run on a later commit and is not in `run.sh`. | `proof/01-technique-{rope,graphics,canvas}-{view,closeup}.png` |
+| `02-look.mjs` | 18 checks: paper grain; the floor line where the level puts it, starting where the floor starts, nothing under it; the line's grain (a flat line measures 0); the stick man on the floor at the sim's height with a drawn, hollow head; a still picture boils in the lines and not in the paper; the same share of the view in a bigger window and at pixel ratios 2 and 3. | `proof/02-look.json`, `02-look.txt`, `02-after.png`, `02-after-retina.png`, `02-after-closeup.png` |
+| `03-walk.mjs` | 13 checks: he walks by himself along the floor; the camera keeps him in the middle; his legs and arms swing through the cycle; the left and right arrow keys walk him, no key stands him; the sim's snapshot says nothing about him. | `proof/03-walk.json`, `03-walk.txt`, `03-walk.webm` (and `03-walk.gif`, its first seconds), `03-walk-1..4.png`, `03-walking-left.png`, `03-standing.png` |
 
-Content search skips every ticket folder, yours included (the root `.ignore`). To search yours, name it as the path: `rg <pattern> verifications/<ticket>/`.
+The headless half is in the client's tests (`pnpm test`): `render/strokes/handDrawn.test.ts` (the hand-drawn path and the boil), `render/stickMan.test.ts` (the limbs, feet on the floor, the planted foot does not slide), `render/floor.test.ts` and `demo/walkAlongTheFloor.test.ts`.
 
-## What is here
-
-| File | What it gives you |
-|---|---|
-| `solo.mjs` | Starts `PORT=<n> pnpm dev`, opens Chromium, reads the sim through `window.__game`, checks it runs with real time and restarts a level, writes a screenshot and a report |
-| `lib.mjs` | `start` (a server that stops with the script, printing without colours), `waitForPort`, `waitFor`, `lastLinesOf`, `check`, `summarize`, `writeProof`, and the `ROOT` and `PROOF` paths |
-| `run.sh` | Installs on first run, runs the scripts in order, keeps their console output as proof |
-
-## What the template relies on
-
-A ticket that changes any of these updates the template in the same PR, and runs it once to show it still passes (`bash verifications/_template/run.sh`; the `proof/` and `node_modules/` it leaves here are gitignored):
-
-- `PORT=<n> pnpm dev` pins the client's port and prints `localhost:<n>/` when ready.
-- `window.__game`: `sim.tick`, `sim.dt`, `level.id`, `hash()` and `loadLevel(n)`, which plays level `n` again from tick 0.
+`lib.mjs` is the template's, plus `lookAt` (what is on screen, as numbers), `differingPixels` and `onScreen` (metres to page pixels through the camera).

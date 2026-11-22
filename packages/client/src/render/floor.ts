@@ -1,5 +1,6 @@
 import type { Level } from '@stickworld/sim';
-import { PENCIL, type Stroke } from './strokes';
+import type { Stroke } from './strokes';
+import { PENCIL } from './strokes/pencil';
 import { toPixels } from './units';
 
 /** The level's floor as pencil strokes in world pixels: one line per segment, so a gap stays a gap. */
