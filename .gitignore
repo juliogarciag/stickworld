@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.worktrees/
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# proof written when the template is run in place; a ticket commits the proof of its own copy
+/verifications/_template/proof/
