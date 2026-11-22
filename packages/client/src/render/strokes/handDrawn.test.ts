@@ -65,6 +65,12 @@ describe('handDrawnPath', () => {
     expect(handDrawnPath({ points: [{ x: 5, y: 5 }, { x: 5, y: 5 }], thickness: 4 }, { strokeIndex: 0, boilFrame: 0 })).toEqual([]);
   });
 
+  it('skips a piece that goes nowhere a number can say, instead of drawing it for ever', () => {
+    const path = handDrawnPath({ points: [{ x: 0, y: 0 }, { x: 30, y: 0 }, { x: Infinity, y: 0 }, { x: Number.NaN, y: 5 }], thickness: 4 }, { strokeIndex: 0, boilFrame: 0 });
+    expect(path.length).toBe(30 / PENCIL.pointSpacing + 1);
+    for (const point of path) expect([point.x, point.y, point.pressure].every(Number.isFinite)).toBe(true);
+  });
+
   it('draws only finite numbers', () => {
     const path = handDrawnPath({ points: [{ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 3, y: 0 }, { x: -2000, y: 1e6 }], thickness: 4 }, { strokeIndex: 9, boilFrame: 123456 });
     for (const point of path) expect([point.x, point.y, point.pressure].every(Number.isFinite)).toBe(true);

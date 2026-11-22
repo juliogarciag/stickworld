@@ -1,5 +1,10 @@
 import type Phaser from 'phaser';
 
+/**
+ * LOOK TEST ONLY (issue #1), with `demo/walkAlongTheFloor.ts`. The Level 1
+ * ticket (issue #2) replaces this with the mapping from keys to commands.
+ */
+
 /** Which way the arrow keys say to walk right now: -1 left, 1 right, 0 neither (or both). */
 export type HeldDirection = -1 | 0 | 1;
 

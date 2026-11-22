@@ -30,7 +30,7 @@ try {
   page.on('console', (message) => message.type() === 'error' && pageErrors.push(message.text()));
   await page.goto(`http://localhost:${PORT}/`);
   await page.waitForFunction(() => window.__game?.walkDemo?.() && window.__game.camera(), null, { timeout: 15000 });
-  const hashAtStart = await page.evaluate(() => ({ hash: window.__game.hash(), tick: window.__game.sim.tick }));
+  const tickAtStart = await page.evaluate(() => window.__game.sim.tick);
 
   // ---- By himself ----
   const first = await poseOf(page);
@@ -44,12 +44,15 @@ try {
   // ---- His limbs move, and the camera keeps him in view ----
   const game = await page.evaluate(() => ({ stickManHeight: window.__game.stickManHeight, floorY: window.__game.level.floor[0].from.y }));
   const frames = [];
+  // One picture at each quarter of a step, by his walk cycle and not by the clock, so the four always differ.
   for (let frame = 0; frame < 4; frame += 1) {
+    await page.waitForFunction((quarter) => Math.floor((window.__game.walkDemo().pose().walkCycle % 0.5) * 8) === quarter, frame);
+    await page.evaluate(() => window.__game.walkDemo().setPaused(true));
     const screen = await onScreen(page);
     const { pose } = screen;
     const picture = await page.screenshot({ path: path.join(PROOF, `03-walk-${frame + 1}.png`) });
     frames.push({ picture, pose, feetX: screen.x(pose.feet.x), floorY: screen.y(game.floorY), manHeight: game.stickManHeight * screen.perMetre });
-    await page.waitForTimeout(140);
+    await page.evaluate(() => window.__game.walkDemo().setPaused(false));
   }
   const centred = frames.every((frame) => Math.abs(frame.feetX - VIEWPORT.width / 2) < 2);
   results.push(check('the camera keeps him in the middle of the view as he walks', centred, frames.map((frame) => frame.feetX.toFixed(1)).join(' ')));
@@ -94,6 +97,38 @@ try {
   results.push(check('the right arrow key walks him right', walkingRight.facing === 1 && walkingRight.action === 'walking' && walkingRight.feet.x > standing.feet.x + 0.2, `facing ${walkingRight.facing}, at ${walkingRight.feet.x.toFixed(2)} m`));
   await page.waitForTimeout(800);
 
+  // ---- The floor is still under him after the camera has travelled, and ends where the level ends it ----
+  await page.keyboard.down('ArrowRight');
+  // He stops by himself near the end of the floor: wait until he is past its last metre and no longer moving.
+  const lastMetre = await page.evaluate(() => window.__game.level.floor[0].to.x - 1);
+  let previous = await poseOf(page);
+  await waitFor('him to reach the end of the floor', {
+    read: async () => {
+      await page.waitForTimeout(150);
+      const now = await poseOf(page);
+      const stopped = now.feet.x === previous.feet.x && now.feet.x > lastMetre;
+      previous = now;
+      return stopped;
+    },
+    until: Boolean,
+    timeoutMs: 20000,
+  });
+  await page.keyboard.up('ArrowRight');
+  await page.waitForFunction(() => window.__game.walkDemo().pose().action === 'standing');
+  await page.waitForTimeout(200);
+  const atTheEnd = await onScreen(page);
+  const floor = await page.evaluate(() => window.__game.level.floor[0]);
+  const endX = atTheEnd.x(floor.to.x);
+  const endY = atTheEnd.y(floor.to.y);
+  const [underHimStill, pastTheEnd] = await lookAt(page, [
+    { x: 40, y: endY - 8, width: 200, height: 16 },
+    { x: endX + 40, y: endY - 10, width: VIEWPORT.width - endX - 60, height: 20 },
+  ]);
+  await page.screenshot({ path: path.join(PROOF, '03-end-of-the-floor.png') });
+  report.endOfTheFloor = { pose: atTheEnd.pose, endX, underHimStill, pastTheEnd };
+  results.push(check('after walking to the far end the floor line is still drawn behind him', underHimStill.darkShare > 0.1, `dark share ${underHimStill.darkShare.toFixed(2)}`));
+  results.push(check('the line ends where the floor ends', endX < VIEWPORT.width - 80 && pastTheEnd.darkShare === 0, `floor ends at ${endX.toFixed(0)} px, dark share past it ${pastTheEnd.darkShare.toFixed(3)}`));
+
   // ---- None of it is game state ----
   const simAfter = await page.evaluate(() => {
     const { sim, level, snapshot } = window.__game;
@@ -102,7 +137,7 @@ try {
   });
   report.snapshotAfterWalking = JSON.parse(simAfter.snapshot);
   const mentionsTheWalk = /walk|facing|pose|limb|feet/i.test(simAfter.snapshot);
-  results.push(check('the walk is view only: the sim kept ticking and its state says nothing about him', simAfter.tick > hashAtStart.tick && !mentionsTheWalk, `tick ${hashAtStart.tick} to ${simAfter.tick}`));
+  results.push(check('the walk is view only: the sim kept ticking and its state says nothing about him', simAfter.tick > tickAtStart && !mentionsTheWalk, `tick ${tickAtStart} to ${simAfter.tick}`));
 
   results.push(check('no page errors', pageErrors.length === 0, pageErrors.join(' | ')));
   await context.close();

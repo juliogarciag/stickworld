@@ -4,7 +4,8 @@ import { graphicsStrokeLayer } from './graphicsLayer';
 
 /**
  * The only place a pencil stroke is drawn (AGENTS.md rule 12, ADR 0002).
- * A caller makes a layer once and shows it its strokes every frame:
+ * A caller makes a layer once and shows it its strokes whenever they change
+ * (every frame is fine); a layer shown once keeps boiling by itself:
  *
  *   const floor = createStrokeLayer(scene);
  *   floor.show([{ points: [from, to], thickness: PENCIL.thickness }]);

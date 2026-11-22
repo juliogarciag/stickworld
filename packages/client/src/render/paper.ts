@@ -87,7 +87,7 @@ function paintOnce(scene: Phaser.Scene, { key, size, paint }: { key: string; siz
   tile.refresh();
 }
 
-/** Paints one repeatable tile of tooth: the paper's colour, clear where the pencil marks fully and showing where it does not. */
+/** Paints one repeatable tile of tooth: the paper's colour, strong at the specks the pencil does not reach and a faint haze everywhere else. */
 function paintTooth(context: CanvasRenderingContext2D): void {
   const size = TOOTH.tileSize;
   const nextUnit = fixedUnits(0x51ec);

@@ -21,6 +21,10 @@ describe('the stick man standing', () => {
     expect(height).toBeLessThanOrEqual(STICK_MAN_HEIGHT);
   });
 
+  it('stands the same wherever his last walk cycle stopped', () => {
+    expect(stickManStrokes({ ...STANDING, walkCycle: 0.7 })).toEqual(stickManStrokes(STANDING));
+  });
+
   it('is drawn in world pixels, where his feet are', () => {
     const points = stickManStrokes(STANDING).flatMap((stroke) => stroke.points);
     expect(Math.max(...points.map((point) => point.y))).toBeCloseTo(toPixels(STANDING.feet.y), 6);
@@ -31,10 +35,12 @@ describe('the stick man standing', () => {
 });
 
 describe('the stick man walking', () => {
-  it('always has a foot on the floor and never one under it', () => {
+  it('always has a foot on the floor, and no knee or hip ever at or under it', () => {
     for (const walkCycle of CYCLE_SAMPLES) {
-      const feetY = skeletonOf({ ...WALKING, walkCycle }).legs.map((leg) => leg[2]!.y);
-      expect(Math.max(...feetY)).toBeCloseTo(WALKING.feet.y, 6);
+      const { legs, hip } = skeletonOf({ ...WALKING, walkCycle });
+      expect(Math.max(...legs.map((leg) => leg[2]!.y))).toBeCloseTo(WALKING.feet.y, 6);
+      for (const leg of legs) expect(leg[1]!.y).toBeLessThan(WALKING.feet.y - BODY.shin / 2);
+      expect(hip.y).toBeLessThan(WALKING.feet.y - BODY.thigh);
     }
   });
 

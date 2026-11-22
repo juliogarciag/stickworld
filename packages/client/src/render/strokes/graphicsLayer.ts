@@ -15,21 +15,22 @@ import type { Stroke, StrokeLayer } from './stroke';
 
 /** A new layer of pencil strokes in `scene`, drawn above what the scene already has. */
 export function graphicsStrokeLayer(scene: Phaser.Scene): StrokeLayer {
-  const number = layersMade;
+  const layerNumber = layersMade;
   layersMade += 1;
   const graphics = scene.add.graphics();
   const colour = Phaser.Display.Color.HexStringToColor(PENCIL.colour).color;
   let strokes: readonly Stroke[] = [];
-  let drawnStrokes: readonly Stroke[] | undefined;
-  let drawnBoilFrame = -1;
+  /** What the last drawing was made from. Nothing is redrawn while all of it is the same. */
+  let drawn: { strokes?: readonly Stroke[]; boilFrame: number; seenX: number; seenY: number; seenWidth: number; seenHeight: number } | undefined;
 
   const draw = (): void => {
     const boilFrame = boilFrameAt(scene.time.now / 1000);
-    if (strokes === drawnStrokes && boilFrame === drawnBoilFrame) return;
-    drawnStrokes = strokes;
-    drawnBoilFrame = boilFrame;
-
     const seen = worldSeenBy(scene.cameras.main);
+    // The view is part of it: points off screen are skipped, so a camera that moved needs a new drawing.
+    const next = { strokes, boilFrame, seenX: seen.x, seenY: seen.y, seenWidth: seen.width, seenHeight: seen.height };
+    if (drawn && Object.entries(next).every(([key, value]) => drawn?.[key as keyof typeof next] === value)) return;
+    drawn = next;
+
     const inView = (point: PencilPoint): boolean =>
       point.x > seen.x - OFF_SCREEN_MARGIN && point.x < seen.x + seen.width + OFF_SCREEN_MARGIN && point.y > seen.y - OFF_SCREEN_MARGIN && point.y < seen.y + seen.height + OFF_SCREEN_MARGIN;
 
@@ -37,7 +38,7 @@ export function graphicsStrokeLayer(scene: Phaser.Scene): StrokeLayer {
     graphics.fillStyle(colour, 1);
     strokes.forEach((stroke, index) => {
       // Numbered by layer, so two layers' lines do not wobble alike.
-      const path = handDrawnPath(stroke, { strokeIndex: number * STROKES_PER_LAYER + index, boilFrame });
+      const path = handDrawnPath(stroke, { strokeIndex: layerNumber * STROKES_PER_LAYER + index, boilFrame });
       path.forEach((point, pointIndex) => {
         if (!inView(point)) return;
         const width = stroke.thickness * point.pressure;
@@ -74,5 +75,5 @@ let layersMade = 0;
 /** More strokes than a layer ever shows: keeps the numbering of two layers' strokes apart. */
 const STROKES_PER_LAYER = 4096;
 
-/** How far outside the view, in world pixels, a line is still drawn, so a long line costs what is on screen and the camera can move a little before the next redraw. */
+/** How far outside the view, in world pixels, a line is still drawn: a long line costs what is on screen, and no end of a piece shows at the edge. */
 const OFF_SCREEN_MARGIN = 200;

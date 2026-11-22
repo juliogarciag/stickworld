@@ -57,10 +57,8 @@ try {
   results.push(check(`the floor is a pencil line where level ${game.level.id} says the floor is`, alongTheFloor.length >= 5 && onTheLine.every((spot) => spot.darkShare > 0.1), `${alongTheFloor.length} spots along it, dark share ${onTheLine.map((spot) => spot.darkShare.toFixed(2)).join(' ')}`));
   results.push(check('the line stays a line: nothing is drawn under it', underTheLine.every((spot) => spot.darkShare === 0)));
   const beforeTheFloor = screen.x(floor.from.x) - 60;
-  if (beforeTheFloor > 10) {
-    const [leftOfTheFloor] = await lookAt(page, [{ x: 10, y: floorY - 10, width: beforeTheFloor - 10, height: 20 }]);
-    results.push(check('the line starts where the floor starts', leftOfTheFloor.darkShare === 0, `dark share left of the floor ${leftOfTheFloor.darkShare.toFixed(3)}`));
-  }
+  const [leftOfTheFloor] = beforeTheFloor > 10 ? await lookAt(page, [{ x: 10, y: floorY - 10, width: beforeTheFloor - 10, height: 20 }]) : [undefined];
+  results.push(check('the line starts where the floor starts', leftOfTheFloor?.darkShare === 0, leftOfTheFloor ? `dark share left of the floor ${leftOfTheFloor.darkShare.toFixed(3)}` : 'the start of the floor is not in view'));
 
   // ---- The pencil's grain ----
   const stretch = { x: feetX + manHeight * 0.5, y: floorY - 6, width: 300, height: 12 };

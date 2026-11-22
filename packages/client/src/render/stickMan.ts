@@ -30,7 +30,13 @@ export function stickManStrokes(pose: StickManPose): Stroke[] {
   ];
 }
 
-/** How far he travels in one walk cycle (two steps), in metres: the distance at which his planted foot does not slide. */
+/**
+ * How far he travels in one walk cycle (two steps), in metres: the distance at
+ * which his planted foot does not slide. It follows from his proportions, which
+ * are view detail. When walking becomes a sim rule (issue #2), the sim cannot
+ * read this: either its tuning names the same length, or the view works the
+ * cycle out from the distance the sim says he has walked.
+ */
 export function walkCycleLength(): number {
   return 4 * STEP_REACH;
 }
@@ -40,7 +46,6 @@ export function walkCycleLength(): number {
 /** His proportions, as shares of his height, and how far his limbs swing, in radians. View detail only. */
 const BODY = {
   headRadius: 0.1 * STICK_MAN_HEIGHT,
-  neckHeight: 0.76 * STICK_MAN_HEIGHT,
   body: 0.31 * STICK_MAN_HEIGHT,
   thigh: 0.235 * STICK_MAN_HEIGHT,
   shin: 0.235 * STICK_MAN_HEIGHT,
@@ -94,7 +99,7 @@ function skeletonOf({ feet, facing, action, walkCycle }: StickManPose): Skeleton
     neck,
     hip,
     // Each arm swings with the opposite leg.
-    arms: [armFrom(shoulder, { facing, cycle: walkCycle + 0.5, walking }), armFrom(shoulder, { facing, cycle: walkCycle, walking })],
+    arms: [armFrom(shoulder, { facing, cycle: walkCycle + 0.5, walking, restingSide: -1 }), armFrom(shoulder, { facing, cycle: walkCycle, walking, restingSide: 1 })],
     legs: [legFrom(hip, { facing, cycle: walkCycle, walking }), legFrom(hip, { facing, cycle: walkCycle + 0.5, walking })],
   };
 }
@@ -119,10 +124,10 @@ function legFrom(hip: Point, { facing, cycle, walking }: LimbCycle): Point[] {
   return [hip, knee, stepFrom(knee, { angle: thigh - bend, length: BODY.shin, facing })];
 }
 
-/** Shoulder, elbow and hand of one arm, forward when the leg at `cycle` is forward. The elbow always bends forward. */
-function armFrom(shoulder: Point, { facing, cycle, walking }: LimbCycle): Point[] {
+/** Shoulder, elbow and hand of one arm, forward when the leg at `cycle` is forward. The elbow always bends forward. Standing, it hangs a little to its `restingSide`: 1 in front of him, -1 behind. */
+function armFrom(shoulder: Point, { facing, cycle, walking, restingSide }: LimbCycle & { restingSide: 1 | -1 }): Point[] {
   const turn = cycle * Math.PI * 2;
-  const upper = walking ? BODY.armSwing * Math.cos(turn) : BODY.restingArm * (((cycle % 1) + 1) % 1 < 0.5 ? 1 : -1);
+  const upper = walking ? BODY.armSwing * Math.cos(turn) : BODY.restingArm * restingSide;
   const bend = walking ? BODY.elbowBend * (1 + 0.5 * Math.cos(turn)) : BODY.restingArm;
   const elbow = stepFrom(shoulder, { angle: upper, length: BODY.upperArm, facing });
   return [shoulder, elbow, stepFrom(elbow, { angle: upper + bend, length: BODY.forearm, facing })];

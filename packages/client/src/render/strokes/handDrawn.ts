@@ -13,7 +13,7 @@ export interface PencilPoint extends StrokePoint {
   readonly pressure: number;
 }
 
-export interface Redraw {
+interface Redraw {
   /** Which stroke of its layer this is, so two strokes do not wobble alike. */
   readonly strokeIndex: number;
   /** Which redraw this is; the wobble changes when it does. */
@@ -60,14 +60,15 @@ function overlappingLoop(points: readonly StrokePoint[]): StrokePoint[] {
   return loop;
 }
 
-/** The same path as points `spacing` apart (the last gap is shorter), keeping every corner. */
+/** The same path as points about `spacing` apart (each straight piece is divided evenly), keeping every corner. */
 function evenlySpaced(points: readonly StrokePoint[], spacing: number): StrokePoint[] {
   const spaced: StrokePoint[] = [];
   for (let index = 1; index < points.length; index += 1) {
     const from = points[index - 1]!;
     const to = points[index]!;
     const length = Math.hypot(to.x - from.x, to.y - from.y);
-    if (!(length > 0)) continue;
+    // A piece with no length, or with a coordinate that is not a number, is skipped: it has nowhere to be drawn.
+    if (!Number.isFinite(length) || length <= 0) continue;
     const steps = Math.max(1, Math.round(length / spacing));
     for (let step = spaced.length === 0 ? 0 : 1; step <= steps; step += 1) {
       const along = step / steps;
@@ -104,5 +105,3 @@ function mixed(first: number, second: number): number {
 }
 
 const unit = (integer: number): number => integer / 4294967296;
-
-export const __testing__ = { evenlySpaced, overlappingLoop, smoothNoise };

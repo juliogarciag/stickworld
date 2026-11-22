@@ -18,6 +18,15 @@ for script in 02-look 03-walk; do
   node "$script.mjs" 2>&1 | sed "s#$repo#<repo>#g" | tee "proof/$script.txt"
   if [ "${PIPESTATUS[0]}" -ne 0 ]; then status=1; fi
 done
+# Rule 12 is enforced: lint rejects a Graphics object made outside render/strokes/.
+echo
+echo "=== 04-lint-rule ===" | tee proof/04-lint-rule.txt
+probe="$repo/packages/client/src/render/ruleTwelveProbe.ts"
+printf "import type Phaser from 'phaser';\nexport const drawn = (scene: Phaser.Scene) => [scene.add.graphics(), scene.make.graphics({})];\n" > "$probe"
+(cd "$repo" && pnpm exec eslint "$probe" 2>&1) | sed "s#$repo#<repo>#g" | tee -a proof/04-lint-rule.txt
+command rm -f "$probe"
+if [ "$(grep -c 'rule 12' proof/04-lint-rule.txt)" -eq 2 ]; then echo "PASS  lint rejects add.graphics() and make.graphics() outside render/strokes/" | tee -a proof/04-lint-rule.txt; else echo "FAIL  lint let a Graphics object through outside render/strokes/" | tee -a proof/04-lint-rule.txt; status=1; fi
+
 # The recording again as a GIF, which a PR description can show inline. Skipped where ffmpeg is not installed.
 if [ -f proof/03-walk.webm ] && command -v ffmpeg >/dev/null; then
   # The first seconds, cropped to the stick man (the camera keeps him in the middle), in few colours: the paper's grain makes a full GIF huge.
