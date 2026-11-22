@@ -52,6 +52,7 @@ const DRAWN_OUTSIDE_STROKES = [
     message: STROKES_ONLY,
   },
   { selector: 'NewExpression[callee.property.name=/^(Graphics|Rope)$/]', message: STROKES_ONLY },
+  { selector: 'NewExpression[callee.name=/^(Graphics|Rope)$/]', message: STROKES_ONLY },
 ];
 
 export default defineConfig([

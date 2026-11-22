@@ -21,14 +21,14 @@ export function graphicsStrokeLayer(scene: Phaser.Scene): StrokeLayer {
   const colour = Phaser.Display.Color.HexStringToColor(PENCIL.colour).color;
   let strokes: readonly Stroke[] = [];
   /** What the last drawing was made from. Nothing is redrawn while all of it is the same. */
-  let drawn: { strokes?: readonly Stroke[]; boilFrame: number; seenX: number; seenY: number; seenWidth: number; seenHeight: number } | undefined;
+  let drawn: { strokes: readonly Stroke[]; boilFrame: number; seenX: number; seenY: number; seenWidth: number; seenHeight: number } | undefined;
 
   const draw = (): void => {
     const boilFrame = boilFrameAt(scene.time.now / 1000);
     const seen = worldSeenBy(scene.cameras.main);
     // The view is part of it: points off screen are skipped, so a camera that moved needs a new drawing.
     const next = { strokes, boilFrame, seenX: seen.x, seenY: seen.y, seenWidth: seen.width, seenHeight: seen.height };
-    if (drawn && Object.entries(next).every(([key, value]) => drawn?.[key as keyof typeof next] === value)) return;
+    if (drawn && drawn.strokes === strokes && drawn.boilFrame === boilFrame && drawn.seenX === seen.x && drawn.seenY === seen.y && drawn.seenWidth === seen.width && drawn.seenHeight === seen.height) return;
     drawn = next;
 
     const inView = (point: PencilPoint): boolean =>

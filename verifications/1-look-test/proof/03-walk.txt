@@ -1,16 +1,16 @@
 PASS  dev server up, started by this run
-PASS  he walks along the floor by himself  (from 1.16 m to 2.67 m in a second)
+PASS  he walks along the floor by himself  (from 1.16 m to 2.57 m in a second)
 PASS  his walk cycle moves on as he walks
 PASS  he stays on the floor line
 PASS  the camera keeps him in the middle of the view as he walks  (480.0 480.0 480.0 480.0)
-PASS  his legs and arms swing: how far they spread changes through the cycle  (legs 80 px, arms 63 px | legs 65 px, arms 47 px | legs 37 px, arms 16 px | legs 49 px, arms 48 px)
-PASS  he is a whole stick man while walking: drawn from the floor up to his height  (200.8 px tall, 207.7 px expected)
-PASS  the left arrow key walks him left  (facing -1, 5.72 m then 4.95 m)
-PASS  with no key held he stands where he stopped  (at 4.65 m)
-PASS  the right arrow key walks him right  (facing 1, at 5.72 m)
+PASS  his legs and arms swing: how far they spread changes through the cycle  (legs 71 px, arms 57 px | legs 64 px, arms 47 px | legs 39 px, arms 17 px | legs 50 px, arms 47 px)
+PASS  he is a whole stick man while walking: drawn from the floor up to his height  (205.8 px tall, 207.7 px expected)
+PASS  the left arrow key walks him left  (facing -1, 5.15 m then 4.37 m)
+PASS  with no key held he stands where he stopped  (at 4.10 m)
+PASS  the right arrow key walks him right  (facing 1, at 5.17 m)
 PASS  after walking to the far end the floor line is still drawn behind him  (dark share 0.25)
-PASS  the line ends where the floor ends  (floor ends at 549 px, dark share past it 0.000)
-PASS  the walk is view only: the sim kept ticking and its state says nothing about him  (tick 5 to 786)
+PASS  the line ends where the floor ends  (floor ends at 549 px, dark share just before it 0.19, past it 0.000)
+PASS  the walk is view only: the sim kept ticking and its state says nothing about him  (tick 5 to 788)
 PASS  no page errors
 PASS  the walk was recorded  (proof/03-walk.webm)
 

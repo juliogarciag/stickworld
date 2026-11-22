@@ -46,8 +46,12 @@ try {
   const frames = [];
   // One picture at each quarter of a step, by his walk cycle and not by the clock, so the four always differ.
   for (let frame = 0; frame < 4; frame += 1) {
-    await page.waitForFunction((quarter) => Math.floor((window.__game.walkDemo().pose().walkCycle % 0.5) * 8) === quarter, frame);
-    await page.evaluate(() => window.__game.walkDemo().setPaused(true));
+    await page.waitForFunction((quarter) => {
+      const demo = window.__game.walkDemo();
+      const there = Math.floor((demo.pose().walkCycle % 0.5) * 8) === quarter;
+      if (there) demo.setPaused(true);
+      return there;
+    }, frame);
     const screen = await onScreen(page);
     const { pose } = screen;
     const picture = await page.screenshot({ path: path.join(PROOF, `03-walk-${frame + 1}.png`) });
@@ -120,14 +124,15 @@ try {
   const floor = await page.evaluate(() => window.__game.level.floor[0]);
   const endX = atTheEnd.x(floor.to.x);
   const endY = atTheEnd.y(floor.to.y);
-  const [underHimStill, pastTheEnd] = await lookAt(page, [
+  const [underHimStill, upToTheEnd, pastTheEnd] = await lookAt(page, [
     { x: 40, y: endY - 8, width: 200, height: 16 },
+    { x: endX - 30, y: endY - 8, width: 25, height: 16 },
     { x: endX + 40, y: endY - 10, width: VIEWPORT.width - endX - 60, height: 20 },
   ]);
   await page.screenshot({ path: path.join(PROOF, '03-end-of-the-floor.png') });
   report.endOfTheFloor = { pose: atTheEnd.pose, endX, underHimStill, pastTheEnd };
   results.push(check('after walking to the far end the floor line is still drawn behind him', underHimStill.darkShare > 0.1, `dark share ${underHimStill.darkShare.toFixed(2)}`));
-  results.push(check('the line ends where the floor ends', endX < VIEWPORT.width - 80 && pastTheEnd.darkShare === 0, `floor ends at ${endX.toFixed(0)} px, dark share past it ${pastTheEnd.darkShare.toFixed(3)}`));
+  results.push(check('the line ends where the floor ends', endX < VIEWPORT.width - 80 && upToTheEnd.darkShare > 0.1 && pastTheEnd.darkShare === 0, `floor ends at ${endX.toFixed(0)} px, dark share just before it ${upToTheEnd.darkShare.toFixed(2)}, past it ${pastTheEnd.darkShare.toFixed(3)}`));
 
   // ---- None of it is game state ----
   const simAfter = await page.evaluate(() => {

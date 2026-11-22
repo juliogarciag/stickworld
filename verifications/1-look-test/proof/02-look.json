@@ -23,7 +23,7 @@
     },
     "pose": {
       "feet": {
-        "x": 1.749109999999998,
+        "x": 1.7739400000000005,
         "y": 0
       },
       "facing": 1,
@@ -39,7 +39,7 @@
     "perMetre": 115.38461538461537,
     "camera": {
       "zoom": 1.1538461538461537,
-      "scrollX": -305.08900000000017,
+      "scrollX": -302.60599999999994,
       "scrollY": -372.96,
       "width": 960,
       "height": 540
@@ -47,35 +47,35 @@
   },
   "paper": {
     "pixels": 28800,
-    "meanLuminance": 234.4542391111207,
-    "luminanceSpread": 2.0388676651795126,
-    "distinctColours": 277,
+    "meanLuminance": 234.4724680555646,
+    "luminanceSpread": 1.8735455560219252,
+    "distinctColours": 253,
     "darkShare": 0,
     "darkWidth": 0
   },
   "middleOfTheLine": {
     "pixels": 300,
-    "meanLuminance": 93.30955600000001,
-    "luminanceSpread": 24.84126033571691,
-    "distinctColours": 168,
-    "darkShare": 0.9566666666666667,
-    "topDarkY": 389,
-    "bottomDarkY": 389,
+    "meanLuminance": 95.75544866666668,
+    "luminanceSpread": 25.693704826355543,
+    "distinctColours": 172,
+    "darkShare": 0.9433333333333334,
+    "topDarkY": 388,
+    "bottomDarkY": 388,
     "darkWidth": 300
   },
   "man": {
     "pixels": 38014,
-    "meanLuminance": 229.56109359709342,
-    "luminanceSpread": 27.717700673652573,
-    "distinctColours": 832,
-    "darkShare": 0.03701267953911717,
-    "topDarkY": 184,
+    "meanLuminance": 229.3303935655221,
+    "luminanceSpread": 28.22616256592711,
+    "distinctColours": 809,
+    "darkShare": 0.03893302467511969,
+    "topDarkY": 185,
     "bottomDarkY": 378,
     "darkWidth": 44
   },
   "boil": {
-    "lineChanged": 870,
-    "manChanged": 910,
+    "lineChanged": 948,
+    "manChanged": 1085,
     "paperChanged": 0
   },
   "results": [
@@ -86,7 +86,7 @@
     {
       "name": "the paper is not a flat colour: it has a grain",
       "pass": true,
-      "details": "277 colours, luminance spread 2.04"
+      "details": "253 colours, luminance spread 1.87"
     },
     {
       "name": "the paper is still light, with nothing drawn where nothing is",
@@ -96,7 +96,7 @@
     {
       "name": "the floor is a pencil line where level 1 says the floor is",
       "pass": true,
-      "details": "6 spots along it, dark share 0.25 0.29 0.22 0.25 0.23 0.19"
+      "details": "6 spots along it, dark share 0.23 0.31 0.22 0.25 0.21 0.19"
     },
     {
       "name": "the line stays a line: nothing is drawn under it",
@@ -110,17 +110,17 @@
     {
       "name": "the line has a grain: along its middle it is not one flat colour",
       "pass": true,
-      "details": "luminance 93, spread 24.8 (a flat line has 0)"
+      "details": "luminance 96, spread 25.7 (a flat line has 0)"
     },
     {
       "name": "the stick man is drawn standing on the floor line",
       "pass": true,
-      "details": "dark share 0.037 around him, 0.000 beside him"
+      "details": "dark share 0.039 around him, 0.000 beside him"
     },
     {
       "name": "he is as tall on screen as the sim says he is",
       "pass": true,
-      "details": "204.8 px drawn, 207.7 px expected"
+      "details": "203.8 px drawn, 207.7 px expected"
     },
     {
       "name": "his head is a drawn circle, not a filled one",
@@ -134,12 +134,12 @@
     {
       "name": "a still line boils: the floor is redrawn a little differently",
       "pass": true,
-      "details": "870 pixels changed"
+      "details": "948 pixels changed"
     },
     {
       "name": "a still stick man boils too",
       "pass": true,
-      "details": "910 pixels changed"
+      "details": "1085 pixels changed"
     },
     {
       "name": "the paper does not boil",
@@ -149,7 +149,7 @@
     {
       "name": "in a bigger window he fills the same share of the view",
       "pass": true,
-      "details": "37.9% of the height, then 38.0%"
+      "details": "37.7% of the height, then 38.0%"
     },
     {
       "name": "at pixel ratio 2 he is the same size against the view, mid-stride",
@@ -159,7 +159,7 @@
     {
       "name": "at pixel ratio 3 he is the same size against the view, mid-stride",
       "pass": true,
-      "details": "109.7 px drawn, 115.4 px expected"
+      "details": "110.3 px drawn, 115.4 px expected"
     },
     {
       "name": "no page errors",
