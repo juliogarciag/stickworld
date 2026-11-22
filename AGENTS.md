@@ -7,7 +7,7 @@ This file describes the structure the repository has and is growing into. Folder
 **Development process**
 
 - This is the repository: https://github.com/juliogarciag/stickworld.
-- We're gonna use a GitHub project to manage tickets: not created yet (the `gh` token needs `gh auth refresh -s project,read:project`); until it exists, the repository's issues are the tickets.
+- We're gonna use a GitHub project to manage tickets: https://github.com/users/juliogarciag/projects/2. Add every new ticket to it (`gh project item-add 2 --owner juliogarciag --url <issue url>`).
 - You can create tickets on your own.
 - The session where a request arrives never does the work itself, even when the human is in the middle of a conversation there. It creates the ticket, defines a short title for it (let's call it `ticketTitle`) and its kebab-case version (`ticketKebabTitle`), starts a new agent session named `[ticketNumber] - {ticketTitle}`, and stays in the conversation with the human. Questions and discussion go on there as before.
 - The new session takes over the ticket: it assigns the ticket to itself and does everything below.
