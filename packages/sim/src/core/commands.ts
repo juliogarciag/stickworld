@@ -1,3 +1,4 @@
+import type { AirplaneCommand } from '../features/airplane/commands';
 import type { InventoryCommand } from '../features/inventory/commands';
 import type { ItemCommand } from '../features/item/commands';
 import type { PlayerCommand } from '../features/player/commands';
@@ -17,7 +18,7 @@ import type { WorldCommand } from '../features/world/commands';
  *     | PlayerCommand
  *     | InventoryCommand;
  */
-export type Command = PlayerCommand | InventoryCommand | ItemCommand | WorldCommand;
+export type Command = PlayerCommand | InventoryCommand | ItemCommand | WorldCommand | AirplaneCommand;
 
 /** True when `value` has the minimal shape of a command. Anything else is dropped by Sim.step. */
 export function isCommandShaped(value: unknown): value is Command {

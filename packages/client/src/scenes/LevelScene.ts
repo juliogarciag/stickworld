@@ -5,13 +5,13 @@ import { sendItemSlotCommands } from '../input/itemSlotKeys';
 import { keysToCommands, type KeysNow } from '../input/playerCommands';
 import { watchPlayerKeys } from '../input/playerKeys';
 import type { GameLoop } from '../loop/GameLoop';
-import { airplanesEasedOverTime, airplaneStrokes } from '../render/airplane';
+import { airplanesEasedOverTime, airplaneStrokes, heightItTurnsAbout } from '../render/airplane';
 import { flagStrokes } from '../render/flag';
 import { floorStrokes } from '../render/floor';
 import { letterStrokes } from '../render/letter';
 import { followStickManWith } from '../render/levelCamera';
 import { layPaper, PAPER_COLOUR, type Paper } from '../render/paper';
-import { posesEasedOverTime, stickManStrokes } from '../render/stickMan';
+import { posesEasedOverTime, seatedIn, stickManStrokes } from '../render/stickMan';
 import { createStrokeLayer, type StrokeLayer } from '../render/strokes';
 
 /**
@@ -67,6 +67,8 @@ export class LevelScene extends Phaser.Scene {
     this.flag.show(flag ? flagStrokes(flag) : []);
     this.letter.show(letter ? letterStrokes(letter) : []);
     this.airplane.show(airplane ? airplaneStrokes(airplane) : []);
-    this.stickMan.show(stickManStrokes(this.poseFor(stickMan, seconds, levelOf(sim).floor)));
+    const pose = this.poseFor(stickMan, seconds, levelOf(sim).floor);
+    // Seated, he tips with the airplane as it is drawn, about the point it is drawn turning about: its middle.
+    this.stickMan.show(stickManStrokes(airplane ? seatedIn(pose, { noseDown: airplane.noseDown, tipsAboutAbove: heightItTurnsAbout(airplane) }) : pose));
   }
 }

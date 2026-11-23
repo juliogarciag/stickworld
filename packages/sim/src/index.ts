@@ -28,4 +28,5 @@ export type { InteractionMeaning } from './features/world';
 export { interactionOf } from './features/world/view';
 export { craftingOf, type CraftingView, type RecipeView } from './features/crafting/view';
 export { letterOf, type LetterView } from './features/letter/view';
-export { airplaneOf, type AirplaneView } from './features/airplane/view';
+export type { AirplaneCommand, AirplaneSteerCommand, SteerDirection } from './features/airplane/commands';
+export { airplaneOf, steeringAskedOf, type AirplaneView } from './features/airplane/view';

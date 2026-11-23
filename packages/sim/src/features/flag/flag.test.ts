@@ -13,7 +13,11 @@ describe('the flag', () => {
   it('stands where the level places it, not reached', () => {
     const placed = LEVEL.placements.find((placement) => placement.defId === FLAG_DEF_ID)!;
     expect(getDef(FLAG_DEF_ID)).toBe(flagDef);
-    expect(flagOf(createSim({ level: 1 }))).toEqual({ at: placed.at, height: flagDef.height, reached: false, raised: 0 });
+    expect(flagOf(createSim({ level: 1 }))).toEqual({ at: placed.at, height: flagDef.height, reached: false, raised: 0, endsTheGame: false });
+  });
+
+  it('ends the game on the last level only', () => {
+    expect(levels.map((level) => flagOf(createSim({ level: level.id }))!.endsTheGame)).toEqual(levels.map((_, index) => index === levels.length - 1));
   });
 
   it('is reached the moment he comes within reach of the stick, and then goes up it', () => {

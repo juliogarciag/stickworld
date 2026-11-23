@@ -1,0 +1,22 @@
+PASS  dev server up, started by this run
+PASS  the game starts on level 3, whose flag ends the game  (level 3)
+PASS  the airplane sits on the edge with its nose over the gap, and K would board it  (airplane at x 9.72, edge at 10, K would board)
+PASS  K seats him in the airplane and launches it forward off the edge  (flying at 7.27 m/s from x 10.70)
+PASS  seated, he is where the airplane is
+PASS  holding up turns its nose up and it climbs  (nose 0.67 rad up, 1.19 m above the line)
+PASS  climbing costs speed: it is slower than it was launched  (7.27 -> 5.84 m/s)
+PASS  the walk key held while seated neither turned him nor moved him off the airplane
+PASS  left alone its nose sinks and it glides down  (from 1.94 m to 0.79 m above the line)
+PASS  diving gives speed back  (4.55 -> 5.12 m/s)
+PASS  it never dropped below its stall speed  (stall speed 3 m/s)
+PASS  it reaches the far side above the line, still flying, with him in it  (0.79 m above the line at x 19.07)
+PASS  no letter fell while he flew, and the level never started again
+PASS  it comes down on the line and slides, losing its speed  (landing at 5.20 m/s at x 21.23, at rest at x 22.24)
+PASS  it lands on the far side: at rest on the line, and he stands up where it lies  (at x 22.24, the far side is 19 to 27)
+PASS  the flag was not reached from the airplane: still seated on the line, it is not
+PASS  he walks to the flag on his own feet and reaches it
+PASS  the game writes across the top of the page once the flag is up, where nothing was written before  (0 pencil-dark pixels in the upper part before, 2471 after (the words are in 06-the-end.png))
+PASS  no level follows: it is still level 3, finished, and he still cheers  (3.3 s later)
+PASS  no page errors
+
+ALL 20 CHECKS PASSED

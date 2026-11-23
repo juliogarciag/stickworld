@@ -16,6 +16,14 @@ describe('promptsFor', () => {
     expect(promptsFor({ ...KEYS, itemUse: null, interaction: 'board' })).toEqual([{ key: 'K', words: 'board the airplane' }]);
   });
 
+  it('names the keys that fly the airplane while he is seated in it, and only then', () => {
+    expect(promptsFor({ ...KEYS, itemUse: null, interaction: null, seated: true })).toEqual([
+      { key: '↑', words: 'climb' },
+      { key: '↓', words: 'dive' },
+      { key: 'SPACE', words: 'jump out' },
+    ]);
+  });
+
   it('says what would be made, by the name the sim gives it', () => {
     expect(promptsFor({ ...KEYS, itemUse: 'craft', wouldMake: 'paper airplane', interaction: null })).toEqual([{ key: 'J', words: 'fold a paper airplane' }]);
   });
@@ -45,6 +53,23 @@ describe('promptStrokes', () => {
     expect(Math.max(...two.flatMap((stroke) => stroke.points).map((point) => point.y))).toBe(Math.max(...points.map((point) => point.y)));
   });
 
+  it('gives a key with a long name a box as wide as the name needs, and puts the words after it', () => {
+    const [box, ...rest] = promptStrokes([{ key: 'SPACE', words: 'jump out' }], CAMERA_SEES);
+    const boxXs = box!.points.map((point) => point.x);
+    const name = written('SPACE', WRITING);
+    expect(Math.max(...boxXs) - Math.min(...boxXs)).toBeGreaterThan(name.width);
+    const nameStrokes = rest.slice(0, name.strokes.length);
+    const wordStrokes = rest.slice(name.strokes.length);
+    expect(Math.min(...nameStrokes.flatMap((stroke) => stroke.points).map((point) => point.x))).toBeGreaterThan(Math.min(...boxXs));
+    expect(Math.max(...nameStrokes.flatMap((stroke) => stroke.points).map((point) => point.x))).toBeLessThan(Math.max(...boxXs));
+    expect(Math.min(...wordStrokes.flatMap((stroke) => stroke.points).map((point) => point.x))).toBeGreaterThan(Math.max(...boxXs));
+
+    const [square] = promptStrokes([{ key: 'K', words: 'lift' }], CAMERA_SEES);
+    const squareXs = square!.points.map((point) => point.x);
+    const squareYs = square!.points.map((point) => point.y);
+    expect(Math.max(...squareXs) - Math.min(...squareXs)).toBe(Math.max(...squareYs) - Math.min(...squareYs));
+  });
+
   it('draws nothing for no prompts', () => {
     expect(promptStrokes([], CAMERA_SEES)).toEqual([]);
   });
@@ -65,6 +90,6 @@ describe('keptWhileUnchanged', () => {
 
 // ---- Helpers ----
 
-const KEYS = { useItemKey: 'J', interactKey: 'K', wouldMake: null } as const;
+const KEYS = { useItemKey: 'J', interactKey: 'K', wouldMake: null, seated: false, flightKeys: { climb: '↑', dive: '↓', jumpOut: 'SPACE' } } as const;
 const CAMERA_SEES = { x: 40, y: -20, width: 1920, height: 1080 };
 const WRITING = { at: { x: 0, y: 0 }, letterHeight: 28 };

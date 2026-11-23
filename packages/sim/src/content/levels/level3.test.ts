@@ -131,6 +131,136 @@ describe('level 3', () => {
     expect(stickManOf(sim).action).toBe('standing');
     expect(letterOf(sim)).toBeUndefined();
   });
+
+  it('is finished the intended way: he boards the airplane on the edge, climbs for a moment, glides across, lands and walks to the flag, which ends the game', () => {
+    const sim = createSim({ level: 3 });
+    putTheAirplaneOnTheEdge(sim);
+    expect(interactionOf(sim)).toBe('board');
+    sim.step([INTERACT]);
+
+    let highest = 0;
+    const seatedTicks = playFlight(sim, climbingFor(CLIMB_THAT_CROSSES.from + 8), ({ airplane, stickMan }) => {
+      expect(stickMan.action).toBe('seated');
+      expect(letterOf(sim)).toBeUndefined();
+      highest = Math.max(highest, -airplane.at.y);
+    });
+    expect(seatedTicks).toBeGreaterThan(TICK_RATE);
+    // He climbed above his own height on the way, and is now on his feet on the far side with the airplane next to him.
+    expect(highest).toBeGreaterThan(STICK_MAN_HEIGHT);
+    expect(stickManOf(sim)).toMatchObject({ action: 'standing', feet: { y: 0 } });
+    expect(stickManOf(sim).feet.x).toBeGreaterThan(GAP.to);
+    expect(airplaneOf(sim)).toMatchObject({ state: 'resting', at: stickManOf(sim).feet });
+    expect(flagOf(sim)).toMatchObject({ reached: false, endsTheGame: true });
+
+    walkTo(sim, FLAG_AT.x);
+    expect(flagOf(sim)!.reached).toBe(true);
+    // No level follows: he stays where he is, cheering, and the game is over.
+    for (let tick = 0; tick < 3 * Math.ceil(LEVEL_END.pauseBeforeNextLevel * TICK_RATE); tick += 1) sim.step([WALK_RIGHT_AT_0.command]);
+    expect(sim.level).toBe(3);
+    expect(flagOf(sim)).toMatchObject({ reached: true, raised: 1, endsTheGame: true });
+    expect(stickManOf(sim).action).toBe('cheering');
+  });
+
+  it('is hard but fair: every climb of a length in a window of about half a second crosses, and nothing but letting go is asked after it', () => {
+    expect((CLIMB_THAT_CROSSES.to - CLIMB_THAT_CROSSES.from) / TICK_RATE).toBeGreaterThan(0.35);
+    for (let ticks = CLIMB_THAT_CROSSES.from; ticks <= CLIMB_THAT_CROSSES.to; ticks += 1) {
+      const sim = createSim({ level: 3 });
+      putTheAirplaneOnTheEdge(sim);
+      sim.step([INTERACT]);
+      playFlight(sim, climbingFor(ticks));
+      expect(stickManOf(sim), `climbing for ${ticks} ticks`).toMatchObject({ action: 'standing', feet: { y: 0 } });
+      expect(stickManOf(sim).feet.x, `climbing for ${ticks} ticks`).toBeGreaterThan(GAP.to);
+      // Short of the end of the paper, with room to walk to the flag or back to it.
+      expect(stickManOf(sim).feet.x, `climbing for ${ticks} ticks`).toBeLessThan(level3.floor[1]!.to.x - 1);
+    }
+  });
+
+  it('cannot be finished by boarding and doing nothing: left alone the airplane sinks into the gap, he dies and the level starts again', () => {
+    const sim = createSim({ level: 3 });
+    putTheAirplaneOnTheEdge(sim);
+    sim.step([INTERACT]);
+    let wasOverTheFarSide = false;
+    playFlight(sim, [], ({ airplane }) => (wasOverTheFarSide ||= isOverTheFarSide(airplane.at)));
+    // It passes under the far line, never over it.
+    expect(wasOverTheFarSide).toBe(false);
+    expectTheLevelToHaveStartedAgainWithANewLetterToCome(sim);
+  });
+
+  it('cannot be finished by sinking under the far edge and climbing back up through the line: the line stops the airplane and it falls', () => {
+    let flightsThatWentUnder = 0;
+    for (const climbFromTick of [36, 40, 44, 50, 60]) {
+      for (const firstSteer of [0, -1] as const) {
+        const sim = createSim({ level: 3 });
+        putTheAirplaneOnTheEdge(sim);
+        sim.step([INTERACT]);
+        let wasUnderTheFarSide = false;
+        let cameUpThroughIt = false;
+        const flight = [
+          { atTick: 0, command: { type: 'airplane/steer', direction: firstSteer } as Command },
+          { atTick: climbFromTick, command: { type: 'airplane/steer', direction: 1 } as Command },
+        ];
+        playFlight(sim, flight, ({ airplane }) => {
+          wasUnderTheFarSide ||= airplane.at.x >= GAP.to && airplane.at.x <= level3.floor[1]!.to.x && airplane.at.y > 0;
+          cameUpThroughIt ||= wasUnderTheFarSide && isOverTheFarSide(airplane.at) && airplane.at.x <= level3.floor[1]!.to.x;
+        });
+        // A flight that pulled up in time, over the gap, is a flight like any other; these are the ones that did not.
+        if (!wasUnderTheFarSide) continue;
+        flightsThatWentUnder += 1;
+        expect(cameUpThroughIt, `steering ${firstSteer}, then up from tick ${climbFromTick}`).toBe(false);
+        expectTheLevelToHaveStartedAgainWithANewLetterToCome(sim);
+      }
+    }
+    expect(flightsThatWentUnder).toBeGreaterThanOrEqual(5);
+  });
+
+  it('cannot be finished by climbing all the way: climbing too steeply for too long it stalls, falls short of the far side and the level starts again', () => {
+    for (const ticks of [CLIMB_THAT_CROSSES.to + 6, 2 * CLIMB_THAT_CROSSES.to, Infinity]) {
+      const sim = createSim({ level: 3 });
+      putTheAirplaneOnTheEdge(sim);
+      sim.step([INTERACT]);
+      let stalledAt: { x: number; y: number } | undefined;
+      let wasOverTheFarSide = false;
+      playFlight(sim, climbingFor(ticks), ({ airplane }) => {
+        if (airplane.state === 'falling') stalledAt ??= airplane.at;
+        wasOverTheFarSide ||= isOverTheFarSide(airplane.at);
+      });
+      // It stalled high over the gap, higher than any flight that crosses needs to go, and never got to the far side.
+      expect(stalledAt, `climbing for ${ticks} ticks`).toBeDefined();
+      expect(stalledAt!.x).toBeLessThan(GAP.to);
+      expect(-stalledAt!.y).toBeGreaterThan(STICK_MAN_HEIGHT);
+      expect(wasOverTheFarSide, `climbing for ${ticks} ticks`).toBe(false);
+      expectTheLevelToHaveStartedAgainWithANewLetterToCome(sim);
+    }
+  });
+
+  it('lets a flight that would fall just short be saved by jumping out near the far edge', () => {
+    const tooShort = climbingFor(CLIMB_THAT_CROSSES.from - 2);
+    const lost = createSim({ level: 3 });
+    putTheAirplaneOnTheEdge(lost);
+    lost.step([INTERACT]);
+    let ticksToTheFarEdge = 0;
+    playFlight(lost, tooShort, ({ airplane }) => {
+      if (airplane.at.x < GAP.to) ticksToTheFarEdge += 1;
+    });
+    expectTheLevelToHaveStartedAgainWithANewLetterToCome(lost);
+
+    // The same flight, but a moment before it would pass under the far edge he jumps out, holding the walk key towards it.
+    const saved = createSim({ level: 3 });
+    putTheAirplaneOnTheEdge(saved);
+    saved.step([INTERACT]);
+    const jumpAtTick = ticksToTheFarEdge - Math.round(JUMPS_OUT_BEFORE_THE_EDGE * TICK_RATE);
+    let jumpedFrom: { x: number; y: number } | undefined;
+    for (let tick = 0; tick < 6 * TICK_RATE; tick += 1) {
+      if (tick === jumpAtTick) jumpedFrom = stickManOf(saved).feet;
+      const commands = tooShort.filter(({ atTick }) => atTick === tick).map(({ command }) => command);
+      saved.step(tick === jumpAtTick ? [...commands, WALK_RIGHT_AT_0.command, { type: 'player/jump' }] : commands);
+    }
+    expect(jumpedFrom!.x).toBeLessThan(GAP.to);
+    expect(stickManOf(saved).feet.y).toBe(0);
+    expect(stickManOf(saved).feet.x).toBeGreaterThan(GAP.to);
+    expect(flagOf(saved)!.reached).toBe(true);
+    expect(saved.level).toBe(3);
+  });
 });
 
 // ---- Helpers ----
@@ -143,6 +273,69 @@ const WALK_RIGHT_AT_0 = { atTick: 0, command: { type: 'player/walk', direction: 
 const SELECT_SLOT_1: Command = { type: 'inventory/select', slot: 1 };
 const USE_ITEM: Command = { type: 'item/use' };
 const INTERACT: Command = { type: 'world/interact' };
+const FLAG_AT = level3.placements.find((placement) => placement.defId === FLAG_DEF_ID)!.at;
+
+/**
+ * How long he can hold the nose up from the moment he boards, in ticks, and cross with nothing more than letting go:
+ * every length from `from` to `to`. Shorter, the airplane sinks under the far edge; longer, it stalls over the gap.
+ * The gap and the `FLIGHT` values are tuned together to keep this window; a change that narrows it fails here.
+ */
+const CLIMB_THAT_CROSSES = { from: 16, to: 42 };
+
+/** True for a point above the floor line of the far side: where an airplane has to be to come down on it. */
+function isOverTheFarSide(at: { readonly x: number; readonly y: number }): boolean {
+  return at.x >= GAP.to && at.y < 0;
+}
+
+/** How long before the airplane would pass under the far edge he jumps out of it, in seconds: at the last moment. */
+const JUMPS_OUT_BEFORE_THE_EDGE = 0.12;
+
+/** A recorded flight: the nose held up from the first tick after boarding for `ticks` ticks, then let go. */
+function climbingFor(ticks: number): { atTick: number; command: Command }[] {
+  return [
+    { atTick: 0, command: { type: 'airplane/steer', direction: 1 } },
+    ...(Number.isFinite(ticks) ? [{ atTick: ticks, command: { type: 'airplane/steer', direction: 0 } as Command }] : []),
+  ];
+}
+
+/**
+ * Plays a recorded flight from the tick after boarding for as long as he is seated, and returns how many ticks that
+ * was. `seen` is shown the airplane and him after every tick he was seated on.
+ */
+function playFlight(
+  sim: SimHandle,
+  commands: readonly { readonly atTick: number; readonly command: Command }[],
+  seen: (now: { airplane: NonNullable<ReturnType<typeof airplaneOf>>; stickMan: ReturnType<typeof stickManOf> }) => void = () => undefined,
+): number {
+  for (let tick = 0; tick < 20 * TICK_RATE; tick += 1) {
+    sim.step(commands.filter(({ atTick }) => atTick === tick).map(({ command }) => command));
+    const stickMan = stickManOf(sim);
+    const airplane = airplaneOf(sim);
+    if (stickMan.action !== 'seated' || !airplane) return tick;
+    seen({ airplane, stickMan });
+  }
+  throw new Error('still seated after 20 seconds');
+}
+
+/** From the start of level 3 on its own: reads the letter, which gives the paper, folds it, sets the airplane down, lifts it, carries it to the edge and puts it down there. */
+function putTheAirplaneOnTheEdge(sim: SimHandle): void {
+  walkTo(sim, LETTER_AT.x);
+  for (const command of [INTERACT, INTERACT, USE_ITEM, USE_ITEM, INTERACT]) sim.step([command]);
+  walkTo(sim, GAP.from - AIRPLANE.putDownAhead - AIRPLANE.length / 4);
+  sim.step([INTERACT]);
+  expect(airplaneOf(sim)).toMatchObject({ state: 'resting', onAnEdge: true });
+}
+
+/** He is back at the start with nothing: no airplane anywhere, an empty slot, the flag not reached, and a new letter on its way down. */
+function expectTheLevelToHaveStartedAgainWithANewLetterToCome(sim: SimHandle): void {
+  expect(sim.level).toBe(3);
+  expect(stickManOf(sim)).toMatchObject({ action: 'standing', feet: level3.start });
+  expect(airplaneOf(sim)).toBeUndefined();
+  expect(itemSlotsOf(sim)[0]?.itemDefId).toBeNull();
+  expect(flagOf(sim)!.reached).toBe(false);
+  for (let tick = 0; tick < 2 * TICK_RATE && !letterOf(sim); tick += 1) sim.step();
+  expect(letterOf(sim)!.height).toBeGreaterThan(0);
+}
 
 /** The last tick on which he still stands on the first segment, walking right from the start. */
 const TICK_AT_THE_EDGE = Math.floor(((GAP.from - level3.start.x) / PLAYER.walkSpeed) * TICK_RATE) - 1;

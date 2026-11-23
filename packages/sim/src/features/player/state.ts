@@ -22,6 +22,10 @@ export interface PlayerState {
   ticksSinceJumpAsked: number | null;
   /** True while he holds something over his head with both hands. What it is belongs to the feature that put it there (the airplane). */
   carrying: boolean;
+  /** True while he sits in something that moves him (the airplane): he neither walks nor falls, and where he is belongs to the feature that seated him. */
+  seated: boolean;
+  /** The tick he sat down on, or null while he is not seated: a jump asked for on that very tick was meant for the floor. */
+  seatedAtTick: number | null;
 }
 
 export const playerSlice = defineSlice<PlayerState>('player', (level) => ({
@@ -36,4 +40,6 @@ export const playerSlice = defineSlice<PlayerState>('player', (level) => ({
   ticksSinceWalkedOff: null,
   ticksSinceJumpAsked: null,
   carrying: false,
+  seated: false,
+  seatedAtTick: null,
 }));

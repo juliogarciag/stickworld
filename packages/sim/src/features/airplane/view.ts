@@ -1,6 +1,7 @@
 import type { Point } from '../../content/levels/types';
 import { Sim, type SimHandle } from '../../core/sim';
-import { AIRPLANE } from './defs';
+import type { SteerDirection } from './commands';
+import { AIRPLANE, FLIGHT } from './defs';
 import { sitsOnAnEdge } from './index';
 import { airplaneSlice } from './state';
 
@@ -14,10 +15,19 @@ export interface AirplaneView {
   readonly length: number;
   /** From its underside to the top of its tail, in metres. */
   readonly height: number;
-  /** `resting` on the floor, `carried` over his head, or `falling`, which ends with it lost. */
-  readonly state: 'resting' | 'carried' | 'falling';
-  /** Metres per second, positive when it falls. 0 resting and carried. */
+  /**
+   * `resting` on the floor, `carried` over his head, `flying` while it glides with him seated in it, `falling` with him
+   * or without him, which over a gap ends with it lost, or `landing` while it slides along the floor it came down on.
+   */
+  readonly state: 'resting' | 'carried' | 'flying' | 'falling' | 'landing';
+  /** Metres per second, positive when it falls. Only other than 0 while it falls. */
   readonly verticalSpeed: number;
+  /** Metres per second: along the way its nose points while it flies, sideways the way it faces while it falls or lands. 0 resting and carried. */
+  readonly speed: number;
+  /** How far its nose points up while it flies, in radians; negative when it points down. 0 otherwise. */
+  readonly pitch: number;
+  /** The speed below which it stops flying and falls, in metres per second. */
+  readonly stallSpeed: number;
   /** True while it rests with its nose out over a gap, floor further on: where it is boarded from. */
   readonly onAnEdge: boolean;
 }
@@ -32,8 +42,17 @@ export function airplaneOf(handle: SimHandle): AirplaneView | undefined {
     facing: airplane.facing,
     length: AIRPLANE.length,
     height: AIRPLANE.height,
-    state: airplane.carried ? 'carried' : airplane.falling ? 'falling' : 'resting',
-    verticalSpeed: airplane.verticalSpeed,
+    state: airplane.carried ? 'carried' : airplane.flying ? 'flying' : airplane.falling ? 'falling' : airplane.sliding ? 'landing' : 'resting',
+    verticalSpeed: airplane.falling ? airplane.verticalSpeed : 0,
+    speed: airplane.speed,
+    pitch: airplane.pitch,
+    stallSpeed: FLIGHT.stallSpeed,
     onAnEdge: sitsOnAnEdge(handle),
   };
+}
+
+/** Which way the sim believes the player wants to steer the airplane, whether or not he is flying one right now. */
+export function steeringAskedOf(handle: SimHandle): SteerDirection {
+  if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
+  return handle.stateOf(airplaneSlice).steering;
 }

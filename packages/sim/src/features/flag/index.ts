@@ -18,14 +18,20 @@ export const flagFeature: Feature = {
     const flag = sim.stateOf(flagSlice);
     if (flag.reachedAtTick === null) {
       const placed = flagPlacedIn(sim.levelDef);
-      const { x, y } = sim.stateOf(playerSlice);
-      if (placed && touchesFlag({ feet: { x, y }, placed })) flag.reachedAtTick = sim.tick;
+      const { x, y, seated } = sim.stateOf(playerSlice);
+      // A flag is reached on his own feet: flying past it in the airplane does not count.
+      if (placed && !seated && touchesFlag({ feet: { x, y }, placed })) flag.reachedAtTick = sim.tick;
       return;
     }
     const nextLevel = levelToStartNow({ levels, level: sim.level, ticksSinceReached: sim.tick - flag.reachedAtTick, dt: sim.dt });
     if (nextLevel) sim.startLevel(nextLevel.id);
   },
 };
+
+/** True for the last level there is: its flag finishes the game, and no level follows it. */
+export function isTheLastLevel(level: Level): boolean {
+  return levels[levels.length - 1]?.id === level.id;
+}
 
 /** Where the level's flag stands, or undefined for a level without one. */
 export function flagPlacedIn(level: Level): Placement | undefined {

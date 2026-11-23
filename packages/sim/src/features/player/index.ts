@@ -12,7 +12,8 @@ import { playerSlice, type PlayerState } from './state';
  * and falling off the paper, which starts the level again. Walking off an
  * edge he keeps the sideways speed he had and the keys only steer it; in a
  * jump they move him as they do on the floor. The end of a floor line pushes
- * him aside as he drops past it. Plain
+ * him aside as he drops past it. Seated in the airplane he does none of
+ * that until a jump takes him out of it. Plain
  * arithmetic on the level's floor segments; no physics library.
  */
 export const playerFeature: Feature = {
@@ -28,6 +29,18 @@ export const playerFeature: Feature = {
 
   update(sim) {
     const player = sim.stateOf(playerSlice);
+    if (player.seated) {
+      // Seated he neither walks nor falls: what he sits in moves him. A jump stands him up in his seat, which is floor enough to take off from.
+      // A jump that arrived on the tick he sat down was asked for before the player could see him seated: it is dropped, not a way out of the seat.
+      if (player.seatedAtTick === sim.tick) player.ticksSinceJumpAsked = null;
+      // Under a floor line there is no room to stand up: he cannot jump up through it, so the jump is dropped too.
+      const floorOverHim = floorHeightAt(sim.levelDef.floor, player.x);
+      if (floorOverHim !== undefined && player.y > floorOverHim) player.ticksSinceJumpAsked = null;
+      if (player.ticksSinceJumpAsked === null) return;
+      player.seated = false;
+      player.seatedAtTick = null;
+      player.onFloor = true;
+    }
     const direction = walkDirectionNow(sim);
     if (direction !== 0) player.facing = direction;
     if (hasFinishedLevel(sim)) player.ticksSinceJumpAsked = null;

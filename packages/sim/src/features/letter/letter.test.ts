@@ -6,6 +6,7 @@ import type { Command } from '../../core/commands';
 import { Sim } from '../../core/sim';
 import { features } from '..';
 import { hasAirplane } from '../airplane';
+import { AIRPLANE } from '../airplane/defs';
 import { airplaneOf } from '../airplane/view';
 import { recipeDef } from '../crafting/defs';
 import { craftingOf } from '../crafting/view';
@@ -192,6 +193,30 @@ const WAYS_TO_LOSE_THE_AIRPLANE: readonly (readonly [string, (sim: Sim) => void]
     (sim) => {
       walkTo(sim, EDGE - 0.2);
       sim.step([USE_ITEM]);
+    },
+  ],
+  [
+    'flying it into the gap',
+    (sim) => {
+      sim.step([USE_ITEM]);
+      sim.step([INTERACT]);
+      walkTo(sim, EDGE - AIRPLANE.putDownAhead - 0.2);
+      sim.step([INTERACT]);
+      sim.step([INTERACT]);
+      expect(airplaneOf(sim)!.state).toBe('flying');
+    },
+  ],
+  [
+    'jumping out of it over the gap',
+    (sim) => {
+      sim.step([USE_ITEM]);
+      sim.step([INTERACT]);
+      walkTo(sim, EDGE - AIRPLANE.putDownAhead - 0.2);
+      sim.step([INTERACT]);
+      sim.step([INTERACT]);
+      for (let tick = 0; tick < 20; tick += 1) sim.step();
+      sim.step([{ type: 'player/jump' }]);
+      expect(stickManOf(sim).action).toBe('jumping');
     },
   ],
   [

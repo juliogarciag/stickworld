@@ -10,8 +10,11 @@ export interface StickManView {
   readonly feet: Point;
   /** 1 when he looks right, -1 when he looks left. */
   readonly facing: 1 | -1;
-  /** `jumping` is any time his feet are off the floor; `cheering` is standing on the floor with the level finished. */
-  readonly action: 'standing' | 'walking' | 'jumping' | 'cheering';
+  /**
+   * `jumping` is any time his feet are off the floor and he is not seated; `cheering` is standing on the floor with the
+   * level finished; `seated` is sitting in the airplane, and then `feet` is the middle of its underside.
+   */
+  readonly action: 'standing' | 'walking' | 'jumping' | 'cheering' | 'seated';
   /** Metres walked on the floor since he last stood still or landed: how far along his walk he is. */
   readonly distanceWalked: number;
   /** Metres per second, positive when he falls: how far along a jump he is. 0 on the floor. */
@@ -32,7 +35,7 @@ export function stickManOf(handle: SimHandle): StickManView {
   return {
     feet: { x: player.x, y: player.y },
     facing: player.facing,
-    action: !player.onFloor ? 'jumping' : hasFinishedLevel(sim) ? 'cheering' : walkDirectionNow(sim) !== 0 ? 'walking' : 'standing',
+    action: player.seated ? 'seated' : !player.onFloor ? 'jumping' : hasFinishedLevel(sim) ? 'cheering' : walkDirectionNow(sim) !== 0 ? 'walking' : 'standing',
     distanceWalked: player.distanceWalked,
     verticalSpeed: player.verticalSpeed,
     horizontalSpeed: player.horizontalSpeed,
