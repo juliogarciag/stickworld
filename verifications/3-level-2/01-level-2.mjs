@@ -167,7 +167,8 @@ try {
   results.push(check('the HUD takes the second box away', pencilWhenUnselected - pencilWithPaper < (pencilWhenSelected - pencilWithPaper) / 4, `${pencilWhenUnselected} pencil pixels: ${pencilWithPaper} before it was selected, ${pencilWhenSelected} while it was`));
 
   results.push(check('no page errors', pageErrors.length === 0, pageErrors.join(' | ')));
-  const withoutDefs = ({ defs: _defs, ...state }) => state;
+  // The defs are the same in every state: the report keeps the paper's and leaves the rest out.
+  const withoutDefs = (state) => ({ ...state, defs: undefined });
   Object.assign(report, {
     gap,
     paper,
