@@ -1,0 +1,79 @@
+{
+  "shots": [
+    {
+      "name": "before-walk-off-0_3m.png",
+      "depth": 0.3,
+      "stickMan": {
+        "tick": 123,
+        "feet": {
+          "x": 6.033333333333354,
+          "y": 0.3055555555555555
+        },
+        "facing": 1,
+        "action": "jumping",
+        "distanceWalked": 4.033333333333354,
+        "verticalSpeed": 3.6666666666666665,
+        "walkDirectionAsked": 0
+      }
+    },
+    {
+      "name": "before-walk-off-1m.png",
+      "depth": 1,
+      "stickMan": {
+        "tick": 132,
+        "feet": {
+          "x": 6.033333333333354,
+          "y": 1.1030555555555555
+        },
+        "facing": 1,
+        "action": "jumping",
+        "distanceWalked": 4.033333333333354,
+        "verticalSpeed": 6.966666666666663,
+        "walkDirectionAsked": 0
+      }
+    },
+    {
+      "name": "before-walk-off-1_3m.png",
+      "depth": 1.3,
+      "stickMan": {
+        "tick": 134,
+        "feet": {
+          "x": 6.033333333333354,
+          "y": 1.3475
+        },
+        "facing": 1,
+        "action": "jumping",
+        "distanceWalked": 4.033333333333354,
+        "verticalSpeed": 7.699999999999996,
+        "walkDirectionAsked": 0
+      }
+    },
+    {
+      "name": "before-walk-off-1_6m.png",
+      "depth": 1.6,
+      "stickMan": {
+        "tick": 136,
+        "feet": {
+          "x": 6.033333333333354,
+          "y": 1.6163888888888887
+        },
+        "facing": 1,
+        "action": "jumping",
+        "distanceWalked": 4.033333333333354,
+        "verticalSpeed": 8.43333333333333,
+        "walkDirectionAsked": 0
+      }
+    }
+  ],
+  "results": [
+    {
+      "name": "dev server of the build from before up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "before: he drops straight down at the edge once the key is let go, wherever in the fall he is",
+      "pass": true,
+      "details": "feet 0.033, 0.033, 0.033, 0.033 m past the edge"
+    }
+  ]
+}

@@ -10,7 +10,7 @@ export type { SimHandle } from './core/sim';
 export type { Command } from './core/commands';
 export { hashSnapshot, type SimSnapshot } from './core/snapshot';
 export { levelOf } from './core/view';
-export { FIXED_DT, STICK_MAN_HEIGHT, TICK_RATE } from './content/tuning';
+export { FIXED_DT, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, TICK_RATE } from './content/tuning';
 export { defs, getDef, type Def } from './content/defs';
 export { levelById, levels } from './content/levels';
 export type { FloorSegment, Level, Placement, Point } from './content/levels/types';

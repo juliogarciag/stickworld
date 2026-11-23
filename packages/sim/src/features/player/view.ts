@@ -1,7 +1,7 @@
 import type { Point } from '../../content/levels/types';
 import { Sim, type SimHandle } from '../../core/sim';
 import type { WalkDirection } from './commands';
-import { hasFinishedLevel, walkDirectionNow } from './index';
+import { hasFinishedLevel, isFallingOffAnEdge, walkDirectionNow } from './index';
 import { playerSlice } from './state';
 
 /** The stick man as a view needs him: where he is and what he is doing. Which way each limb points is the view's business. */
@@ -16,6 +16,10 @@ export interface StickManView {
   readonly distanceWalked: number;
   /** Metres per second, positive when he falls: how far along a jump he is. 0 on the floor. */
   readonly verticalSpeed: number;
+  /** Metres per second, positive to the right: how fast he went sideways this tick, walking, jumping or drifting as he falls off an edge. On the tick he lands it is still the speed he came down with. */
+  readonly horizontalSpeed: number;
+  /** True while he is in the air because he walked off an edge, and not because he jumped: the fall that has momentum. */
+  readonly fallingOffAnEdge: boolean;
   /** Which way the sim believes the player wants to walk, whether or not he can right now. */
   readonly walkDirectionAsked: WalkDirection;
 }
@@ -29,6 +33,8 @@ export function stickManOf(handle: SimHandle): StickManView {
     action: !player.onFloor ? 'jumping' : hasFinishedLevel(sim) ? 'cheering' : walkDirectionNow(sim) !== 0 ? 'walking' : 'standing',
     distanceWalked: player.distanceWalked,
     verticalSpeed: player.verticalSpeed,
+    horizontalSpeed: player.horizontalSpeed,
+    fallingOffAnEdge: isFallingOffAnEdge(player),
     walkDirectionAsked: player.walkDirection,
   };
 }
