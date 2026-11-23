@@ -1,0 +1,25 @@
+PASS  dev server up, started by this run
+PASS  reaching the flag of level 1 starts level 2 by itself, with him standing at its start  (level 1 -> 2, feet at {"x":2,"y":0})
+PASS  level 2 is two stretches of floor with a gap between them, and a flag past the gap  (gap {"from":6,"to":6.8}, flag at x 11)
+PASS  the paper is a def  ({"id":200,"name":"paper"})
+PASS  slot 1 is there, empty and not selected, when level 2 starts  ({"slot":1,"itemDefId":null,"selected":false,"onPage":{"x":28,"y":28,"width":56,"height":56}})
+PASS  slot 1 is drawn inside the page  ({"x":28,"y":28,"width":56,"height":56})
+PASS  the HUD draws slot 1: there is pencil where the sim says its box is  (556 pencil pixels)
+PASS  walking into the gap, he falls below the line  (deepest 5.92 m below the line, 44 frames in the gap)
+PASS  he dies and the level starts again at once: back at the start within two seconds of leaving the line  (0.73 s)
+PASS  the restart is the sim's own: same level, the same sim still counting ticks, flag not reached  (level 2, tick 385 -> 576)
+PASS  slot 1 is still empty after the death  ({"slot":1,"itemDefId":null,"selected":false,"onPage":{"x":28,"y":28,"width":56,"height":56}})
+PASS  jumping at the edge, he crosses the gap with his feet above the line the whole way  (21 frames over the gap, highest 0.70 m, lowest over the gap 0.34 m above the line)
+PASS  he lands on the far side and walks on, with slot 1 still empty  (feet {"x":7.316666666666701,"y":0}, slot holds null)
+PASS  he reaches the flag of level 2  (feet x 10.58, flag x 11)
+PASS  reaching the flag puts the paper in slot 1  ({"slot":1,"itemDefId":200,"selected":false,"onPage":{"x":28,"y":28,"width":56,"height":56}})
+PASS  the paper arrives the moment the flag is reached, not before  (flag reached at tick 823, paper held at tick 823)
+PASS  the HUD draws the paper in slot 1: more pencil there than when it was empty  (556 -> 744 pencil pixels)
+PASS  pressing 1 selects slot 1, which still holds the paper  ({"slot":1,"itemDefId":200,"selected":true,"onPage":{"x":28,"y":28,"width":56,"height":56}})
+PASS  the HUD shows slot 1 selected: a second box around it  (744 -> 1690 pencil pixels)
+PASS  it stays selected until 1 is pressed again
+PASS  pressing 1 again unselects it, and the paper stays  ({"slot":1,"itemDefId":200,"selected":false,"onPage":{"x":28,"y":28,"width":56,"height":56}})
+PASS  the HUD takes the second box away  (827 pencil pixels: 744 before it was selected, 1690 while it was)
+PASS  no page errors
+
+ALL 23 CHECKS PASSED

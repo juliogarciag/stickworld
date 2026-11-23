@@ -1,45 +1,19 @@
-# Verification template
+# Ticket 3: level 2, the gap, dying, and the paper
 
-The starting point for a ticket's `verifications/<ticket>/` folder, and the only folder under `verifications/` that is kept working. Every other folder is the proof of one ticket, frozen when its PR merged: do not run, repair, read or copy from them.
+What is verified: in the real app, with the keys a player uses, level 1 leads to level 2; walking into level 2's gap is a death that starts the level again; a jump clears the gap; the flag past it puts the paper in item slot 1; and the 1 key selects and unselects that slot. What the sim holds is read through `window.__game`; what the HUD draws is measured in screenshots as the amount of pencil where the slot is.
 
-## Start a ticket's folder
-
-From the repo root, in the ticket's worktree:
+Run it (from anywhere; the first run installs Playwright in this folder):
 
 ```bash
-cp -R verifications/_template verifications/<ticketNumber>-<ticketKebabTitle>
+bash verifications/3-level-2/run.sh
 ```
 
-If the template was run in place before, the copy carries its `proof/` and `node_modules/`: delete both from the copy.
+It starts its own dev server on port 5913 and stops it when done.
 
-Then, in the copy:
+| Script | What it proves | Proof |
+|---|---|---|
+| `01-level-2.mjs` | 23 checks: level 1's flag starts level 2; level 2 has a gap and a flag past it; slot 1 starts empty; walking into the gap he falls below the line and the level starts again within two seconds, in the same sim; the slot is still empty after the death; a jump at the edge crosses with his feet above the line; the paper is in slot 1 from the tick the flag is reached and not before; the HUD draws the slot, the paper, and a second box while selected; 1 selects, 1 again unselects; no page errors | `proof/01-level-2.txt` (the PASS lines), `proof/01-level-2.json` (the states read), `proof/01` to `07-*.png`, `proof/08-death-jump-paper-and-slot.webm` (the whole run) |
 
-1. Rename `solo.mjs` after what it proves (`01-walks-to-the-flag.mjs`, ...), add more scripts beside it if the ticket needs them, and list them in `run.sh`.
-2. Change the port at the top of each script to one no other session uses. It must differ from the dev server you leave running for the human, because a pinned port refuses to start twice.
-3. Replace the example checks with what the ticket promises, from the point of view of the player. Derive expected numbers from `window.__game` (level, defs, camera, pixelsPerMetre), never from constants typed into the script.
-4. Replace this README with the ticket's own: what is verified, how to run it, and a table of script, what it proves, and proof file.
+Not checked here, because the app cannot reach it yet: the paper surviving a death in a later level. Level 2 is the last level, and he stands at its flag for good. `packages/sim/src/content/levels/level2.test.ts` proves it headlessly.
 
-Run it from anywhere; the first run installs Playwright in the folder:
-
-```bash
-bash verifications/<ticketNumber>-<ticketKebabTitle>/run.sh
-```
-
-Each script prints `PASS`/`FAIL` lines, exits non-zero on failure and writes into `proof/`: the JSON report, the screenshots, and the console output as `proof/<script>.txt`. Commit `proof/` with the ticket. A change in how something looks needs before and after screenshots; a change in how something moves, a short screen recording (Playwright's `recordVideo` option on `browser.newContext`).
-
-Content search skips every ticket folder, yours included (the root `.ignore`). To search yours, name it as the path: `rg <pattern> verifications/<ticket>/`.
-
-## What is here
-
-| File | What it gives you |
-|---|---|
-| `solo.mjs` | Starts `PORT=<n> pnpm dev`, opens Chromium, reads the sim through `window.__game`, checks it runs with real time and restarts a level, writes a screenshot and a report |
-| `lib.mjs` | `start` (a server that stops with the script, printing without colours), `waitForPort`, `waitFor`, `lastLinesOf`, `check`, `summarize`, `writeProof`, and the `ROOT` and `PROOF` paths |
-| `run.sh` | Installs on first run, runs the scripts in order, keeps their console output as proof |
-
-## What the template relies on
-
-A ticket that changes any of these updates the template in the same PR, and runs it once to show it still passes (`bash verifications/_template/run.sh`; the `proof/` and `node_modules/` it leaves here are gitignored):
-
-- `PORT=<n> pnpm dev` pins the client's port and prints `localhost:<n>/` when ready.
-- `window.__game`: `sim.tick`, `sim.dt`, `level.id`, `hash()` and `loadLevel(n)`, which plays level `n` again from tick 0.
+There is no "before" screenshot: the item slot is new, so every screenshot is an "after". `01-level-2-starts.png` shows the slot empty, `05` with the paper, `06` selected.
