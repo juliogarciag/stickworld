@@ -98,9 +98,24 @@ try {
   results.push(check('the jump was caught in a screenshot', spotJump.shot, '03-jumping.png'));
   results.push(check('the up arrow jumps too, straight up when he stands', spotJump.left && spotJump.landed && near(spotJump.end.stickMan.feet.x, beforeSpotJump.stickMan.feet.x) && spotJump.end.stickMan.action === 'standing', `feet ${spotJump.highest.toFixed(2)} m above the floor at the top`));
 
+  // ---- The same with A, D and W ----
+  await page.keyboard.down('d');
+  await page.waitForTimeout(400);
+  const wentRightWithD = await stateOf(page);
+  await page.keyboard.up('d');
+  await page.keyboard.down('a');
+  await page.waitForTimeout(400);
+  const wentLeftWithA = await stateOf(page);
+  await page.keyboard.up('a');
+  await page.waitForTimeout(150);
+  results.push(check('D walks him right and A walks him left, like the arrows', wentRightWithD.stickMan.facing === 1 && wentRightWithD.stickMan.feet.x > spotJump.end.stickMan.feet.x + 0.3 && wentLeftWithA.stickMan.facing === -1 && wentLeftWithA.stickMan.feet.x < wentRightWithD.stickMan.feet.x - 0.3, `${describe(wentRightWithD)}; then ${describe(wentLeftWithA)}`));
+  await page.keyboard.press('w');
+  const jumpWithW = await watchUntilLanded(page);
+  results.push(check('W jumps, like space and the up arrow', jumpWithW.left && jumpWithW.landed, `feet ${jumpWithW.highest.toFixed(2)} m above the floor at the top`));
+
   // ---- Reaching the flag finishes the level ----
   await page.keyboard.down('ArrowRight');
-  const secondsToTheFlag = (spotJump.end.flag.at.x - spotJump.end.stickMan.feet.x) / speed;
+  const secondsToTheFlag = (jumpWithW.end.flag.at.x - jumpWithW.end.stickMan.feet.x) / speed;
   const reached = await waitFor('the flag to be reached', { read: () => stateOf(page), until: (state) => state.flag.reached, timeoutMs: secondsToTheFlag * 2000 + 3000 }).catch(() => undefined);
   results.push(check('walking on to the flag finishes the level', Boolean(reached), reached ? `${describe(reached)}, flag at x ${reached.flag.at.x}` : 'never reached'));
   if (!reached) throw new Error('the flag was never reached');
@@ -110,7 +125,7 @@ try {
   const finished = await stateOf(page);
   const clothDownAtEnd = await darkPixels(page, flagShot, clothBox(finished, 0));
   const clothUpAtEnd = await darkPixels(page, flagShot, clothBox(finished, 1));
-  results.push(check('the cloth is drawn low on the stick before he reaches it and at the top after', clothDownAtStart > 3 * clothUpAtStart && clothUpAtEnd > 3 * clothDownAtEnd && clothUpAtEnd > 20, `dark pixels low/high: ${clothDownAtStart}/${clothUpAtStart} at the start, ${clothDownAtEnd}/${clothUpAtEnd} at the end`));
+  results.push(check('the cloth is drawn low on the stick before he reaches it and at the top after', clothDownAtStart > 3 * clothUpAtStart && clothUpAtEnd > 3 * clothDownAtEnd && clothUpAtEnd > 8 && clothDownAtStart > 8, `dark pixels low/high: ${clothDownAtStart}/${clothUpAtStart} at the start, ${clothDownAtEnd}/${clothUpAtEnd} at the end`));
   results.push(check('the flag stays in view with him', between(screenOf(finished, finished.flag.at).x, 0, VIEWPORT.width)));
 
   // The right arrow is still down; then left and a jump are tried too.

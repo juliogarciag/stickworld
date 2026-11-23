@@ -7,7 +7,7 @@ import { flagStrokes } from '../render/flag';
 import { floorStrokes } from '../render/floor';
 import { followStickManWith } from '../render/levelCamera';
 import { layPaper, PAPER_COLOUR, type Paper } from '../render/paper';
-import { poseOf, stickManStrokes } from '../render/stickMan';
+import { posesEasedOverTime, stickManStrokes } from '../render/stickMan';
 import { createStrokeLayer, type StrokeLayer } from '../render/strokes';
 
 /**
@@ -23,6 +23,7 @@ export class LevelScene extends Phaser.Scene {
   private keysNow!: () => KeysNow;
   private follow!: (stickMan: StickManView) => void;
   private readonly commandsFor = keysToCommands();
+  private readonly poseFor = posesEasedOverTime();
 
   constructor(private readonly loop: GameLoop) {
     super('level');
@@ -40,7 +41,8 @@ export class LevelScene extends Phaser.Scene {
 
   override update(_time: number, deltaMs: number): void {
     for (const command of this.commandsFor({ keys: this.keysNow(), sim: this.loop.sim })) this.loop.queueCommand(command);
-    this.loop.advanceBy(deltaMs / 1000);
+    const seconds = deltaMs / 1000;
+    this.loop.advanceBy(seconds);
 
     const { sim } = this.loop;
     const stickMan = stickManOf(sim);
@@ -50,6 +52,6 @@ export class LevelScene extends Phaser.Scene {
     this.paper.cover(this.cameras.main);
     this.floor.show(floorStrokes(levelOf(sim)));
     this.flag.show(flag ? flagStrokes(flag) : []);
-    this.stickMan.show(stickManStrokes(poseOf(stickMan)));
+    this.stickMan.show(stickManStrokes(this.poseFor(stickMan, seconds)));
   }
 }
