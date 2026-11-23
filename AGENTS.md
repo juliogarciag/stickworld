@@ -51,10 +51,10 @@ packages/
       features/<name>/    One folder per feature: state, defs, commands, systems, tests.
       features/index.ts   The list of features the sim runs (one line per feature).
   client/     Phaser app. Reads sim state, draws it, turns input into commands. No game rules.
-    src/main.ts, src/scenes/, src/loop/, src/input/, src/debug.ts
+    src/main.ts, src/scenes/, src/loop/, src/debug.ts
+    src/input/            The ONLY place that knows which keys there are: keys in, commands out.
     src/render/           What is drawn and where. paper.ts is the sheet and its tooth (the grain every line gets).
     src/render/strokes/   The ONLY place a pencil stroke is drawn. Everything else asks it for a line.
-    src/demo/             Look test only: the stick man's client-only walk. The Level 1 ticket deletes it.
     src/hud/              The item slots, the recipe list, the letter text; view facts, never sim state.
 docs/decisions/   Architecture decision records (ADRs).
 verifications/    One folder per ticket with its verification scripts and proof, frozen when the ticket's PR merges.
@@ -118,7 +118,7 @@ Example: an `airplane` feature where the stick man places a paper airplane and f
 6. Register it in `features/index.ts`. Order matters only if your feature depends on another feature's work within the same tick.
 7. Tests next to the code (`*.test.ts`): create a sim on a level, drive `sim.step(commands)` for N ticks, assert on `sim.snapshot()` or on what the view functions return. Every feature needs at least one headless test that proves it works, and nothing you add may break `core/determinism.test.ts`.
 8. Every level needs two headless tests that play it with a list of commands: one that reaches the flag the intended way, and one for each shortcut that must not work (level 3's gap cannot be crossed by jumping). Tuning that breaks a level then fails a test instead of being found by hand.
-9. If a view needs something new, export it from `sim/src/index.ts` and consume it in `packages/client`. The client only draws; if you are tempted to put an `if` about game rules in the client, it belongs in the sim.
+9. If a view needs something new, write a view function in the feature's `view.ts` that takes a `SimHandle` and returns plain data (`stickManOf(sim)` in `features/player/view.ts`), export it from `sim/src/index.ts` and consume it in `packages/client`. The client only draws; if you are tempted to put an `if` about game rules in the client, it belongs in the sim.
 10. A level is a data file in `sim/src/content/levels/`: the floor as a list of line segments in metres (a gap is the space between two segments), where the stick man starts, and what is placed on it (a flag, a letter) by def id and position. A feature that needs its own things placed in a level adds an optional field to the level type for them and reads it in its `init`. Tuning numbers that are global go in `content/tuning.ts`; feature-specific ones go in the feature's `defs.ts`.
 11. Run `pnpm check`. Lint will tell you if you crossed a boundary.
 
@@ -134,7 +134,7 @@ Example: an `airplane` feature where the stick man places a paper airplane and f
 - Test files read top-down: imports, then the `describe` blocks, then fixtures, fakes and helper functions at the bottom under a `// ---- Helpers ----` comment. A reader should see what is being asserted before how it is set up. Function declarations hoist, so this is always safe for them; `const` helpers and fixtures are fine too as long as they are only used inside `it`, `beforeAll` and similar callbacks, never in a `describe` body.
 - For user-facing changes, the ticket's `verifications/<ticket>/` folder holds scripts that exercise the real app (Playwright against `pnpm dev`) and the proof they produced (screenshots, logs, JSON reports). Start from a copy of `verifications/_template/` (its README has the steps).
 - How the game looks cannot be asserted, only shown: a ticket that changes the look puts before and after screenshots in its proof, and a short screen recording when the change is in how something moves.
-- Dev builds expose `window.__game` (`sim`, `game`, `snapshot()`, `hash()`, `level`, `defs`, `pixelsPerMetre`, `stickManHeight`, `camera()`, `queueCommand(command)`, `loadLevel(n)`, and until the Level 1 ticket removes the demo, `walkDemo()` with `pose()` and `setPaused(paused)`) so browser checks can read sim state and derive expectations from content instead of hardcoding numbers. It is stripped from production builds. Add to it when a check needs something new, and list the addition here.
+- Dev builds expose `window.__game` (`sim`, `game`, `snapshot()`, `hash()`, `level`, `defs`, `pixelsPerMetre`, `stickManHeight`, `camera()`, `stickMan()` and `flag()` (each as the sim's view functions give it), `queueCommand(command)`, `loadLevel(n)`) so browser checks can read sim state and derive expectations from content instead of hardcoding numbers. It is stripped from production builds. Add to it when a check needs something new, and list the addition here.
 - A `verifications/<ticket>/` folder is proof for that ticket only and is frozen when its PR merges. Nobody runs, repairs or reads another ticket's folder afterwards. `verifications/_template/` is the only folder kept working: never copy from a frozen one, and a ticket that changes what the template relies on (its README lists it) updates the template in the same PR.
 - Content search (`rg`, the Grep tool) skips every folder under `verifications/` except `_template` (the root `.ignore`), your own ticket's folder included. To search yours, name it as the path: `rg <pattern> verifications/<ticket>/`.
 - Units: the sim works in metres, y pointing down, from an origin at the start of each level's floor. The stick man's height in metres is a tuning value and everything else is sized against it. The client converts metres to pixels with `PIXELS_PER_METRE` in `client/src/render/units.ts`; on-screen size comes from the camera's zoom, never from that ratio.

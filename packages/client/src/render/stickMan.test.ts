@@ -1,6 +1,6 @@
 import { STICK_MAN_HEIGHT } from '@stickworld/sim';
 import { describe, expect, it } from 'vitest';
-import { __testing__, stickManStrokes, walkCycleLength, type StickManPose } from './stickMan';
+import { __testing__, poseOf, stickManStrokes, walkCycleLength, type StickManPose } from './stickMan';
 import { toPixels } from './units';
 
 const { skeletonOf, BODY } = __testing__;
@@ -94,8 +94,58 @@ describe('the stick man walking', () => {
   });
 });
 
+describe('the stick man jumping', () => {
+  it('has his lower foot exactly where the sim says his feet are, all the way up and down', () => {
+    for (const rise of [1, 0.5, 0, -0.5, -1]) {
+      const { legs } = skeletonOf({ ...JUMPING, rise });
+      expect(Math.max(...legs.map((leg) => leg[2]!.y))).toBeCloseTo(JUMPING.feet.y, 6);
+    }
+  });
+
+  it('tucks his legs more on the way up than on the way down', () => {
+    const hipAbove = (rise: number): number => JUMPING.feet.y - skeletonOf({ ...JUMPING, rise }).hip.y;
+    expect(hipAbove(1)).toBeLessThan(hipAbove(-1));
+  });
+
+  it('does not look like standing or walking', () => {
+    expect(stickManStrokes(JUMPING)).not.toEqual(stickManStrokes({ ...JUMPING, action: 'standing' }));
+    expect(stickManStrokes(JUMPING)).not.toEqual(stickManStrokes({ ...JUMPING, action: 'walking' }));
+  });
+});
+
+describe('the stick man cheering', () => {
+  it('stands with both hands up beside his head, higher than his neck', () => {
+    const { arms, legs, head } = skeletonOf({ ...STANDING, action: 'cheering' });
+    for (const arm of arms) expect(arm[2]!.y).toBeLessThan(head.y);
+    expect(arms[0]![2]!.x).toBeLessThan(head.x - BODY.headRadius);
+    expect(arms[1]![2]!.x).toBeGreaterThan(head.x + BODY.headRadius);
+    expect(legs).toEqual(skeletonOf(STANDING).legs);
+  });
+});
+
+describe('the pose for what the sim says', () => {
+  const view = { feet: { x: 3, y: 0.5 }, facing: -1, action: 'walking', distanceWalked: 0, verticalSpeed: 0, walkDirectionAsked: -1 } as const;
+
+  it('keeps where he is, which way he faces and what he is doing', () => {
+    expect(poseOf(view)).toMatchObject({ feet: view.feet, facing: -1, action: 'walking' });
+  });
+
+  it('goes through one walk cycle per cycle length walked', () => {
+    expect(poseOf({ ...view, distanceWalked: walkCycleLength() * 0.25 }).walkCycle).toBeCloseTo(0.25, 6);
+    expect(poseOf({ ...view, distanceWalked: walkCycleLength() * 3.5 }).walkCycle).toBeCloseTo(0.5, 6);
+  });
+
+  it('rises while he moves up and falls while he moves down, never past 1', () => {
+    expect(poseOf({ ...view, verticalSpeed: -100 }).rise).toBe(1);
+    expect(poseOf({ ...view, verticalSpeed: 100 }).rise).toBe(-1);
+    expect(poseOf({ ...view, verticalSpeed: 0 }).rise).toBeCloseTo(0, 6);
+    expect(poseOf({ ...view, verticalSpeed: -1 }).rise).toBeGreaterThan(0);
+  });
+});
+
 // ---- Helpers ----
 
-const STANDING: StickManPose = { feet: { x: 3, y: 0.5 }, facing: 1, action: 'standing', walkCycle: 0 };
-const WALKING: StickManPose = { feet: { x: 3, y: 0.5 }, facing: 1, action: 'walking', walkCycle: 0 };
+const STANDING: StickManPose = { feet: { x: 3, y: 0.5 }, facing: 1, action: 'standing', walkCycle: 0, rise: 0 };
+const WALKING: StickManPose = { feet: { x: 3, y: 0.5 }, facing: 1, action: 'walking', walkCycle: 0, rise: 0 };
+const JUMPING: StickManPose = { feet: { x: 3, y: 0.2 }, facing: 1, action: 'jumping', walkCycle: 0, rise: 1 };
 const CYCLE_SAMPLES = Array.from({ length: 40 }, (_, sample) => sample / 40);

@@ -14,3 +14,6 @@ export { FIXED_DT, STICK_MAN_HEIGHT, TICK_RATE } from './content/tuning';
 export { defs, getDef, type Def } from './content/defs';
 export { levelById, levels } from './content/levels';
 export type { FloorSegment, Level, Placement, Point } from './content/levels/types';
+export type { JumpCommand, PlayerCommand, WalkCommand, WalkDirection } from './features/player/commands';
+export { stickManOf, type StickManView } from './features/player/view';
+export { flagOf, type FlagView } from './features/flag/view';

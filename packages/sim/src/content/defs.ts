@@ -1,3 +1,5 @@
+import { flagDefs } from '../features/flag/defs';
+
 /**
  * Every def in the game, keyed by a numeric id. Ids are forever: never reuse
  * or renumber one, even after its thing is removed.
@@ -6,15 +8,16 @@
  * Claimed blocks:
  *
  *     0-99   reserved
+ *   100-199   flag
  *
- * The next free block is 100-199.
+ * The next free block is 200-299.
  */
 export interface Def {
   readonly id: number;
   readonly name: string;
 }
 
-export const defs: readonly Def[] = [];
+export const defs: readonly Def[] = [...flagDefs];
 
 assertUniqueIds(defs);
 
