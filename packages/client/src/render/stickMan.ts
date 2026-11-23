@@ -25,8 +25,8 @@ export function stickManStrokes(pose: StickManPose): Stroke[] {
   const { head, neck, hip, arms, legs } = skeletonOf(pose);
   const lines = [[neck, hip], ...arms, ...legs];
   return [
-    { points: circleAround(head, BODY.headRadius).map(inPixels), thickness: PENCIL.thickness, closed: true },
-    ...lines.map((line) => ({ points: line.map(inPixels), thickness: PENCIL.thickness })),
+    { points: circleAround(head, BODY.headRadius).map(inPixels), thickness: BODY.lineWeight * PENCIL.thickness, closed: true },
+    ...lines.map((line) => ({ points: line.map(inPixels), thickness: BODY.lineWeight * PENCIL.thickness })),
   ];
 }
 
@@ -45,10 +45,12 @@ export function walkCycleLength(): number {
 
 /** His proportions, as shares of his height, and how far his limbs swing, in radians. View detail only. */
 const BODY = {
-  headRadius: 0.1 * STICK_MAN_HEIGHT,
-  body: 0.31 * STICK_MAN_HEIGHT,
-  thigh: 0.235 * STICK_MAN_HEIGHT,
-  shin: 0.235 * STICK_MAN_HEIGHT,
+  /** How much thicker his lines are than an ordinary pencil line: this is what makes him chunky rather than slender. */
+  lineWeight: 2.2,
+  headRadius: 0.13 * STICK_MAN_HEIGHT,
+  body: 0.3 * STICK_MAN_HEIGHT,
+  thigh: 0.21 * STICK_MAN_HEIGHT,
+  shin: 0.21 * STICK_MAN_HEIGHT,
   upperArm: 0.15 * STICK_MAN_HEIGHT,
   forearm: 0.15 * STICK_MAN_HEIGHT,
   /** How far below the neck the arms start. */
