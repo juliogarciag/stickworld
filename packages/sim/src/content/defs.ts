@@ -1,3 +1,6 @@
+import { flagDefs } from '../features/flag/defs';
+import { itemDefs } from '../features/inventory/defs';
+
 /**
  * Every def in the game, keyed by a numeric id. Ids are forever: never reuse
  * or renumber one, even after its thing is removed.
@@ -6,18 +9,17 @@
  * Claimed blocks:
  *
  *     0-99     reserved
- *     200-299  inventory: the items the stick man can hold (features/inventory/defs.ts)
+ *     100-199  flag
+ *     200-299  inventory: the items the stick man can hold
  *
  * The next free block is 300-399.
  */
-import { itemDefs } from '../features/inventory/defs';
-
 export interface Def {
   readonly id: number;
   readonly name: string;
 }
 
-export const defs: readonly Def[] = [...itemDefs];
+export const defs: readonly Def[] = [...flagDefs, ...itemDefs];
 
 assertUniqueIds(defs);
 

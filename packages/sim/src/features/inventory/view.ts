@@ -1,5 +1,5 @@
-import type { SimHandle } from '../../core/sim';
-import { inventorySlice, type Inventory } from './state';
+import { Sim, type SimHandle } from '../../core/sim';
+import { inventorySlice } from './state';
 
 /** One item slot as a view shows it. */
 export interface ItemSlot {
@@ -11,8 +11,8 @@ export interface ItemSlot {
 }
 
 /** Every item slot the stick man has, in order, with what it holds and whether it is selected. */
-export function itemSlotsOf(sim: SimHandle): ItemSlot[] {
-  const inventory = sim.snapshot().slices[inventorySlice.key] as Inventory | undefined;
-  if (!inventory) return [];
-  return inventory.slots.map((itemDefId, index) => ({ slot: index + 1, itemDefId, selected: inventory.selectedSlot === index + 1 }));
+export function itemSlotsOf(handle: SimHandle): ItemSlot[] {
+  if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
+  const { slots, selectedSlot } = handle.stateOf(inventorySlice);
+  return slots.map((itemDefId, index) => ({ slot: index + 1, itemDefId, selected: selectedSlot === index + 1 }));
 }

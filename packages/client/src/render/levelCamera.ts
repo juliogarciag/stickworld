@@ -1,4 +1,4 @@
-import { STICK_MAN_HEIGHT, type Point } from '@stickworld/sim';
+import { STICK_MAN_HEIGHT, type Point, type StickManView } from '@stickworld/sim';
 import type Phaser from 'phaser';
 import { toPixels } from './units';
 
@@ -10,11 +10,27 @@ const FRAMING = {
   floorFromTop: 0.72,
 } as const;
 
-/** Points `camera` at the stick man standing at `feet` (metres), at the zoom that fits the view to its height. */
-export function frameStickMan(camera: Phaser.Cameras.Scene2D.Camera, feet: Point): void {
+/**
+ * Returns a function that points `camera` at the stick man, to call every
+ * frame. It follows him along the line, and stays at the height of the floor
+ * he last stood on while his feet are off it: a jump moves him on the screen,
+ * not the paper under him.
+ */
+export function followStickManWith(camera: Phaser.Cameras.Scene2D.Camera): (stickMan: StickManView) => void {
+  let floorHeight: number | undefined;
+  return ({ feet, action }) => {
+    if (action !== 'jumping' || floorHeight === undefined) floorHeight = feet.y;
+    frame(camera, { x: feet.x, y: floorHeight });
+  };
+}
+
+// ---- Helpers ----
+
+/** Points `camera` at the floor at `floor` (metres), at the zoom that fits the view to its height. */
+function frame(camera: Phaser.Cameras.Scene2D.Camera, floor: Point): void {
   const viewHeight = toPixels(FRAMING.stickMenTall * STICK_MAN_HEIGHT);
   camera.setZoom(levelZoom(camera));
-  camera.centerOn(toPixels(feet.x), toPixels(feet.y) - (FRAMING.floorFromTop - 0.5) * viewHeight);
+  camera.centerOn(toPixels(floor.x), toPixels(floor.y) - (FRAMING.floorFromTop - 0.5) * viewHeight);
 }
 
 /** The zoom at which `camera` shows the level: the one that makes its view `FRAMING.stickMenTall` stick men tall. */

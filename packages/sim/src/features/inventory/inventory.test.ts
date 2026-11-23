@@ -5,7 +5,7 @@ import { hashSnapshot } from '../../core/snapshot';
 import { getDef } from '../../content/defs';
 import { ITEM_SLOT_COUNT, PAPER_ITEM_ID } from './defs';
 import { giveItem } from './give';
-import { inventoryFeature } from '.';
+import { features } from '..';
 import { itemSlotsOf } from './view';
 
 describe('inventory', () => {
@@ -63,7 +63,7 @@ describe('inventory', () => {
     const sim = simOnLevel(1);
     giveItem(sim, PAPER_ITEM_ID);
     sim.step([SELECT_SLOT_1]);
-    const restored = new Sim({ features: [inventoryFeature], snapshot: sim.snapshot() });
+    const restored = new Sim({ features, snapshot: sim.snapshot() });
     expect(itemSlotsOf(restored)).toEqual(itemSlotsOf(sim));
   });
 });
@@ -73,5 +73,5 @@ describe('inventory', () => {
 const SELECT_SLOT_1: Command = { type: 'inventory/select', slot: 1 };
 
 function simOnLevel(level: number): Sim {
-  return new Sim({ features: [inventoryFeature], start: { seed: 1, level } });
+  return new Sim({ features, start: { seed: 1, level } });
 }
