@@ -5,16 +5,19 @@
  * Each feature claims a block of 100 ids here and spreads its list in below.
  * Claimed blocks:
  *
- *     0-99   reserved
+ *     0-99     reserved
+ *     200-299  inventory: the items the stick man can hold (features/inventory/defs.ts)
  *
- * The next free block is 100-199.
+ * The next free block is 300-399.
  */
+import { itemDefs } from '../features/inventory/defs';
+
 export interface Def {
   readonly id: number;
   readonly name: string;
 }
 
-export const defs: readonly Def[] = [];
+export const defs: readonly Def[] = [...itemDefs];
 
 assertUniqueIds(defs);
 

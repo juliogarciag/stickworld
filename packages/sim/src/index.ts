@@ -14,3 +14,6 @@ export { FIXED_DT, STICK_MAN_HEIGHT, TICK_RATE } from './content/tuning';
 export { defs, getDef, type Def } from './content/defs';
 export { levelById, levels } from './content/levels';
 export type { FloorSegment, Level, Placement, Point } from './content/levels/types';
+export type { InventoryCommand, InventorySelectCommand } from './features/inventory/commands';
+export { PAPER_ITEM_ID } from './features/inventory/defs';
+export { itemSlotsOf, type ItemSlot } from './features/inventory/view';

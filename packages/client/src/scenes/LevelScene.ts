@@ -1,6 +1,7 @@
 import { levelOf, type Level, type SimHandle } from '@stickworld/sim';
 import Phaser from 'phaser';
 import { walkAlongTheFloor, type WalkDemo } from '../demo/walkAlongTheFloor';
+import { sendItemSlotKeys } from '../input/itemSlotKeys';
 import { watchWalkKeys, type HeldDirection } from '../input/walkKeys';
 import type { GameLoop } from '../loop/GameLoop';
 import { floorStrokes } from '../render/floor';
@@ -37,6 +38,7 @@ export class LevelScene extends Phaser.Scene {
     this.floor = createStrokeLayer(this);
     this.stickMan = createStrokeLayer(this);
     this.heldDirection = watchWalkKeys(this);
+    sendItemSlotKeys(this, (command) => this.loop.queueCommand(command));
   }
 
   /** The walk on `level`, started again whenever the loop plays a new sim (a level starts or restarts). */

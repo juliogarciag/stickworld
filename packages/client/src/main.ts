@@ -4,6 +4,7 @@ import { exposeDebugApi } from './debug';
 import { GameLoop } from './loop/GameLoop';
 import { PAPER_COLOUR } from './render/paper';
 import { keepCanvasAtWindowSize, windowViewportConfig } from './render/viewport';
+import { HudScene } from './scenes/HudScene';
 import { LevelScene } from './scenes/LevelScene';
 import { startingLevel } from './startingLevel';
 
@@ -15,7 +16,7 @@ function boot(): void {
     type: Phaser.AUTO,
     parent: 'game',
     backgroundColor: PAPER_COLOUR,
-    scene: [new LevelScene(loop)],
+    scene: [new LevelScene(loop), new HudScene(loop)],
     scale: windowViewportConfig(),
   });
   keepCanvasAtWindowSize(game);

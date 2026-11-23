@@ -13,6 +13,11 @@ const FRAMING = {
 /** Points `camera` at the stick man standing at `feet` (metres), at the zoom that fits the view to its height. */
 export function frameStickMan(camera: Phaser.Cameras.Scene2D.Camera, feet: Point): void {
   const viewHeight = toPixels(FRAMING.stickMenTall * STICK_MAN_HEIGHT);
-  camera.setZoom(camera.height / viewHeight);
+  camera.setZoom(levelZoom(camera));
   camera.centerOn(toPixels(feet.x), toPixels(feet.y) - (FRAMING.floorFromTop - 0.5) * viewHeight);
+}
+
+/** The zoom at which `camera` shows the level: the one that makes its view `FRAMING.stickMenTall` stick men tall. */
+export function levelZoom(camera: Phaser.Cameras.Scene2D.Camera): number {
+  return camera.height / toPixels(FRAMING.stickMenTall * STICK_MAN_HEIGHT);
 }
