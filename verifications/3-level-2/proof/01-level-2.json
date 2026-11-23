@@ -8,7 +8,7 @@
     "name": "paper"
   },
   "level2Start": {
-    "tick": 385,
+    "tick": 384,
     "level": {
       "id": 2,
       "name": "A gap",
@@ -84,7 +84,7 @@
     ]
   },
   "afterDeath": {
-    "tick": 637,
+    "tick": 630,
     "level": {
       "id": 2,
       "name": "A gap",
@@ -160,7 +160,7 @@
     ]
   },
   "landed": {
-    "tick": 797,
+    "tick": 786,
     "level": {
       "id": 2,
       "name": "A gap",
@@ -236,7 +236,7 @@
     ]
   },
   "atTheFlag": {
-    "tick": 947,
+    "tick": 936,
     "level": {
       "id": 2,
       "name": "A gap",
@@ -312,7 +312,7 @@
     ]
   },
   "selected": {
-    "tick": 1043,
+    "tick": 1029,
     "level": {
       "id": 2,
       "name": "A gap",
@@ -388,7 +388,7 @@
     ]
   },
   "unselected": {
-    "tick": 1177,
+    "tick": 1155,
     "level": {
       "id": 2,
       "name": "A gap",
@@ -464,14 +464,14 @@
     ]
   },
   "pencilPixelsAroundSlot1": {
-    "empty": 551,
-    "withPaper": 827,
-    "selected": 1657,
-    "unselected": 780
+    "empty": 542,
+    "withPaper": 818,
+    "selected": 1684,
+    "unselected": 758
   },
   "framesWatched": {
-    "death": 173,
-    "jump": 296
+    "death": 174,
+    "jump": 295
   },
   "results": [
     {
@@ -506,12 +506,12 @@
     {
       "name": "the HUD draws slot 1: there is pencil where the HUD says its box is",
       "pass": true,
-      "details": "551 pencil pixels"
+      "details": "542 pencil pixels"
     },
     {
       "name": "walking into the gap, he falls below the line",
       "pass": true,
-      "details": "deepest 5.92 m below the line, 43 frames in the gap"
+      "details": "deepest 5.92 m below the line, 45 frames in the gap"
     },
     {
       "name": "he dies and the level starts again at once: back at the start within two seconds of leaving the line",
@@ -521,7 +521,7 @@
     {
       "name": "the restart is the sim's own: same level, the same sim still counting ticks, flag not reached",
       "pass": true,
-      "details": "level 2, tick 385 -> 637"
+      "details": "level 2, tick 384 -> 630"
     },
     {
       "name": "slot 1 is still empty after the death",
@@ -551,12 +551,12 @@
     {
       "name": "the paper arrives the moment the flag is reached, not before",
       "pass": true,
-      "details": "flag reached at tick 886, paper held at tick 886"
+      "details": "flag reached at tick 875, paper held at tick 875"
     },
     {
       "name": "the HUD draws the paper in slot 1: more pencil there than when it was empty",
       "pass": true,
-      "details": "551 -> 827 pencil pixels"
+      "details": "542 -> 818 pencil pixels"
     },
     {
       "name": "pressing 1 selects slot 1, which still holds the paper",
@@ -566,7 +566,7 @@
     {
       "name": "the HUD shows slot 1 selected: a second box around it",
       "pass": true,
-      "details": "827 -> 1657 pencil pixels"
+      "details": "818 -> 1684 pencil pixels"
     },
     {
       "name": "it stays selected until 1 is pressed again",
@@ -580,7 +580,7 @@
     {
       "name": "the HUD takes the second box away",
       "pass": true,
-      "details": "780 pencil pixels: 827 before it was selected, 1657 while it was"
+      "details": "758 pencil pixels: 818 before it was selected, 1684 while it was"
     },
     {
       "name": "no page errors",
