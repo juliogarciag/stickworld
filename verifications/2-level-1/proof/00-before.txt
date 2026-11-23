@@ -1,0 +1,4 @@
+PASS  dev server up, started by this run
+PASS  screenshot of the look test walk taken
+
+ALL 2 CHECKS PASSED

@@ -1,0 +1,384 @@
+{
+  "atStart": {
+    "tick": 11,
+    "dt": 0.016666666666666666,
+    "level": {
+      "id": 1,
+      "name": "A walk",
+      "floor": [
+        {
+          "from": {
+            "x": 0,
+            "y": 0
+          },
+          "to": {
+            "x": 14,
+            "y": 0
+          }
+        }
+      ],
+      "start": {
+        "x": 2,
+        "y": 0
+      },
+      "placements": [
+        {
+          "defId": 100,
+          "at": {
+            "x": 11,
+            "y": 0
+          }
+        }
+      ]
+    },
+    "defs": [
+      {
+        "id": 100,
+        "name": "flag",
+        "height": 2.2,
+        "reach": 0.45,
+        "raiseSeconds": 0.6
+      }
+    ],
+    "stickMan": {
+      "feet": {
+        "x": 2,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "standing",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "walkDirectionAsked": 0
+    },
+    "flag": {
+      "at": {
+        "x": 11,
+        "y": 0
+      },
+      "height": 2.2,
+      "reached": false,
+      "raised": 0
+    },
+    "camera": {
+      "zoom": 0.5,
+      "scrollX": -280,
+      "scrollY": -507.59999999999997,
+      "width": 960,
+      "height": 540
+    },
+    "pixelsPerMetre": 100,
+    "stickManHeight": 1.8
+  },
+  "walkSpeed": 2.2000000000000037,
+  "jump": {
+    "highest": 0.6977177164990158,
+    "end": {
+      "feet": {
+        "x": 6.180000000000022,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "walking",
+      "distanceWalked": 0.03666666666666707,
+      "verticalSpeed": 0,
+      "walkDirectionAsked": 1
+    }
+  },
+  "stoppedShort": {
+    "tick": 324,
+    "dt": 0.016666666666666666,
+    "level": {
+      "id": 1,
+      "name": "A walk",
+      "floor": [
+        {
+          "from": {
+            "x": 0,
+            "y": 0
+          },
+          "to": {
+            "x": 14,
+            "y": 0
+          }
+        }
+      ],
+      "start": {
+        "x": 2,
+        "y": 0
+      },
+      "placements": [
+        {
+          "defId": 100,
+          "at": {
+            "x": 11,
+            "y": 0
+          }
+        }
+      ]
+    },
+    "defs": [
+      {
+        "id": 100,
+        "name": "flag",
+        "height": 2.2,
+        "reach": 0.45,
+        "raiseSeconds": 0.6
+      }
+    ],
+    "stickMan": {
+      "feet": {
+        "x": 6.216666666666689,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "standing",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "walkDirectionAsked": 0
+    },
+    "flag": {
+      "at": {
+        "x": 11,
+        "y": 0
+      },
+      "height": 2.2,
+      "reached": false,
+      "raised": 0
+    },
+    "camera": {
+      "zoom": 0.5,
+      "scrollX": 141.6666666666689,
+      "scrollY": -507.59999999999997,
+      "width": 960,
+      "height": 540
+    },
+    "pixelsPerMetre": 100,
+    "stickManHeight": 1.8
+  },
+  "finished": {
+    "tick": 723,
+    "dt": 0.016666666666666666,
+    "level": {
+      "id": 1,
+      "name": "A walk",
+      "floor": [
+        {
+          "from": {
+            "x": 0,
+            "y": 0
+          },
+          "to": {
+            "x": 14,
+            "y": 0
+          }
+        }
+      ],
+      "start": {
+        "x": 2,
+        "y": 0
+      },
+      "placements": [
+        {
+          "defId": 100,
+          "at": {
+            "x": 11,
+            "y": 0
+          }
+        }
+      ]
+    },
+    "defs": [
+      {
+        "id": 100,
+        "name": "flag",
+        "height": 2.2,
+        "reach": 0.45,
+        "raiseSeconds": 0.6
+      }
+    ],
+    "stickMan": {
+      "feet": {
+        "x": 10.58000000000007,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "cheering",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "walkDirectionAsked": 1
+    },
+    "flag": {
+      "at": {
+        "x": 11,
+        "y": 0
+      },
+      "height": 2.2,
+      "reached": true,
+      "raised": 1
+    },
+    "camera": {
+      "zoom": 0.5,
+      "scrollX": 578.0000000000068,
+      "scrollY": -507.59999999999997,
+      "width": 960,
+      "height": 540
+    },
+    "pixelsPerMetre": 100,
+    "stickManHeight": 1.8
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "he starts standing where level 1 starts, looking right",
+      "pass": true,
+      "details": "standing at x 2.00, y 0.00, facing 1"
+    },
+    {
+      "name": "the flag stands where the level places it, a few metres to his right, not reached",
+      "pass": true,
+      "details": "flag at x 11, start at x 2"
+    },
+    {
+      "name": "the view is sized by his height: he is a sixth of it or so",
+      "pass": true,
+      "details": "90 px of 540"
+    },
+    {
+      "name": "the camera is on him",
+      "pass": true,
+      "details": "feet at screen x 480.0"
+    },
+    {
+      "name": "he is drawn in pencil where the sim says he is, and not beside it",
+      "pass": true,
+      "details": "283 dark pixels on him, 20 beside him"
+    },
+    {
+      "name": "the flag is drawn in pencil where the sim says it stands, and not beside it",
+      "pass": true,
+      "details": "171 dark pixels on the stick, 0 beside it"
+    },
+    {
+      "name": "holding the right arrow walks him right",
+      "pass": true,
+      "details": "walking at x 4.31, y 0.00, facing 1, 2.20 m/s"
+    },
+    {
+      "name": "his walk moves on with the distance he walks",
+      "pass": true,
+      "details": "walked 2.31 m"
+    },
+    {
+      "name": "the camera follows him along the line",
+      "pass": true,
+      "details": "scrollX -280 -> -49"
+    },
+    {
+      "name": "space makes him jump: a small jump, under his own height, and back to the floor",
+      "pass": true,
+      "details": "feet 0.70 m above the floor at the top"
+    },
+    {
+      "name": "he keeps walking through the jump",
+      "pass": true,
+      "details": "walking at x 6.18, y 0.00, facing 1"
+    },
+    {
+      "name": "a jump moves him on the screen, not the paper: the camera stays at the floor",
+      "pass": true,
+      "details": "feet 35 px higher on screen at the top"
+    },
+    {
+      "name": "letting go stops him, short of the flag",
+      "pass": true,
+      "details": "standing at x 6.22, y 0.00, facing 1"
+    },
+    {
+      "name": "stopping short does not finish the level",
+      "pass": true
+    },
+    {
+      "name": "holding the left arrow turns him and walks him left",
+      "pass": true,
+      "details": "walking at x 5.01, y 0.00, facing -1"
+    },
+    {
+      "name": "the jump was caught in a screenshot",
+      "pass": true,
+      "details": "03-jumping.png"
+    },
+    {
+      "name": "the up arrow jumps too, straight up when he stands",
+      "pass": true,
+      "details": "feet 0.46 m above the floor at the top"
+    },
+    {
+      "name": "D walks him right and A walks him left, like the arrows",
+      "pass": true,
+      "details": "walking at x 5.85, y 0.00, facing 1; then walking at x 4.97, y 0.00, facing -1"
+    },
+    {
+      "name": "W jumps, like space and the up arrow",
+      "pass": true,
+      "details": "feet 0.70 m above the floor at the top"
+    },
+    {
+      "name": "walking on to the flag finishes the level",
+      "pass": true,
+      "details": "cheering at x 10.58, y 0.00, facing 1, flag at x 11"
+    },
+    {
+      "name": "the flag goes up the stick and he cheers",
+      "pass": true,
+      "details": "cheering at x 10.58, y 0.00, facing 1"
+    },
+    {
+      "name": "the cloth is drawn low on the stick before he reaches it and at the top after",
+      "pass": true,
+      "details": "dark pixels low/high: 15/0 at the start, 0/16 at the end"
+    },
+    {
+      "name": "the flag stays in view with him",
+      "pass": true
+    },
+    {
+      "name": "once finished he stays put whatever is pressed, and the last level stays finished",
+      "pass": true,
+      "details": "cheering at x 10.58, y 0.00, facing 1"
+    },
+    {
+      "name": "playing the level again puts him back at the start with the flag down",
+      "pass": true,
+      "details": "standing at x 2.00, y 0.00, facing 1"
+    },
+    {
+      "name": "walking left past the end of the floor, he falls",
+      "pass": true,
+      "details": "jumping at x -0.64, y 0.88, facing -1"
+    },
+    {
+      "name": "and the level starts again: he is back on the floor near the start, the flag not reached",
+      "pass": true,
+      "details": "walking at x 1.93, y 0.00, facing -1"
+    },
+    {
+      "name": "the left arrow, still held, walks him again after the restart",
+      "pass": true,
+      "details": "walking at x 1.89, y 0.00, facing -1"
+    },
+    {
+      "name": "recorded the walk, two jumps and the flag",
+      "pass": true,
+      "details": "07-walk-jump-flag.webm"
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

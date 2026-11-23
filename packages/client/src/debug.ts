@@ -1,10 +1,8 @@
-import type { Command, Def, Level, SimHandle, SimSnapshot } from '@stickworld/sim';
-import { defs, hashSnapshot, levelOf, STICK_MAN_HEIGHT } from '@stickworld/sim';
+import type { Command, Def, FlagView, Level, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
+import { defs, flagOf, hashSnapshot, levelOf, STICK_MAN_HEIGHT, stickManOf } from '@stickworld/sim';
 import type Phaser from 'phaser';
-import type { WalkDemo } from './demo/walkAlongTheFloor';
 import type { GameLoop } from './loop/GameLoop';
 import { PIXELS_PER_METRE } from './render/units';
-import type { LevelScene } from './scenes/LevelScene';
 
 /** What dev tooling and end-to-end checks can reach from the page. Dev builds only; listed in AGENTS.md. */
 export interface GameDebugApi {
@@ -21,8 +19,10 @@ export interface GameDebugApi {
   hash(): string;
   /** The level camera right now, or undefined until the level scene runs. */
   camera(): CameraView | undefined;
-  /** Look test only (issue #1): the stick man's client-only walk, or undefined until the level scene has drawn. `pose()` reads it, `setPaused(true)` holds him still. Goes away with the demo. */
-  walkDemo(): WalkDemo | undefined;
+  /** The stick man as the sim has him right now: where his feet are (metres) and what he is doing. */
+  stickMan(): StickManView;
+  /** The level's flag as the sim has it right now, or undefined when the level has none. */
+  flag(): FlagView | undefined;
   /** Queues a command for the next earned tick, through the same path as keyboard input. */
   queueCommand(command: Command): void;
   /** Plays level `level` from its start. */
@@ -63,7 +63,8 @@ export function exposeDebugApi({ loop, game }: { loop: GameLoop; game: Phaser.Ga
       const { zoom, scrollX, scrollY, width, height } = game.scene.getScene('level').cameras.main;
       return { zoom, scrollX, scrollY, width, height };
     },
-    walkDemo: () => (game.scene.isActive('level') ? (game.scene.getScene('level') as LevelScene).walkDemo : undefined),
+    stickMan: () => stickManOf(loop.sim),
+    flag: () => flagOf(loop.sim),
     queueCommand: (command) => loop.queueCommand(command),
     loadLevel: (level) => loop.playLevel(level),
   };

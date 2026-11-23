@@ -1,3 +1,5 @@
+import type { PlayerCommand } from '../features/player/commands';
+
 /**
  * Commands are the only way input reaches the sim. They are plain,
  * serializable objects (JSON-safe) so they can be recorded and replayed: a
@@ -11,10 +13,8 @@
  *   export type Command =
  *     | PlayerCommand
  *     | InventoryCommand;
- *
- * No feature has commands yet, so the union is empty.
  */
-export type Command = never;
+export type Command = PlayerCommand;
 
 /** True when `value` has the minimal shape of a command. Anything else is dropped by Sim.step. */
 export function isCommandShaped(value: unknown): value is Command {

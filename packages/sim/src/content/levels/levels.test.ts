@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { levels } from '.';
+import { getDef } from '../defs';
 
 describe('levels', () => {
   it('have unique ids, counted from 1 in the order they are played', () => {
@@ -17,6 +18,10 @@ describe('levels', () => {
 
     it('starts the stick man over the floor', () => {
       expect(level.floor.some((segment) => segment.from.x <= level.start.x && level.start.x <= segment.to.x)).toBe(true);
+    });
+
+    it('places only things that have a def', () => {
+      for (const placement of level.placements) expect(getDef(placement.defId), `def ${placement.defId}`).toBeDefined();
     });
   });
 });

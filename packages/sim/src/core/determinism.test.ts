@@ -42,10 +42,13 @@ describe('determinism', () => {
 
 const TICKS = 600;
 
-/** A recorded input: well-formed commands nobody owns and garbage, which every feature must ignore without throwing. */
+/** A recorded input: the player walking back and forth and jumping, well-formed commands nobody owns, and garbage, which every feature must ignore without throwing. */
 function commandsAt(tick: number): Command[] {
   const garbage: unknown[] = [null, 3, 'player/walk', { type: 7 }, { type: 'nobody/owns-this', amount: tick }];
-  return [garbage[tick % garbage.length]] as Command[];
+  const played: Command[] = [];
+  if (tick % 90 === 0) played.push({ type: 'player/walk', direction: tick % 180 === 0 ? 1 : -1 });
+  if (tick % 40 === 7) played.push({ type: 'player/jump' });
+  return [garbage[tick % garbage.length] as Command, ...played];
 }
 
 interface Noise {
