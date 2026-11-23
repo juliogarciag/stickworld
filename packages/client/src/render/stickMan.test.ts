@@ -1,9 +1,10 @@
-import { STICK_MAN_HEIGHT } from '@stickworld/sim';
+import { STICK_MAN_HEIGHT, STICK_MAN_WIDTH } from '@stickworld/sim';
 import { describe, expect, it } from 'vitest';
-import { __testing__, poseOf, posesEasedOverTime, stickManStrokes, walkCycleLength, type StickManPose } from './stickMan';
+import { distanceBetweenLines } from './geometry';
+import { __testing__, keptOffTheFloor, poseOf, posesEasedOverTime, stickManStrokes, walkCycleLength, type StickManPose } from './stickMan';
 import { toPixels } from './units';
 
-const { skeletonOf, BODY, EASING } = __testing__;
+const { skeletonOf, BODY, EASING, OFF_THE_LINE } = __testing__;
 
 describe('the stick man standing', () => {
   it('is a head, a body, two arms and two legs', () => {
@@ -184,6 +185,123 @@ describe('poses eased over time', () => {
   });
 });
 
+describe('the stick man falling sideways', () => {
+  it('tips the way he drifts, more the faster he drifts against how fast he falls, and stays upright dropping straight', () => {
+    const tiltAt = (horizontalSpeed: number, verticalSpeed: number): number => poseOf({ ...FALLING, horizontalSpeed, verticalSpeed }).tilt;
+    expect(tiltAt(0, 4)).toBe(0);
+    expect(tiltAt(2, 4)).toBeGreaterThan(0);
+    expect(tiltAt(-2, 4)).toBeCloseTo(-tiltAt(2, 4), 9);
+    expect(tiltAt(2, 4)).toBeGreaterThan(tiltAt(1, 4));
+    expect(tiltAt(2, 4)).toBeGreaterThan(tiltAt(2, 8));
+    expect(tiltAt(2, 4)).toBeLessThanOrEqual(BODY.fallTilt);
+  });
+
+  it('is upright on the floor and on the way up, however fast he goes sideways', () => {
+    expect(poseOf({ ...ON_THE_FLOOR, action: 'walking', horizontalSpeed: 2 }).tilt).toBe(0);
+    expect(poseOf({ ...GOING_UP, horizontalSpeed: 2 }).tilt).toBe(0);
+  });
+
+  it('has only begun to tip when the fall has only begun', () => {
+    expect(poseOf({ ...FALLING, horizontalSpeed: 2, verticalSpeed: 0.2 }).tilt).toBeLessThan(poseOf({ ...FALLING, horizontalSpeed: 2, verticalSpeed: 2 }).tilt / 3);
+  });
+
+  it('puts his head ahead of his hips and his feet behind them, with his lower foot still where the sim says', () => {
+    for (const facing of [1, -1] as const) {
+      const upright = skeletonOf({ ...JUMPING, rise: -1, facing });
+      const tipped = skeletonOf({ ...JUMPING, rise: -1, facing, tilt: 0.3 });
+      expect(tipped.head.x - tipped.hip.x).toBeGreaterThan(upright.head.x - upright.hip.x + 0.1);
+      for (const leg of [0, 1]) expect(tipped.legs[leg]![2]!.x).toBeLessThan(upright.legs[leg]![2]!.x);
+      expect(Math.max(...tipped.legs.map((leg) => leg[2]!.y))).toBeCloseTo(JUMPING.feet.y, 6);
+    }
+  });
+
+  it('tips over a few frames, and comes back upright over a few once he has landed', () => {
+    const poseFor = posesEasedOverTime();
+    const falling = { ...FALLING, horizontalSpeed: 2, verticalSpeed: 3 };
+    poseFor(falling, FRAME);
+    const first = poseFor(falling, FRAME).tilt;
+    expect(first).toBeGreaterThan(0);
+    expect(first).toBeLessThan(poseOf(falling).tilt);
+    for (let frame = 0; frame < 30; frame += 1) poseFor(falling, FRAME);
+    expect(poseFor(falling, FRAME).tilt).toBeCloseTo(poseOf(falling).tilt, 9);
+    expect(poseFor({ ...ON_THE_FLOOR, feet: falling.feet }, FRAME).tilt).toBeGreaterThan(0);
+    for (let frame = 0; frame < 30; frame += 1) poseFor({ ...ON_THE_FLOOR, feet: falling.feet }, FRAME);
+    expect(poseFor({ ...ON_THE_FLOOR, feet: falling.feet }, FRAME).tilt).toBe(0);
+  });
+});
+
+describe('the stick man dropping past the end of a floor line', () => {
+  it('is left as he is when nothing of him is near a line', () => {
+    const pose = { ...DROPPING, feet: { x: LINE_END + 2, y: 0.5 } };
+    expect(keptOffTheFloor(pose, FLOOR)).toEqual(pose);
+  });
+
+  it('never has an arm, his body or his head across the line, all the way down beside it', () => {
+    for (const facing of [1, -1] as const) {
+      for (const feet of DROP_BESIDE_THE_END) {
+        const skeleton = skeletonOf(keptOffTheFloor({ ...DROPPING, facing, feet }, FLOOR));
+        for (const arm of skeleton.arms) {
+          expect(distanceBetweenLines([arm[0]!, arm[1]!], LINE), `arm at feet y ${feet.y}`).toBeGreaterThan(0);
+          expect(distanceBetweenLines([arm[1]!, arm[2]!], LINE), `forearm at feet y ${feet.y}`).toBeGreaterThan(0);
+        }
+        expect(distanceBetweenLines([skeleton.neck, skeleton.hip], LINE)).toBeGreaterThan(0);
+        expect(distanceBetweenLines([skeleton.head, skeleton.head], LINE)).toBeGreaterThan(BODY.headRadius);
+      }
+    }
+  });
+
+  it('holds the arm that would cross on the line: lifted no more than it takes, so the arm rests on it', () => {
+    const lifts = DROP_BESIDE_THE_END.map((feet) => keptOffTheFloor({ ...DROPPING, feet }, FLOOR));
+    const held = lifts.filter((pose) => pose.armsLifted[BACK_ARM] > 0);
+    expect(held.length).toBeGreaterThan(3);
+    for (const pose of held) {
+      const [shoulder, elbow, hand] = skeletonOf(pose).arms[BACK_ARM]!;
+      const fromTheLine = Math.min(distanceBetweenLines([shoulder!, elbow!], LINE), distanceBetweenLines([elbow!, hand!], LINE));
+      expect(fromTheLine).toBeLessThan(OFF_THE_LINE + 0.03);
+    }
+  });
+
+  it('pushes the held arm further up as he drops, then lets it go once his shoulder is under the line', () => {
+    const lifts = DROP_BESIDE_THE_END.map((feet) => keptOffTheFloor({ ...DROPPING, feet }, FLOOR).armsLifted[BACK_ARM]);
+    const firstHeld = lifts.findIndex((lift) => lift > 0);
+    const lastHeld = lifts.findLastIndex((lift) => lift > 0);
+    expect(firstHeld).toBeGreaterThan(0);
+    for (let drop = firstHeld + 1; drop <= lastHeld; drop += 1) expect(lifts[drop]).toBeGreaterThanOrEqual(lifts[drop - 1]!);
+    expect(lifts[lastHeld]).toBeGreaterThan(lifts[firstHeld]! + 0.3);
+    expect(lifts.slice(lastHeld + 1).length).toBeGreaterThan(0);
+    const shoulderWhenLetGo = skeletonOf({ ...DROPPING, feet: DROP_BESIDE_THE_END[lastHeld + 1]! }).arms[BACK_ARM]![0]!;
+    // By then his arm reaches round the end of the line and under it.
+    expect(shoulderWhenLetGo.y).toBeGreaterThan(LINE[0].y - BODY.upperArm);
+  });
+
+  it('leaves the arm on the other side of him where it was', () => {
+    for (const feet of DROP_BESIDE_THE_END) expect(keptOffTheFloor({ ...DROPPING, feet }, FLOOR).armsLifted[1 - BACK_ARM]).toBe(0);
+  });
+
+  it('tips him less, or not at all, when tipping would put his head across a line', () => {
+    const towardsTheLine = { ...DROPPING, feet: { x: BESIDE_THE_END, y: 1.5 }, tilt: -0.5 };
+    const kept = keptOffTheFloor(towardsTheLine, FLOOR);
+    expect(kept.tilt).toBeGreaterThan(towardsTheLine.tilt);
+    expect(kept.tilt).toBeLessThanOrEqual(0);
+    const awayFromTheLine = { ...towardsTheLine, tilt: 0.5 };
+    expect(keptOffTheFloor(awayFromTheLine, FLOOR).tilt).toBe(0.5);
+  });
+
+  it('lets the arm come down over a few frames once the line lets go, never across the line on the way', () => {
+    const poseFor = posesEasedOverTime();
+    const shown = DROP_BESIDE_THE_END.map((feet) => poseFor({ ...FALLING, feet }, FRAME, FLOOR));
+    const lifts = shown.map((pose) => pose.armsLifted[BACK_ARM]);
+    expect(Math.max(...lifts)).toBeGreaterThan(0.3);
+    expect(lifts[lifts.length - 1]).toBe(0);
+    for (let frame = 1; frame < lifts.length; frame += 1) expect(lifts[frame - 1]! - lifts[frame]!).toBeLessThanOrEqual(FRAME * EASING.armComesDownPerSecond + 1e-9);
+    for (const pose of shown) {
+      const [shoulder, elbow, hand] = skeletonOf(pose).arms[BACK_ARM]!;
+      expect(distanceBetweenLines([shoulder!, elbow!], LINE)).toBeGreaterThan(0);
+      expect(distanceBetweenLines([elbow!, hand!], LINE)).toBeGreaterThan(0);
+    }
+  });
+});
+
 describe('the stick man cheering', () => {
   it('stands with both hands up beside his head, higher than his neck', () => {
     const { arms, legs, head } = skeletonOf({ ...STANDING, action: 'cheering' });
@@ -214,13 +332,24 @@ describe('the pose for what the sim says', () => {
 
 // ---- Helpers ----
 
-const STANDING: StickManPose = { feet: { x: 3, y: 0.5 }, facing: 1, action: 'standing', walkCycle: 0, rise: 0, striding: false, inTheAir: 0, landing: 0 };
-const WALKING: StickManPose = { feet: { x: 3, y: 0.5 }, facing: 1, action: 'walking', walkCycle: 0, rise: 0, striding: true, inTheAir: 0, landing: 0 };
-const JUMPING: StickManPose = { feet: { x: 3, y: 0.2 }, facing: 1, action: 'jumping', walkCycle: 0, rise: 1, striding: false, inTheAir: 1, landing: 0 };
-const view = { feet: { x: 3, y: 0.5 }, facing: -1, action: 'walking', distanceWalked: 0, verticalSpeed: 0, walkDirectionAsked: -1 } as const;
-const ON_THE_FLOOR = { feet: { x: 3, y: 0 }, facing: 1, action: 'standing', distanceWalked: 0, verticalSpeed: 0, walkDirectionAsked: 0 } as const;
+const STANDING: StickManPose = { feet: { x: 3, y: 0.5 }, facing: 1, action: 'standing', walkCycle: 0, rise: 0, striding: false, inTheAir: 0, landing: 0, tilt: 0, armsLifted: [0, 0] };
+const WALKING: StickManPose = { feet: { x: 3, y: 0.5 }, facing: 1, action: 'walking', walkCycle: 0, rise: 0, striding: true, inTheAir: 0, landing: 0, tilt: 0, armsLifted: [0, 0] };
+const JUMPING: StickManPose = { feet: { x: 3, y: 0.2 }, facing: 1, action: 'jumping', walkCycle: 0, rise: 1, striding: false, inTheAir: 1, landing: 0, tilt: 0, armsLifted: [0, 0] };
+const view = { feet: { x: 3, y: 0.5 }, facing: -1, action: 'walking', distanceWalked: 0, verticalSpeed: 0, horizontalSpeed: 0, walkDirectionAsked: -1 } as const;
+const ON_THE_FLOOR = { feet: { x: 3, y: 0 }, facing: 1, action: 'standing', distanceWalked: 0, verticalSpeed: 0, horizontalSpeed: 0, walkDirectionAsked: 0 } as const;
 const GOING_UP = { ...ON_THE_FLOOR, feet: { x: 3, y: -0.2 }, action: 'jumping', verticalSpeed: -5 } as const;
 const COMING_DOWN = { ...ON_THE_FLOOR, feet: { x: 3, y: -0.2 }, action: 'jumping', verticalSpeed: 4 } as const;
+const FALLING = { ...COMING_DOWN, horizontalSpeed: 0 } as const;
+/** A floor line that ends at `LINE_END`, with him dropping on the open side of it, as close as the sim lets him: half his width away. */
+const LINE_END = 6;
+const FLOOR = [{ from: { x: 0, y: 0 }, to: { x: LINE_END, y: 0 } }];
+const LINE = [FLOOR[0]!.from, FLOOR[0]!.to] as const;
+/** Coming down facing away from the line, so his back arm is the one over it. */
+const BESIDE_THE_END = LINE_END + STICK_MAN_WIDTH / 2;
+const DROPPING: StickManPose = { feet: { x: BESIDE_THE_END, y: 0 }, facing: 1, action: 'jumping', walkCycle: 0, rise: -1, striding: false, inTheAir: 1, landing: 0, tilt: 0, armsLifted: [0, 0] };
+const BACK_ARM = 0;
+/** His feet from the line's height to well below it, a tick of falling apart. */
+const DROP_BESIDE_THE_END = Array.from({ length: 80 }, (_, step) => ({ x: BESIDE_THE_END, y: step * 0.03 }));
 const FRAME = 1 / 60;
 const framesIn = (seconds: number): number => Math.ceil(seconds / FRAME) + 1;
 const CYCLE_SAMPLES = Array.from({ length: 40 }, (_, sample) => sample / 40);

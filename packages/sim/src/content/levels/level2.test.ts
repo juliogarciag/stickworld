@@ -9,7 +9,7 @@ import { isItemDefId, PAPER_ITEM_ID } from '../../features/inventory/defs';
 import { itemSlotsOf } from '../../features/inventory/view';
 import { PLAYER } from '../../features/player/defs';
 import { stickManOf } from '../../features/player/view';
-import { TICK_RATE } from '../tuning';
+import { STICK_MAN_WIDTH, TICK_RATE } from '../tuning';
 import { levels } from '.';
 import { level2 } from './level2';
 
@@ -49,7 +49,7 @@ describe('level 2', () => {
   it('cannot be finished by letting his momentum carry him: the far end of the gap stops him and he drops beside it', () => {
     const sim = createSim({ level: 2 });
     const { overTheGap, restartedAtTick } = play(sim, { commands: [WALK_RIGHT_AT_0, { atTick: TICK_PAST_THE_EDGE, command: { type: 'player/walk', direction: 0 } }], ticks: 400 });
-    expect(Math.max(...overTheGap.map((feet) => feet.x))).toBeCloseTo(GAP.to - PLAYER.width / 2, 6);
+    expect(Math.max(...overTheGap.map((feet) => feet.x))).toBeCloseTo(GAP.to - STICK_MAN_WIDTH / 2, 6);
     expect(restartedAtTick).not.toBeNull();
     expect(flagOf(sim)!.reached).toBe(false);
   });

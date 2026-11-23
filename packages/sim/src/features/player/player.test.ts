@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { levelById, levels } from '../../content/levels';
-import { STICK_MAN_HEIGHT } from '../../content/tuning';
+import { STICK_MAN_HEIGHT, STICK_MAN_WIDTH } from '../../content/tuning';
 import type { Command } from '../../core/commands';
 import { createSim, restoreSim } from '../../core/create';
 import type { SimHandle } from '../../core/sim';
@@ -196,24 +196,24 @@ describe('dropping past the end of a floor line', () => {
     }
     expect(besideTheEnd.length).toBeGreaterThan(3);
     // Drifting alone would have left the end of the line inside his body: the end put him where he is.
-    expect(stickManOf(sim).feet.x).toBeCloseTo(end - PLAYER.width / 2, 9);
+    expect(stickManOf(sim).feet.x).toBeCloseTo(end - STICK_MAN_WIDTH / 2, 9);
     expect(stickManOf(sim).horizontalSpeed).toBe(drift);
-    for (let tick = 1; tick < besideTheEnd.length; tick += 1) expect(Math.abs(besideTheEnd[tick]! - besideTheEnd[tick - 1]!)).toBeLessThan(0.06);
+    for (let tick = 1; tick < besideTheEnd.length; tick += 1) expect(Math.abs(besideTheEnd[tick]! - besideTheEnd[tick - 1]!)).toBeLessThan(STICK_MAN_WIDTH / 4);
   });
 
   it('is stopped by the end of a line he drifts into, and goes under it once his head has dropped below it', () => {
     const sim = createSim({ level: 2 });
     const farEnd = levelById(2).floor[1]!.from.x;
     sim.step([WALK_RIGHT]);
-    while (stickManOf(sim).feet.y <= 0 || stickManOf(sim).feet.x < farEnd - PLAYER.width / 2 - 1e-9) sim.step();
+    while (stickManOf(sim).feet.y <= 0 || stickManOf(sim).feet.x < farEnd - STICK_MAN_WIDTH / 2 - 1e-9) sim.step();
     expect(stickManOf(sim).feet.y).toBeLessThan(STICK_MAN_HEIGHT);
-    expect(stickManOf(sim)).toMatchObject({ feet: { x: farEnd - PLAYER.width / 2 }, horizontalSpeed: 0 });
+    expect(stickManOf(sim)).toMatchObject({ feet: { x: farEnd - STICK_MAN_WIDTH / 2 }, horizontalSpeed: 0 });
     while (stickManOf(sim).feet.y < STICK_MAN_HEIGHT) {
-      expect(stickManOf(sim).feet.x).toBe(farEnd - PLAYER.width / 2);
+      expect(stickManOf(sim).feet.x).toBe(farEnd - STICK_MAN_WIDTH / 2);
       sim.step();
     }
     stepFor(sim, 10);
-    expect(stickManOf(sim).feet.x).toBeGreaterThan(farEnd - PLAYER.width / 2);
+    expect(stickManOf(sim).feet.x).toBeGreaterThan(farEnd - STICK_MAN_WIDTH / 2);
   });
 
   it('is not pushed while he stands, walks or jumps over the line', () => {
@@ -224,7 +224,7 @@ describe('dropping past the end of a floor line', () => {
     sim.step([JUMP]);
     stepFor(sim, 3);
     expect(stickManOf(sim).feet.x).toBeGreaterThan(end);
-    expect(stickManOf(sim).feet.x).toBeLessThan(end + PLAYER.width / 2);
+    expect(stickManOf(sim).feet.x).toBeLessThan(end + STICK_MAN_WIDTH / 2);
     expect(stickManOf(sim).horizontalSpeed).toBe(-PLAYER.walkSpeed);
   });
 });
@@ -286,7 +286,7 @@ function commandsOfPattern(pattern: number, tick: number): Command[] {
 /** His body as the tuning describes it, worked out here again so the test does not lean on the code it checks. */
 function halfWidthOfHisBody(aboveFeet: number): number {
   if (aboveFeet <= 0 || aboveFeet >= STICK_MAN_HEIGHT) return 0;
-  return (PLAYER.width / 2) * Math.min(1, aboveFeet / PLAYER.fullWidthAbove);
+  return (STICK_MAN_WIDTH / 2) * Math.min(1, aboveFeet / PLAYER.fullWidthAbove);
 }
 
 /** Steps `ticks` times, with `commands` on the first tick only. */

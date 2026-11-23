@@ -1,5 +1,5 @@
 import type { FloorSegment } from '../../content/levels/types';
-import { STICK_MAN_HEIGHT } from '../../content/tuning';
+import { STICK_MAN_HEIGHT, STICK_MAN_WIDTH } from '../../content/tuning';
 import { PLAYER } from './defs';
 
 /** How high the floor is at `x`, or undefined over a gap or past the floor's ends. */
@@ -21,7 +21,7 @@ export function lowestFloorHeight(floor: readonly FloorSegment[]): number {
  */
 export function bodyReachAt(aboveFeet: number): number {
   if (aboveFeet <= 0 || aboveFeet >= STICK_MAN_HEIGHT) return 0;
-  return (PLAYER.width / 2) * Math.min(1, aboveFeet / PLAYER.fullWidthAbove);
+  return (STICK_MAN_WIDTH / 2) * Math.min(1, aboveFeet / PLAYER.fullWidthAbove);
 }
 
 /**

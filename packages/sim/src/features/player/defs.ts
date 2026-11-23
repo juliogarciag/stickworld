@@ -21,8 +21,9 @@ export const PLAYER = {
   jumpAskedLateWindow: 0.1,
   /** How far below the level's lowest floor he falls before the level starts again. */
   fallBelowFloor: 6,
-  /** How wide he is at his widest, head and arms: what the end of a floor line pushes aside as he drops past it. */
-  width: 0.5,
-  /** How far above his feet he is that wide. Below it he narrows to a point at his feet, which is all that stands on the line. */
+  /**
+   * How far above his feet he is as wide as `STICK_MAN_WIDTH`, for the end of a floor line he drops past. Below it he
+   * narrows to a point at his feet, which is all that stands on the line, so the end pushes him aside a little at a time.
+   */
   fullWidthAbove: 0.5,
 } as const;

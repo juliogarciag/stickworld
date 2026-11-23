@@ -54,6 +54,6 @@ export class LevelScene extends Phaser.Scene {
     this.paper.cover(this.cameras.main);
     this.floor.show(floorStrokes(levelOf(sim)));
     this.flag.show(flag ? flagStrokes(flag) : []);
-    this.stickMan.show(stickManStrokes(this.poseFor(stickMan, seconds)));
+    this.stickMan.show(stickManStrokes(this.poseFor(stickMan, seconds, levelOf(sim).floor)));
   }
 }
