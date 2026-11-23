@@ -16,9 +16,9 @@ PASS  J with the airplane puts it on the floor in front of him and empties the s
 PASS  the airplane is drawn on the floor, and nothing over his head  (412 pencil pixels where it rests)
 PASS  next to it, K would lift it  (interaction: lift)
 PASS  K lifts it over his head  ({"at":{"x":3.283333333333332,"y":-1.82},"facing":1,"length":1.4,"height":0.34,"state":"carried","verticalSpeed":0,"onAnEdge":false})
-PASS  the airplane is drawn over his head, and no longer on the floor  (366 pencil pixels over his head)
+PASS  the airplane is drawn over his head, and no longer on the floor  (328 pencil pixels over his head)
 PASS  a jump with it keeps it over his head
-PASS  while he walks the airplane is drawn over his head  (367 pencil pixels over his head mid-walk)
+PASS  while he walks the airplane is drawn over his head  (373 pencil pixels over his head mid-walk)
 PASS  he carries it as he walks: on every frame the sim has it over his feet  (151 frames, 5.5 m, never more than 0 m apart)
 PASS  while he carries it, K would put it down  (interaction: putDown)
 PASS  K near the edge puts it down in front of him, sitting on the edge with its nose out over the gap  (middle at 9.68, nose at 10.38, edge at 10)

@@ -22,17 +22,3 @@ export const AIRPLANE = {
   /** How fast it falls faster, in metres per second squared. Paper: much slower than he does. */
   gravity: 7,
 } as const;
-
-/**
- * How he gets on an airplane that sits on an edge. Boarding itself is issue #5; the key scheme is decided here (ADR 0003).
- */
-export const BOARDING = {
-  /**
-   * false: interacting with an airplane that sits on an edge boards it, and anywhere else lifts it. One press, and the
-   * airplane cannot be lifted off an edge.
-   * true: a short press always lifts it and a held press boards it. Try this one by changing it here: the keys follow.
-   */
-  needsAHeldPress: false,
-  /** How long a press has to last to count as held, in seconds. Only read when a held press is needed. */
-  heldPressSeconds: 0.35,
-} as const;

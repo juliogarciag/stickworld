@@ -18,22 +18,15 @@ export const worldFeature: Feature = {
 
   handleCommand(sim, command) {
     if (command.type !== 'world/interact') return;
-    const { held } = command as { held?: unknown };
-    if (held !== undefined && typeof held !== 'boolean') return;
-    interactionNow(sim, { held: held === true })?.perform();
+    interactionNow(sim)?.perform();
   },
 };
 
-/** How the player pressed: a short press, or one he held down. */
-export interface Press {
-  readonly held: boolean;
-}
-
 /** What `'world/interact'` would do right now, with the function that does it, or undefined when there is nothing to interact with. */
-export function interactionNow(sim: Sim, press: Press): Interaction | undefined {
+export function interactionNow(sim: Sim): Interaction | undefined {
   if (hasFinishedLevel(sim)) return undefined;
   for (const answer of ANSWERS) {
-    const interaction = answer(sim, press);
+    const interaction = answer(sim);
     if (interaction) return interaction;
   }
   return undefined;

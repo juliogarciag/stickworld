@@ -6,7 +6,7 @@ PASS  the paper folds into an airplane  ([{"slot":1,"itemDefId":201,"selected":t
 -- put down too far past the edge --
 PASS  it falls past the edge when he puts it down that close to it  ({"at":{"x":10.710000000000061,"y":0.315},"facing":1,"length":1.4,"height":0.34,"state":"falling","verticalSpeed":2.1,"onAnEdge":false})
 PASS  put down too far past the edge: the airplane is lost, and he holds nothing
-PASS  put down too far past the edge: a new letter falls from the sky to where the old one was  (seen at 8.5 m, then 4.2 m, then on the floor at x 3.6; 339 pencil pixels on its way down)
+PASS  put down too far past the edge: a new letter falls from the sky to where the old one was  (seen at 8.5 m, then 4.2 m, then on the floor at x 3.6; 307 pencil pixels on its way down)
 PASS  put down too far past the edge: reading it gives a new paper  ([{"slot":1,"itemDefId":200,"selected":true}])
 PASS  the paper folds into an airplane  ([{"slot":1,"itemDefId":201,"selected":true}])
 

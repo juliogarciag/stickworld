@@ -1,4 +1,4 @@
-import { BOARDING, type Command } from '@stickworld/sim';
+import type { Command } from '@stickworld/sim';
 import type Phaser from 'phaser';
 
 /**
@@ -15,38 +15,7 @@ export function sendActionCommands(scene: Phaser.Scene, send: (command: Command)
   keyboard.on(`keydown-${ACTION_KEY_NAMES.useItem}`, (event: KeyboardEvent) => {
     if (!event.repeat) send({ type: 'item/use' });
   });
-  if (BOARDING.needsAHeldPress) sendShortAndHeldPresses(scene, send);
-  else {
-    keyboard.on(`keydown-${ACTION_KEY_NAMES.interact}`, (event: KeyboardEvent) => {
-      if (!event.repeat) send({ type: 'world/interact' });
-    });
-  }
-}
-
-// ---- Helpers ----
-
-/**
- * The interact key when a held press means something else than a short one: a short press is sent when the key comes
- * up, since only then is it known to be short, and a held one as soon as it has lasted long enough.
- */
-function sendShortAndHeldPresses(scene: Phaser.Scene, send: (command: Command) => void): void {
-  let pressWaiting: Phaser.Time.TimerEvent | undefined;
-  scene.input.keyboard?.on(`keydown-${ACTION_KEY_NAMES.interact}`, (event: KeyboardEvent) => {
-    if (event.repeat || pressWaiting) return;
-    pressWaiting = scene.time.delayedCall(BOARDING.heldPressSeconds * 1000, () => {
-      pressWaiting = undefined;
-      send({ type: 'world/interact', held: true });
-    });
-  });
-  scene.input.keyboard?.on(`keyup-${ACTION_KEY_NAMES.interact}`, () => {
-    if (!pressWaiting) return;
-    pressWaiting.remove();
-    pressWaiting = undefined;
-    send({ type: 'world/interact' });
-  });
-  // A window that loses focus never hears the key come up: the press is dropped, not held for him.
-  scene.game.events.on('blur', () => {
-    pressWaiting?.remove();
-    pressWaiting = undefined;
+  keyboard.on(`keydown-${ACTION_KEY_NAMES.interact}`, (event: KeyboardEvent) => {
+    if (!event.repeat) send({ type: 'world/interact' });
   });
 }

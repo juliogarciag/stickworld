@@ -102,7 +102,7 @@
     {
       "name": "the airplane is drawn over his head, and no longer on the floor",
       "pass": true,
-      "details": "366 pencil pixels over his head"
+      "details": "328 pencil pixels over his head"
     },
     {
       "name": "a jump with it keeps it over his head",
@@ -111,7 +111,7 @@
     {
       "name": "while he walks the airplane is drawn over his head",
       "pass": true,
-      "details": "367 pencil pixels over his head mid-walk"
+      "details": "373 pencil pixels over his head mid-walk"
     },
     {
       "name": "he carries it as he walks: on every frame the sim has it over his feet",

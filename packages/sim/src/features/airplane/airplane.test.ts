@@ -12,7 +12,7 @@ import { letterOf } from '../letter/view';
 import { PLAYER } from '../player/defs';
 import { stickManOf } from '../player/view';
 import { interactionOf } from '../world/view';
-import { AIRPLANE, BOARDING } from './defs';
+import { AIRPLANE } from './defs';
 import { __testing__, hasAirplane } from './index';
 import { airplaneOf } from './view';
 
@@ -150,7 +150,6 @@ describe('the edge', () => {
   });
 
   it('is boarded, not lifted, where it sits on an edge: the press is taken and, until boarding exists, does nothing', () => {
-    expect(BOARDING.needsAHeldPress).toBe(false);
     const sim = carryingTheAirplane();
     walkTo(sim, EDGE - AIRPLANE.putDownAhead - 0.2);
     sim.step([INTERACT]);

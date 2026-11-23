@@ -99,7 +99,7 @@ Dependency versions live in one place: the `catalog` in `pnpm-workspace.yaml`. P
 - J is `'item/use'` and K is `'world/interact'`, always. What a press does depends on things several features own, so each command belongs to a small feature named after it (`features/item`, `features/world`) that keeps an ordered list of answers, `ANSWERS`, and performs the first one that applies (ADR 0003). One press does one thing.
 - A feature with a use for either key exports an answer, a function of the sim that returns `{ means, perform }` or `undefined` (`airplaneInteraction`, `letterInteraction`, `recipeListUse`, `letterBeingRead`, which answers both keys), and adds it to the list: never a second handler for the command. The order of the list is the priority.
 - `itemUseOf(sim)` and `interactionOf(sim)` say what a press would do right now; the HUD shows it beside the key (`client/src/hud/prompts.ts`, which needs words for every new meaning).
-- K next to the airplane lifts it, except where it sits on an edge with its nose out over a gap (floor further on): there K boards it (boarding is issue #5; until then the press is taken and does nothing). The other scheme, a held press to board, is kept behind `BOARDING.needsAHeldPress` in `features/airplane/defs.ts` until issue #5 settles it.
+- K next to the airplane lifts it, except where it sits on an edge with its nose out over a gap (floor further on): there K boards it (boarding is issue #5; until then the press is taken and does nothing). A held press to board was tried and rejected (ADR 0003).
 
 **Commands**
 

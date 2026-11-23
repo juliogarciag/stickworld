@@ -7,7 +7,7 @@ import { holdsItem, replaceSelectedItem, selectedItemOf } from '../inventory/hel
 import { PLAYER } from '../player/defs';
 import { floorHeightAt, lowestFloorHeight } from '../player/floor';
 import { playerSlice } from '../player/state';
-import { AIRPLANE, BOARDING } from './defs';
+import { AIRPLANE } from './defs';
 import { airplaneSlice, type AirplaneState } from './state';
 
 /**
@@ -76,18 +76,17 @@ export function airplaneItemUse(sim: Sim) {
 }
 
 /**
- * What interacting does with the airplane, for `features/world`: put it down while he carries it, lift it when he
- * stands next to it, or board it. Which of lifting and boarding a press means is `BOARDING.needsAHeldPress`.
+ * What interacting does with the airplane, for `features/world`: put it down while he carries it, board it where it
+ * sits on an edge, or lift it anywhere else he stands next to it (ADR 0003).
  */
-export function airplaneInteraction(sim: Sim, { held }: { readonly held: boolean }) {
+export function airplaneInteraction(sim: Sim) {
   const airplane = sim.stateOf(airplaneSlice);
   const player = sim.stateOf(playerSlice);
   if (!airplane.inWorld || airplane.falling || !player.onFloor) return undefined;
   if (airplane.carried) return { means: 'putDown' as const, perform: () => putDownInFrontOfHim(sim) };
   if (Math.abs(player.x - airplane.x) > AIRPLANE.reach) return undefined;
-  const pressBoards = BOARDING.needsAHeldPress ? held : true;
   // Boarding is issue #5. Until then the press is taken and nothing happens: it must not lift the airplane instead.
-  if (sitsOnAnEdge(sim) && pressBoards) return { means: 'board' as const, perform: () => undefined };
+  if (sitsOnAnEdge(sim)) return { means: 'board' as const, perform: () => undefined };
   return {
     means: 'lift' as const,
     perform: () => {

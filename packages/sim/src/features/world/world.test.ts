@@ -60,23 +60,13 @@ describe("'world/interact' and 'item/use'", () => {
     expect(interactionOf(sim)).toBe('lift');
   });
 
-  it.each([{ held: 'yes' }, { held: 1 }, { held: null }, { held: {} }])("ignore an interact whose 'held' is %j", (fields) => {
-    const sim = new Sim({ features, start: { seed: 1, level: 3 } });
-    walkTo(sim, letterOf(sim)!.at.x);
-    const before = sim.snapshot().slices;
-    sim.step([{ type: 'world/interact', ...fields } as unknown as Command]);
-    expect(sim.snapshot().slices).toEqual(before);
-    sim.step([{ type: 'world/interact', held: false }]);
-    expect(letterOf(sim)!.beingRead).toBe(true);
-  });
-
   it.each(levels.map((level) => [level.id]))('change nothing on level %i when there is nothing to use or interact with', (level) => {
     const sim = new Sim({ features, start: { seed: 1, level } });
     walkTo(sim, stickManOf(sim).feet.x - 1);
     expect(interactionOf(sim)).toBeNull();
     expect(itemUseOf(sim)).toBeNull();
     const untouched = new Sim({ features, snapshot: sim.snapshot() });
-    sim.step([INTERACT, USE_ITEM, { type: 'world/interact', held: true }]);
+    sim.step([INTERACT, USE_ITEM]);
     untouched.step();
     expect(hashSnapshot(sim.snapshot())).toBe(hashSnapshot(untouched.snapshot()));
   });
