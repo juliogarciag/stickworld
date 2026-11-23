@@ -20,12 +20,14 @@ export function keysToCommands(): (now: { keys: KeysNow; sim: SimHandle }) => Co
   let lastWalkAsked: { direction: WalkDirection; sim: SimHandle; tick: number } | undefined;
   return ({ keys, sim }) => {
     const commands: Command[] = [];
-    const direction = walkDirectionHeld(keys);
-    const stillWaiting = lastWalkAsked !== undefined && lastWalkAsked.sim === sim && lastWalkAsked.tick === sim.tick;
-    const simWillBelieve = stillWaiting && lastWalkAsked ? lastWalkAsked.direction : stickManOf(sim).walkDirectionAsked;
-    if (direction !== simWillBelieve) {
-      commands.push({ type: 'player/walk', direction });
-      lastWalkAsked = { direction, sim, tick: sim.tick };
+    const directionHeld = walkDirectionHeld(keys);
+    // The last walk command may still be waiting for the sim's next tick. Until then the sim has not heard it,
+    // but it has been asked, and asking again would be a duplicate.
+    const lastWalkIsStillWaiting = lastWalkAsked !== undefined && lastWalkAsked.sim === sim && lastWalkAsked.tick === sim.tick;
+    const directionAlreadyAsked = lastWalkIsStillWaiting && lastWalkAsked ? lastWalkAsked.direction : stickManOf(sim).walkDirectionAsked;
+    if (directionHeld !== directionAlreadyAsked) {
+      commands.push({ type: 'player/walk', direction: directionHeld });
+      lastWalkAsked = { direction: directionHeld, sim, tick: sim.tick };
     }
     if (keys.jumpPressed) commands.push({ type: 'player/jump' });
     return commands;
