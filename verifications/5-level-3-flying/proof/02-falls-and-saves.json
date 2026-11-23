@@ -1,6 +1,6 @@
 {
   "sinking": {
-    "tick": 343,
+    "tick": 345,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -59,7 +59,7 @@
     "itemUse": null
   },
   "afterTheFall": {
-    "tick": 381,
+    "tick": 382,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -104,7 +104,7 @@
     "itemUse": null
   },
   "newLetter": {
-    "tick": 418,
+    "tick": 419,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -157,7 +157,7 @@
     "itemUse": null
   },
   "again": {
-    "tick": 816,
+    "tick": 818,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -216,7 +216,7 @@
     "itemUse": null
   },
   "stalled": {
-    "tick": 886,
+    "tick": 885,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -230,8 +230,8 @@
     "farEnd": 27,
     "stickMan": {
       "feet": {
-        "x": 14.596976048477115,
-        "y": -3.2963291514306503
+        "x": 14.25338615438926,
+        "y": -3.2971500960238624
       },
       "facing": 1,
       "action": "seated",
@@ -244,15 +244,15 @@
     },
     "airplane": {
       "at": {
-        "x": 14.596976048477115,
-        "y": -3.2963291514306503
+        "x": 14.25338615438926,
+        "y": -3.2971500960238624
       },
       "facing": 1,
       "length": 1.4,
       "height": 0.34,
       "state": "falling",
-      "verticalSpeed": -2.0240615546696277,
-      "speed": 2.1726805990558837,
+      "verticalSpeed": -2.0404310184847305,
+      "speed": 2.190252009552748,
       "pitch": 0,
       "stallSpeed": 3,
       "onAnEdge": false
@@ -275,7 +275,7 @@
     "itemUse": null
   },
   "falling": {
-    "tick": 921,
+    "tick": 919,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -289,8 +289,8 @@
     "farEnd": 27,
     "stickMan": {
       "feet": {
-        "x": 15.86437306459305,
-        "y": -3.286059502765705
+        "x": 15.494528959802489,
+        "y": -3.3295054509429822
       },
       "facing": 1,
       "action": "seated",
@@ -303,15 +303,15 @@
     },
     "airplane": {
       "at": {
-        "x": 15.86437306459305,
-        "y": -3.286059502765705
+        "x": 15.494528959802489,
+        "y": -3.3295054509429822
       },
       "facing": 1,
       "length": 1.4,
       "height": 0.34,
       "state": "falling",
-      "verticalSpeed": 2.0592717786637063,
-      "speed": 2.1726805990558837,
+      "verticalSpeed": 1.926235648181937,
+      "speed": 2.190252009552748,
       "pitch": 0,
       "stallSpeed": 3,
       "onAnEdge": false
@@ -334,7 +334,7 @@
     "itemUse": null
   },
   "afterTheStall": {
-    "tick": 987,
+    "tick": 986,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -379,7 +379,7 @@
     "itemUse": null
   },
   "beforeTheJump": {
-    "tick": 1515,
+    "tick": 1510,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -393,8 +393,8 @@
     "farEnd": 27,
     "stickMan": {
       "feet": {
-        "x": 18.342285340473584,
-        "y": 0.22609331790582432
+        "x": 18.298296014415268,
+        "y": 0.11112606652523957
       },
       "facing": 1,
       "action": "seated",
@@ -407,15 +407,15 @@
     },
     "airplane": {
       "at": {
-        "x": 18.342285340473584,
-        "y": 0.22609331790582432
+        "x": 18.298296014415268,
+        "y": 0.11112606652523957
       },
       "facing": 1,
       "length": 1.4,
       "height": 0.34,
       "state": "flying",
       "verticalSpeed": 0,
-      "speed": 6.437104459055018,
+      "speed": 6.357724732263993,
       "pitch": -0.36,
       "stallSpeed": 3,
       "onAnEdge": false
@@ -438,7 +438,7 @@
     "itemUse": null
   },
   "jumpedOut": {
-    "tick": 1521,
+    "tick": 1515,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -452,8 +452,8 @@
     "farEnd": 27,
     "stickMan": {
       "feet": {
-        "x": 18.690109156257623,
-        "y": -0.019286653329635667
+        "x": 18.54413225412767,
+        "y": -0.17264231917564152
       },
       "facing": 1,
       "action": "jumping",
@@ -466,15 +466,15 @@
     },
     "airplane": {
       "at": {
-        "x": 18.94781297765073,
-        "y": 0.4695712028429156
+        "x": 18.795487130847302,
+        "y": 0.31382577611689444
       },
       "facing": 1,
       "length": 1.4,
       "height": 0.34,
       "state": "falling",
-      "verticalSpeed": 2.7497597390502935,
-      "speed": 6.06555732089653,
+      "verticalSpeed": 2.713913325850063,
+      "speed": 5.970323150794329,
       "pitch": 0,
       "stallSpeed": 3,
       "onAnEdge": false
@@ -497,7 +497,7 @@
     "itemUse": null
   },
   "saved": {
-    "tick": 1557,
+    "tick": 1552,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -511,7 +511,7 @@
     "farEnd": 27,
     "stickMan": {
       "feet": {
-        "x": 19.533442489590925,
+        "x": 19.460798920794304,
         "y": 0
       },
       "facing": 1,
@@ -525,15 +525,15 @@
     },
     "airplane": {
       "at": {
-        "x": 22.58714737018865,
-        "y": 3.3794270462730913
+        "x": 22.477186407170507,
+        "y": 3.318377882613322
       },
       "facing": 1,
       "length": 1.4,
       "height": 0.34,
       "state": "falling",
-      "verticalSpeed": 6.949759739050283,
-      "speed": 6.06555732089653,
+      "verticalSpeed": 7.03057999251672,
+      "speed": 5.970323150794329,
       "pitch": 0,
       "stallSpeed": 3,
       "onAnEdge": false
@@ -601,12 +601,12 @@
     {
       "name": "held up all the way, it climbs until it is too slow and stalls high over the gap",
       "pass": true,
-      "details": "stalled 3.30 m up at x 14.60, at 2.17 m/s sideways (stall speed 3)"
+      "details": "stalled 3.30 m up at x 14.25, at 2.19 m/s sideways (stall speed 3)"
     },
     {
       "name": "stalled it falls faster and faster with him in it, whatever is held",
       "pass": true,
-      "details": "-2.02 -> 2.06 m/s down"
+      "details": "-2.04 -> 1.93 m/s down"
     },
     {
       "name": "it falls short of the far side and the level starts again",
@@ -615,7 +615,7 @@
     {
       "name": "the airplane came in too low to land: at or under the height of the line just before the far edge",
       "pass": true,
-      "details": "-0.23 m above the line at x 18.34, sinking"
+      "details": "-0.11 m above the line at x 18.30, sinking"
     },
     {
       "name": "the jump key stands him up and jumps him out; the airplane falls on without him",
@@ -625,7 +625,7 @@
     {
       "name": "the jump saves him: he stands on the far side, and the level did not start again",
       "pass": true,
-      "details": "feet at x 19.53, the far side starts at 19"
+      "details": "feet at x 19.46, the far side starts at 19"
     },
     {
       "name": "no page errors",

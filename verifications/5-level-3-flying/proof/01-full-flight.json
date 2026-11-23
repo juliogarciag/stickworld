@@ -1,6 +1,6 @@
 {
   "ready": {
-    "tick": 259,
+    "tick": 260,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -59,7 +59,7 @@
     "itemUse": null
   },
   "boarded": {
-    "tick": 277,
+    "tick": 279,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -73,8 +73,8 @@
     "farEnd": 27,
     "stickMan": {
       "feet": {
-        "x": 10.294411306450376,
-        "y": -0.10173705389082886
+        "x": 10.413735082426777,
+        "y": -0.12842016764809672
       },
       "facing": 1,
       "action": "seated",
@@ -87,16 +87,16 @@
     },
     "airplane": {
       "at": {
-        "x": 10.294411306450376,
-        "y": -0.10173705389082886
+        "x": 10.413735082426777,
+        "y": -0.12842016764809672
       },
       "facing": 1,
       "length": 1.4,
       "height": 0.34,
       "state": "flying",
       "verticalSpeed": 0,
-      "speed": 7.336248868664337,
-      "pitch": 0.19166666666666665,
+      "speed": 7.295895798822282,
+      "pitch": 0.21999999999999997,
       "stallSpeed": 3,
       "onAnEdge": false
     },
@@ -118,7 +118,7 @@
     "itemUse": null
   },
   "climbing": {
-    "tick": 298,
+    "tick": 299,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -177,7 +177,7 @@
     "itemUse": null
   },
   "top": {
-    "tick": 339,
+    "tick": 340,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -236,7 +236,7 @@
     "itemUse": null
   },
   "overTheFarSide": {
-    "tick": 386,
+    "tick": 387,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -295,7 +295,7 @@
     "itemUse": null
   },
   "touchedDown": {
-    "tick": 409,
+    "tick": 410,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -354,7 +354,7 @@
     "itemUse": null
   },
   "landed": {
-    "tick": 432,
+    "tick": 433,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -413,7 +413,7 @@
     "itemUse": null
   },
   "atTheFlag": {
-    "tick": 555,
+    "tick": 558,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -472,7 +472,7 @@
     "itemUse": null
   },
   "later": {
-    "tick": 750,
+    "tick": 752,
     "dt": 0.016666666666666666,
     "level": 3,
     "start": {
@@ -548,7 +548,7 @@
     {
       "name": "K seats him in the airplane and launches it forward off the edge",
       "pass": true,
-      "details": "flying at 7.34 m/s from x 10.29"
+      "details": "flying at 7.30 m/s from x 10.41"
     },
     {
       "name": "seated, he is where the airplane is",
@@ -562,7 +562,7 @@
     {
       "name": "climbing costs speed: it is slower than it was launched",
       "pass": true,
-      "details": "7.34 -> 5.86 m/s"
+      "details": "7.30 -> 5.86 m/s"
     },
     {
       "name": "the walk key held while seated neither turned him nor moved him off the airplane",
@@ -618,7 +618,7 @@
     {
       "name": "no level follows: it is still level 3, finished, and he still cheers",
       "pass": true,
-      "details": "3.3 s later"
+      "details": "3.2 s later"
     },
     {
       "name": "no page errors",
