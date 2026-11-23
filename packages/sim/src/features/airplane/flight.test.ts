@@ -254,6 +254,22 @@ describe('a floor line', () => {
     expect(hasAirplane(sim)).toBe(false);
   });
 
+  it('is not jumped through from below either: under it a jump is dropped, he stays seated and falls with the airplane', () => {
+    const sim = readyToBoard();
+    sim.step([INTERACT]);
+    // A climb too short to cross: it passes under the far edge.
+    sim.step([STEER_UP]);
+    for (let tick = 1; tick < 600 && airplaneOf(sim)!.at.x < FAR_SIDE + 0.5; tick += 1) sim.step(tick === 14 ? [STEER_LEVEL] : []);
+    expect(airplaneOf(sim)!.at.y).toBeGreaterThan(0);
+    for (let tick = 0; tick < 10 * TICK_RATE && stickManOf(sim).action === 'seated'; tick += 1) {
+      sim.step([{ type: 'player/walk', direction: 1 }, JUMP]);
+      expect(stickManOf(sim).action).not.toBe('jumping');
+    }
+    expect(stickManOf(sim)).toMatchObject({ feet: level3.start });
+    expect(flagOf(sim)!.reached).toBe(false);
+    expect(hasAirplane(sim)).toBe(false);
+  });
+
   it('is slid off when it comes down too late: past the end of the paper it falls with him still in it, and the level starts again', () => {
     const sim = readyToBoard();
     sim.step([INTERACT]);

@@ -33,6 +33,9 @@ export const playerFeature: Feature = {
       // Seated he neither walks nor falls: what he sits in moves him. A jump stands him up in his seat, which is floor enough to take off from.
       // A jump that arrived on the tick he sat down was asked for before the player could see him seated: it is dropped, not a way out of the seat.
       if (player.seatedAtTick === sim.tick) player.ticksSinceJumpAsked = null;
+      // Under a floor line there is no room to stand up: he cannot jump up through it, so the jump is dropped too.
+      const floorOverHim = floorHeightAt(sim.levelDef.floor, player.x);
+      if (floorOverHim !== undefined && player.y > floorOverHim) player.ticksSinceJumpAsked = null;
       if (player.ticksSinceJumpAsked === null) return;
       player.seated = false;
       player.seatedAtTick = null;
