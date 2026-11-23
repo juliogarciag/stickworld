@@ -44,4 +44,9 @@ function sendShortAndHeldPresses(scene: Phaser.Scene, send: (command: Command) =
     pressWaiting = undefined;
     send({ type: 'world/interact' });
   });
+  // A window that loses focus never hears the key come up: the press is dropped, not held for him.
+  scene.game.events.on('blur', () => {
+    pressWaiting?.remove();
+    pressWaiting = undefined;
+  });
 }

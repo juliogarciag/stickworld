@@ -73,8 +73,8 @@ export function letterInteraction(sim: Sim) {
     means: 'read' as const,
     perform: () => {
       letter.beingRead = true;
-      const read = sim.stateOf(lettersReadSlice);
-      if (!read.includes(def.id)) read.push(def.id);
+      const lettersRead = sim.stateOf(lettersReadSlice);
+      if (!lettersRead.includes(def.id)) lettersRead.push(def.id);
       teachRecipe(sim, def.teachesRecipe);
       if (!hasWhatItIsFor(sim, def)) giveItem(sim, def.gives);
     },

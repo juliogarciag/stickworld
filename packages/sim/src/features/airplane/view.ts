@@ -18,7 +18,7 @@ export interface AirplaneView {
   readonly state: 'resting' | 'carried' | 'falling';
   /** Metres per second, positive when it falls. 0 resting and carried. */
   readonly verticalSpeed: number;
-  /** True while it rests with its nose out past the end of a floor line: where it is boarded from. */
+  /** True while it rests with its nose out over a gap, floor further on: where it is boarded from. */
   readonly onAnEdge: boolean;
 }
 

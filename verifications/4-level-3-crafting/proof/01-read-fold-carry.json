@@ -48,7 +48,7 @@
     {
       "name": "the text is written on the screen",
       "pass": true,
-      "details": "0 pencil pixels in the top middle before, 9737 while reading"
+      "details": "0 pencil pixels in the top middle before, 9789 while reading"
     },
     {
       "name": "reading taught the paper airplane, the only recipe he knows",
@@ -102,14 +102,19 @@
     {
       "name": "the airplane is drawn over his head, and no longer on the floor",
       "pass": true,
-      "details": "328 pencil pixels over his head"
+      "details": "366 pencil pixels over his head"
     },
     {
       "name": "a jump with it keeps it over his head",
       "pass": true
     },
     {
-      "name": "he carries it as he walks: on every frame it is over his feet",
+      "name": "while he walks the airplane is drawn over his head",
+      "pass": true,
+      "details": "367 pencil pixels over his head mid-walk"
+    },
+    {
+      "name": "he carries it as he walks: on every frame the sim has it over his feet",
       "pass": true,
       "details": "151 frames, 5.5 m, never more than 0 m apart"
     },

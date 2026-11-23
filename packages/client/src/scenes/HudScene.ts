@@ -22,8 +22,8 @@ export class HudScene extends Phaser.Scene {
   private itemSlots!: StrokeLayer;
   private heldUp!: StrokeLayer;
   private prompts!: StrokeLayer;
-  private readonly heldUpStrokes = keptWhileUnchanged<Stroke[]>();
-  private readonly promptsStrokes = keptWhileUnchanged<Stroke[]>();
+  private readonly strokesOfWhatIsHeldUp = keptWhileUnchanged<Stroke[]>();
+  private readonly strokesOfPrompts = keptWhileUnchanged<Stroke[]>();
 
   constructor(private readonly loop: GameLoop) {
     super({ key: HUD_SCENE, active: true });
@@ -46,14 +46,14 @@ export class HudScene extends Phaser.Scene {
     const recipeList = recipeListOf(sim);
     const reading = letter?.beingRead ? letter.text : null;
     this.heldUp.show(
-      this.heldUpStrokes(JSON.stringify([reading, recipeList, seen]), () => {
+      this.strokesOfWhatIsHeldUp(JSON.stringify([reading, recipeList, seen]), () => {
         if (reading !== null) return letterSheetStrokes(reading, seen);
         return recipeList.open ? recipeListStrokes(recipeList, seen) : [];
       }),
     );
 
     const prompts = promptsFor({ itemUse: itemUseOf(sim), useItemKey: ACTION_KEY_NAMES.useItem, interaction: interactionOf(sim), interactKey: ACTION_KEY_NAMES.interact });
-    this.prompts.show(this.promptsStrokes(JSON.stringify([prompts, seen]), () => promptStrokes(prompts, seen)));
+    this.prompts.show(this.strokesOfPrompts(JSON.stringify([prompts, seen]), () => promptStrokes(prompts, seen)));
   }
 }
 

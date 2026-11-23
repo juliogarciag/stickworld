@@ -21,7 +21,7 @@ If every feature handled the command itself, one press could do two things (lift
 
 K next to the airplane has to mean both "lift it" and, from issue #5 on, "board it". Two schemes were built and played:
 
-1. **One press, by where the airplane is (chosen).** An airplane that sits on an edge with its nose out is boarded; anywhere else it is lifted. Every press acts the moment the key goes down, and the HUD can say which it will be. The cost: an airplane cannot be lifted back off an edge.
+1. **One press, by where the airplane is (chosen).** An airplane that sits on an edge with its nose out over a gap is boarded; anywhere else, the end of the paper included, it is lifted. Every press acts the moment the key goes down, and the HUD can say which it will be. The cost: an airplane cannot be lifted back off an edge.
 2. **A held press boards (kept behind `BOARDING.needsAHeldPress`).** A short press always lifts, a press held for `BOARDING.heldPressSeconds` boards. Nothing is ever stuck on an edge. The cost: a short press is only known to be short when the key comes up, so every lift and put-down waits for the release, and the HUD has to explain two presses of one key.
 
 Both are in the code so the choice can be felt: `BOARDING.needsAHeldPress` in `features/airplane/defs.ts` switches the sim's rule and the client's key handling together. Boarding itself does nothing yet; the press is taken so that it does not lift instead. Issue #5 should delete the scheme that lost.

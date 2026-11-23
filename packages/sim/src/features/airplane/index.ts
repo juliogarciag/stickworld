@@ -34,9 +34,7 @@ export const airplaneFeature: Feature = {
         letFall(airplane);
         player.carrying = false;
       } else {
-        airplane.x = player.x;
-        airplane.y = player.y - STICK_MAN_HEIGHT - AIRPLANE.carriedAbove;
-        airplane.facing = player.facing;
+        carryOverHisHead(sim);
       }
     }
     if (!airplane.falling) return;
@@ -51,11 +49,17 @@ export function hasAirplane(sim: Sim): boolean {
   return holdsItem(sim, AIRPLANE_ITEM_ID) || sim.stateOf(airplaneSlice).inWorld;
 }
 
-/** True while the airplane rests on the floor with its nose out past the end of the line: where it is boarded from. */
+/**
+ * True while the airplane rests on the floor with its nose out over a gap: where it is boarded from. An airplane whose
+ * nose sticks out past the end of the paper, with no floor further on to fly to, does not count: it is only lifted.
+ */
 export function sitsOnAnEdge(sim: Sim): boolean {
   const airplane = sim.stateOf(airplaneSlice);
   if (!airplane.inWorld || airplane.carried || airplane.falling) return false;
-  return floorHeightAt(sim.levelDef.floor, airplane.x + (airplane.facing * AIRPLANE.length) / 2) === undefined;
+  const { floor } = sim.levelDef;
+  const nose = airplane.x + (airplane.facing * AIRPLANE.length) / 2;
+  const floorFurtherOn = floor.some(({ from, to }) => (airplane.facing === 1 ? from.x > nose : to.x < nose));
+  return floorHeightAt(floor, nose) === undefined && floorFurtherOn;
 }
 
 /** What using the held item does when it is the airplane, for `features/item`: it is put on the floor in front of him. */
@@ -102,7 +106,7 @@ function putDownInFrontOfHim(sim: Sim): void {
   const player = sim.stateOf(playerSlice);
   const { floor } = sim.levelDef;
   const middle = player.x + player.facing * AIRPLANE.putDownAhead;
-  const resting = whereItRests(floor, middle);
+  const resting = whereItRests(floor, { middle, facing: player.facing });
   player.carrying = false;
   airplane.inWorld = true;
   airplane.carried = false;
@@ -128,14 +132,16 @@ function letFall(airplane: AirplaneState): void {
 }
 
 /**
- * Where the middle of an airplane put down at `middle` comes to rest, or undefined when it falls. It rests where it is
- * put when there is floor under its middle. A little past the end of a line it is pulled back to sit on the edge.
+ * Where the middle of an airplane put down at `middle`, nose towards `facing`, comes to rest, or undefined when it
+ * falls. It rests where it is put when there is floor under its middle. A little past the end of the line he put it
+ * down from, it is pulled back to sit on that edge; it is never pulled on to the far side of a gap.
  */
-function whereItRests(floor: readonly FloorSegment[], middle: number): number | undefined {
+function whereItRests(floor: readonly FloorSegment[], { middle, facing }: { middle: number; facing: 1 | -1 }): number | undefined {
   if (floorHeightAt(floor, middle) !== undefined) return middle;
   for (const { from, to } of floor) {
-    if (middle > to.x && middle - to.x <= AIRPLANE.savedPastTheEdge) return to.x - AIRPLANE.sitsBackFromTheEdge;
-    if (middle < from.x && from.x - middle <= AIRPLANE.savedPastTheEdge) return from.x + AIRPLANE.sitsBackFromTheEdge;
+    const end = facing === 1 ? to.x : from.x;
+    const past = (middle - end) * facing;
+    if (past > 0 && past <= AIRPLANE.savedPastTheEdge) return end - facing * AIRPLANE.sitsBackFromTheEdge;
   }
   return undefined;
 }

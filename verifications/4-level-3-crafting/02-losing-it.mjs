@@ -51,17 +51,33 @@ try {
     },
     {
       name: 'carried off the edge',
-      shot: '10-carried-off-the-edge.png',
       lose: async () => {
         await tap(page, 'j');
         await tap(page, 'k');
         await page.keyboard.down('ArrowRight');
-        await waitInGame(page, () => window.__game.airplane()?.state === 'falling');
+        await waitInGame(page, () => window.__game.airplane()?.state === 'falling' && window.__game.stickMan().feet.y > 0.6);
         const falling = await seen(page);
+        await screenshot(page, '10-carried-off-the-edge.png');
         await page.keyboard.up('ArrowRight');
         results.push(check('it falls out of his hands when he walks off the edge with it', falling.airplane.at.x > edge && !falling.stickMan.carrying && falling.stickMan.action === 'jumping', `airplane at ${falling.airplane.at.x.toFixed(2)}, edge at ${edge}`));
         await waitInGame(page, (start) => window.__game.stickMan().feet.x === start.x && window.__game.stickMan().feet.y === start.y, level.start);
         results.push(check('he dies, and the level starts again', true));
+      },
+    },
+    {
+      name: 'carried into the gap by a jump from the edge',
+      lose: async () => {
+        await tap(page, 'j');
+        await tap(page, 'k');
+        await page.keyboard.down('ArrowRight');
+        await waitInGame(page, (x) => window.__game.stickMan().feet.x > x, edge - 0.15);
+        await page.keyboard.press('ArrowUp');
+        await waitInGame(page, () => window.__game.airplane()?.state === 'falling');
+        const jumped = await seen(page);
+        await waitInGame(page, (start) => window.__game.stickMan().feet.x === start.x && window.__game.stickMan().feet.y === start.y, level.start);
+        await page.keyboard.up('ArrowRight');
+        const after = await seen(page);
+        results.push(check('a jump from the edge with it does not cross the gap: he falls in, it falls out of his hands, and the level starts again', jumped.stickMan.feet.x > edge && jumped.stickMan.feet.x < level.floor[1].from.x && after.flag.reached === false, `let go at x ${jumped.stickMan.feet.x.toFixed(2)}, gap from ${edge} to ${level.floor[1].from.x}`));
       },
     },
     {

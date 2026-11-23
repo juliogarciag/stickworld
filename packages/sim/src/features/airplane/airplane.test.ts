@@ -123,13 +123,30 @@ describe('the edge', () => {
   it('rests anywhere with floor under its middle, and nowhere further past an end than it is saved from', () => {
     const { whereItRests } = __testing__;
     const { floor } = level3;
-    expect(whereItRests(floor, 5)).toBe(5);
-    expect(whereItRests(floor, EDGE)).toBe(EDGE);
-    expect(whereItRests(floor, EDGE + AIRPLANE.savedPastTheEdge)).toBe(EDGE - AIRPLANE.sitsBackFromTheEdge);
-    expect(whereItRests(floor, EDGE + AIRPLANE.savedPastTheEdge + 0.01)).toBeUndefined();
-    expect(whereItRests(floor, -AIRPLANE.savedPastTheEdge)).toBe(AIRPLANE.sitsBackFromTheEdge);
-    expect(whereItRests(floor, -AIRPLANE.savedPastTheEdge - 0.01)).toBeUndefined();
-    expect(whereItRests(floor, FAR_SIDE - 0.1)).toBe(FAR_SIDE + AIRPLANE.sitsBackFromTheEdge);
+    const right = (middle: number) => whereItRests(floor, { middle, facing: 1 });
+    const left = (middle: number) => whereItRests(floor, { middle, facing: -1 });
+    expect(right(5)).toBe(5);
+    expect(right(EDGE)).toBe(EDGE);
+    expect(right(EDGE + AIRPLANE.savedPastTheEdge)).toBe(EDGE - AIRPLANE.sitsBackFromTheEdge);
+    expect(right(EDGE + AIRPLANE.savedPastTheEdge + 0.01)).toBeUndefined();
+    expect(left(-AIRPLANE.savedPastTheEdge)).toBe(AIRPLANE.sitsBackFromTheEdge);
+    expect(left(-AIRPLANE.savedPastTheEdge - 0.01)).toBeUndefined();
+    expect(left(FAR_SIDE - 0.1)).toBe(FAR_SIDE + AIRPLANE.sitsBackFromTheEdge);
+    // Never on to the far side of a gap: put down nose first just short of it, it falls.
+    expect(right(FAR_SIDE - 0.1)).toBeUndefined();
+    expect(left(EDGE + 0.1)).toBeUndefined();
+  });
+
+  it('is lifted, not boarded, where its nose sticks out past the end of the paper: there is nowhere to fly to', () => {
+    const sim = holdingTheAirplane();
+    walkTo(sim, AIRPLANE.putDownAhead + 0.2);
+    sim.step([USE_ITEM]);
+    const airplane = airplaneOf(sim)!;
+    expect(airplane).toMatchObject({ state: 'resting', facing: -1, onAnEdge: false });
+    expect(airplane.at.x - airplane.length / 2).toBeLessThan(0);
+    expect(interactionOf(sim)).toBe('lift');
+    sim.step([INTERACT]);
+    expect(airplaneOf(sim)!.state).toBe('carried');
   });
 
   it('is boarded, not lifted, where it sits on an edge: the press is taken and, until boarding exists, does nothing', () => {

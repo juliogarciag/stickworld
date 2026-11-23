@@ -5,7 +5,7 @@ PASS  the letter is drawn on the floor  (205 pencil pixels where it lies)
 PASS  before the letter is read, J with the paper opens an empty recipe list  ({"open":true,"recipes":[]})
 PASS  next to the letter, K would read it  (interaction: read)
 PASS  K shows the letter: the sim says he reads it, and its text is its def's  (A sheet of paper can fly. Hold yours and fold it into an airplane. Set it down, lift it over your head and carry it to the edge.)
-PASS  the text is written on the screen  (0 pencil pixels in the top middle before, 9737 while reading)
+PASS  the text is written on the screen  (0 pencil pixels in the top middle before, 9789 while reading)
 PASS  reading taught the paper airplane, the only recipe he knows  ([{"defId":400,"name":"paper airplane"}])
 PASS  K again puts the letter away: it is gone from the level and from the screen
 PASS  with the paper selected, J would open the recipes  (item use: openRecipes)
@@ -16,9 +16,10 @@ PASS  J with the airplane puts it on the floor in front of him and empties the s
 PASS  the airplane is drawn on the floor, and nothing over his head  (412 pencil pixels where it rests)
 PASS  next to it, K would lift it  (interaction: lift)
 PASS  K lifts it over his head  ({"at":{"x":3.283333333333332,"y":-1.82},"facing":1,"length":1.4,"height":0.34,"state":"carried","verticalSpeed":0,"onAnEdge":false})
-PASS  the airplane is drawn over his head, and no longer on the floor  (328 pencil pixels over his head)
+PASS  the airplane is drawn over his head, and no longer on the floor  (366 pencil pixels over his head)
 PASS  a jump with it keeps it over his head
-PASS  he carries it as he walks: on every frame it is over his feet  (151 frames, 5.5 m, never more than 0 m apart)
+PASS  while he walks the airplane is drawn over his head  (367 pencil pixels over his head mid-walk)
+PASS  he carries it as he walks: on every frame the sim has it over his feet  (151 frames, 5.5 m, never more than 0 m apart)
 PASS  while he carries it, K would put it down  (interaction: putDown)
 PASS  K near the edge puts it down in front of him, sitting on the edge with its nose out over the gap  (middle at 9.68, nose at 10.38, edge at 10)
 PASS  there, K would board it (boarding itself is the next ticket), and pressing it changes nothing yet
@@ -26,4 +27,4 @@ PASS  it stays on the edge and no letter falls: nothing is lost
 PASS  carrying shortens the jump  (0.45 m with it, 0.70 m without)
 PASS  no page errors
 
-ALL 27 CHECKS PASSED
+ALL 28 CHECKS PASSED

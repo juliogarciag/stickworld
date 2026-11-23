@@ -126,12 +126,17 @@ try {
   const carriedFrom = now.stickMan.feet.x;
   await page.keyboard.down('ArrowRight');
   await waitInGame(page, (x) => window.__game.stickMan().feet.x > x, carriedFrom + 2);
+  now = await seen(page);
+  // Looked at while he walks: a little ahead of where he was when the picture was asked for, so the rectangle is wide.
+  const overHimWalking = await pageRectangle(page, { x: now.stickMan.feet.x - 1, y: -(level.stickManHeight + 0.42) }, { x: now.stickMan.feet.x + 1.4, y: -(level.stickManHeight + 0.1) });
+  const walkingPixels = await pencilPixelsIn(page, overHimWalking);
+  results.push(check('while he walks the airplane is drawn over his head', walkingPixels > 150, `${walkingPixels} pencil pixels over his head mid-walk`));
   await screenshot(page, '07-carrying.png');
   await page.keyboard.up('ArrowRight');
   await walkTo(page, edge - 1.25);
   now = await seen(page);
   const carried = await page.evaluate(() => window.__carried);
-  results.push(check('he carries it as he walks: on every frame it is over his feet', carried.frames > 60 && carried.apart === 0 && now.airplane?.state === 'carried' && now.stickMan.feet.x - carriedFrom > 2, `${carried.frames} frames, ${(now.stickMan.feet.x - carriedFrom).toFixed(1)} m, never more than ${carried.apart} m apart`));
+  results.push(check('he carries it as he walks: on every frame the sim has it over his feet', carried.frames > 60 && carried.apart === 0 && now.airplane?.state === 'carried' && now.stickMan.feet.x - carriedFrom > 2, `${carried.frames} frames, ${(now.stickMan.feet.x - carriedFrom).toFixed(1)} m, never more than ${carried.apart} m apart`));
 
   // ---- Putting it down on the edge ----
   results.push(check('while he carries it, K would put it down', now.interaction === 'putDown', `interaction: ${now.interaction}`));

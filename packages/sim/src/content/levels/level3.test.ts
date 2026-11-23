@@ -45,6 +45,21 @@ describe('level 3', () => {
     expect(restarted).toBe(true);
   });
 
+  it('cannot be finished by jumping with the airplane over his head either: that jump is no longer than the other', () => {
+    for (let jumpAtTick = TICK_AT_THE_EDGE - 40; jumpAtTick <= TICK_AT_THE_EDGE + 12; jumpAtTick += 1) {
+      const sim = createSim({ level: 3 });
+      // Read, put away, select, open, fold, set down, lift: the letter gives the paper to a level 3 started on its own.
+      walkTo(sim, LETTER_AT.x);
+      for (const command of [INTERACT, INTERACT, SELECT_SLOT_1, USE_ITEM, USE_ITEM, USE_ITEM, INTERACT]) sim.step([command]);
+      walkTo(sim, level3.start.x);
+      expect(stickManOf(sim).carrying).toBe(true);
+      // Back where the level starts him, so the walk to the edge takes as many ticks as it does from the start.
+      const { furthestStoodAt, restarted } = playToTheEnd(sim, [WALK_RIGHT_AT_0, { atTick: jumpAtTick, command: { type: 'player/jump' } }]);
+      expect(furthestStoodAt, `jumping at tick ${jumpAtTick}`).toBeLessThanOrEqual(GAP.from);
+      expect(restarted, `jumping at tick ${jumpAtTick}`).toBe(true);
+    }
+  });
+
   it('cannot be finished by walking: he falls into the gap and the level starts again', () => {
     const sim = createSim({ level: 3 });
     const { furthestStoodAt, restarted } = playToTheEnd(sim, [WALK_RIGHT_AT_0]);
