@@ -5,6 +5,7 @@ import type { SimHandle } from '../../core/sim';
 import { LEVEL_END } from '../../features/flag/defs';
 import { flagOf } from '../../features/flag/view';
 import { stickManOf } from '../../features/player/view';
+import { TICK_RATE } from '../tuning';
 import { level1 } from './level1';
 import { level2 } from './level2';
 
@@ -85,7 +86,7 @@ const STOP_SHORT: Recording = {
 };
 
 /** How many ticks a finished level stays before the next one starts. */
-const PAUSE_TICKS = Math.round(LEVEL_END.pauseBeforeNextLevel * 60);
+const PAUSE_TICKS = Math.round(LEVEL_END.pauseBeforeNextLevel * TICK_RATE);
 
 /** Walks him right from where he is until the tick the flag is reached. */
 function walkUntilTheFlagIsReached(sim: SimHandle): void {

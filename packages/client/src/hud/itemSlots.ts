@@ -19,10 +19,10 @@ export interface Rectangle {
 
 /** Where slot number `slot` (counted from 1) is drawn when the HUD camera sees `seen`: a row from the top left corner. */
 export function itemSlotBox(slot: number, seen: Rectangle): Rectangle {
-  return { x: seen.x + SLOTS.margin + (slot - 1) * (SLOTS.side + SLOTS.spacing), y: seen.y + SLOTS.margin, width: SLOTS.side, height: SLOTS.side };
+  return { x: seen.x + SLOT_LAYOUT.margin + (slot - 1) * (SLOT_LAYOUT.side + SLOT_LAYOUT.spacing), y: seen.y + SLOT_LAYOUT.margin, width: SLOT_LAYOUT.side, height: SLOT_LAYOUT.side };
 }
 
-/** The strokes that draw `slots` when the HUD camera sees `seen`. */
+/** The strokes that draw `slots` when the HUD camera sees `seen`. For each slot, in this order: its box, its number, the item it holds, and last the second box when it is selected. */
 export function itemSlotStrokes(slots: readonly ItemSlot[], seen: Rectangle): Stroke[] {
   return slots.flatMap(({ slot, itemDefId, selected }) => {
     const box = itemSlotBox(slot, seen);
@@ -31,7 +31,7 @@ export function itemSlotStrokes(slots: readonly ItemSlot[], seen: Rectangle): St
       { points: cornersOf(box), thickness: PENCIL.thickness, closed: true },
       ...(NUMERALS[slot] ?? []).map(drawnIn),
       ...(itemDefId === null ? [] : (ITEM_DRAWINGS[itemDefId] ?? UNKNOWN_ITEM)).map(drawnIn),
-      ...(selected ? [{ points: cornersOf(grownBy(box, SLOTS.selectedOutset)), thickness: PENCIL.thickness * SLOTS.selectedWeight, closed: true }] : []),
+      ...(selected ? [{ points: cornersOf(grownBy(box, SLOT_LAYOUT.selectedOutset)), thickness: PENCIL.thickness * SLOT_LAYOUT.selectedWeight, closed: true }] : []),
     ];
   });
 }
@@ -39,7 +39,7 @@ export function itemSlotStrokes(slots: readonly ItemSlot[], seen: Rectangle): St
 // ---- Helpers ----
 
 /** Sizes in the HUD camera's world pixels, which are the level's: the HUD is drawn at the level's zoom, so its pencil is the same weight. */
-const SLOTS = {
+const SLOT_LAYOUT = {
   /** From the corner of the screen to the first slot. */
   margin: 56,
   side: 112,

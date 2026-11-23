@@ -79,10 +79,10 @@ export function exposeDebugApi({ loop, game }: { loop: GameLoop; game: Phaser.Ga
       if (!game.scene.isActive(HUD_SCENE)) return [];
       const seen = worldSeenBy(game.scene.getScene(HUD_SCENE).cameras.main);
       // World pixels to canvas pixels by the camera's zoom, canvas pixels to CSS pixels by the game's.
-      const onPage = seen.zoom * game.scale.zoom;
+      const cssPixelsPerWorldPixel = seen.zoom * game.scale.zoom;
       return itemSlotsOf(loop.sim).map((itemSlot) => {
         const box = itemSlotBox(itemSlot.slot, seen);
-        return { ...itemSlot, onPage: { x: (box.x - seen.x) * onPage, y: (box.y - seen.y) * onPage, width: box.width * onPage, height: box.height * onPage } };
+        return { ...itemSlot, onPage: { x: (box.x - seen.x) * cssPixelsPerWorldPixel, y: (box.y - seen.y) * cssPixelsPerWorldPixel, width: box.width * cssPixelsPerWorldPixel, height: box.height * cssPixelsPerWorldPixel } };
       });
     },
     queueCommand: (command) => loop.queueCommand(command),

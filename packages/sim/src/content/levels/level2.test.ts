@@ -9,6 +9,7 @@ import { isItemDefId, PAPER_ITEM_ID } from '../../features/inventory/defs';
 import { itemSlotsOf } from '../../features/inventory/view';
 import { PLAYER } from '../../features/player/defs';
 import { stickManOf } from '../../features/player/view';
+import { TICK_RATE } from '../tuning';
 import { levels } from '.';
 import { level2 } from './level2';
 
@@ -36,7 +37,7 @@ describe('level 2', () => {
     const sim = createSim({ level: 2 });
     const { overTheGap, deepest, restartedAtTick } = play(sim, WALK_INTO_THE_GAP);
     expect(overTheGap.some((feet) => feet.y > FLOOR_Y)).toBe(true);
-    expect(deepest).toBeGreaterThan(FLOOR_Y + PLAYER.fallBelowFloor - 1);
+    expect(deepest).toBeGreaterThan(FLOOR_Y + PLAYER.fallBelowFloor - ONE_TICK_OF_FALL);
     expect(restartedAtTick).not.toBeNull();
     expect(sim.level).toBe(2);
     expect(sim.tick).toBe(WALK_INTO_THE_GAP.ticks);
@@ -52,18 +53,19 @@ describe('level 2', () => {
     expect(flagOf(sim)!.reached).toBe(false);
   });
 
-  it('has a gap wider than a walk can cross and narrower than a jump', () => {
+  it('has a gap a jump clears with room to spare: he need not take off at the very edge', () => {
     const jumpSeconds = 2 * Math.sqrt((2 * PLAYER.jumpHeight) / PLAYER.gravity);
-    expect(GAP.to - GAP.from).toBeGreaterThan(0.25 * PLAYER.walkSpeed * jumpSeconds);
-    expect(GAP.to - GAP.from).toBeLessThan(0.8 * PLAYER.walkSpeed * jumpSeconds);
+    const jumpLength = PLAYER.walkSpeed * jumpSeconds;
+    expect(GAP.to - GAP.from).toBeLessThan(LARGEST_SHARE_OF_A_JUMP * jumpLength);
   });
 
   it('can be played again after a death: the same jump then reaches the flag', () => {
     const sim = createSim({ level: 2 });
     const { restartedAtTick } = play(sim, WALK_INTO_THE_GAP);
-    play(sim, { commands: [{ atTick: 0, command: { type: 'player/walk', direction: 0 } }], ticks: 1 });
-    play(sim, JUMP_THE_GAP);
     expect(restartedAtTick).not.toBeNull();
+    // The death left him standing at the start, so the recording plays as it does on a fresh level.
+    expect(stickManOf(sim)).toMatchObject({ feet: level2.start, action: 'standing' });
+    play(sim, JUMP_THE_GAP);
     expect(flagOf(sim)!.reached).toBe(true);
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBe(PAPER_ITEM_ID);
   });
@@ -72,11 +74,13 @@ describe('level 2', () => {
 describe('the paper', () => {
   it('comes from playing levels 1 and 2 in a row, with nothing in the slot until level 2 is finished', () => {
     const sim = createSim({ level: 1 });
-    play(sim, { commands: [WALK_RIGHT_AT_0], ticks: 600 });
-    play(sim, { commands: [], ticks: Math.ceil(LEVEL_END.pauseBeforeNextLevel / sim.dt) });
-    expect(sim.level).toBe(2);
+    sim.step([WALK_RIGHT_AT_0.command]);
+    for (let tick = 0; tick < 600 && !flagOf(sim)!.reached; tick += 1) sim.step();
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBeNull();
-    play(sim, { commands: [{ atTick: 0, command: { type: 'player/walk', direction: 0 } }], ticks: 1 });
+    for (let tick = 0; tick < Math.ceil(LEVEL_END.pauseBeforeNextLevel * TICK_RATE) + 1; tick += 1) sim.step();
+    expect(sim.level).toBe(2);
+    expect(stickManOf(sim)).toMatchObject({ feet: level2.start, action: 'standing' });
+    expect(itemSlotsOf(sim)[0]?.itemDefId).toBeNull();
     play(sim, JUMP_THE_GAP);
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBe(PAPER_ITEM_ID);
   });
@@ -92,7 +96,7 @@ describe('the paper', () => {
     sim.startLevel(1);
     expect(itemSlotsOf(sim)).toEqual(held);
     const { deepest, restartedAtTick } = play(sim, { commands: [{ atTick: 0, command: { type: 'player/walk', direction: -1 } }], ticks: 400 });
-    expect(deepest).toBeGreaterThan(PLAYER.fallBelowFloor - 1);
+    expect(deepest).toBeGreaterThan(PLAYER.fallBelowFloor - ONE_TICK_OF_FALL);
     expect(restartedAtTick).not.toBeNull();
     expect(sim.level).toBe(1);
     expect(itemSlotsOf(sim)).toEqual(held);
@@ -100,9 +104,8 @@ describe('the paper', () => {
 });
 
 describe('every level', () => {
-  it.each(levels.map((level) => [level.id, level] as const))('level %i gives at its flag nothing, or an item, and then has a flag', (_, level) => {
-    if (level.flagGivesItem === undefined) return;
-    expect(isItemDefId(level.flagGivesItem)).toBe(true);
+  it.each(LEVELS_WHOSE_FLAG_GIVES_AN_ITEM.map((level) => [level.id, level] as const))("level %i's flag gives an item that exists, and the level has a flag", (_, level) => {
+    expect(isItemDefId(level.flagGivesItem!)).toBe(true);
     expect(flagOf(createSim({ level: level.id }))).toBeDefined();
   });
 });
@@ -121,9 +124,22 @@ interface Recording {
 
 const WALK_RIGHT_AT_0 = { atTick: 0, command: { type: 'player/walk', direction: 1 } } as const;
 
-/** The tick on which he is a quarter of a metre before the edge of the gap, walking right from the start. */
-const TICK_NEAR_THE_EDGE = Math.round((GAP.from - 0.25 - level2.start.x) / (PLAYER.walkSpeed / 60));
-const TICK_PAST_THE_GAP = TICK_NEAR_THE_EDGE + 60;
+const LEVELS_WHOSE_FLAG_GIVES_AN_ITEM = levels.filter((level) => level.flagGivesItem !== undefined);
+
+/** The gap is at most this share of the length of a jump, so there is a stretch of floor before the edge to take off from. */
+const LARGEST_SHARE_OF_A_JUMP = 0.8;
+
+/**
+ * He is sent back to the start on the tick he passes the depth that kills,
+ * so the deepest he is ever seen is up to one tick of falling short of it.
+ * At that depth he has fallen `fallBelowFloor`, which gives his speed.
+ */
+const ONE_TICK_OF_FALL = Math.sqrt(2 * PLAYER.gravity * PLAYER.fallBelowFloor) / TICK_RATE;
+
+/** The tick on which he is a quarter of the gap's width before its edge, walking right from the start: where a player would jump. */
+const TICK_NEAR_THE_EDGE = Math.round(((GAP.from - 0.25 * (GAP.to - GAP.from) - level2.start.x) / PLAYER.walkSpeed) * TICK_RATE);
+/** A second later he has landed and walked on, well short of the flag. */
+const TICK_PAST_THE_GAP = TICK_NEAR_THE_EDGE + TICK_RATE;
 
 /** Walk right, jump just before the edge, keep walking to the flag. */
 const JUMP_THE_GAP: Recording = {

@@ -42,6 +42,12 @@ describe('inventory', () => {
     expect(itemSlotsOf(sim)[0]?.selected).toBe(false);
   });
 
+  it('selects a slot that holds nothing: the key answers whether or not he has an item yet', () => {
+    const sim = simOnLevel(1);
+    sim.step([SELECT_SLOT_1]);
+    expect(itemSlotsOf(sim)[0]).toEqual({ slot: 1, itemDefId: null, selected: true });
+  });
+
   it.each([0, -1, 1.5, ITEM_SLOT_COUNT + 1, Number.NaN, Infinity, '1', null, undefined, {}, [1]])('ignores a select for slot %j', (slot) => {
     const sim = simOnLevel(1);
     const before = sim.snapshot().slices;

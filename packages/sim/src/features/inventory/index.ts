@@ -24,7 +24,8 @@ export const inventoryFeature: Feature = {
   update(sim) {
     const { flagGivesItem } = sim.levelDef;
     const flagReached = sim.stateOf(flagSlice).reachedAtTick !== null;
-    // Asked every tick the flag stands reached: an item he already holds is not given twice.
+    // Asked every tick the flag stands reached: an item he already holds is not given twice. With every slot taken the
+    // item is not given at all; no level can do that yet, and the one that can has to say what happens to it.
     if (flagGivesItem !== undefined && flagReached) giveItem(sim, flagGivesItem);
   },
 };

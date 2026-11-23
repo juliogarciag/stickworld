@@ -28,12 +28,14 @@ export function followStickManWith(camera: Phaser.Cameras.Scene2D.Camera): (stic
 
 /** Points `camera` at the floor at `floor` (metres), at the zoom that fits the view to its height. */
 function frame(camera: Phaser.Cameras.Scene2D.Camera, floor: Point): void {
-  const viewHeight = toPixels(FRAMING.stickMenTall * STICK_MAN_HEIGHT);
   camera.setZoom(levelZoom(camera));
-  camera.centerOn(toPixels(floor.x), toPixels(floor.y) - (FRAMING.floorFromTop - 0.5) * viewHeight);
+  camera.centerOn(toPixels(floor.x), toPixels(floor.y) - (FRAMING.floorFromTop - 0.5) * VIEW_HEIGHT);
 }
+
+/** How tall the view of the level is, in world pixels. */
+const VIEW_HEIGHT = toPixels(FRAMING.stickMenTall * STICK_MAN_HEIGHT);
 
 /** The zoom at which `camera` shows the level: the one that makes its view `FRAMING.stickMenTall` stick men tall. */
 export function levelZoom(camera: Phaser.Cameras.Scene2D.Camera): number {
-  return camera.height / toPixels(FRAMING.stickMenTall * STICK_MAN_HEIGHT);
+  return camera.height / VIEW_HEIGHT;
 }
