@@ -1,4 +1,3 @@
-/* global window */
 /**
  * What goes wrong on level 3's flight, played with the real keyboard in
  * Chromium against `pnpm dev`, and recorded: doing nothing sinks into the gap
