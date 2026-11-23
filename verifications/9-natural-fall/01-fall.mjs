@@ -100,6 +100,14 @@ try {
   const jumped = await samplesOf(page);
   const overTheGap = jumped.filter((sample) => sample.feet.x > world.gap.from && sample.feet.x < world.gap.to);
   results.push(check('a running jump carries him over the gap, above the line all the way', overTheGap.length >= 3 && overTheGap.every((sample) => sample.feet.y < world.floorY), `${overTheGap.length} frames over the gap, lowest ${Math.max(...overTheGap.map((sample) => sample.feet.y)).toFixed(3)} m`));
+  const jumping = jumped.filter((sample) => sample.action === 'jumping');
+  results.push(
+    check(
+      'the sim tells a jump from a fall off an edge, so only the fall is drawn leaning',
+      jumping.length >= 3 && jumping.every((sample) => sample.fallingOffAnEdge === false) && falling.every((sample) => sample.fallingOffAnEdge === true),
+      `${jumping.length} frames of the jump, none falling off an edge; ${falling.length} frames of the walk off the edge, all of them`,
+    ),
+  );
   results.push(check('level 2 is still finished: he lands, walks on and reaches the flag', jumped[jumped.length - 1].level === 2 && (await page.evaluate(() => window.__game.flag().reached))));
 
   // ---- 4. Level 1 is still finished by walking right. ----
@@ -137,8 +145,9 @@ try {
   await stills.waitForFunction((takeOff) => window.__game.stickMan().feet.x >= takeOff, world.gap.from - 0.25 * (world.gap.to - world.gap.from), { polling: 'raf' });
   await stills.keyboard.press('Space');
   report.shots.push({ name: 'after-jump-over-the-gap.png', stickMan: await shotWhen(stills, { name: 'after-jump-over-the-gap.png', condition: `(api) => api.stickMan().feet.x >= ${(world.gap.from + world.gap.to) / 2}` }) });
+  report.shots.push({ name: 'after-jump-coming-down.png', stickMan: await shotWhen(stills, { name: 'after-jump-coming-down.png', condition: `(api) => api.stickMan().action === 'jumping' && api.stickMan().feet.x >= ${world.gap.to}` }) });
   await stills.keyboard.up('ArrowRight');
-  results.push(check('a picture of every moment was taken', report.shots.length === 2 * DEPTHS.length, report.shots.map((shot) => shot.name).join(', ')));
+  results.push(check('a picture of every moment was taken', report.shots.length === 2 * DEPTHS.length + 1, report.shots.map((shot) => shot.name).join(', ')));
   results.push(check('no page errors', pageErrors.length + stillsErrors.length === 0, [...pageErrors, ...stillsErrors].join(' | ')));
   await stills.context().close();
   const [recording] = readdirSync(videoFolder);

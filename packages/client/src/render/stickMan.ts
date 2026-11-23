@@ -243,10 +243,10 @@ function skeletonOf(pose: StickManPose): Skeleton {
 /**
  * How far a fall tips him over, in radians, positive to the right: in proportion to how fast he moves sideways against
  * how fast he falls. Dropping straight he stays upright; walking off an edge he tips forward as the fall takes hold,
- * and straightens as falling outweighs drifting.
+ * and straightens as falling outweighs drifting. Only a fall off an edge tips him: a jump has its own poses, forward or back.
  */
-function tiltOfFall({ action, horizontalSpeed, verticalSpeed }: StickManView): number {
-  if (action !== 'jumping' || verticalSpeed <= 0) return 0;
+function tiltOfFall({ fallingOffAnEdge, horizontalSpeed, verticalSpeed }: StickManView): number {
+  if (!fallingOffAnEdge || verticalSpeed <= 0) return 0;
   const sidewaysShare = horizontalSpeed / Math.hypot(horizontalSpeed, verticalSpeed);
   return BODY.fallTilt * sidewaysShare * Math.min(1, verticalSpeed / BODY.speedOfFullTilt);
 }

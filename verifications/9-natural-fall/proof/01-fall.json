@@ -24,6 +24,7 @@
         "distanceWalked": 4.033333333333354,
         "verticalSpeed": 3.6666666666666665,
         "horizontalSpeed": 2.2,
+        "fallingOffAnEdge": true,
         "walkDirectionAsked": 0
       }
     },
@@ -41,6 +42,7 @@
         "distanceWalked": 4.033333333333354,
         "verticalSpeed": 6.966666666666663,
         "horizontalSpeed": 0,
+        "fallingOffAnEdge": true,
         "walkDirectionAsked": 0
       }
     },
@@ -58,6 +60,7 @@
         "distanceWalked": 4.033333333333354,
         "verticalSpeed": 7.699999999999996,
         "horizontalSpeed": 0,
+        "fallingOffAnEdge": true,
         "walkDirectionAsked": 0
       }
     },
@@ -75,6 +78,7 @@
         "distanceWalked": 4.033333333333354,
         "verticalSpeed": 8.43333333333333,
         "horizontalSpeed": 0,
+        "fallingOffAnEdge": true,
         "walkDirectionAsked": 0
       }
     },
@@ -92,6 +96,7 @@
         "distanceWalked": 0,
         "verticalSpeed": 8.750225229795353,
         "horizontalSpeed": 0,
+        "fallingOffAnEdge": false,
         "walkDirectionAsked": 0
       }
     },
@@ -109,6 +114,7 @@
         "distanceWalked": 0,
         "verticalSpeed": 9.483558563128687,
         "horizontalSpeed": 0,
+        "fallingOffAnEdge": false,
         "walkDirectionAsked": 0
       }
     },
@@ -126,6 +132,7 @@
         "distanceWalked": 0,
         "verticalSpeed": 10.216891896462021,
         "horizontalSpeed": 0,
+        "fallingOffAnEdge": false,
         "walkDirectionAsked": 0
       }
     },
@@ -142,6 +149,24 @@
         "distanceWalked": 3.8133333333333512,
         "verticalSpeed": 0.3168918964620227,
         "horizontalSpeed": 2.2,
+        "fallingOffAnEdge": false,
+        "walkDirectionAsked": 1
+      }
+    },
+    {
+      "name": "after-jump-coming-down.png",
+      "stickMan": {
+        "tick": 134,
+        "feet": {
+          "x": 6.803333333333362,
+          "y": -0.26989864659208934
+        },
+        "facing": 1,
+        "action": "jumping",
+        "distanceWalked": 3.8133333333333512,
+        "verticalSpeed": 4.350225229795356,
+        "horizontalSpeed": 2.2,
+        "fallingOffAnEdge": false,
         "walkDirectionAsked": 1
       }
     }
@@ -216,6 +241,11 @@
       "details": "21 frames over the gap, lowest -0.339 m"
     },
     {
+      "name": "the sim tells a jump from a fall off an edge, so only the fall is drawn leaning",
+      "pass": true,
+      "details": "30 frames of the jump, none falling off an edge; 45 frames of the walk off the edge, all of them"
+    },
+    {
       "name": "level 2 is still finished: he lands, walks on and reaches the flag",
       "pass": true
     },
@@ -226,7 +256,7 @@
     {
       "name": "a picture of every moment was taken",
       "pass": true,
-      "details": "after-walk-off-0_3m.png, after-walk-off-1m.png, after-walk-off-1_3m.png, after-walk-off-1_6m.png, after-straight-drop-1m.png, after-straight-drop-1_3m.png, after-straight-drop-1_6m.png, after-jump-over-the-gap.png"
+      "details": "after-walk-off-0_3m.png, after-walk-off-1m.png, after-walk-off-1_3m.png, after-walk-off-1_6m.png, after-straight-drop-1m.png, after-straight-drop-1_3m.png, after-straight-drop-1_6m.png, after-jump-over-the-gap.png, after-jump-coming-down.png"
     },
     {
       "name": "no page errors",

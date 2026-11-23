@@ -33,8 +33,7 @@ export const playerFeature: Feature = {
     if (hasFinishedLevel(sim)) player.ticksSinceJumpAsked = null;
     // Only a fall that began by walking off an edge has momentum: on the floor and in a jump the keys move him at once.
     // A jump from the floor takes off with the speed the floor gives him this tick, so the speed comes first.
-    const fellOffAnEdge = !player.onFloor && player.ticksSinceWalkedOff !== null;
-    player.horizontalSpeed = fellOffAnEdge ? speedAfterSteering(player.horizontalSpeed, { direction, dt: sim.dt }) : direction * PLAYER.walkSpeed;
+    player.horizontalSpeed = isFallingOffAnEdge(player) ? speedAfterSteering(player.horizontalSpeed, { direction, dt: sim.dt }) : direction * PLAYER.walkSpeed;
     jumpIfAskedAndAble(sim, player);
 
     const { floor } = sim.levelDef;
@@ -50,6 +49,11 @@ export const playerFeature: Feature = {
 /** Which way he walks this tick: the way the player asked, or nowhere once the level is finished. */
 export function walkDirectionNow(sim: Sim): WalkDirection {
   return hasFinishedLevel(sim) ? 0 : sim.stateOf(playerSlice).walkDirection;
+}
+
+/** True while he is in the air because he walked off an edge, and not because he jumped. */
+export function isFallingOffAnEdge(player: PlayerState): boolean {
+  return !player.onFloor && player.ticksSinceWalkedOff !== null;
 }
 
 export function hasFinishedLevel(sim: Sim): boolean {

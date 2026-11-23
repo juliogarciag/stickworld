@@ -216,9 +216,16 @@ describe('the stick man falling sideways', () => {
     expect(tiltAt(2, 4)).toBeLessThanOrEqual(BODY.fallTilt);
   });
 
-  it('is upright on the floor and on the way up, however fast he goes sideways', () => {
+  it('is upright on the floor, however fast he goes sideways', () => {
     expect(poseOf({ ...ON_THE_FLOOR, action: 'walking', horizontalSpeed: 2 }).tilt).toBe(0);
-    expect(poseOf({ ...GOING_UP, horizontalSpeed: 2 }).tilt).toBe(0);
+  });
+
+  it('is not tipped by a jump, forward or back, on the way up or on the way down', () => {
+    for (const horizontalSpeed of [2, -2]) {
+      expect(poseOf({ ...GOING_UP, horizontalSpeed }).tilt).toBe(0);
+      expect(poseOf({ ...COMING_DOWN, horizontalSpeed }).tilt).toBe(0);
+      expect(stickManStrokes(poseOf({ ...COMING_DOWN, horizontalSpeed, facing: 1 }))).toEqual(stickManStrokes(poseOf({ ...COMING_DOWN, horizontalSpeed: 0, facing: 1 })));
+    }
   });
 
   it('has only begun to tip when the fall has only begun', () => {
@@ -386,11 +393,12 @@ describe('the pose for what the sim says', () => {
 const STANDING: StickManPose = { feet: { x: 3, y: 0.5 }, facing: 1, action: 'standing', walkCycle: 0, rise: 0, longFall: 0, striding: false, inTheAir: 0, landing: 0, tilt: 0, armsLifted: [0, 0] };
 const WALKING: StickManPose = { feet: { x: 3, y: 0.5 }, facing: 1, action: 'walking', walkCycle: 0, rise: 0, longFall: 0, striding: true, inTheAir: 0, landing: 0, tilt: 0, armsLifted: [0, 0] };
 const JUMPING: StickManPose = { feet: { x: 3, y: 0.2 }, facing: 1, action: 'jumping', walkCycle: 0, rise: 1, longFall: 0, striding: false, inTheAir: 1, landing: 0, tilt: 0, armsLifted: [0, 0] };
-const view = { feet: { x: 3, y: 0.5 }, facing: -1, action: 'walking', distanceWalked: 0, verticalSpeed: 0, horizontalSpeed: 0, walkDirectionAsked: -1 } as const;
-const ON_THE_FLOOR = { feet: { x: 3, y: 0 }, facing: 1, action: 'standing', distanceWalked: 0, verticalSpeed: 0, horizontalSpeed: 0, walkDirectionAsked: 0 } as const;
+const view = { feet: { x: 3, y: 0.5 }, facing: -1, action: 'walking', distanceWalked: 0, verticalSpeed: 0, horizontalSpeed: 0, fallingOffAnEdge: false, walkDirectionAsked: -1 } as const;
+const ON_THE_FLOOR = { feet: { x: 3, y: 0 }, facing: 1, action: 'standing', distanceWalked: 0, verticalSpeed: 0, horizontalSpeed: 0, fallingOffAnEdge: false, walkDirectionAsked: 0 } as const;
 const GOING_UP = { ...ON_THE_FLOOR, feet: { x: 3, y: -0.2 }, action: 'jumping', verticalSpeed: -5 } as const;
 const COMING_DOWN = { ...ON_THE_FLOOR, feet: { x: 3, y: -0.2 }, action: 'jumping', verticalSpeed: 4 } as const;
-const FALLING = { ...COMING_DOWN, horizontalSpeed: 0 } as const;
+/** In the air because he walked off an edge. */
+const FALLING = { ...COMING_DOWN, horizontalSpeed: 0, fallingOffAnEdge: true } as const;
 /** A floor line that ends at `LINE_END`, with him dropping on the open side of it, as close as the sim lets him: half his width away. */
 const LINE_END = 6;
 const FLOOR = [{ from: { x: 0, y: 0 }, to: { x: LINE_END, y: 0 } }];

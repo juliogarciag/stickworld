@@ -29,7 +29,7 @@ BEFORE_ROOT=/tmp/before node verifications/9-natural-fall/00-before.mjs
 | Script | What it proves | Proof |
 |---|---|---|
 | `01-fall.mjs` | The checks above, read from the sim through `window.__game` while the keys are pressed, on a page that is not being filmed | `proof/01-fall.txt`, `proof/01-fall.json` |
-| `01-fall.mjs` | The look after: a forward fall and a straight drop at four depths below the line, and a jump over the gap | `proof/after-walk-off-*.png`, `proof/after-straight-drop-*.png`, `proof/after-jump-over-the-gap.png` |
+| `01-fall.mjs` | The look after: a forward fall and a straight drop at four depths below the line, and a jump over the gap | `proof/after-walk-off-*.png`, `proof/after-straight-drop-*.png`, `proof/after-jump-over-the-gap.png`, `proof/after-jump-coming-down.png` |
 | `01-fall.mjs` | How it moves: a forward fall, a straight drop, a jump across the gap to the flag, level 1 | `proof/fall.mp4`, `proof/fall.gif` |
 | `00-before.mjs` | The look before, with the same keys at the same depths: he drops straight down with his head and arm across the line | `proof/before-walk-off-*.png`, `proof/00-before.txt`, `proof/00-before.json` |
 | `scenes.mjs` | Nothing by itself: the moves both scripts share | |

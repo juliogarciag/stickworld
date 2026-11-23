@@ -111,7 +111,7 @@ describe('momentum falling off an edge', () => {
     sim.step([STOP]);
     const from = stickManOf(sim).feet.x;
     stepFor(sim, 20);
-    expect(stickManOf(sim)).toMatchObject({ action: 'jumping', horizontalSpeed: -PLAYER.walkSpeed, walkDirectionAsked: 0 });
+    expect(stickManOf(sim)).toMatchObject({ action: 'jumping', fallingOffAnEdge: true, horizontalSpeed: -PLAYER.walkSpeed, walkDirectionAsked: 0 });
     expect(stickManOf(sim).feet.x - from).toBeCloseTo(-20 * PLAYER.walkSpeed * sim.dt, 6);
   });
 
@@ -136,7 +136,7 @@ describe('momentum falling off an edge', () => {
     const sim = createSim({ level: 1 });
     sim.step([JUMP]);
     sim.step([WALK_RIGHT]);
-    expect(stickManOf(sim)).toMatchObject({ action: 'jumping', horizontalSpeed: PLAYER.walkSpeed });
+    expect(stickManOf(sim)).toMatchObject({ action: 'jumping', fallingOffAnEdge: false, horizontalSpeed: PLAYER.walkSpeed });
     sim.step([STOP]);
     const stoppedAt = stickManOf(sim).feet.x;
     stepFor(sim, 5);
@@ -151,7 +151,7 @@ describe('momentum falling off an edge', () => {
     sim.step([JUMP]);
     expect(stickManOf(sim).verticalSpeed).toBeLessThan(0);
     sim.step([STOP]);
-    expect(stickManOf(sim)).toMatchObject({ action: 'jumping', horizontalSpeed: 0 });
+    expect(stickManOf(sim)).toMatchObject({ action: 'jumping', fallingOffAnEdge: false, horizontalSpeed: 0 });
   });
 });
 

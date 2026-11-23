@@ -12,10 +12,11 @@ PASS  it pushes him a little every tick, never across the paper at once  (at mos
 PASS  it is a straight drop: he falls at least five times faster than he drifts, all the way down the line  (he does not drift at all)
 PASS  a jump has no momentum: with the key let go in the air he does not drift  (24 frames above the line with no key held, all with no sideways speed)
 PASS  a running jump carries him over the gap, above the line all the way  (21 frames over the gap, lowest -0.339 m)
+PASS  the sim tells a jump from a fall off an edge, so only the fall is drawn leaning  (30 frames of the jump, none falling off an edge; 45 frames of the walk off the edge, all of them)
 PASS  level 2 is still finished: he lands, walks on and reaches the flag
 PASS  level 1 is still finished by walking to the flag
-PASS  a picture of every moment was taken  (after-walk-off-0_3m.png, after-walk-off-1m.png, after-walk-off-1_3m.png, after-walk-off-1_6m.png, after-straight-drop-1m.png, after-straight-drop-1_3m.png, after-straight-drop-1_6m.png, after-jump-over-the-gap.png)
+PASS  a picture of every moment was taken  (after-walk-off-0_3m.png, after-walk-off-1m.png, after-walk-off-1_3m.png, after-walk-off-1_6m.png, after-straight-drop-1m.png, after-straight-drop-1_3m.png, after-straight-drop-1_6m.png, after-jump-over-the-gap.png, after-jump-coming-down.png)
 PASS  no page errors
 PASS  the recording of the forward fall, the straight drop and the jump was written  (proof/fall.mp4, proof/fall.gif)
 
-ALL 19 CHECKS PASSED
+ALL 20 CHECKS PASSED
