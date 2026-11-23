@@ -56,7 +56,7 @@ function isWalkDirection(value: unknown): value is WalkDirection {
 /** Takes off when a jump is waiting and he is on the floor, or left it by an edge a moment ago. A jump that waited too long is forgotten. */
 function jumpIfAskedAndAble(sim: Sim, player: PlayerState): void {
   if (player.ticksSinceJumpAsked === null) return;
-  const walkedOffJustNow = player.ticksSinceWalkedOff !== null && player.ticksSinceWalkedOff <= wholeTicksIn(PLAYER.jumpAskedLateWindow, sim.dt);
+  const walkedOffJustNow = player.ticksSinceWalkedOff !== null && player.ticksSinceWalkedOff < wholeTicksIn(PLAYER.jumpAskedLateWindow, sim.dt);
   if (player.onFloor || walkedOffJustNow) {
     player.verticalSpeed = -Math.sqrt(2 * PLAYER.gravity * PLAYER.jumpHeight);
     player.onFloor = false;
@@ -81,7 +81,10 @@ function walkTo(player: PlayerState, { x, floorHeight, walking }: { x: number; f
   player.y = floorHeight;
 }
 
-/** One tick in the air: gravity pulls him towards `x`, and he lands if the floor there is between where he was and where he would be. */
+/**
+ * One tick in the air: gravity pulls him towards `x`, and he lands if the floor there is between where he was and where he would be.
+ * That is right for flat floors, which is all the levels have: a floor that slopes up towards him could be missed.
+ */
 function fallTo(player: PlayerState, { x, floorHeight, dt }: { x: number; floorHeight: number | undefined; dt: number }): void {
   const y = player.y + player.verticalSpeed * dt + (PLAYER.gravity * dt * dt) / 2;
   player.verticalSpeed += PLAYER.gravity * dt;

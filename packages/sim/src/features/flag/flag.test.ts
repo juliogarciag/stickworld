@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { getDef } from '../../content/defs';
-import { levelById } from '../../content/levels';
+import { levelById, levels } from '../../content/levels';
+import type { Level } from '../../content/levels/types';
+import { FIXED_DT } from '../../content/tuning';
 import { createSim } from '../../core/create';
 import { stickManOf } from '../player/view';
-import { FLAG_DEF_ID, flagDef } from './defs';
+import { FLAG_DEF_ID, flagDef, LEVEL_END } from './defs';
+import { __testing__, flagPlacedIn } from './index';
 import { flagOf } from './view';
 
 describe('the flag', () => {
@@ -38,6 +41,34 @@ describe('the flag', () => {
   });
 });
 
+describe('every flag', () => {
+  it('stands over floor that goes on for its reach on both sides, so he cannot finish a level on his way off the paper', () => {
+    for (const level of levels) {
+      const placed = flagPlacedIn(level);
+      if (!placed) continue;
+      const overFloor = level.floor.some((segment) => segment.from.x <= placed.at.x - flagDef.reach && placed.at.x + flagDef.reach <= segment.to.x);
+      expect(overFloor, `level ${level.id}`).toBe(true);
+    }
+  });
+});
+
+describe('after the flag', () => {
+  it('the next level starts once the pause is over, not a tick before', () => {
+    const finished = { levels: TWO_LEVELS, level: 1, dt: FIXED_DT };
+    expect(levelToStartNow({ ...finished, ticksSinceReached: 0 })).toBeUndefined();
+    expect(levelToStartNow({ ...finished, ticksSinceReached: PAUSE_TICKS - 1 })).toBeUndefined();
+    expect(levelToStartNow({ ...finished, ticksSinceReached: PAUSE_TICKS })).toBe(TWO_LEVELS[1]);
+  });
+
+  it('the last level stays finished however long he waits', () => {
+    expect(levelToStartNow({ levels: TWO_LEVELS, level: 2, dt: FIXED_DT, ticksSinceReached: PAUSE_TICKS * 100 })).toBeUndefined();
+  });
+});
+
 // ---- Helpers ----
+
+const { levelToStartNow } = __testing__;
+const PAUSE_TICKS = Math.round(LEVEL_END.pauseBeforeNextLevel / FIXED_DT);
+const TWO_LEVELS: readonly Level[] = [levelById(1), { ...levelById(1), id: 2, name: 'The one after' }];
 
 const LEVEL = levelById(1);

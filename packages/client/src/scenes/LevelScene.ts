@@ -1,6 +1,6 @@
 import { flagOf, levelOf, stickManOf, type StickManView } from '@stickworld/sim';
 import Phaser from 'phaser';
-import { commandsFromKeys, type KeysNow } from '../input/playerCommands';
+import { keysToCommands, type KeysNow } from '../input/playerCommands';
 import { watchPlayerKeys } from '../input/playerKeys';
 import type { GameLoop } from '../loop/GameLoop';
 import { flagStrokes } from '../render/flag';
@@ -22,7 +22,7 @@ export class LevelScene extends Phaser.Scene {
   private stickMan!: StrokeLayer;
   private keysNow!: () => KeysNow;
   private follow!: (stickMan: StickManView) => void;
-  private readonly commandsFor = commandsFromKeys();
+  private readonly commandsFor = keysToCommands();
 
   constructor(private readonly loop: GameLoop) {
     super('level');

@@ -6,8 +6,9 @@
  * and starts again. Then the same walk once more for the camera: a recording
  * of the walk, a jump and the flag.
  *
- * Every expected number comes from `window.__game` (the level, the flag, the
- * camera), none is typed in here.
+ * Where things are and how big they are comes from `window.__game` (the
+ * level, the flag, the camera, his height). The numbers typed in here are
+ * loose bounds only: "a few metres", "more than a step", "much darker".
  */
 import { chromium } from 'playwright';
 import { mkdirSync, renameSync, rmSync } from 'node:fs';
@@ -48,6 +49,12 @@ try {
   const graphiteOnHim = await darkPixels(page, startShot, bodyBox(atStart));
   const graphiteOnBarePaper = await darkPixels(page, startShot, { ...bodyBox(atStart), x: bodyBox(atStart).x - 3 * bodyBox(atStart).width });
   results.push(check('he is drawn in pencil where the sim says he is, and not beside it', graphiteOnHim > 150 && graphiteOnBarePaper < graphiteOnHim / 10, `${graphiteOnHim} dark pixels on him, ${graphiteOnBarePaper} beside him`));
+  // Nothing is near the flag yet, so graphite in the stick's box can only be the stick.
+  const graphiteOnTheStick = await darkPixels(page, startShot, stickBox(atStart));
+  const graphiteBesideTheStick = await darkPixels(page, startShot, { ...stickBox(atStart), x: stickBox(atStart).x - 4 * stickBox(atStart).width });
+  results.push(check('the flag is drawn in pencil where the sim says it stands, and not beside it', between(screenOf(atStart, atStart.flag.at).x, 0, VIEWPORT.width) && graphiteOnTheStick > 60 && graphiteBesideTheStick < graphiteOnTheStick / 10, `${graphiteOnTheStick} dark pixels on the stick, ${graphiteBesideTheStick} beside it`));
+  const clothDownAtStart = await darkPixels(page, startShot, clothBox(atStart, 0));
+  const clothUpAtStart = await darkPixels(page, startShot, clothBox(atStart, 1));
 
   // ---- Walking right ----
   await page.keyboard.down('ArrowRight');
@@ -88,6 +95,7 @@ try {
   const beforeSpotJump = await stateOf(page);
   await page.keyboard.press('ArrowUp');
   const spotJump = await watchUntilLanded(page, '03-jumping.png');
+  results.push(check('the jump was caught in a screenshot', spotJump.shot, '03-jumping.png'));
   results.push(check('the up arrow jumps too, straight up when he stands', spotJump.left && spotJump.landed && near(spotJump.end.stickMan.feet.x, beforeSpotJump.stickMan.feet.x) && spotJump.end.stickMan.action === 'standing', `feet ${spotJump.highest.toFixed(2)} m above the floor at the top`));
 
   // ---- Reaching the flag finishes the level ----
@@ -100,8 +108,9 @@ try {
   results.push(check('the flag goes up the stick and he cheers', Boolean(raised) && raised.stickMan.action === 'cheering', raised ? describe(raised) : 'never raised'));
   const flagShot = await shoot(page, '05-at-the-flag.png');
   const finished = await stateOf(page);
-  const graphiteOnTheStick = await darkPixels(page, flagShot, stickBox(finished));
-  results.push(check('the flag is drawn in pencil where the sim says it stands', graphiteOnTheStick > 60, `${graphiteOnTheStick} dark pixels on the stick`));
+  const clothDownAtEnd = await darkPixels(page, flagShot, clothBox(finished, 0));
+  const clothUpAtEnd = await darkPixels(page, flagShot, clothBox(finished, 1));
+  results.push(check('the cloth is drawn low on the stick before he reaches it and at the top after', clothDownAtStart > 3 * clothUpAtStart && clothUpAtEnd > 3 * clothDownAtEnd && clothUpAtEnd > 20, `dark pixels low/high: ${clothDownAtStart}/${clothUpAtStart} at the start, ${clothDownAtEnd}/${clothUpAtEnd} at the end`));
   results.push(check('the flag stays in view with him', between(screenOf(finished, finished.flag.at).x, 0, VIEWPORT.width)));
 
   // The right arrow is still down; then left and a jump are tried too.
@@ -128,7 +137,6 @@ try {
   await page.keyboard.up('ArrowLeft');
   results.push(check('the left arrow, still held, walks him again after the restart', Boolean(walkingAgain), walkingAgain ? describe(walkingAgain) : 'he stood still'));
 
-  results.push(check('no page errors', pageErrors.length === 0, pageErrors.join(' | ')));
   report.atStart = atStart;
   report.walkSpeed = speed;
   report.jump = { highest: jump.highest, end: jump.end.stickMan };
@@ -142,6 +150,8 @@ try {
   mkdirSync(videoFolder, { recursive: true });
   const filming = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: 1, recordVideo: { dir: videoFolder, size: VIEWPORT } });
   const film = await filming.newPage();
+  film.on('pageerror', (error) => pageErrors.push(String(error)));
+  film.on('console', (message) => message.type() === 'error' && pageErrors.push(message.text()));
   await openGame(film);
   await film.waitForTimeout(600);
   await film.keyboard.down('ArrowRight');
@@ -157,6 +167,7 @@ try {
   renameSync(await video.path(), path.join(PROOF, '07-walk-jump-flag.webm'));
   rmSync(videoFolder, { recursive: true, force: true });
   results.push(check('recorded the walk, two jumps and the flag', Boolean(filmed), '07-walk-jump-flag.webm'));
+  results.push(check('no page errors', pageErrors.length === 0, pageErrors.join(' | ')));
 } catch (error) {
   results.push(check(`run completed (${error.message})`, false));
 } finally {
@@ -185,9 +196,8 @@ function stateOf(page) {
 
 /** Reads every frame from now until he has left the floor and come back to it. With `shotName`, takes a screenshot on the way up. */
 async function watchUntilLanded(page, shotName) {
-  const seen = { left: false, landed: false, highest: 0, highestOnScreen: Infinity, cameraHeights: [], end: undefined };
+  const seen = { left: false, landed: false, shot: false, highest: 0, highestOnScreen: Infinity, cameraHeights: [], end: undefined };
   const deadline = Date.now() + 4000;
-  let shot = false;
   while (Date.now() < deadline) {
     const state = await stateOf(page);
     const height = state.level.start.y - state.stickMan.feet.y;
@@ -196,8 +206,8 @@ async function watchUntilLanded(page, shotName) {
       seen.highest = Math.max(seen.highest, height);
       seen.highestOnScreen = Math.min(seen.highestOnScreen, screenOf(state, state.stickMan.feet).y);
       seen.cameraHeights.push(state.camera.scrollY);
-      if (shotName && !shot && height > 0.3) {
-        shot = true;
+      if (shotName && !seen.shot && height > 0.3) {
+        seen.shot = true;
         await shoot(page, shotName);
       }
     } else if (seen.left) {
@@ -233,7 +243,18 @@ function bodyBox(state) {
 function stickBox(state) {
   const foot = screenOf(state, state.flag.at);
   const top = screenOf(state, { x: state.flag.at.x, y: state.flag.at.y - state.flag.height });
-  return { x: foot.x - 6, y: top.y, width: 12, height: foot.y - top.y };
+  // It stops short of the foot, so the floor line is not counted.
+  return { x: foot.x - 6, y: top.y, width: 12, height: foot.y - top.y - 8 };
+}
+
+/**
+ * The screen rectangle to the right of the stick where the cloth is when the flag is `raised` (0 or 1):
+ * the top fifth of the stick when up, the fifth below the middle when down. The two do not overlap.
+ */
+function clothBox(state, raised) {
+  const stick = stickBox(state);
+  const top = raised === 1 ? stick.y + stick.height * 0.05 : stick.y + stick.height * 0.5;
+  return { x: stick.x + stick.width, y: top, width: stick.height * 0.12, height: stick.height * 0.1 };
 }
 
 async function shoot(page, name) {

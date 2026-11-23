@@ -48,7 +48,7 @@ packages/
       index.ts            Public API. The ONLY file the client may import from.
       core/               Sim, state slices, feature hooks, commands, rng, snapshot, view.
       content/            Data: the levels, the item and recipe defs, tuning values.
-      features/<name>/    One folder per feature: state, defs, commands, systems, tests.
+      features/<name>/    One folder per feature: state, defs, commands, systems, view, tests.
       features/index.ts   The list of features the sim runs (one line per feature).
   client/     Phaser app. Reads sim state, draws it, turns input into commands. No game rules.
     src/main.ts, src/scenes/, src/loop/, src/debug.ts

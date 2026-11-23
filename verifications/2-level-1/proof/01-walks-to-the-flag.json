@@ -70,7 +70,7 @@
     "pixelsPerMetre": 100,
     "stickManHeight": 1.8
   },
-  "walkSpeed": 2.2000000000000024,
+  "walkSpeed": 2.200000000000003,
   "jump": {
     "highest": 0.6999436925511606,
     "end": {
@@ -86,7 +86,7 @@
     }
   },
   "stoppedShort": {
-    "tick": 199,
+    "tick": 225,
     "dt": 0.016666666666666666,
     "level": {
       "id": 1,
@@ -157,7 +157,7 @@
     "stickManHeight": 1.8
   },
   "finished": {
-    "tick": 493,
+    "tick": 515,
     "dt": 0.016666666666666666,
     "level": {
       "id": 1,
@@ -255,7 +255,12 @@
     {
       "name": "he is drawn in pencil where the sim says he is, and not beside it",
       "pass": true,
-      "details": "241 dark pixels on him, 22 beside him"
+      "details": "231 dark pixels on him, 3 beside him"
+    },
+    {
+      "name": "the flag is drawn in pencil where the sim says it stands, and not beside it",
+      "pass": true,
+      "details": "166 dark pixels on the stick, 0 beside it"
     },
     {
       "name": "holding the right arrow walks him right",
@@ -302,6 +307,11 @@
       "details": "walking at x 4.68, y 0.00, facing -1"
     },
     {
+      "name": "the jump was caught in a screenshot",
+      "pass": true,
+      "details": "03-jumping.png"
+    },
+    {
       "name": "the up arrow jumps too, straight up when he stands",
       "pass": true,
       "details": "feet 0.70 m above the floor at the top"
@@ -317,9 +327,9 @@
       "details": "cheering at x 10.58, y 0.00, facing 1"
     },
     {
-      "name": "the flag is drawn in pencil where the sim says it stands",
+      "name": "the cloth is drawn low on the stick before he reaches it and at the top after",
       "pass": true,
-      "details": "208 dark pixels on the stick"
+      "details": "dark pixels low/high: 16/0 at the start, 0/21 at the end"
     },
     {
       "name": "the flag stays in view with him",
@@ -338,12 +348,12 @@
     {
       "name": "walking left past the end of the floor, he falls",
       "pass": true,
-      "details": "jumping at x -0.68, y 0.99, facing -1"
+      "details": "jumping at x -0.71, y 1.10, facing -1"
     },
     {
       "name": "and the level starts again: he is back on the floor near the start, the flag not reached",
       "pass": true,
-      "details": "walking at x 1.93, y 0.00, facing -1"
+      "details": "walking at x 1.96, y 0.00, facing -1"
     },
     {
       "name": "the left arrow, still held, walks him again after the restart",
@@ -351,14 +361,14 @@
       "details": "walking at x 1.93, y 0.00, facing -1"
     },
     {
-      "name": "no page errors",
-      "pass": true,
-      "details": ""
-    },
-    {
       "name": "recorded the walk, two jumps and the flag",
       "pass": true,
       "details": "07-walk-jump-flag.webm"
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
     }
   ]
 }
