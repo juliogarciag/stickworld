@@ -125,8 +125,8 @@ try {
   const endX = atTheEnd.x(floor.to.x);
   const endY = atTheEnd.y(floor.to.y);
   const [underHimStill, upToTheEnd, pastTheEnd] = await lookAt(page, [
-    { x: 40, y: endY - 8, width: 200, height: 16 },
-    { x: endX - 30, y: endY - 8, width: 25, height: 16 },
+    { x: 40, y: endY - 4, width: 200, height: 8 },
+    { x: endX - 30, y: endY - 4, width: 25, height: 8 },
     { x: endX + 40, y: endY - 10, width: VIEWPORT.width - endX - 60, height: 20 },
   ]);
   await page.screenshot({ path: path.join(PROOF, '03-end-of-the-floor.png') });

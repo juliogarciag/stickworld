@@ -23,7 +23,7 @@
     },
     "pose": {
       "feet": {
-        "x": 1.7739400000000005,
+        "x": 1.7492000000000008,
         "y": 0
       },
       "facing": 1,
@@ -35,47 +35,47 @@
   "screen": {
     "floorY": 388.79999999999995,
     "feetX": 480,
-    "manHeight": 207.69230769230768,
-    "perMetre": 115.38461538461537,
+    "manHeight": 90,
+    "perMetre": 50,
     "camera": {
-      "zoom": 1.1538461538461537,
-      "scrollX": -302.60599999999994,
-      "scrollY": -372.96,
+      "zoom": 0.5,
+      "scrollX": -305.0799999999999,
+      "scrollY": -507.59999999999997,
       "width": 960,
       "height": 540
     }
   },
   "paper": {
     "pixels": 28800,
-    "meanLuminance": 234.4724680555646,
-    "luminanceSpread": 1.8735455560219252,
-    "distinctColours": 253,
+    "meanLuminance": 234.37066225695378,
+    "luminanceSpread": 1.8012349664429748,
+    "distinctColours": 229,
     "darkShare": 0,
     "darkWidth": 0
   },
   "middleOfTheLine": {
     "pixels": 300,
-    "meanLuminance": 95.75544866666668,
-    "luminanceSpread": 25.693704826355543,
-    "distinctColours": 172,
-    "darkShare": 0.9433333333333334,
+    "meanLuminance": 98.71060666666675,
+    "luminanceSpread": 27.064514388504072,
+    "distinctColours": 115,
+    "darkShare": 0.9466666666666667,
     "topDarkY": 388,
     "bottomDarkY": 388,
     "darkWidth": 300
   },
   "man": {
-    "pixels": 38014,
-    "meanLuminance": 229.3303935655221,
-    "luminanceSpread": 28.22616256592711,
-    "distinctColours": 809,
-    "darkShare": 0.03893302467511969,
-    "topDarkY": 185,
-    "bottomDarkY": 378,
-    "darkWidth": 44
+    "pixels": 6696,
+    "meanLuminance": 228.37876702510093,
+    "luminanceSpread": 27.29348604143857,
+    "distinctColours": 414,
+    "darkShare": 0.03718637992831541,
+    "topDarkY": 300,
+    "bottomDarkY": 377,
+    "darkWidth": 19
   },
   "boil": {
-    "lineChanged": 948,
-    "manChanged": 1085,
+    "lineChanged": 597,
+    "manChanged": 241,
     "paperChanged": 0
   },
   "results": [
@@ -86,17 +86,17 @@
     {
       "name": "the paper is not a flat colour: it has a grain",
       "pass": true,
-      "details": "253 colours, luminance spread 1.87"
+      "details": "229 colours, luminance spread 1.80"
     },
     {
       "name": "the paper is still light, with nothing drawn where nothing is",
       "pass": true,
-      "details": "mean luminance 234.5"
+      "details": "mean luminance 234.4"
     },
     {
       "name": "the floor is a pencil line where level 1 says the floor is",
       "pass": true,
-      "details": "6 spots along it, dark share 0.23 0.31 0.22 0.25 0.21 0.19"
+      "details": "8 spots along it, dark share 0.25 0.15 0.23 0.15 0.13 0.23 0.25 0.23"
     },
     {
       "name": "the line stays a line: nothing is drawn under it",
@@ -110,17 +110,17 @@
     {
       "name": "the line has a grain: along its middle it is not one flat colour",
       "pass": true,
-      "details": "luminance 96, spread 25.7 (a flat line has 0)"
+      "details": "luminance 99, spread 27.1 (a flat line has 0)"
     },
     {
       "name": "the stick man is drawn standing on the floor line",
       "pass": true,
-      "details": "dark share 0.039 around him, 0.000 beside him"
+      "details": "dark share 0.037 around him, 0.000 beside him"
     },
     {
       "name": "he is as tall on screen as the sim says he is",
       "pass": true,
-      "details": "203.8 px drawn, 207.7 px expected"
+      "details": "88.8 px drawn, 90.0 px expected"
     },
     {
       "name": "his head is a drawn circle, not a filled one",
@@ -134,12 +134,12 @@
     {
       "name": "a still line boils: the floor is redrawn a little differently",
       "pass": true,
-      "details": "948 pixels changed"
+      "details": "597 pixels changed"
     },
     {
       "name": "a still stick man boils too",
       "pass": true,
-      "details": "1085 pixels changed"
+      "details": "241 pixels changed"
     },
     {
       "name": "the paper does not boil",
@@ -149,17 +149,17 @@
     {
       "name": "in a bigger window he fills the same share of the view",
       "pass": true,
-      "details": "37.7% of the height, then 38.0%"
+      "details": "16.4% of the height, then 16.6%"
     },
     {
       "name": "at pixel ratio 2 he is the same size against the view, mid-stride",
       "pass": true,
-      "details": "165.0 px drawn, 173.1 px expected"
+      "details": "71.5 px drawn, 75.0 px expected"
     },
     {
       "name": "at pixel ratio 3 he is the same size against the view, mid-stride",
       "pass": true,
-      "details": "110.3 px drawn, 115.4 px expected"
+      "details": "47.7 px drawn, 50.0 px expected"
     },
     {
       "name": "no page errors",

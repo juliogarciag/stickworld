@@ -52,7 +52,7 @@ try {
   const visibleFrom = Math.max(floor.from.x, game.pose.feet.x - (VIEWPORT.width / 2 - 20) / screen.perMetre);
   const visibleTo = Math.min(floor.to.x, game.pose.feet.x + (VIEWPORT.width / 2 - 20) / screen.perMetre);
   const alongTheFloor = Array.from({ length: 9 }, (_, sample) => visibleFrom + ((visibleTo - visibleFrom) * (sample + 0.5)) / 9).filter((metres) => Math.abs(screen.x(metres) - feetX) > manHeight * 0.5);
-  const onTheLine = await lookAt(page, alongTheFloor.map((metres) => ({ x: screen.x(metres) - 3, y: floorY - 8, width: 6, height: 16 })));
+  const onTheLine = await lookAt(page, alongTheFloor.map((metres) => ({ x: screen.x(metres) - 3, y: floorY - 4, width: 6, height: 8 })));
   const underTheLine = await lookAt(page, alongTheFloor.map((metres) => ({ x: screen.x(metres) - 3, y: floorY + 14, width: 6, height: 40 })));
   results.push(check(`the floor is a pencil line where level ${game.level.id} says the floor is`, alongTheFloor.length >= 5 && onTheLine.every((spot) => spot.darkShare > 0.1), `${alongTheFloor.length} spots along it, dark share ${onTheLine.map((spot) => spot.darkShare.toFixed(2)).join(' ')}`));
   results.push(check('the line stays a line: nothing is drawn under it', underTheLine.every((spot) => spot.darkShare === 0)));

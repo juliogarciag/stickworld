@@ -5,7 +5,7 @@ import { toPixels } from './units';
 /** How the camera frames the level. View detail only. */
 const FRAMING = {
   /** How many stick men tall the view is: this, not the pixel ratio, decides how big things are on screen. */
-  stickMenTall: 2.6,
+  stickMenTall: 6,
   /** Where the floor under him sits, as a share of the view's height from the top. */
   floorFromTop: 0.72,
 } as const;
