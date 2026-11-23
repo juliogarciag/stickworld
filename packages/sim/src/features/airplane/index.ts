@@ -4,10 +4,11 @@ import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
 import { AIRPLANE_ITEM_ID } from '../inventory/defs';
 import { holdsItem, replaceSelectedItem, selectedItemOf } from '../inventory/held';
-import { PLAYER } from '../player/defs';
 import { floorHeightAt, lowestFloorHeight } from '../player/floor';
 import { playerSlice } from '../player/state';
+import type { SteerDirection } from './commands';
 import { AIRPLANE } from './defs';
+import { boardAndLaunch, moveOneTick } from './flight';
 import { airplaneSlice, type AirplaneState } from './state';
 
 /**
@@ -16,12 +17,19 @@ import { airplaneSlice, type AirplaneState } from './state';
  * interacting again puts it down in front of him. It rests wherever its
  * middle has floor under it, so near the end of a line it sits on the edge
  * with its nose out. Put down too far past the edge, or still over his head
- * when he drops off one, it falls and is lost. Moved by lifting and carrying
- * only: plain arithmetic on the level's floor segments, no physics.
+ * when he drops off one, it falls and is lost. Where it sits on an edge with
+ * its nose over a gap, interacting boards it: he sits down in it and it
+ * glides, steered by `'airplane/steer'` (`flight.ts`). Plain arithmetic on
+ * the level's floor segments, no physics.
  */
 export const airplaneFeature: Feature = {
   name: 'airplane',
   slices: [airplaneSlice],
+
+  handleCommand(sim, command) {
+    const { type, direction } = command as { type: string; direction?: unknown };
+    if (type === 'airplane/steer' && isSteerDirection(direction)) sim.stateOf(airplaneSlice).steering = direction;
+  },
 
   update(sim) {
     const airplane = sim.stateOf(airplaneSlice);
@@ -37,10 +45,7 @@ export const airplaneFeature: Feature = {
         carryOverHisHead(sim);
       }
     }
-    if (!airplane.falling) return;
-    airplane.y += airplane.verticalSpeed * sim.dt + (AIRPLANE.gravity * sim.dt * sim.dt) / 2;
-    airplane.verticalSpeed += AIRPLANE.gravity * sim.dt;
-    if (airplane.y > floorLevel + PLAYER.fallBelowFloor) sim.setStateOf(airplaneSlice, airplaneSlice.initialFor(sim.levelDef));
+    moveOneTick(sim);
   },
 };
 
@@ -55,7 +60,7 @@ export function hasAirplane(sim: Sim): boolean {
  */
 export function sitsOnAnEdge(sim: Sim): boolean {
   const airplane = sim.stateOf(airplaneSlice);
-  if (!airplane.inWorld || airplane.carried || airplane.falling) return false;
+  if (!airplane.inWorld || airplane.carried || airplane.falling || airplane.flying || airplane.sliding) return false;
   const { floor } = sim.levelDef;
   const nose = airplane.x + (airplane.facing * AIRPLANE.length) / 2;
   const floorFurtherOn = floor.some(({ from, to }) => (airplane.facing === 1 ? from.x > nose : to.x < nose));
@@ -82,11 +87,10 @@ export function airplaneItemUse(sim: Sim) {
 export function airplaneInteraction(sim: Sim) {
   const airplane = sim.stateOf(airplaneSlice);
   const player = sim.stateOf(playerSlice);
-  if (!airplane.inWorld || airplane.falling || !player.onFloor) return undefined;
+  if (!airplane.inWorld || airplane.falling || airplane.flying || airplane.sliding || !player.onFloor) return undefined;
   if (airplane.carried) return { means: 'putDown' as const, perform: () => putDownInFrontOfHim(sim) };
   if (Math.abs(player.x - airplane.x) > AIRPLANE.reach) return undefined;
-  // Boarding is issue #5. Until then the press is taken and nothing happens: it must not lift the airplane instead.
-  if (sitsOnAnEdge(sim)) return { means: 'board' as const, perform: () => undefined };
+  if (sitsOnAnEdge(sim)) return { means: 'board' as const, perform: () => boardAndLaunch(sim) };
   return {
     means: 'lift' as const,
     perform: () => {
@@ -98,6 +102,10 @@ export function airplaneInteraction(sim: Sim) {
 }
 
 // ---- Helpers ----
+
+function isSteerDirection(value: unknown): value is SteerDirection {
+  return value === -1 || value === 0 || value === 1;
+}
 
 /** The airplane leaves his hands or his slot for the floor in front of him, or for the air past the end of it. */
 function putDownInFrontOfHim(sim: Sim): void {
@@ -111,6 +119,7 @@ function putDownInFrontOfHim(sim: Sim): void {
   airplane.carried = false;
   airplane.facing = player.facing;
   airplane.verticalSpeed = 0;
+  airplane.speed = 0;
   airplane.x = resting ?? middle;
   airplane.y = floorHeightAt(floor, airplane.x) ?? player.y;
   airplane.falling = resting === undefined;
@@ -128,6 +137,7 @@ function letFall(airplane: AirplaneState): void {
   airplane.carried = false;
   airplane.falling = true;
   airplane.verticalSpeed = 0;
+  airplane.speed = 0;
 }
 
 /**

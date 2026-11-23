@@ -12,7 +12,7 @@ import { letterOf } from '../letter/view';
 import { PLAYER } from '../player/defs';
 import { stickManOf } from '../player/view';
 import { interactionOf } from '../world/view';
-import { AIRPLANE } from './defs';
+import { AIRPLANE, FLIGHT } from './defs';
 import { __testing__, hasAirplane } from './index';
 import { airplaneOf } from './view';
 
@@ -23,7 +23,7 @@ describe('placing the airplane', () => {
     sim.step([{ type: 'player/walk', direction: 0 }]);
     const { feet } = stickManOf(sim);
     sim.step([USE_ITEM]);
-    expect(airplaneOf(sim)).toEqual({ at: { x: feet.x - AIRPLANE.putDownAhead, y: 0 }, facing: -1, length: AIRPLANE.length, height: AIRPLANE.height, state: 'resting', verticalSpeed: 0, onAnEdge: false });
+    expect(airplaneOf(sim)).toEqual({ at: { x: feet.x - AIRPLANE.putDownAhead, y: 0 }, facing: -1, length: AIRPLANE.length, height: AIRPLANE.height, state: 'resting', verticalSpeed: 0, speed: 0, pitch: 0, stallSpeed: FLIGHT.stallSpeed, onAnEdge: false });
     expect(itemSlotsOf(sim)).toEqual([{ slot: 1, itemDefId: null, selected: true }]);
     expect(itemUseOf(sim)).toBeNull();
   });
@@ -149,14 +149,14 @@ describe('the edge', () => {
     expect(airplaneOf(sim)!.state).toBe('carried');
   });
 
-  it('is boarded, not lifted, where it sits on an edge: the press is taken and, until boarding exists, does nothing', () => {
+  it('is boarded, not lifted, where it sits on an edge (flight.test.ts has the flight)', () => {
     const sim = carryingTheAirplane();
     walkTo(sim, EDGE - AIRPLANE.putDownAhead - 0.2);
     sim.step([INTERACT]);
     expect(interactionOf(sim)).toBe('board');
-    const before = sim.snapshot().slices;
     sim.step([INTERACT]);
-    expect(sim.snapshot().slices).toEqual(before);
+    expect(stickManOf(sim)).toMatchObject({ action: 'seated', carrying: false });
+    expect(airplaneOf(sim)!.state).toBe('flying');
   });
 });
 

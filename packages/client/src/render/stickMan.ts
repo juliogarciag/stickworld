@@ -11,7 +11,7 @@ import { PIXELS_PER_METRE, toPixels } from './units';
  */
 
 export interface StickManPose {
-  /** Where his feet are on the floor, in metres. */
+  /** Where his feet are on the floor, in metres. Seated, the middle of the underside of what he sits in. */
   readonly feet: Point;
   /** 1 when he looks right, -1 when he looks left. */
   readonly facing: 1 | -1;
@@ -28,8 +28,10 @@ export interface StickManPose {
   readonly inTheAir: number;
   /** How deep he is in the knee bend that takes a landing, from 0 to 1. */
   readonly landing: number;
-  /** How far his body tips over as he falls sideways, in radians: positive to the right, 0 upright. */
+  /** How far his body tips over as he falls sideways, in radians: positive to the right, 0 upright. Seated, how far what he sits in tips all of him. */
   readonly tilt: number;
+  /** How far above `feet` the point is that a seated man tips about, in metres: the middle of what he sits in. Only read when seated. */
+  readonly tipsAboutAbove: number;
   /** How far each arm is lifted from where it would point, in radians, so that it rests on a floor line instead of crossing it. */
   readonly armsLifted: readonly [number, number];
   /** How far his arms have gone up to hold something over his head, from 0 to 1. */
@@ -53,9 +55,19 @@ export function poseOf(stickMan: StickManView): StickManPose {
     inTheAir: action === 'jumping' ? 1 : 0,
     landing: 0,
     tilt: tiltOfFall(stickMan),
+    tipsAboutAbove: 0,
     armsLifted: [0, 0],
     carrying: stickMan.carrying ? 1 : 0,
   };
+}
+
+/**
+ * `pose` tipped with what he sits in: its nose `noseDown` radians down, turning about a point `turnsAboutAbove` metres
+ * above its underside. The pose of a man who is not seated is returned as it is.
+ */
+export function seatedIn(pose: StickManPose, { noseDown, turnsAboutAbove }: { noseDown: number; turnsAboutAbove: number }): StickManPose {
+  if (pose.action !== 'seated') return pose;
+  return { ...pose, tilt: pose.facing * noseDown, tipsAboutAbove: turnsAboutAbove };
 }
 
 /**
@@ -181,6 +193,17 @@ const BODY = {
   carrying: { handOut: 0.14 * STICK_MAN_HEIGHT, elbowOut: 0.165 * STICK_MAN_HEIGHT, elbowUp: 0.8 * STICK_MAN_HEIGHT },
   /** Both arms up once the level is finished. */
   cheeringArm: { swing: 2.2, bend: 0.3 },
+  /**
+   * Seated in the airplane: his hips on its fold, a little behind its middle, his knees up in front of him and his
+   * feet down on its nose, leaning into the flight with both hands on it in front of him.
+   */
+  seated: {
+    legs: [{ swing: 1.92, bend: 1.25 }, { swing: 1.77, bend: 0.95 }],
+    arms: [{ swing: 0.42, bend: 0.05 }, { swing: 0.56, bend: 0.08 }],
+    lean: 0.3,
+    hipsAbove: 0.13 * STICK_MAN_HEIGHT,
+    hipsBehind: 0.055 * STICK_MAN_HEIGHT,
+  },
 } as const;
 
 /** How long his limbs take to get from one thing to the next, in seconds. View detail only. */
@@ -234,6 +257,7 @@ interface Limbs {
 
 /** Every joint, in metres. The lower foot is where the sim says his feet are, so the hips rise and fall as he walks. */
 function skeletonOf(pose: StickManPose): Skeleton {
+  if (pose.action === 'seated') return seatedSkeletonOf(pose);
   const { feet, facing, tilt } = pose;
   const posed = limbsOf(pose);
   // Tipping over, his legs trail behind his body, and each arm is as far up as the floor line has pushed it.
@@ -257,6 +281,31 @@ function skeletonOf(pose: StickManPose): Skeleton {
     return armFrom(shoulder, arm, facing).map((joint, jointIndex) => partWay(joint, held[jointIndex]!, holdingUp));
   });
   return { head, neck, hip, arms, legs: limbs.legs.map((leg) => legFrom(hip, leg, facing)) };
+}
+
+/** Every joint of a seated man, in metres: sat where the sim has him, then tipped with what he sits in. */
+function seatedSkeletonOf({ feet, facing, tilt, tipsAboutAbove }: StickManPose): Skeleton {
+  const { legs, arms, lean, hipsAbove, hipsBehind } = BODY.seated;
+  const hip = { x: feet.x - facing * hipsBehind, y: feet.y - hipsAbove };
+  const neck = { x: hip.x + Math.sin(lean * facing) * BODY.body, y: hip.y - Math.cos(lean) * BODY.body };
+  const head = { x: neck.x + Math.sin(lean * facing) * BODY.headRadius, y: neck.y - Math.cos(lean) * BODY.headRadius };
+  const shoulder = { x: neck.x - Math.sin(lean * facing) * BODY.shoulderDrop, y: neck.y + Math.cos(lean) * BODY.shoulderDrop };
+  const about = { x: feet.x, y: feet.y - tipsAboutAbove };
+  const tipped = (point: Point): Point => turnedAbout(about, point, tilt);
+  return {
+    head: tipped(head),
+    neck: tipped(neck),
+    hip: tipped(hip),
+    arms: arms.map((arm) => armFrom(shoulder, arm, facing).map(tipped)),
+    legs: legs.map((leg) => legFrom(hip, leg, facing).map(tipped)),
+  };
+}
+
+/** `point` turned about `centre` by `angle` radians, clockwise on the page. */
+function turnedAbout(centre: Point, point: Point, angle: number): Point {
+  const x = point.x - centre.x;
+  const y = point.y - centre.y;
+  return { x: centre.x + x * Math.cos(angle) - y * Math.sin(angle), y: centre.y + x * Math.sin(angle) + y * Math.cos(angle) };
 }
 
 /** The point `share` of the way from `from` to `to`. */

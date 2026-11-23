@@ -55,6 +55,43 @@ describe('airplanesEasedOverTime', () => {
     }
   });
 
+  it('is exactly where the sim has it while it flies, however fast, with its nose where the sim points it', () => {
+    const shownFor = airplanesEasedOverTime();
+    shownFor(RESTING, FRAME);
+    let flying = FLYING;
+    // The first frames turn its nose from level to where the sim points it; from then on it is exact.
+    for (let frame = 0; frame < 10; frame += 1) expect(shownFor(flying, FRAME)!.at).toEqual(flying.at);
+    for (let frame = 0; frame < 30; frame += 1) {
+      flying = { ...flying, at: { x: flying.at.x + 11 * FRAME, y: flying.at.y - 2 * FRAME }, pitch: flying.pitch - 1.7 * FRAME };
+      const shown = shownFor(flying, FRAME)!;
+      expect(shown.at).toEqual(flying.at);
+      expect(shown.noseDown).toBeCloseTo(-flying.pitch, 9);
+    }
+  });
+
+  it('turns its nose over a moment when the sim turns it at once: a stall does not snap it down', () => {
+    const shownFor = airplanesEasedOverTime();
+    shownFor(FLYING, FRAME);
+    expect(shownFor(FLYING, FRAME)!.noseDown).toBe(-FLYING.pitch);
+    const stalled: AirplaneView = { ...FLYING, state: 'falling', pitch: 0, verticalSpeed: 4, speed: 2 };
+    const first = shownFor(stalled, FRAME)!.noseDown;
+    expect(first).toBeGreaterThan(-FLYING.pitch);
+    expect(first).toBeLessThan(0);
+    let last = first;
+    for (let frame = 0; frame < 60; frame += 1) last = shownFor(stalled, FRAME)!.noseDown;
+    expect(last).toBeGreaterThan(0.5);
+  });
+
+  it('keeps up with an airplane that falls fast, drifting on sideways', () => {
+    const shownFor = airplanesEasedOverTime();
+    let falling: AirplaneView = { ...FLYING, state: 'falling', pitch: 0, verticalSpeed: 9, speed: 6 };
+    shownFor(falling, FRAME);
+    for (let frame = 0; frame < 30; frame += 1) {
+      falling = { ...falling, at: { x: falling.at.x + falling.speed * FRAME, y: falling.at.y + falling.verticalSpeed * FRAME } };
+      expect(shownFor(falling, FRAME)!.at).toEqual(falling.at);
+    }
+  });
+
   it('starts afresh after it was gone: a new airplane does not slide in from where the last one was', () => {
     const shownFor = airplanesEasedOverTime();
     shownFor(RESTING, FRAME);
@@ -69,5 +106,6 @@ describe('airplanesEasedOverTime', () => {
 const FRAME = 1 / 60;
 const WALK_SPEED = 2.2;
 const ON_THE_FLOOR: ShownAirplane = { at: { x: 5, y: 0 }, facing: 1, length: 1.4, height: 0.34, noseDown: 0 };
-const RESTING: AirplaneView = { at: { x: 5, y: 0 }, facing: 1, length: 1.4, height: 0.34, state: 'resting', verticalSpeed: 0, onAnEdge: false };
+const RESTING: AirplaneView = { at: { x: 5, y: 0 }, facing: 1, length: 1.4, height: 0.34, state: 'resting', verticalSpeed: 0, speed: 0, pitch: 0, stallSpeed: 3, onAnEdge: false };
+const FLYING: AirplaneView = { ...RESTING, at: { x: 12, y: -1.5 }, state: 'flying', speed: 7, pitch: 0.4 };
 const CARRIED: AirplaneView = { ...RESTING, at: { x: 4.1, y: -1.82 }, state: 'carried' };

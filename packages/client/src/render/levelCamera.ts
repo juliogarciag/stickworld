@@ -13,13 +13,13 @@ const FRAMING = {
 /**
  * Returns a function that points `camera` at the stick man, to call every
  * frame. It follows him along the line, and stays at the height of the floor
- * he last stood on while his feet are off it: a jump moves him on the screen,
- * not the paper under him.
+ * he last stood on while his feet are off it: a jump or a flight moves him on
+ * the screen, not the paper under him.
  */
 export function followStickManWith(camera: Phaser.Cameras.Scene2D.Camera): (stickMan: StickManView) => void {
   let floorHeight: number | undefined;
   return ({ feet, action }) => {
-    if (action !== 'jumping' || floorHeight === undefined) floorHeight = feet.y;
+    if ((action !== 'jumping' && action !== 'seated') || floorHeight === undefined) floorHeight = feet.y;
     frame(camera, { x: feet.x, y: floorHeight });
   };
 }

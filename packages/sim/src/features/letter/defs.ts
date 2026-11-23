@@ -23,7 +23,7 @@ export const letterDefs: readonly LetterDef[] = [
   {
     id: AIRPLANE_LETTER_ID,
     name: 'the letter about the paper airplane',
-    text: 'A sheet of paper can fly. Hold yours and fold it into an airplane. Set it down, lift it over your head and carry it to the edge.',
+    text: 'A sheet of paper can fly. Hold yours and fold it into an airplane. Set it down, lift it over your head and carry it to the edge. Sit in it there and it flies: climbing slows it, diving speeds it up, and too slow it falls.',
     teachesRecipe: PAPER_AIRPLANE_RECIPE_ID,
     gives: PAPER_ITEM_ID,
   },
