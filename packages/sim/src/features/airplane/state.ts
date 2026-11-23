@@ -2,7 +2,7 @@ import { defineSlice } from '../../core/slice';
 import type { SteerDirection } from './commands';
 
 export interface AirplaneState {
-  /** True while there is an airplane in the level: on the floor, over his head or falling. False while it is an item in his slot, or lost, or not made yet. */
+  /** True while there is an airplane in the level: on the floor, over his head, flying, sliding or falling. False while it is an item in his slot, or lost, or not made yet. */
   inWorld: boolean;
   /** The middle of its underside, in metres. Only read while it is in the world. */
   x: number;

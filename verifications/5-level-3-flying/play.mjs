@@ -119,3 +119,21 @@ export async function putTheAirplaneOnTheEdge(page) {
   await press(page, 'k'); // put down
   return stateOf(page);
 }
+
+/** How many pixels of a screenshot are as dark as a pencil line, counted in the page: the paper and its grain are much lighter. */
+export function pencilPixelsIn(page, png) {
+  return page.evaluate(async (base64) => {
+    const image = new window.Image();
+    image.src = `data:image/png;base64,${base64}`;
+    await image.decode();
+    const canvas = window.document.createElement('canvas');
+    canvas.width = image.width;
+    canvas.height = image.height;
+    const context = canvas.getContext('2d');
+    context.drawImage(image, 0, 0);
+    const { data } = context.getImageData(0, 0, image.width, image.height);
+    let dark = 0;
+    for (let index = 0; index < data.length; index += 4) if ((data[index] + data[index + 1] + data[index + 2]) / 3 < 150) dark += 1;
+    return dark;
+  }, png.toString('base64'));
+}

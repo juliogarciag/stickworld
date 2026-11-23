@@ -27,16 +27,16 @@ export interface KeysWouldDo {
   readonly interaction: InteractionMeaning | null;
   readonly interactKey: string;
   /** True while he is seated in the airplane, and the names of the keys that fly it. */
-  readonly flying: boolean;
+  readonly seated: boolean;
   readonly flightKeys: { readonly climb: string; readonly dive: string; readonly jumpOut: string };
 }
 
 /** The prompts to show: the item key first, then the interact key, each only when it would do something, then the keys that fly the airplane while he is seated in it. */
-export function promptsFor({ itemUse, useItemKey, interaction, interactKey, flying, flightKeys }: KeysWouldDo): Prompt[] {
+export function promptsFor({ itemUse, useItemKey, interaction, interactKey, seated, flightKeys }: KeysWouldDo): Prompt[] {
   return [
     ...(itemUse === null ? [] : [{ key: useItemKey, words: ITEM_USE_WORDS[itemUse] }]),
     ...(interaction === null ? [] : [{ key: interactKey, words: INTERACTION_WORDS[interaction] }]),
-    ...(flying ? [{ key: flightKeys.climb, words: FLIGHT_WORDS.climb }, { key: flightKeys.dive, words: FLIGHT_WORDS.dive }, { key: flightKeys.jumpOut, words: FLIGHT_WORDS.jumpOut }] : []),
+    ...(seated ? [{ key: flightKeys.climb, words: FLIGHT_WORDS.climb }, { key: flightKeys.dive, words: FLIGHT_WORDS.dive }, { key: flightKeys.jumpOut, words: FLIGHT_WORDS.jumpOut }] : []),
   ];
 }
 

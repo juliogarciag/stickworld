@@ -38,6 +38,7 @@ export const FLIGHT = {
   pitchRate: 1.7,
   /** With no steer key held its nose sinks to `restingPitch`, this fast: left alone it glides gently down. */
   noseSinkRate: 1.3,
+  /** Where its nose points when nobody steers it: a little down. */
   restingPitch: -0.36,
   /** The furthest up and the furthest down its nose goes. */
   steepestClimb: 0.75,

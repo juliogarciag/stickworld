@@ -10,7 +10,7 @@ import type { Rectangle } from './itemSlots';
  */
 
 /** True once the flag that ends the game has been reached and has gone all the way up its stick. */
-export function gameIsOver(flag: FlagView | undefined): boolean {
+export function theEndIsWritten(flag: FlagView | undefined): boolean {
   return flag !== undefined && flag.endsTheGame && flag.reached && flag.raised === 1;
 }
 

@@ -31,8 +31,11 @@ export const playerFeature: Feature = {
     const player = sim.stateOf(playerSlice);
     if (player.seated) {
       // Seated he neither walks nor falls: what he sits in moves him. A jump stands him up in his seat, which is floor enough to take off from.
+      // A jump that arrived on the tick he sat down was asked for before the player could see him seated: it is dropped, not a way out of the seat.
+      if (player.seatedAtTick === sim.tick) player.ticksSinceJumpAsked = null;
       if (player.ticksSinceJumpAsked === null) return;
       player.seated = false;
+      player.seatedAtTick = null;
       player.onFloor = true;
     }
     const direction = walkDirectionNow(sim);

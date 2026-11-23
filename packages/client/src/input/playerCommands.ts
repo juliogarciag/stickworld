@@ -24,6 +24,9 @@ export interface KeysNow {
  * his feet, the airplane's nose up while he is seated in it, where only the
  * jump key itself jumps him out. Which of the two he is doing is the sim's
  * (`stickManOf`); what the sim does with either command is its own business.
+ * What is read here is one tick old while a command waits: an up key pressed
+ * in the moment he boards is still sent as a jump, and the sim drops a jump
+ * that arrives on the tick he sits down.
  */
 export function keysToCommands(): (now: { keys: KeysNow; sim: SimHandle }) => Command[] {
   const walkIsNews = newsToTheSim<WalkDirection>();

@@ -62,12 +62,12 @@ export function poseOf(stickMan: StickManView): StickManPose {
 }
 
 /**
- * `pose` tipped with what he sits in: its nose `noseDown` radians down, turning about a point `turnsAboutAbove` metres
+ * `pose` tipped with what he sits in: its nose `noseDown` radians down, turning about a point `tipsAboutAbove` metres
  * above its underside. The pose of a man who is not seated is returned as it is.
  */
-export function seatedIn(pose: StickManPose, { noseDown, turnsAboutAbove }: { noseDown: number; turnsAboutAbove: number }): StickManPose {
+export function seatedIn(pose: StickManPose, { noseDown, tipsAboutAbove }: { noseDown: number; tipsAboutAbove: number }): StickManPose {
   if (pose.action !== 'seated') return pose;
-  return { ...pose, tilt: pose.facing * noseDown, tipsAboutAbove: turnsAboutAbove };
+  return { ...pose, tilt: pose.facing * noseDown, tipsAboutAbove: tipsAboutAbove };
 }
 
 /**

@@ -17,7 +17,7 @@ describe('promptsFor', () => {
   });
 
   it('names the keys that fly the airplane while he is seated in it, and only then', () => {
-    expect(promptsFor({ ...KEYS, itemUse: null, interaction: null, flying: true })).toEqual([
+    expect(promptsFor({ ...KEYS, itemUse: null, interaction: null, seated: true })).toEqual([
       { key: '↑', words: 'climb' },
       { key: '↓', words: 'dive' },
       { key: 'SPACE', words: 'jump out' },
@@ -83,6 +83,6 @@ describe('keptWhileUnchanged', () => {
 
 // ---- Helpers ----
 
-const KEYS = { useItemKey: 'J', interactKey: 'K', flying: false, flightKeys: { climb: '↑', dive: '↓', jumpOut: 'SPACE' } } as const;
+const KEYS = { useItemKey: 'J', interactKey: 'K', seated: false, flightKeys: { climb: '↑', dive: '↓', jumpOut: 'SPACE' } } as const;
 const CAMERA_SEES = { x: 40, y: -20, width: 1920, height: 1080 };
 const WRITING = { at: { x: 0, y: 0 }, letterHeight: 28 };

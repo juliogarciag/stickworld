@@ -185,6 +185,33 @@ describe('level 3', () => {
     expectTheLevelToHaveStartedAgainWithANewLetterToCome(sim);
   });
 
+  it('cannot be finished by sinking under the far edge and climbing back up through the line: the line stops the airplane and it falls', () => {
+    let flightsThatWentUnder = 0;
+    for (const climbFromTick of [36, 40, 44, 50, 60]) {
+      for (const firstSteer of [0, -1] as const) {
+        const sim = createSim({ level: 3 });
+        putTheAirplaneOnTheEdge(sim);
+        sim.step([INTERACT]);
+        let wasUnderTheFarSide = false;
+        let cameUpThroughIt = false;
+        const flight = [
+          { atTick: 0, command: { type: 'airplane/steer', direction: firstSteer } as Command },
+          { atTick: climbFromTick, command: { type: 'airplane/steer', direction: 1 } as Command },
+        ];
+        playFlight(sim, flight, ({ airplane }) => {
+          wasUnderTheFarSide ||= airplane.at.x >= GAP.to && airplane.at.x <= level3.floor[1]!.to.x && airplane.at.y > 0;
+          cameUpThroughIt ||= wasUnderTheFarSide && isOverTheFarSide(airplane.at) && airplane.at.x <= level3.floor[1]!.to.x;
+        });
+        // A flight that pulled up in time, over the gap, is a flight like any other; these are the ones that did not.
+        if (!wasUnderTheFarSide) continue;
+        flightsThatWentUnder += 1;
+        expect(cameUpThroughIt, `steering ${firstSteer}, then up from tick ${climbFromTick}`).toBe(false);
+        expectTheLevelToHaveStartedAgainWithANewLetterToCome(sim);
+      }
+    }
+    expect(flightsThatWentUnder).toBeGreaterThanOrEqual(5);
+  });
+
   it('cannot be finished by climbing all the way: climbing too steeply for too long it stalls, falls short of the far side and the level starts again', () => {
     for (const ticks of [CLIMB_THAT_CROSSES.to + 6, 2 * CLIMB_THAT_CROSSES.to, Infinity]) {
       const sim = createSim({ level: 3 });
@@ -220,7 +247,7 @@ describe('level 3', () => {
     const saved = createSim({ level: 3 });
     putTheAirplaneOnTheEdge(saved);
     saved.step([INTERACT]);
-    const jumpAtTick = ticksToTheFarEdge - Math.round(0.12 * TICK_RATE);
+    const jumpAtTick = ticksToTheFarEdge - Math.round(JUMPS_OUT_BEFORE_THE_EDGE * TICK_RATE);
     let jumpedFrom: { x: number; y: number } | undefined;
     for (let tick = 0; tick < 6 * TICK_RATE; tick += 1) {
       if (tick === jumpAtTick) jumpedFrom = stickManOf(saved).feet;
@@ -258,6 +285,9 @@ const CLIMB_THAT_CROSSES = { from: 16, to: 42 };
 function isOverTheFarSide(at: { readonly x: number; readonly y: number }): boolean {
   return at.x >= GAP.to && at.y < 0;
 }
+
+/** How long before the airplane would pass under the far edge he jumps out of it, in seconds: at the last moment. */
+const JUMPS_OUT_BEFORE_THE_EDGE = 0.12;
 
 /** A recorded flight: the nose held up from the first tick after boarding for `ticks` ticks, then let go. */
 function climbingFor(ticks: number): { atTick: number; command: Command }[] {

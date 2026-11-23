@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { gameIsOver, theEndStrokes } from './theEnd';
+import { theEndIsWritten, theEndStrokes } from './theEnd';
 
 describe('the end', () => {
   it('is only once the flag that ends the game has been reached and is all the way up', () => {
-    expect(gameIsOver(undefined)).toBe(false);
-    expect(gameIsOver({ ...LAST_FLAG, reached: false, raised: 0 })).toBe(false);
-    expect(gameIsOver({ ...LAST_FLAG, raised: 0.5 })).toBe(false);
-    expect(gameIsOver({ ...LAST_FLAG, endsTheGame: false })).toBe(false);
-    expect(gameIsOver(LAST_FLAG)).toBe(true);
+    expect(theEndIsWritten(undefined)).toBe(false);
+    expect(theEndIsWritten({ ...LAST_FLAG, reached: false, raised: 0 })).toBe(false);
+    expect(theEndIsWritten({ ...LAST_FLAG, raised: 0.5 })).toBe(false);
+    expect(theEndIsWritten({ ...LAST_FLAG, endsTheGame: false })).toBe(false);
+    expect(theEndIsWritten(LAST_FLAG)).toBe(true);
   });
 
   it('is written large across the upper half of what the camera sees, centred', () => {

@@ -3,7 +3,7 @@ import Phaser from 'phaser';
 import { itemSlotStrokes } from '../hud/itemSlots';
 import { letterSheetStrokes, recipeListStrokes } from '../hud/panels';
 import { promptsFor, promptStrokes } from '../hud/prompts';
-import { gameIsOver, theEndStrokes } from '../hud/theEnd';
+import { theEndIsWritten, theEndStrokes } from '../hud/theEnd';
 import { keptWhileUnchanged } from '../hud/unchanged';
 import { ACTION_KEY_NAMES } from '../input/actionKeys';
 import { FLIGHT_KEY_NAMES } from '../input/playerKeys';
@@ -62,12 +62,12 @@ export class HudScene extends Phaser.Scene {
       useItemKey: ACTION_KEY_NAMES.useItem,
       interaction: interactionOf(sim),
       interactKey: ACTION_KEY_NAMES.interact,
-      flying: stickManOf(sim).action === 'seated',
+      seated: stickManOf(sim).action === 'seated',
       flightKeys: FLIGHT_KEY_NAMES,
     });
     this.prompts.show(this.strokesOfPrompts(JSON.stringify([prompts, seen]), () => promptStrokes(prompts, seen)));
 
-    const over = gameIsOver(flagOf(sim));
+    const over = theEndIsWritten(flagOf(sim));
     this.theEnd.show(this.strokesOfTheEnd(JSON.stringify([over, seen]), () => (over ? theEndStrokes(seen) : [])));
   }
 }

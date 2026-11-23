@@ -49,6 +49,20 @@ describe('boarding', () => {
     }
   });
 
+  it('is not undone by a jump that arrives on the same tick, before or after the interaction: he stays seated', () => {
+    for (const commands of [[INTERACT, JUMP], [JUMP, INTERACT]]) {
+      const sim = readyToBoard();
+      sim.step(commands);
+      expect(stickManOf(sim).action).toBe('seated');
+      expect(airplaneOf(sim)!.state).toBe('flying');
+      for (let tick = 0; tick < 10; tick += 1) sim.step();
+      expect(stickManOf(sim).action).toBe('seated');
+      // The next jump is his own: it takes him out.
+      sim.step([JUMP]);
+      expect(stickManOf(sim).action).toBe('jumping');
+    }
+  });
+
   it('cannot be interacted with while it flies: the press does nothing', () => {
     const sim = readyToBoard();
     sim.step([INTERACT]);
@@ -222,6 +236,40 @@ describe('landing', () => {
   });
 });
 
+describe('a floor line', () => {
+  it('is not flown through from below: under it the airplane stops gliding and falls, with him in it', () => {
+    const sim = readyToBoard();
+    sim.step([INTERACT]);
+    // Left alone it sinks under the far line; then the nose is held up.
+    for (let tick = 0; tick < 600 && airplaneOf(sim)!.at.x < FAR_SIDE; tick += 1) sim.step();
+    expect(airplaneOf(sim)!.at.y).toBeGreaterThan(0);
+    sim.step([STEER_UP]);
+    let highest = Infinity;
+    for (let tick = 0; tick < 10 * TICK_RATE && stickManOf(sim).action === 'seated'; tick += 1) {
+      highest = Math.min(highest, airplaneOf(sim)!.at.y);
+      sim.step();
+    }
+    expect(highest).toBeGreaterThan(0);
+    expect(stickManOf(sim)).toMatchObject({ action: 'standing', feet: level3.start });
+    expect(hasAirplane(sim)).toBe(false);
+  });
+
+  it('is slid off when it comes down too late: past the end of the paper it falls with him still in it, and the level starts again', () => {
+    const sim = readyToBoard();
+    sim.step([INTERACT]);
+    const lateLanding = [
+      { atTick: 0, command: STEER_UP },
+      { atTick: 20, command: STEER_LEVEL },
+      { atTick: 95, command: STEER_UP },
+      { atTick: 125, command: STEER_LEVEL },
+    ];
+    const states = collapsed(flown(sim, lateLanding).map((airplane) => airplane.state));
+    expect(states.slice(-2)).toEqual(['landing', 'falling']);
+    expect(stickManOf(sim)).toMatchObject({ action: 'standing', feet: level3.start });
+    expect(hasAirplane(sim)).toBe(false);
+  });
+});
+
 describe('jumping out', () => {
   it('stands him up and jumps him out of his seat; the airplane falls on without him', () => {
     const sim = readyToBoard();
@@ -243,6 +291,16 @@ describe('jumping out', () => {
     for (let tick = 0; tick < 5 * TICK_RATE && stickManOf(sim).action === 'jumping'; tick += 1) sim.step();
     expect(stickManOf(sim)).toMatchObject({ action: 'standing', feet: level3.start });
     expect(hasAirplane(sim)).toBe(false);
+  });
+
+  it('early, walking back to the near side, saves him and loses the airplane: he is not left with one he cannot reach, and a new letter falls', () => {
+    const sim = readyToBoard();
+    sim.step([INTERACT]);
+    sim.step([{ type: 'player/walk', direction: -1 }, { type: 'player/jump' }]);
+    for (let tick = 0; tick < 12 * TICK_RATE && !letterOf(sim); tick += 1) sim.step();
+    expect(stickManOf(sim).feet.x).toBeLessThanOrEqual(EDGE);
+    expect(hasAirplane(sim)).toBe(false);
+    expect(letterOf(sim)!.height).toBeGreaterThan(0);
   });
 
   it('leaves an airplane that comes down over the floor lying there, to be lifted again', () => {
@@ -309,6 +367,7 @@ const EDGE = level3.floor[0]!.to.x;
 const FAR_SIDE = level3.floor[1]!.from.x;
 
 const INTERACT: Command = { type: 'world/interact' };
+const JUMP: Command = { type: 'player/jump' };
 const STEER_UP: Command = { type: 'airplane/steer', direction: 1 };
 const STEER_LEVEL: Command = { type: 'airplane/steer', direction: 0 };
 const STEER_DOWN: Command = { type: 'airplane/steer', direction: -1 };

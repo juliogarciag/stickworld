@@ -45,16 +45,21 @@ export function airplanesEasedOverTime(): (airplane: AirplaneView | undefined, s
       // Handled, it follows at its own pace; falling, it also keeps up with however fast it falls; flying and landing it is where the sim says.
       const reach = seconds * (HANDLING.speed + airplane.speed + Math.abs(airplane.verticalSpeed));
       const at = inHisHands || airplane.state === 'falling' ? movedTowards(shown.at, airplane.at, reach) : airplane.at;
-      const turn = seconds * HANDLING.noseTurnsPerSecond;
+      const turn = seconds * HANDLING.noseTurnRate;
       shown = { at, noseDown: shown.noseDown + Math.max(-turn, Math.min(turn, noseDown - shown.noseDown)) };
     }
     return { at: shown.at, facing: airplane.facing, length: airplane.length, height: airplane.height, noseDown: shown.noseDown };
   };
 }
 
+/** How far above its underside the point is that the airplane is drawn turning about, in metres: its middle. What sits in it turns about the same point. */
+export function heightItTurnsAbout({ height }: { height: number }): number {
+  return height / 2;
+}
+
 /** The strokes that draw the airplane, in world pixels: its outline, and the fold along its middle. */
 export function airplaneStrokes({ at, facing, length, height, noseDown }: ShownAirplane): Stroke[] {
-  const middle = { x: at.x, y: at.y - height / 2 };
+  const middle = { x: at.x, y: at.y - heightItTurnsAbout({ height }) };
   const part = ({ along, up }: { along: number; up: number }): Point => {
     const flat = { x: at.x + facing * along * length, y: at.y - up * height };
     const angle = facing * noseDown;
@@ -94,7 +99,7 @@ const HANDLING = {
   noseDownPerSpeed: 0.16,
   mostNoseDown: 1.1,
   /** How fast its nose turns to where it should point, in radians per second: faster than it is ever steered, so in flight it is exactly where the sim points it. */
-  noseTurnsPerSecond: 5,
+  noseTurnRate: 5,
 } as const;
 
 /** `from` moved towards `to` by at most `step`: `to` itself when it is within reach. */

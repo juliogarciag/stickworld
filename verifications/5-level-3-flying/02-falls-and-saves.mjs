@@ -7,11 +7,13 @@
  */
 import path from 'node:path';
 import { PROOF, check, summarize, writeProof } from './lib.mjs';
-import { openLevel3, putTheAirplaneOnTheEdge, stateOf, untilTheSim } from './play.mjs';
+import { VIEWPORT, openLevel3, pencilPixelsIn, putTheAirplaneOnTheEdge, stateOf, untilTheSim } from './play.mjs';
 
 /** A port no other session uses, and not the one of the dev server left running for the human (5205). */
 const PORT = 5916;
 const NAME = '02-falls-and-saves';
+/** The bottom left corner of the page, where the HUD writes what the keys would do. */
+const HINTS = { x: 0, y: VIEWPORT.height - 160, width: 300, height: 160 };
 const results = [];
 const report = {};
 let game;
@@ -19,13 +21,28 @@ try {
   game = await openLevel3({ port: PORT, name: NAME, results });
   const { page, pageErrors } = game;
 
+  // ---- 0. On his feet an up key is still a jump ----
+  await page.keyboard.press('w');
+  await untilTheSim(page, 'him to jump', (api) => api.stickMan().action === 'jumping', 2000);
+  results.push(check('on his feet, an up key (W) is a jump as before', true));
+  await untilTheSim(page, 'him to land', (api) => api.stickMan().action === 'standing');
+
   // ---- 1. Boarding and doing nothing: it sinks into the gap ----
   await putTheAirplaneOnTheEdge(page);
+  const hintsStanding = await pencilPixelsIn(page, await page.screenshot({ clip: HINTS }));
   await page.keyboard.press('k');
   await untilTheSim(page, 'him to be seated', (api) => api.stickMan().action === 'seated');
   await untilTheSim(page, 'it to sink below the line', (api) => api.stickMan().action === 'seated' && api.airplane().at.y > 1);
   const sinking = await stateOf(page);
+  const hintsSeated = await pencilPixelsIn(page, await page.screenshot({ clip: HINTS }));
   await page.screenshot({ path: path.join(PROOF, '07-sinking-into-the-gap.png') });
+  results.push(check('while he is seated the page names the keys that fly it, below what K would do before', hintsSeated > hintsStanding + 300, `${hintsStanding} pencil-dark pixels in the bottom left corner standing next to it, ${hintsSeated} seated`));
+  // Already lost, he pushes the nose down with the other down key: it dives steeper than it sinks by itself.
+  await page.keyboard.down('s');
+  await untilTheSim(page, 'the nose to go further down', (api) => api.stickMan().action !== 'seated' || api.airplane().pitch < -0.55, 4000).catch(() => undefined);
+  const diving = await stateOf(page);
+  await page.keyboard.up('s');
+  results.push(check('a down key (S) turns its nose further down', diving.stickMan.action === 'seated' && diving.airplane.pitch < sinking.airplane.pitch - 0.15, `nose ${sinking.airplane.pitch.toFixed(2)} -> ${diving.airplane?.pitch.toFixed(2)} rad`));
   results.push(check('left alone it sinks below the line short of the far side, with him in it', sinking.stickMan.action === 'seated' && sinking.airplane.at.x < sinking.gap.to && sinking.airplane.pitch < 0, `${sinking.airplane.at.y.toFixed(2)} m below the line at x ${sinking.airplane.at.x.toFixed(2)}, the far side starts at ${sinking.gap.to}`));
   await untilTheSim(page, 'the level to start again', (api) => api.stickMan().action !== 'seated');
   const afterTheFall = await stateOf(page);
@@ -53,7 +70,8 @@ try {
   results.push(check('held up all the way, it climbs until it is too slow and stalls high over the gap', stalled.airplane.state === 'falling' && stalled.stickMan.action === 'seated' && stalled.airplane.at.x < stalled.gap.to && -stalled.airplane.at.y > 2, `stalled ${(-stalled.airplane.at.y).toFixed(2)} m up at x ${stalled.airplane.at.x.toFixed(2)}, at ${stalled.airplane.speed.toFixed(2)} m/s sideways (stall speed ${stalled.airplane.stallSpeed})`));
   results.push(check('stalled it falls faster and faster with him in it, whatever is held', falling.airplane?.state === 'falling' && falling.stickMan.action === 'seated' && falling.airplane.verticalSpeed > stalled.airplane.verticalSpeed + 1, `${stalled.airplane.verticalSpeed.toFixed(2)} -> ${falling.airplane?.verticalSpeed.toFixed(2)} m/s down`));
   let reachedTheFarSide = false;
-  for (;;) {
+  for (const giveUpAt = Date.now() + 15000; ; ) {
+    if (Date.now() > giveUpAt) throw new Error('timed out waiting for: the stalled airplane to fall out of sight');
     const now = await stateOf(page);
     if (now.stickMan.action !== 'seated') break;
     if (now.airplane && now.airplane.at.x >= now.gap.to && now.airplane.at.y < 0) reachedTheFarSide = true;
@@ -68,7 +86,7 @@ try {
   await page.keyboard.down('ArrowUp');
   await page.keyboard.up('k');
   // Let go a little too soon: the nose not as far up as a flight that crosses needs.
-  await untilTheSim(page, 'the nose to be part of the way up', (api) => api.airplane()?.pitch >= 0.55);
+  await untilTheSim(page, 'the nose to be part of the way up', (api) => api.airplane()?.pitch >= 0.52);
   await page.keyboard.up('ArrowUp');
   // He holds the walk key towards the far side, which does nothing yet, and jumps out three quarters of a metre before the edge.
   await page.keyboard.down('ArrowRight');

@@ -13,7 +13,7 @@ PASS  it reaches the far side above the line, still flying, with him in it  (0.7
 PASS  no letter fell while he flew, and the level never started again
 PASS  it comes down on the line and slides, losing its speed  (landing at 5.19 m/s at x 20.93, at rest at x 21.94)
 PASS  it lands on the far side: at rest on the line, and he stands up where it lies  (at x 21.94, the far side is 19 to 27)
-PASS  the flag was not reached from the airplane
+PASS  the flag was not reached from the airplane: still seated on the line, it is not
 PASS  he walks to the flag on his own feet and reaches it
 PASS  the game writes across the top of the page once the flag is up, where nothing was written before  (0 pencil-dark pixels in the upper part before, 2426 after (the words are in 06-the-end.png))
 PASS  no level follows: it is still level 3, finished, and he still cheers  (3.3 s later)

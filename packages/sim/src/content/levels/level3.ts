@@ -10,7 +10,8 @@ import type { Level } from './types';
  * defs): doing nothing sinks short of the far side, climbing for too long
  * stalls over the gap, and a climb of the right length crosses
  * (`level3.test.ts` holds the window). The far side is long enough to land on
- * from any flight that crosses.
+ * from any such flight; one that is kept in the air for longer can still come
+ * down too late and slide off the end of the paper.
  */
 export const level3: Level = {
   id: 3,

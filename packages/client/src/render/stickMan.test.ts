@@ -455,8 +455,8 @@ describe('seated in the airplane', () => {
   it('tips with what he sits in, all of him, about the point it turns about', () => {
     for (const facing of [1, -1] as const) {
       const level = skeletonOf({ ...SEATED, facing });
-      const noseUp = skeletonOf(seatedIn({ ...SEATED, facing }, { noseDown: -0.5, turnsAboutAbove: 0.17 }));
-      const noseDown = skeletonOf(seatedIn({ ...SEATED, facing }, { noseDown: 0.5, turnsAboutAbove: 0.17 }));
+      const noseUp = skeletonOf(seatedIn({ ...SEATED, facing }, { noseDown: -0.5, tipsAboutAbove: 0.17 }));
+      const noseDown = skeletonOf(seatedIn({ ...SEATED, facing }, { noseDown: 0.5, tipsAboutAbove: 0.17 }));
       // Nose up he tips back, nose down he tips forward; his limbs keep their length.
       expect((noseUp.head.x - level.head.x) * facing).toBeLessThan(0);
       expect((noseDown.head.x - level.head.x) * facing).toBeGreaterThan(0);
@@ -464,13 +464,20 @@ describe('seated in the airplane', () => {
       for (const joint of ['head', 'neck', 'hip'] as const) {
         expect(Math.hypot(noseUp[joint].x - about.x, noseUp[joint].y - about.y)).toBeCloseTo(Math.hypot(level[joint].x - about.x, level[joint].y - about.y), 9);
       }
+      for (const limbs of ['arms', 'legs'] as const) {
+        noseUp[limbs].forEach((limb, limbIndex) => limb.forEach((joint, jointIndex) => {
+          const untipped = level[limbs][limbIndex]![jointIndex]!;
+          expect(Math.hypot(joint.x - about.x, joint.y - about.y)).toBeCloseTo(Math.hypot(untipped.x - about.x, untipped.y - about.y), 9);
+          if (Math.hypot(untipped.x - about.x, untipped.y - about.y) > 0.05) expect(joint).not.toEqual(untipped);
+        }));
+      }
       expect(Math.hypot(noseUp.neck.x - noseUp.hip.x, noseUp.neck.y - noseUp.hip.y)).toBeCloseTo(BODY.body, 9);
     }
   });
 
   it('is only for a seated man: any other pose is left as it is', () => {
-    expect(seatedIn(STANDING, { noseDown: 0.5, turnsAboutAbove: 0.17 })).toBe(STANDING);
-    expect(seatedIn(JUMPING, { noseDown: 0.5, turnsAboutAbove: 0.17 })).toBe(JUMPING);
+    expect(seatedIn(STANDING, { noseDown: 0.5, tipsAboutAbove: 0.17 })).toBe(STANDING);
+    expect(seatedIn(JUMPING, { noseDown: 0.5, tipsAboutAbove: 0.17 })).toBe(JUMPING);
   });
 
   it('comes from the sim as a pose that is level until the scene tips it, and is drawn as a head and five lines like any other', () => {

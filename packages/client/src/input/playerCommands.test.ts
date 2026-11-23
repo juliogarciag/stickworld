@@ -88,6 +88,14 @@ describe('keys to commands, seated in the airplane', () => {
     expect(stickManOf(sim).action).toBe('seated');
   });
 
+  it('takes both steer keys held at once for neither, and the jump key with an up key held for one jump', () => {
+    const sim = seatedInTheAirplane();
+    const commandsFor = keysToCommands();
+    sim.step(commandsFor({ keys: UP, sim }));
+    expect(commandsFor({ keys: { ...UP, downHeld: true }, sim })).toEqual([{ type: 'airplane/steer', direction: 0 }]);
+    expect(keysToCommands()({ keys: { ...UP, upPressed: true, jumpPressed: true }, sim })).toEqual([{ type: 'player/jump' }]);
+  });
+
   it('jumps him out with the jump key, and stops steering once he is out with the key still held', () => {
     const sim = seatedInTheAirplane();
     const commandsFor = keysToCommands();

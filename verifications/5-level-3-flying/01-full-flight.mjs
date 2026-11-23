@@ -7,7 +7,7 @@
  */
 import path from 'node:path';
 import { PROOF, check, summarize, writeProof } from './lib.mjs';
-import { VIEWPORT, openLevel3, putTheAirplaneOnTheEdge, stateOf, untilTheSim } from './play.mjs';
+import { VIEWPORT, openLevel3, pencilPixelsIn, putTheAirplaneOnTheEdge, stateOf, untilTheSim } from './play.mjs';
 
 /** A port no other session uses, and not the one of the dev server left running for the human (5205). */
 const PORT = 5915;
@@ -70,7 +70,7 @@ try {
   const landed = await stateOf(page);
   results.push(check('it comes down on the line and slides, losing its speed', touchedDown.airplane.at.y === 0 && touchedDown.airplane.at.x > touchedDown.gap.to && landed.airplane.speed === 0 && (touchedDown.airplane.state === 'resting' || touchedDown.airplane.speed > 0), `${touchedDown.airplane.state} at ${touchedDown.airplane.speed.toFixed(2)} m/s at x ${touchedDown.airplane.at.x.toFixed(2)}, at rest at x ${landed.airplane.at.x.toFixed(2)}`));
   results.push(check('it lands on the far side: at rest on the line, and he stands up where it lies', landed.airplane.state === 'resting' && landed.airplane.speed === 0 && landed.airplane.at.y === 0 && landed.airplane.at.x > landed.gap.to && samePoint(landed.stickMan.feet, landed.airplane.at), `at x ${landed.airplane.at.x.toFixed(2)}, the far side is ${landed.gap.to} to ${landed.farEnd}`));
-  results.push(check('the flag was not reached from the airplane', landed.flag.reached === false || Math.abs(landed.stickMan.feet.x - landed.flag.at.x) < 1));
+  results.push(check('the flag was not reached from the airplane: still seated on the line, it is not', touchedDown.stickMan.action !== 'seated' || touchedDown.flag.reached === false));
   await page.screenshot({ path: path.join(PROOF, '05-landed.png') });
 
   // ---- The last flag ----
@@ -109,24 +109,6 @@ process.exit(summarize(results) ? 0 : 1);
 
 function samePoint(one, other) {
   return Math.abs(one.x - other.x) < 1e-9 && Math.abs(one.y - other.y) < 1e-9;
-}
-
-/** How many pixels of a screenshot are as dark as a pencil line, counted in the page: the paper and its grain are much lighter. */
-function pencilPixelsIn(page, png) {
-  return page.evaluate(async (base64) => {
-    const image = new window.Image();
-    image.src = `data:image/png;base64,${base64}`;
-    await image.decode();
-    const canvas = window.document.createElement('canvas');
-    canvas.width = image.width;
-    canvas.height = image.height;
-    const context = canvas.getContext('2d');
-    context.drawImage(image, 0, 0);
-    const { data } = context.getImageData(0, 0, image.width, image.height);
-    let dark = 0;
-    for (let index = 0; index < data.length; index += 4) if ((data[index] + data[index + 1] + data[index + 2]) / 3 < 150) dark += 1;
-    return dark;
-  }, png.toString('base64'));
 }
 
 /** Holds the arrow key towards the flag until it is reached. He may have landed on either side of it, or within reach of it already. */

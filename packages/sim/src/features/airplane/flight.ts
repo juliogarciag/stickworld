@@ -20,6 +20,7 @@ export function boardAndLaunch(sim: Sim): void {
   airplane.speed = FLIGHT.launchSpeed;
   airplane.pitch = FLIGHT.launchPitch;
   player.seated = true;
+  player.seatedAtTick = sim.tick;
   player.onFloor = false;
   player.facing = airplane.facing;
   player.verticalSpeed = 0;
@@ -31,7 +32,10 @@ export function boardAndLaunch(sim: Sim): void {
   seatHim(player, airplane);
 }
 
-/** One tick of an airplane that is off the floor or sliding along it. Nothing happens to one that rests or is carried. */
+/**
+ * One tick of an airplane that is off the floor or sliding along it: where it goes, and what follows from where it got
+ * to (he stands up, the level starts again, it is lost). Nothing happens to one that rests or is carried.
+ */
 export function moveOneTick(sim: Sim): void {
   const airplane = sim.stateOf(airplaneSlice);
   const player = sim.stateOf(playerSlice);
@@ -48,6 +52,7 @@ export function moveOneTick(sim: Sim): void {
   const below = airplane.y - lowestFloorHeight(sim.levelDef.floor);
   // With him in it, falling out of sight starts the level again, and nothing of the airplane is left. Without him it is only lost.
   if (player.seated && below > FLIGHT.lostBelowFloor) sim.startLevel(sim.level);
+  // As deep as he can fall himself: it is gone when he would be.
   else if (!player.seated && below > PLAYER.fallBelowFloor) sim.setStateOf(airplaneSlice, { ...airplaneSlice.initialFor(sim.levelDef), steering: airplane.steering });
 }
 
@@ -96,10 +101,18 @@ function slide(sim: Sim, airplane: AirplaneState): void {
 
 /**
  * Moves it to `to`, or sets it on the floor line when the way there crosses one from above: then it slides on with the
- * sideways speed it had. True when it came down. Right for flat floors, which is all the levels have.
+ * sideways speed it had. True when it came down. A floor line is not flown through from below either: under one, it
+ * goes no higher than it is, and a glide ends there in a fall. Right for flat floors, which is all the levels have.
  */
 function comeDownOrMoveTo(sim: Sim, airplane: AirplaneState, to: { x: number; y: number }): boolean {
   const floorHeight = floorHeightAt(sim.levelDef.floor, to.x);
+  const hitsFromBelow = floorHeight !== undefined && airplane.y > floorHeight && to.y <= floorHeight;
+  if (hitsFromBelow) {
+    stopGliding(airplane);
+    airplane.verticalSpeed = Math.max(0, airplane.verticalSpeed);
+    airplane.x = to.x;
+    return false;
+  }
   const comesDown = floorHeight !== undefined && airplane.y < floorHeight && to.y >= floorHeight;
   if (!comesDown) {
     airplane.x = to.x;
@@ -135,6 +148,7 @@ function seatHim(player: PlayerState, airplane: AirplaneState): void {
 /** The airplane has come to rest on the floor: he gets up and stands where it lies. */
 function standHimUp(player: PlayerState): void {
   player.seated = false;
+  player.seatedAtTick = null;
   player.onFloor = true;
   player.verticalSpeed = 0;
   player.horizontalSpeed = 0;
