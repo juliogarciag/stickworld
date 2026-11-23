@@ -16,7 +16,7 @@ export interface StickManView {
   readonly distanceWalked: number;
   /** Metres per second, positive when he falls: how far along a jump he is. 0 on the floor. */
   readonly verticalSpeed: number;
-  /** Metres per second, positive to the right: how fast he is going sideways, on the floor or drifting in the air. */
+  /** Metres per second, positive to the right: how fast he went sideways this tick, walking, jumping or drifting as he falls off an edge. On the tick he lands it is still the speed he came down with. */
   readonly horizontalSpeed: number;
   /** Which way the sim believes the player wants to walk, whether or not he can right now. */
   readonly walkDirectionAsked: WalkDirection;

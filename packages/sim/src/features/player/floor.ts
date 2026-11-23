@@ -16,15 +16,6 @@ export function lowestFloorHeight(floor: readonly FloorSegment[]): number {
 }
 
 /**
- * How far to each side of his feet his body reaches, `aboveFeet` metres above them: nothing at his feet, widening to
- * half his width, and nothing again above his head. He is a controlled body with a simple outline, not a shape with physics.
- */
-export function bodyReachAt(aboveFeet: number): number {
-  if (aboveFeet <= 0 || aboveFeet >= STICK_MAN_HEIGHT) return 0;
-  return (STICK_MAN_WIDTH / 2) * Math.min(1, aboveFeet / PLAYER.fullWidthAbove);
-}
-
-/**
  * Where a body in the air at `feet` has to be so that no floor segment's end is inside it, or undefined when it is clear
  * already. `awayFromFloor` is the side the end pushed him to: 1 to the right, -1 to the left. Right for flat floors with
  * gaps wider than he is, which is all the levels have: each segment pushes by the height of its nearer end.
@@ -38,4 +29,15 @@ export function clearOfFloorEnds(floor: readonly FloorSegment[], feet: { readonl
     if (reach > 0 && (x - feet.x) * awayFromFloor > 0) return { x, awayFromFloor };
   }
   return undefined;
+}
+
+// ---- Helpers ----
+
+/**
+ * How far to each side of his feet his body reaches, `aboveFeet` metres above them: nothing at his feet, widening to
+ * half his width, and nothing again above his head. He is a controlled body with a simple outline, not a shape with physics.
+ */
+function bodyReachAt(aboveFeet: number): number {
+  if (aboveFeet <= 0 || aboveFeet >= STICK_MAN_HEIGHT) return 0;
+  return (STICK_MAN_WIDTH / 2) * Math.min(1, aboveFeet / PLAYER.fullWidthAbove);
 }

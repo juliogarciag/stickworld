@@ -1,20 +1,21 @@
 PASS  dev server up, started by this run
-PASS  he walked off the edge and the key was let go while he fell  (16 frames falling with no key held, 4 of them before the far end)
+PASS  he walked off the edge and the key was let go while he fell  (44 frames falling with no key held, 12 of them before the far end)
 PASS  after the key is let go he keeps the speed he walked at  (walked at 2.200 m/s, drifted at 2.200 to 2.200 m/s)
-PASS  his momentum carries him forward over the gap, as far as walking would have  (0.293 m after the key was let go; 0.293 m at walk speed over the same ticks)
+PASS  his momentum carries him forward over the gap, as far as walking would have  (0.403 m after the key was let go; 0.403 m at walk speed over the same ticks)
 PASS  the far end of the gap stops him: his body never goes through it  (furthest feet x 6.4750 with the line inside his height, far end at 6.8, half his width 0.325)
-PASS  he then drops straight beside the far end  (4 frames at feet x 6.4750 with no sideways speed)
+PASS  he then drops straight beside the far end  (12 frames at feet x 6.4750 with no sideways speed)
 PASS  falling into the gap still starts the level again
-PASS  he stood at the very edge, hopped, and came down past it  (stood at 5.850, edge at 6, 4 frames dropping beside the line)
-PASS  he came down closer to the end of the line than half his width  (feet x 6.1950 as they passed the line, end of the line at 6, half his width 0.325)
-PASS  the near end pushes him aside: once he is half his height down, the line is not inside his width  (closest feet x 6.3250)
-PASS  it pushes him a little every frame, never across the paper at once  (at most 0.130 m in a frame)
-PASS  it is a straight drop: he falls at least five times faster than he drifts, all the way down the line  (falling 32.8 times faster than drifting at the least)
-PASS  a running jump carries him over the gap, above the line all the way  (8 frames over the gap, lowest -0.403 m)
+PASS  he stood at the very edge, hopped, and came down past it  (stood at 5.813, edge at 6, 13 frames dropping beside the line)
+PASS  he came down closer to the end of the line than half his width  (feet x 6.0449 as they passed the line, end of the line at 6, half his width 0.325)
+PASS  the near end pushes him aside: he was not moving sideways, and half his height down he is exactly half his width from it  (feet x 6.3250)
+PASS  it pushes him a little every tick, never across the paper at once  (at most 0.073 m in a tick)
+PASS  it is a straight drop: he falls at least five times faster than he drifts, all the way down the line  (he does not drift at all)
+PASS  a jump has no momentum: with the key let go in the air he does not drift  (24 frames above the line with no key held, all with no sideways speed)
+PASS  a running jump carries him over the gap, above the line all the way  (21 frames over the gap, lowest -0.339 m)
 PASS  level 2 is still finished: he lands, walks on and reaches the flag
 PASS  level 1 is still finished by walking to the flag
 PASS  a picture of every moment was taken  (after-walk-off-0_3m.png, after-walk-off-1m.png, after-walk-off-1_3m.png, after-walk-off-1_6m.png, after-straight-drop-1m.png, after-straight-drop-1_3m.png, after-straight-drop-1_6m.png, after-jump-over-the-gap.png)
 PASS  no page errors
 PASS  the recording of the forward fall, the straight drop and the jump was written  (proof/fall.mp4, proof/fall.gif)
 
-ALL 18 CHECKS PASSED
+ALL 19 CHECKS PASSED

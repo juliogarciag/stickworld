@@ -7,13 +7,22 @@
  * moves run against the build from before it.
  */
 import path from 'node:path';
+import { chromium } from 'playwright';
 import { PROOF } from './lib.mjs';
 
-/** CSS pixels. Screenshots are taken at twice that so the pencil lines can be looked at closely. */
+/** CSS pixels. The page for the pictures is opened at twice that (`pixelRatio: 2`) so the pencil lines can be looked at closely. */
 export const VIEWPORT = { width: 960, height: 540 };
 
-export async function openGame(browser, { port, video }) {
-  const context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: 2, ...(video ? { recordVideo: { dir: video, size: VIEWPORT } } : {}) });
+/**
+ * Chromium drawing with the machine's graphics card where that is known to work. Without it a headless page draws the
+ * game a few frames a second, and a check that reads one sample a frame sees too little of a fall that lasts half a second.
+ */
+export function launchBrowser() {
+  return chromium.launch({ args: process.platform === 'darwin' ? ['--use-angle=metal'] : [] });
+}
+
+export async function openGame(browser, { port, video, pixelRatio = 1 }) {
+  const context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: pixelRatio, ...(video ? { recordVideo: { dir: video, size: VIEWPORT } } : {}) });
   const page = await context.newPage();
   const pageErrors = [];
   page.on('pageerror', (error) => pageErrors.push(String(error)));
@@ -76,29 +85,46 @@ export async function shotWhen(page, { name, condition }) {
 export async function walkOffTheGapAndLetGo(page) {
   await playLevel(page, 2);
   await page.keyboard.down('ArrowRight');
-  await page.waitForFunction(() => window.__game.stickMan().action === 'jumping' && window.__game.stickMan().feet.x > window.__game.level.floor[0].to.x, null, { polling: 'raf' });
-  await page.keyboard.up('ArrowRight');
+  await letGoOfRightArrowWhen(page, `(api) => api.stickMan().action === 'jumping' && api.stickMan().feet.x > api.level.floor[0].to.x`);
 }
 
 /**
- * Stands him at the near end of level 2's gap, hops, goes past the end with the right arrow and takes the speed back
- * with the left one, so he comes down beside the end of the line, all but straight. `slow` is the sideways speed, in
- * metres per second, at which the left arrow is let go.
+ * Stands him at the near end of level 2's gap, hops, and holds the right arrow just until he is past the end: in a
+ * jump he stops the moment the key is let go, so he comes down beside the end of the line, straight.
  */
-export async function hopOffTheEdgeAndStop(page, { slow }) {
+export async function hopOffTheEdgeAndStop(page) {
   await playLevel(page, 2);
   const { edge, width } = await page.evaluate(() => ({ edge: window.__game.level.floor[0].to.x, width: window.__game.stickManWidth }));
   await page.keyboard.down('ArrowRight');
-  await page.waitForFunction((stopBy) => window.__game.stickMan().feet.x >= stopBy, edge - width / 4, { polling: 'raf' });
-  await page.keyboard.up('ArrowRight');
+  await letGoOfRightArrowWhen(page, `(api) => api.stickMan().feet.x >= ${edge - width / 3}`);
   await page.waitForFunction(() => window.__game.stickMan().action === 'standing', null, { polling: 'raf' });
   await page.keyboard.press('Space');
   await page.keyboard.down('ArrowRight');
-  await page.waitForFunction((end) => window.__game.stickMan().feet.x >= end, edge, { polling: 'raf' });
+  await letGoOfRightArrowWhen(page, `(api) => api.stickMan().feet.x >= ${edge}`);
+}
+
+/**
+ * Lets go of the right arrow on the very frame `condition` first holds (a function of the debug API, as source text).
+ * A key let go from outside the page arrives a few frames late, which at walking speed is further than the width of
+ * what is being aimed at, so the page lets go of it itself: the same key-up the game gets from a keyboard.
+ */
+async function letGoOfRightArrowWhen(page, condition) {
+  await page.evaluate(
+    (source) =>
+      new Promise((resolve, reject) => {
+        window.setTimeout(() => reject(new Error(`the moment to let go of the key never came: ${source}`)), 15000);
+        const holds = new Function('api', `return (${source})(api);`);
+        const look = () => {
+          if (!holds(window.__game)) return window.requestAnimationFrame(look);
+          window.dispatchEvent(new window.KeyboardEvent('keyup', { key: 'ArrowRight', code: 'ArrowRight', keyCode: 39, which: 39, bubbles: true }));
+          resolve();
+        };
+        look();
+      }),
+    condition,
+  );
+  // So the browser's own idea of the key agrees with the page's.
   await page.keyboard.up('ArrowRight');
-  await page.keyboard.down('ArrowLeft');
-  await page.waitForFunction((speed) => window.__game.stickMan().horizontalSpeed <= speed, slow, { polling: 'raf' });
-  await page.keyboard.up('ArrowLeft');
 }
 
 /**

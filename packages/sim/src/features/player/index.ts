@@ -9,9 +9,10 @@ import { playerSlice, type PlayerState } from './state';
 
 /**
  * The stick man: walking, a small jump with forgiveness on both sides of it,
- * and falling off the paper, which starts the level again. In the air he
- * keeps the sideways speed he left the floor with, the keys only steer it,
- * and the end of a floor line pushes him aside as he drops past it. Plain
+ * and falling off the paper, which starts the level again. Walking off an
+ * edge he keeps the sideways speed he had and the keys only steer it; in a
+ * jump they move him as they do on the floor. The end of a floor line pushes
+ * him aside as he drops past it. Plain
  * arithmetic on the level's floor segments; no physics library.
  */
 export const playerFeature: Feature = {
@@ -30,8 +31,10 @@ export const playerFeature: Feature = {
     const direction = walkDirectionNow(sim);
     if (direction !== 0) player.facing = direction;
     if (hasFinishedLevel(sim)) player.ticksSinceJumpAsked = null;
+    // Only a fall that began by walking off an edge has momentum: on the floor and in a jump the keys move him at once.
     // A jump from the floor takes off with the speed the floor gives him this tick, so the speed comes first.
-    player.horizontalSpeed = player.onFloor ? direction * PLAYER.walkSpeed : speedAfterSteering(player.horizontalSpeed, { direction, dt: sim.dt });
+    const fellOffAnEdge = !player.onFloor && player.ticksSinceWalkedOff !== null;
+    player.horizontalSpeed = fellOffAnEdge ? speedAfterSteering(player.horizontalSpeed, { direction, dt: sim.dt }) : direction * PLAYER.walkSpeed;
     jumpIfAskedAndAble(sim, player);
 
     const { floor } = sim.levelDef;
@@ -108,12 +111,14 @@ function fallTo(player: PlayerState, { x, floorHeight, dt }: { x: number; floorH
   player.ticksSinceWalkedOff = null;
 }
 
-/** His sideways speed in the air a tick later: as it was with no key held, otherwise a little closer to walking the way the key says. */
+/** His sideways speed a tick later in a fall off an edge: as it was with no key held, otherwise a little closer to walking the way the key says. */
 function speedAfterSteering(speed: number, { direction, dt }: { direction: WalkDirection; dt: number }): number {
   if (direction === 0) return speed;
   const mostChange = PLAYER.airSteering * dt;
-  const change = direction * PLAYER.walkSpeed - speed;
-  return speed + Math.max(-mostChange, Math.min(mostChange, change));
+  const wanted = direction * PLAYER.walkSpeed;
+  // Close enough to get there this tick: exactly there, not a rounding away from it.
+  if (Math.abs(wanted - speed) <= mostChange) return wanted;
+  return speed + Math.sign(wanted - speed) * mostChange;
 }
 
 /** In the air next to the end of a floor line: the end pushes him aside so his body and head clear it, and stops him if he was drifting into it. */

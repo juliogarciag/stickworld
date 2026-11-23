@@ -125,10 +125,10 @@ Example: an `airplane` feature where the stick man places a paper airplane and f
 
 **Game feel belongs in tuning**
 
-- Jump height, walk speed, how much the keys steer him in the air, the forgiveness around a jump (pressing just before landing, or just after leaving an edge), the glide's speed loss and stall speed: all are named values in data files, never numbers inside logic.
-- In the air the stick man has a sideways speed of his own: he keeps the speed he left the floor with, and a held key only steers it (`PLAYER.airSteering`). On the floor he is at walk speed, or still, at once.
+- Jump height, walk speed, how much the keys steer him as he falls off an edge, the forgiveness around a jump (pressing just before landing, or just after leaving an edge), the glide's speed loss and stall speed: all are named values in data files, never numbers inside logic.
+- Falling off an edge the stick man has a sideways speed of his own: he keeps the speed he walked off with, and a held key only steers it (`PLAYER.airSteering`). On the floor and in a jump he is at walk speed, or still, at once.
 - The glide is an exchange, not aerodynamics: climbing costs speed, diving gains it, and below the stall speed the airplane falls. Keep it that simple unless an ADR says otherwise.
-- The stick man is a controlled body with limbs drawn from code, not a ragdoll. The sim keeps the end of a floor line out of his outline as he drops past it (`STICK_MAN_WIDTH`, `PLAYER.fullWidthAbove`); the view keeps his arms, body and head from being drawn across a line (`keptOffTheFloor` in `client/src/render/stickMan.ts`). Both assume flat floors with gaps wider than he is, which a test on every level checks.
+- The stick man is a controlled body with limbs drawn from code, not a ragdoll. The sim keeps the end of a floor line out of his outline as he drops past it (`STICK_MAN_WIDTH`, `PLAYER.fullWidthAbove`); the view keeps his arms, body and head from being drawn across a line (`keptOffTheFloor` in `client/src/render/stickMan.ts`). Both assume flat floors at one height with gaps wider than he is, which tests on every level check (`content/levels/levels.test.ts`).
 
 **Verifying work**
 

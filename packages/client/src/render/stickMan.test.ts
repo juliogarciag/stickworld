@@ -1,4 +1,4 @@
-import { STICK_MAN_HEIGHT, STICK_MAN_WIDTH } from '@stickworld/sim';
+import { createSim, levels, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf, type Command, type FloorSegment } from '@stickworld/sim';
 import { describe, expect, it } from 'vitest';
 import { distanceBetweenLines } from './geometry';
 import { __testing__, keptOffTheFloor, poseOf, posesEasedOverTime, stickManStrokes, walkCycleLength, type StickManPose } from './stickMan';
@@ -148,14 +148,14 @@ describe('the stick man landing', () => {
 describe('poses eased over time', () => {
   it('gets into the jump over a few frames instead of at once, and never moves where he is', () => {
     const poseFor = posesEasedOverTime();
-    poseFor(ON_THE_FLOOR, FRAME);
-    const first = poseFor(GOING_UP, FRAME);
+    poseFor(ON_THE_FLOOR, FRAME, NO_FLOOR);
+    const first = poseFor(GOING_UP, FRAME, NO_FLOOR);
     expect(first.feet).toEqual(GOING_UP.feet);
     expect(first.inTheAir).toBeGreaterThan(0);
     expect(first.inTheAir).toBeLessThan(0.2);
     let pose = first;
     for (let frame = 0; frame < framesIn(EASING.intoTheAir); frame += 1) {
-      const next = poseFor(GOING_UP, FRAME);
+      const next = poseFor(GOING_UP, FRAME, NO_FLOOR);
       expect(next.inTheAir).toBeGreaterThanOrEqual(pose.inTheAir);
       pose = next;
     }
@@ -164,24 +164,24 @@ describe('poses eased over time', () => {
 
   it('takes the landing with a knee bend that eases out, while his limbs come back from the jump', () => {
     const poseFor = posesEasedOverTime();
-    poseFor(ON_THE_FLOOR, FRAME);
-    for (let frame = 0; frame < 30; frame += 1) poseFor(COMING_DOWN, FRAME);
-    const touchdown = poseFor(ON_THE_FLOOR, FRAME);
+    poseFor(ON_THE_FLOOR, FRAME, NO_FLOOR);
+    for (let frame = 0; frame < 30; frame += 1) poseFor(COMING_DOWN, FRAME, NO_FLOOR);
+    const touchdown = poseFor(ON_THE_FLOOR, FRAME, NO_FLOOR);
     expect(touchdown.landing).toBe(1);
     expect(touchdown.inTheAir).toBeGreaterThan(0.8);
-    const soonAfter = poseFor(ON_THE_FLOOR, FRAME);
+    const soonAfter = poseFor(ON_THE_FLOOR, FRAME, NO_FLOOR);
     expect(soonAfter.landing).toBeLessThan(1);
     expect(soonAfter.inTheAir).toBeLessThan(touchdown.inTheAir);
     let pose = soonAfter;
-    for (let frame = 0; frame < framesIn(EASING.landing); frame += 1) pose = poseFor(ON_THE_FLOOR, FRAME);
+    for (let frame = 0; frame < framesIn(EASING.landing); frame += 1) pose = poseFor(ON_THE_FLOOR, FRAME, NO_FLOOR);
     expect(pose).toEqual(poseOf(ON_THE_FLOOR));
   });
 
   it('does not bend his knees when he was not coming down: a level that starts again just shows him standing', () => {
     const poseFor = posesEasedOverTime();
-    poseFor(ON_THE_FLOOR, FRAME);
-    poseFor({ ...COMING_DOWN, feet: { x: -1, y: 6 } }, FRAME);
-    expect(poseFor(ON_THE_FLOOR, FRAME)).toEqual(poseOf(ON_THE_FLOOR));
+    poseFor(ON_THE_FLOOR, FRAME, NO_FLOOR);
+    poseFor({ ...COMING_DOWN, feet: { x: -1, y: 6 } }, FRAME, NO_FLOOR);
+    expect(poseFor(ON_THE_FLOOR, FRAME, NO_FLOOR)).toEqual(poseOf(ON_THE_FLOOR));
   });
 });
 
@@ -238,15 +238,15 @@ describe('the stick man falling sideways', () => {
   it('tips over a few frames, and comes back upright over a few once he has landed', () => {
     const poseFor = posesEasedOverTime();
     const falling = { ...FALLING, horizontalSpeed: 2, verticalSpeed: 3 };
-    poseFor(falling, FRAME);
-    const first = poseFor(falling, FRAME).tilt;
+    poseFor(falling, FRAME, NO_FLOOR);
+    const first = poseFor(falling, FRAME, NO_FLOOR).tilt;
     expect(first).toBeGreaterThan(0);
     expect(first).toBeLessThan(poseOf(falling).tilt);
-    for (let frame = 0; frame < 30; frame += 1) poseFor(falling, FRAME);
-    expect(poseFor(falling, FRAME).tilt).toBeCloseTo(poseOf(falling).tilt, 9);
-    expect(poseFor({ ...ON_THE_FLOOR, feet: falling.feet }, FRAME).tilt).toBeGreaterThan(0);
-    for (let frame = 0; frame < 30; frame += 1) poseFor({ ...ON_THE_FLOOR, feet: falling.feet }, FRAME);
-    expect(poseFor({ ...ON_THE_FLOOR, feet: falling.feet }, FRAME).tilt).toBe(0);
+    for (let frame = 0; frame < 30; frame += 1) poseFor(falling, FRAME, NO_FLOOR);
+    expect(poseFor(falling, FRAME, NO_FLOOR).tilt).toBeCloseTo(poseOf(falling).tilt, 9);
+    expect(poseFor({ ...ON_THE_FLOOR, feet: falling.feet }, FRAME, NO_FLOOR).tilt).toBeGreaterThan(0);
+    for (let frame = 0; frame < 30; frame += 1) poseFor({ ...ON_THE_FLOOR, feet: falling.feet }, FRAME, NO_FLOOR);
+    expect(poseFor({ ...ON_THE_FLOOR, feet: falling.feet }, FRAME, NO_FLOOR).tilt).toBe(0);
   });
 });
 
@@ -305,6 +305,37 @@ describe('the stick man dropping past the end of a floor line', () => {
     expect(kept.tilt).toBeLessThanOrEqual(0);
     const awayFromTheLine = { ...towardsTheLine, tilt: 0.5 };
     expect(keptOffTheFloor(awayFromTheLine, FLOOR).tilt).toBe(0.5);
+  });
+
+  it('fits inside the width the sim keeps clear of a line: his head, with the room a pencil line takes', () => {
+    expect(BODY.headRadius + OFF_THE_LINE).toBeLessThan(STICK_MAN_WIDTH / 2);
+  });
+
+  it('has nothing but his feet across a line in any fall the sim gives him, on every level, at one frame a tick and at one every three', () => {
+    for (const level of levels) {
+      for (const ticksPerFrame of [1, 3]) {
+        for (const keys of WAYS_TO_FALL) {
+          const sim = createSim({ level: level.id });
+          const poseFor = posesEasedOverTime();
+          for (let tick = 0; tick < 420 && sim.level === level.id; tick += 1) {
+            sim.step(keys(tick));
+            if (tick % ticksPerFrame !== 0) continue;
+            const stickMan = stickManOf(sim);
+            const { head, neck, hip, arms } = skeletonOf(poseFor(stickMan, ticksPerFrame * FRAME, level.floor));
+            if (stickMan.action !== 'jumping') continue;
+            const where = `level ${level.id}, tick ${tick}, feet (${stickMan.feet.x.toFixed(3)}, ${stickMan.feet.y.toFixed(3)})`;
+            for (const { from, to } of level.floor) {
+              for (const arm of arms) {
+                expect(distanceBetweenLines([arm[0]!, arm[1]!], [from, to]), `upper arm, ${where}`).toBeGreaterThan(0);
+                expect(distanceBetweenLines([arm[1]!, arm[2]!], [from, to]), `forearm, ${where}`).toBeGreaterThan(0);
+              }
+              expect(distanceBetweenLines([neck, hip], [from, to]), `body, ${where}`).toBeGreaterThan(0);
+              expect(distanceBetweenLines([head, head], [from, to]), `head, ${where}`).toBeGreaterThan(BODY.headRadius);
+            }
+          }
+        }
+      }
+    }
   });
 
   it('lets the arm come down over a few frames once the line lets go, never across the line on the way', () => {
@@ -368,8 +399,23 @@ const LINE = [FLOOR[0]!.from, FLOOR[0]!.to] as const;
 const BESIDE_THE_END = LINE_END + STICK_MAN_WIDTH / 2;
 const DROPPING: StickManPose = { feet: { x: BESIDE_THE_END, y: 0 }, facing: 1, action: 'jumping', walkCycle: 0, rise: -1, longFall: 0, striding: false, inTheAir: 1, landing: 0, tilt: 0, armsLifted: [0, 0] };
 const BACK_ARM = 0;
-/** His feet from the line's height to well below it, a tick of falling apart. */
+/** His feet from the line's height to well below it, in small steps: slower than he ever falls, so every moment of the hold is looked at. */
 const DROP_BESIDE_THE_END = Array.from({ length: 80 }, (_, step) => ({ x: BESIDE_THE_END, y: step * 0.03 }));
+const WALK = (direction: -1 | 0 | 1): Command => ({ type: 'player/walk', direction });
+const JUMP: Command = { type: 'player/jump' };
+/** The keys, tick by tick, of the falls a player gets into: off either way, letting go, steering back, hopping at an edge, jumping short. */
+const WAYS_TO_FALL: readonly ((tick: number) => Command[])[] = [
+  (tick) => (tick === 0 ? [WALK(1)] : []),
+  (tick) => (tick === 0 ? [WALK(-1)] : []),
+  (tick) => (tick === 0 ? [WALK(1)] : tick === 112 ? [WALK(0)] : []),
+  (tick) => (tick === 0 ? [WALK(1)] : tick === 112 ? [WALK(-1)] : []),
+  (tick) => (tick === 0 ? [WALK(-1)] : tick === 57 ? [WALK(1)] : []),
+  (tick) => (tick === 0 ? [WALK(1)] : tick === 106 ? [WALK(0)] : tick === 120 ? [JUMP, WALK(1)] : tick === 123 ? [WALK(0)] : []),
+  (tick) => (tick === 0 ? [WALK(1)] : tick === 80 ? [JUMP] : []),
+  (tick) => (tick === 0 ? [WALK(1)] : tick === 100 ? [JUMP] : tick === 110 ? [WALK(0)] : []),
+  (tick) => (tick === 0 ? [WALK(-1)] : tick === 50 ? [WALK(0)] : tick === 60 ? [JUMP, WALK(-1)] : tick === 64 ? [WALK(0)] : []),
+];
 const FRAME = 1 / 60;
+const NO_FLOOR: readonly FloorSegment[] = [];
 const framesIn = (seconds: number): number => Math.ceil(seconds / FRAME) + 1;
 const CYCLE_SAMPLES = Array.from({ length: 40 }, (_, sample) => sample / 40);

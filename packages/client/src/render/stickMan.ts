@@ -1,5 +1,5 @@
 import { STICK_MAN_HEIGHT, type FloorSegment, type Point, type StickManView } from '@stickworld/sim';
-import { distanceBetweenLines } from './geometry';
+import { distanceBetweenLines, type Line } from './geometry';
 import type { Stroke, StrokePoint } from './strokes';
 import { PENCIL } from './strokes/pencil';
 import { PIXELS_PER_METRE, toPixels } from './units';
@@ -58,11 +58,11 @@ export function poseOf(stickMan: StickManView): StickManPose {
 /**
  * `pose` with nothing of him drawn across a floor line, for a body in the air. An arm that would cross a line is lifted
  * until it rests on it: as he drops the line pushes the arm further up, and once his shoulder is under the line the arm
- * is free again. `armsLiftedAtLeast` asks for arms no lower than that, for an arm that is on its way down. His body is tipped only as far as keeps his head and body off the line; the sim keeps him clear of it upright.
+ * is free again. `armsLiftedAtLeast` asks for arms no lower than that, for an arm that is on its way down. His body is tipped only as far as keeps his head, body and legs off the line; the sim keeps his head and body clear of it upright.
  */
 export function keptOffTheFloor(pose: StickManPose, floor: readonly FloorSegment[], armsLiftedAtLeast: readonly [number, number] = [0, 0]): StickManPose {
   if (pose.action !== 'jumping') return pose;
-  const tilt = TILT_SHARES.map((share) => pose.tilt * share).find((tried) => headAndBodyAreOffTheFloor({ ...pose, tilt: tried }, floor)) ?? 0;
+  const tilt = TILT_SHARES.map((share) => pose.tilt * share).find((tried) => allButHisArmsIsOffTheFloor({ ...pose, tilt: tried }, floor)) ?? 0;
   const tipped = { ...pose, tilt };
   return { ...tipped, armsLifted: [leastLiftOffTheFloor(tipped, { arm: 0, floor, atLeast: armsLiftedAtLeast[0] }), leastLiftOffTheFloor(tipped, { arm: 1, floor, atLeast: armsLiftedAtLeast[1] })] };
 }
@@ -76,15 +76,17 @@ export function keptOffTheFloor(pose: StickManPose, floor: readonly FloorSegment
  * and bumps into things in one tick; a body does not. View detail only: where
  * he is never lags.
  */
-export function posesEasedOverTime(): (stickMan: StickManView, seconds: number, floor?: readonly FloorSegment[]) => StickManPose {
+export function posesEasedOverTime(): (stickMan: StickManView, seconds: number, floor: readonly FloorSegment[]) => StickManPose {
+  // `tilt` is how far he would be tipped with no line in the way: what is shown may be less, and eases from this all the same.
   let previous: { feet: Point; inTheAir: number; landing: number; falling: boolean; tilt: number; armsLifted: readonly [number, number] } | undefined;
-  return (stickMan, seconds, floor = []) => {
+  return (stickMan, seconds, floor) => {
     const pose = poseOf(stickMan);
     const jumpedAcrossThePaper = previous !== undefined && Math.hypot(pose.feet.x - previous.feet.x, pose.feet.y - previous.feet.y) > STICK_MAN_HEIGHT;
     if (!previous || jumpedAcrossThePaper) {
       // The first frame, or the level started again: nothing to ease from.
-      previous = { feet: pose.feet, inTheAir: pose.inTheAir, landing: 0, falling: false, tilt: 0, armsLifted: [0, 0] };
-      return { ...pose, tilt: 0 };
+      const shown = keptOffTheFloor({ ...pose, tilt: 0 }, floor);
+      previous = { feet: pose.feet, inTheAir: pose.inTheAir, landing: 0, falling: false, tilt: 0, armsLifted: shown.armsLifted };
+      return shown;
     }
     const share = seconds / (pose.inTheAir === 1 ? EASING.intoTheAir : EASING.ontoTheFloor);
     const inTheAir = pose.inTheAir === 1 ? Math.min(1, previous.inTheAir + share) : Math.max(0, previous.inTheAir - share);
@@ -95,7 +97,7 @@ export function posesEasedOverTime(): (stickMan: StickManView, seconds: number, 
     // An arm the line has let go of comes down over a moment, and stays on the line for as long as that would take it across.
     const mostComingDown = seconds * EASING.armComesDownPerSecond;
     const shown = keptOffTheFloor({ ...pose, inTheAir, landing, tilt }, floor, [Math.max(0, previous.armsLifted[0] - mostComingDown), Math.max(0, previous.armsLifted[1] - mostComingDown)]);
-    previous = { feet: pose.feet, inTheAir, landing, falling: stickMan.action === 'jumping' && stickMan.verticalSpeed > 0, tilt: shown.tilt, armsLifted: shown.armsLifted };
+    previous = { feet: pose.feet, inTheAir, landing, falling: stickMan.action === 'jumping' && stickMan.verticalSpeed > 0, tilt, armsLifted: shown.armsLifted };
     return shown;
   };
 }
@@ -249,9 +251,10 @@ function tiltOfFall({ action, horizontalSpeed, verticalSpeed }: StickManView): n
   return BODY.fallTilt * sidewaysShare * Math.min(1, verticalSpeed / BODY.speedOfFullTilt);
 }
 
-function headAndBodyAreOffTheFloor(pose: StickManPose, floor: readonly FloorSegment[]): boolean {
-  const { head, neck, hip } = skeletonOf(pose);
-  return floor.every(({ from, to }) => distanceBetweenLines([head, head], [from, to]) >= BODY.headRadius + OFF_THE_LINE && distanceBetweenLines([neck, hip], [from, to]) >= OFF_THE_LINE);
+function allButHisArmsIsOffTheFloor(pose: StickManPose, floor: readonly FloorSegment[]): boolean {
+  const { head, neck, hip, legs } = skeletonOf(pose);
+  const bodyAndLegs: Line[] = [[neck, hip], ...legs.flatMap(([top, knee, foot]): Line[] => [[top!, knee!], [knee!, foot!]])];
+  return floor.every(({ from, to }) => distanceBetweenLines([head, head], [from, to]) >= BODY.headRadius + OFF_THE_LINE && bodyAndLegs.every((line) => distanceBetweenLines(line, [from, to]) >= OFF_THE_LINE));
 }
 
 function armIsOffTheFloor(pose: StickManPose, { arm, floor }: { arm: 0 | 1; floor: readonly FloorSegment[] }): boolean {

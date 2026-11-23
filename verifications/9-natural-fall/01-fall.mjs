@@ -13,9 +13,8 @@ import { execFileSync } from 'node:child_process';
 import { mkdtempSync, readdirSync, rmSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { chromium } from 'playwright';
 import { PROOF, check, lastLinesOf, start, summarize, waitFor, waitForPort, writeProof } from './lib.mjs';
-import { hopOffTheEdgeAndStop, openGame, playLevel, samplesOf, shotWhen, shotsOfAFall, untilTheLevelStartsAgain, walkOffTheGapAndLetGo } from './scenes.mjs';
+import { hopOffTheEdgeAndStop, launchBrowser, openGame, playLevel, samplesOf, shotWhen, shotsOfAFall, untilTheLevelStartsAgain, walkOffTheGapAndLetGo } from './scenes.mjs';
 
 /** Not 5209: that is the dev server left running for the human. */
 const PORT = 5909;
@@ -32,8 +31,9 @@ try {
   results.push(check('dev server up, started by this run', ready, ready ? undefined : lastLinesOf(devServer.output)));
   if (!ready) throw new Error('nothing to open');
 
-  browser = await chromium.launch();
-  const { context, page, pageErrors } = await openGame(browser, { port: PORT, video: videoFolder });
+  browser = await launchBrowser();
+  // The checks read one sample a frame, so they run on a page that is not being filmed and keeps up with the sim.
+  const { context, page, pageErrors } = await openGame(browser, { port: PORT });
   const world = await page.evaluate(() => {
     const api = window.__game;
     api.loadLevel(2);
@@ -71,8 +71,8 @@ try {
   results.push(check('he then drops straight beside the far end', stopped.length >= 3 && stopped.every((sample) => sample.horizontalSpeed === 0), `${stopped.length} frames at feet x ${furthest.toFixed(4)} with no sideways speed`));
   results.push(check('falling into the gap still starts the level again', forward[forward.length - 1].action === 'standing' && forward.some((sample) => sample.feet.y > world.floorY + world.height)));
 
-  // ---- 2. A straight drop: stand at the edge, hop past the end with the right arrow, and stop the drift with the left. ----
-  await hopOffTheEdgeAndStop(page, { slow: 0.05 * walkSpeed });
+  // ---- 2. A straight drop: stand at the edge, hop, and hold the right arrow just until he is past the end. ----
+  await hopOffTheEdgeAndStop(page);
   await untilTheLevelStartsAgain(page);
   const straight = await samplesOf(page);
   const stoodAt = straight.filter((sample) => sample.action === 'standing' && sample.feet.x > world.gap.from - world.width / 2).map((sample) => sample.feet.x)[0];
@@ -82,11 +82,13 @@ try {
   results.push(check('he came down closer to the end of the line than half his width', cameDownAt > world.gap.from && cameDownAt < world.gap.from + world.width / 2, `feet x ${cameDownAt?.toFixed(4)} as they passed the line, end of the line at ${world.gap.from}, half his width ${world.width / 2}`));
   const lowDown = droppingBeside.filter((sample) => sample.feet.y > world.floorY + world.height / 2);
   const closest = Math.min(...lowDown.map((sample) => sample.feet.x));
-  results.push(check('the near end pushes him aside: once he is half his height down, the line is not inside his width', lowDown.length >= 1 && closest >= world.gap.from + world.width / 2 - 1e-6, `closest feet x ${closest.toFixed(4)}`));
-  const sideways = droppingBeside.map((sample, index) => (index === 0 ? 0 : Math.abs(sample.feet.x - droppingBeside[index - 1].feet.x)));
-  results.push(check('it pushes him a little every frame, never across the paper at once', Math.max(...sideways) < world.width / 4, `at most ${Math.max(...sideways).toFixed(3)} m in a frame`));
+  results.push(check('the near end pushes him aside: he was not moving sideways, and half his height down he is exactly half his width from it', lowDown.length >= 1 && Math.abs(closest - (world.gap.from + world.width / 2)) < 1e-6, `feet x ${closest.toFixed(4)}`));
+  const sidewaysPerTick = droppingBeside.map((sample, index) => (index === 0 ? 0 : Math.abs(sample.feet.x - droppingBeside[index - 1].feet.x) / Math.max(1, sample.tick - droppingBeside[index - 1].tick)));
+  results.push(check('it pushes him a little every tick, never across the paper at once', Math.max(...sidewaysPerTick) < world.width / 8, `at most ${Math.max(...sidewaysPerTick).toFixed(3)} m in a tick`));
   const steepest = Math.min(...droppingBeside.map((sample) => sample.verticalSpeed / Math.max(Math.abs(sample.horizontalSpeed), 1e-9)));
-  results.push(check('it is a straight drop: he falls at least five times faster than he drifts, all the way down the line', steepest >= 5, `falling ${Math.min(steepest, 999).toFixed(1)} times faster than drifting at the least`));
+  results.push(check('it is a straight drop: he falls at least five times faster than he drifts, all the way down the line', steepest >= 5, steepest > 1e6 ? 'he does not drift at all' : `falling ${steepest.toFixed(1)} times faster than drifting at the least`));
+  const inTheHop = straight.filter((sample) => sample.action === 'jumping' && sample.walkDirectionAsked === 0 && sample.feet.y < world.floorY);
+  results.push(check('a jump has no momentum: with the key let go in the air he does not drift', inTheHop.length >= 2 && inTheHop.every((sample) => sample.horizontalSpeed === 0), `${inTheHop.length} frames above the line with no key held, all with no sideways speed`));
 
   // ---- 3. A running jump across the gap, to the flag. ----
   await playLevel(page, 2);
@@ -99,7 +101,6 @@ try {
   const overTheGap = jumped.filter((sample) => sample.feet.x > world.gap.from && sample.feet.x < world.gap.to);
   results.push(check('a running jump carries him over the gap, above the line all the way', overTheGap.length >= 3 && overTheGap.every((sample) => sample.feet.y < world.floorY), `${overTheGap.length} frames over the gap, lowest ${Math.max(...overTheGap.map((sample) => sample.feet.y)).toFixed(3)} m`));
   results.push(check('level 2 is still finished: he lands, walks on and reaches the flag', jumped[jumped.length - 1].level === 2 && (await page.evaluate(() => window.__game.flag().reached))));
-  await page.waitForTimeout(600);
 
   // ---- 4. Level 1 is still finished by walking right. ----
   await playLevel(page, 1);
@@ -110,11 +111,26 @@ try {
 
   await context.close();
 
-  // ---- 5. The pictures, on a page that is not being filmed: the game stops for each one. ----
-  const { page: stills, pageErrors: stillsErrors } = await openGame(browser, { port: PORT });
+  // ---- 5. The recording: the same three moves again, on a page that is filmed and checked for nothing. ----
+  const { context: filmed, page: film } = await openGame(browser, { port: PORT, video: videoFolder });
+  await walkOffTheGapAndLetGo(film);
+  await untilTheLevelStartsAgain(film);
+  await hopOffTheEdgeAndStop(film);
+  await untilTheLevelStartsAgain(film);
+  await playLevel(film, 2);
+  await film.keyboard.down('ArrowRight');
+  await film.waitForFunction((takeOff) => window.__game.stickMan().feet.x >= takeOff, world.gap.from - 0.25 * (world.gap.to - world.gap.from), { polling: 'raf' });
+  await film.keyboard.press('Space');
+  await film.waitForFunction(() => window.__game.flag().reached, null, { polling: 'raf', timeout: 10000 });
+  await film.keyboard.up('ArrowRight');
+  await film.waitForTimeout(600);
+  await filmed.close();
+
+  // ---- 6. The pictures, on a page that is not being filmed: the game stops for each one. ----
+  const { page: stills, pageErrors: stillsErrors } = await openGame(browser, { port: PORT, pixelRatio: 2 });
   report.shots = [
     ...(await shotsOfAFall(stills, { prefix: 'after-walk-off', depths: DEPTHS, fall: walkOffTheGapAndLetGo })),
-    ...(await shotsOfAFall(stills, { prefix: 'after-straight-drop', depths: DEPTHS.slice(1), fall: (page) => hopOffTheEdgeAndStop(page, { slow: 0.05 * walkSpeed }) })),
+    ...(await shotsOfAFall(stills, { prefix: 'after-straight-drop', depths: DEPTHS.slice(1), fall: hopOffTheEdgeAndStop })),
   ];
   await playLevel(stills, 2);
   await stills.keyboard.down('ArrowRight');
@@ -124,6 +140,7 @@ try {
   await stills.keyboard.up('ArrowRight');
   results.push(check('a picture of every moment was taken', report.shots.length === 2 * DEPTHS.length, report.shots.map((shot) => shot.name).join(', ')));
   results.push(check('no page errors', pageErrors.length + stillsErrors.length === 0, [...pageErrors, ...stillsErrors].join(' | ')));
+  await stills.context().close();
   const [recording] = readdirSync(videoFolder);
   // The recording as a file a pull request can show, and the three falls of it as a picture that plays by itself.
   execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', path.join(videoFolder, recording), '-movflags', '+faststart', '-pix_fmt', 'yuv420p', path.join(PROOF, 'fall.mp4')]);

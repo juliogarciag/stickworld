@@ -3,7 +3,7 @@
 What is verified, in the real app (`PORT=5909 pnpm dev`, Chromium, the keys a player uses):
 
 - Walking off the near end of level 2's gap and letting go of the key: he keeps the speed he walked at and is carried over the gap, the far end of the gap stops him, he drops straight beside it, and the level starts again.
-- Standing at the edge, hopping past it and stopping the drift: he comes down beside the near end of the line, closer than half his width, and the end pushes him clear a little every frame.
+- Standing at the edge and hopping just past it: a jump has no momentum, so he stops in the air when the key is let go, comes down beside the near end of the line, closer than half his width, and the end pushes him clear a little every frame.
 - A running jump still crosses the gap and reaches the flag; level 1 is still finished by walking.
 - How it looks, which cannot be checked: pictures of the same moments before and after, and a recording.
 
@@ -22,11 +22,13 @@ git worktree add --detach /tmp/before origin/3-level-2 && (cd /tmp/before && pnp
 BEFORE_ROOT=/tmp/before node verifications/9-natural-fall/00-before.mjs
 ```
 
+`01-fall.mjs` needs `ffmpeg` on the path to turn the recording into `fall.mp4` and `fall.gif`.
+
 ## What is here
 
 | Script | What it proves | Proof |
 |---|---|---|
-| `01-fall.mjs` | The 18 checks above, read from the sim through `window.__game` while the keys are pressed | `proof/01-fall.txt`, `proof/01-fall.json` |
+| `01-fall.mjs` | The checks above, read from the sim through `window.__game` while the keys are pressed, on a page that is not being filmed | `proof/01-fall.txt`, `proof/01-fall.json` |
 | `01-fall.mjs` | The look after: a forward fall and a straight drop at four depths below the line, and a jump over the gap | `proof/after-walk-off-*.png`, `proof/after-straight-drop-*.png`, `proof/after-jump-over-the-gap.png` |
 | `01-fall.mjs` | How it moves: a forward fall, a straight drop, a jump across the gap to the flag, level 1 | `proof/fall.mp4`, `proof/fall.gif` |
 | `00-before.mjs` | The look before, with the same keys at the same depths: he drops straight down with his head and arm across the line | `proof/before-walk-off-*.png`, `proof/00-before.txt`, `proof/00-before.json` |

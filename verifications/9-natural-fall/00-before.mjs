@@ -9,9 +9,8 @@
  *
  * It is not in run.sh: the build it photographs is not in this branch.
  */
-import { chromium } from 'playwright';
 import { check, lastLinesOf, start, summarize, waitFor, waitForPort, writeProof } from './lib.mjs';
-import { openGame, shotsOfAFall, walkOffTheGapAndLetGo } from './scenes.mjs';
+import { launchBrowser, openGame, shotsOfAFall, walkOffTheGapAndLetGo } from './scenes.mjs';
 
 const PORT = 5919;
 const BEFORE_ROOT = process.env.BEFORE_ROOT;
@@ -28,8 +27,8 @@ try {
   results.push(check('dev server of the build from before up, started by this run', ready, ready ? undefined : lastLinesOf(devServer.output)));
   if (!ready) throw new Error('nothing to open');
 
-  browser = await chromium.launch();
-  const { page } = await openGame(browser, { port: PORT });
+  browser = await launchBrowser();
+  const { page } = await openGame(browser, { port: PORT, pixelRatio: 2 });
   report.shots = await shotsOfAFall(page, { prefix: 'before-walk-off', depths: DEPTHS, fall: walkOffTheGapAndLetGo });
   const edge = await page.evaluate(() => window.__game.level.floor[0].to.x);
   const height = await page.evaluate(() => window.__game.stickManHeight);

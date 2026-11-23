@@ -105,7 +105,7 @@ describe('jumping', () => {
   });
 });
 
-describe('momentum in the air', () => {
+describe('momentum falling off an edge', () => {
   it('carries him forward after he walks off an edge and the key is let go', () => {
     const sim = justWalkedOffTheEdge();
     sim.step([STOP]);
@@ -115,48 +115,43 @@ describe('momentum in the air', () => {
     expect(stickManOf(sim).feet.x - from).toBeCloseTo(-20 * PLAYER.walkSpeed * sim.dt, 6);
   });
 
-  it('carries him forward through a jump after the key is let go', () => {
-    const sim = createSim({ level: 1 });
-    sim.step([WALK_RIGHT, JUMP]);
-    sim.step([STOP]);
-    const from = stickManOf(sim).feet.x;
-    stepFor(sim, 10);
-    expect(stickManOf(sim).feet.x - from).toBeCloseTo(10 * PLAYER.walkSpeed * sim.dt, 6);
-  });
-
-  it('stops him where he lands when no key is held', () => {
-    const sim = createSim({ level: 1 });
-    sim.step([WALK_RIGHT, JUMP]);
-    sim.step([STOP]);
-    while (stickManOf(sim).action === 'jumping') sim.step();
-    const landedAt = stickManOf(sim).feet.x;
-    stepFor(sim, 10);
-    expect(stickManOf(sim)).toMatchObject({ action: 'standing', horizontalSpeed: 0 });
-    expect(stickManOf(sim).feet.x).toBe(landedAt);
-  });
-
-  it('lets the keys steer him only as fast as the air steering allows, and never past walk speed', () => {
-    const sim = createSim({ level: 1 });
-    sim.step([JUMP]);
-    sim.step([WALK_RIGHT]);
-    expect(stickManOf(sim).horizontalSpeed).toBeCloseTo(PLAYER.airSteering * sim.dt, 9);
-    stepFor(sim, 9);
-    expect(stickManOf(sim).horizontalSpeed).toBeCloseTo(10 * PLAYER.airSteering * sim.dt, 9);
-    expect(stickManOf(sim).horizontalSpeed).toBeLessThan(PLAYER.walkSpeed);
-
-    const fast = createSim({ level: 1 });
-    fast.step([WALK_RIGHT, JUMP]);
-    stepFor(fast, 15);
-    expect(stickManOf(fast)).toMatchObject({ action: 'jumping', horizontalSpeed: PLAYER.walkSpeed });
-  });
-
-  it('slows him, then turns him round, when the other way is held', () => {
+  it('lets the keys steer him only as fast as the air steering allows: the other way slows him, then turns him round', () => {
     const sim = justWalkedOffTheEdge();
     sim.step([WALK_RIGHT]);
     expect(stickManOf(sim).horizontalSpeed).toBeCloseTo(-PLAYER.walkSpeed + PLAYER.airSteering * sim.dt, 9);
+    stepFor(sim, 9);
+    expect(stickManOf(sim).horizontalSpeed).toBeCloseTo(-PLAYER.walkSpeed + 10 * PLAYER.airSteering * sim.dt, 9);
     stepFor(sim, Math.ceil(PLAYER.walkSpeed / (PLAYER.airSteering * sim.dt)));
     expect(stickManOf(sim).action).toBe('jumping');
     expect(stickManOf(sim).horizontalSpeed).toBeGreaterThanOrEqual(0);
+  });
+
+  it('never takes him past walk speed, however long the key is held', () => {
+    const sim = justWalkedOffTheEdge();
+    stepFor(sim, 20);
+    expect(stickManOf(sim)).toMatchObject({ action: 'jumping', horizontalSpeed: -PLAYER.walkSpeed });
+  });
+
+  it('is not what a jump has: there the keys move him and stop him at once, as on the floor', () => {
+    const sim = createSim({ level: 1 });
+    sim.step([JUMP]);
+    sim.step([WALK_RIGHT]);
+    expect(stickManOf(sim)).toMatchObject({ action: 'jumping', horizontalSpeed: PLAYER.walkSpeed });
+    sim.step([STOP]);
+    const stoppedAt = stickManOf(sim).feet.x;
+    stepFor(sim, 5);
+    expect(stickManOf(sim)).toMatchObject({ action: 'jumping', horizontalSpeed: 0 });
+    expect(stickManOf(sim).feet.x).toBe(stoppedAt);
+    sim.step([WALK_LEFT]);
+    expect(stickManOf(sim).horizontalSpeed).toBe(-PLAYER.walkSpeed);
+  });
+
+  it('ends with a jump asked for just after the edge: from then on the keys move him at once', () => {
+    const sim = justWalkedOffTheEdge();
+    sim.step([JUMP]);
+    expect(stickManOf(sim).verticalSpeed).toBeLessThan(0);
+    sim.step([STOP]);
+    expect(stickManOf(sim)).toMatchObject({ action: 'jumping', horizontalSpeed: 0 });
   });
 });
 
@@ -182,12 +177,14 @@ describe('dropping past the end of a floor line', () => {
   it('is pushed aside by the end as he comes down beside it, a little every tick, until his whole width is clear of it', () => {
     const sim = standingAtTheEdge();
     const end = LEVEL.floor[0]!.from.x;
-    // A hop on the spot with the lightest touch outward: he comes down just past the end, all but straight.
+    // A hop with a touch outward, three ticks long: he comes down just past the end, straight.
     sim.step([JUMP]);
-    stepFor(sim, 2, [WALK_LEFT]);
+    stepFor(sim, 3, [WALK_LEFT]);
     sim.step([STOP]);
-    const drift = stickManOf(sim).horizontalSpeed;
-    expect(drift).toBeCloseTo(-2 * PLAYER.airSteering * sim.dt, 9);
+    const pastTheEnd = end - stickManOf(sim).feet.x;
+    expect(pastTheEnd).toBeGreaterThan(0);
+    expect(pastTheEnd).toBeLessThan(STICK_MAN_WIDTH / 2);
+    expect(stickManOf(sim).horizontalSpeed).toBe(0);
 
     const besideTheEnd: number[] = [];
     for (let tick = 0; tick < 200 && stickManOf(sim).feet.y < PLAYER.fullWidthAbove; tick += 1) {
@@ -195,9 +192,9 @@ describe('dropping past the end of a floor line', () => {
       sim.step();
     }
     expect(besideTheEnd.length).toBeGreaterThan(3);
-    // Drifting alone would have left the end of the line inside his body: the end put him where he is.
+    // He was not moving sideways: the end of the line put him where he is.
     expect(stickManOf(sim).feet.x).toBeCloseTo(end - STICK_MAN_WIDTH / 2, 9);
-    expect(stickManOf(sim).horizontalSpeed).toBe(drift);
+    expect(stickManOf(sim).horizontalSpeed).toBe(0);
     for (let tick = 1; tick < besideTheEnd.length; tick += 1) expect(Math.abs(besideTheEnd[tick]! - besideTheEnd[tick - 1]!)).toBeLessThan(STICK_MAN_WIDTH / 4);
   });
 
@@ -216,7 +213,7 @@ describe('dropping past the end of a floor line', () => {
     expect(stickManOf(sim).feet.x).toBeGreaterThan(farEnd - STICK_MAN_WIDTH / 2);
   });
 
-  it('is not pushed while he stands, walks or jumps over the line', () => {
+  it('is not pushed while he jumps over the end of the line', () => {
     const sim = createSim({ level: 1 });
     sim.step([WALK_LEFT]);
     const end = LEVEL.floor[0]!.from.x;

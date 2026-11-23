@@ -7,7 +7,7 @@ export interface PlayerState {
   y: number;
   /** Metres per second, positive when he falls. 0 on the floor. */
   verticalSpeed: number;
-  /** Metres per second, positive to the right. In the air it is his own: he keeps it when the key is let go. */
+  /** Metres per second, positive to the right. Falling off an edge it is his own: he keeps it when the key is let go. */
   horizontalSpeed: number;
   /** 1 when he looks right, -1 when he looks left. */
   facing: 1 | -1;

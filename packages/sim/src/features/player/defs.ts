@@ -3,12 +3,12 @@
  * logic. Metres and seconds, y pointing down.
  */
 export const PLAYER = {
-  /** How fast he walks. In the air it is the fastest the keys can make him go sideways. */
+  /** How fast he walks, on the floor and in a jump. Falling off an edge it is the fastest the keys can make him go sideways. */
   walkSpeed: 2.2,
   /**
-   * How much the keys steer him in the air: the most his sideways speed changes, in metres per second squared.
-   * On the floor he is at walk speed at once; in the air he keeps the speed he left the floor with, and a held
-   * key only changes it this fast. With no key held he drifts on as he was.
+   * How much the keys steer him once he has walked off an edge: the most his sideways speed changes, in metres per
+   * second squared. On the floor and in a jump he is at walk speed at once; falling off an edge he keeps the speed
+   * he walked off with, and a held key only changes it this fast. With no key held he drifts on as he was.
    */
   airSteering: 6,
   /** How high his feet get in a jump. A small jump: well under his own height. */
