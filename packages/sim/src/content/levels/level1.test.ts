@@ -2,9 +2,12 @@ import { describe, expect, it } from 'vitest';
 import type { Command } from '../../core/commands';
 import { createSim } from '../../core/create';
 import type { SimHandle } from '../../core/sim';
+import { LEVEL_END } from '../../features/flag/defs';
 import { flagOf } from '../../features/flag/view';
 import { stickManOf } from '../../features/player/view';
+import { TICK_RATE } from '../tuning';
 import { level1 } from './level1';
+import { level2 } from './level2';
 
 describe('level 1', () => {
   it('is finished by walking right to the flag, with a jump on the way', () => {
@@ -34,14 +37,25 @@ describe('level 1', () => {
     expect(flagOf(sim)!.reached).toBe(false);
   });
 
-  it('stays finished, and he stays put, whatever is pressed afterwards', () => {
+  it('stays finished, and he stays put, whatever is pressed before the next level starts', () => {
     const sim = createSim({ level: 1 });
-    play(sim, WALK_TO_THE_FLAG);
+    walkUntilTheFlagIsReached(sim);
     const stoodAt = stickManOf(sim).feet;
-    play(sim, { commands: [{ atTick: 0, command: { type: 'player/walk', direction: -1 } }, { atTick: 5, command: { type: 'player/jump' } }], ticks: 300 });
+    play(sim, { commands: [{ atTick: 0, command: { type: 'player/walk', direction: -1 } }, { atTick: 5, command: { type: 'player/jump' } }], ticks: PAUSE_TICKS - 2 });
     expect(sim.level).toBe(1);
     expect(flagOf(sim)!.reached).toBe(true);
     expect(stickManOf(sim)).toMatchObject({ feet: stoodAt, action: 'cheering' });
+  });
+
+  it('is followed by level 2, a short pause after the flag is reached', () => {
+    const sim = createSim({ level: 1 });
+    walkUntilTheFlagIsReached(sim);
+    play(sim, { commands: [], ticks: PAUSE_TICKS - 2 });
+    expect(sim.level).toBe(1);
+    play(sim, { commands: [], ticks: 4 });
+    expect(sim.level).toBe(2);
+    expect(stickManOf(sim)).toMatchObject({ feet: level2.start, action: 'standing' });
+    expect(flagOf(sim)!.reached).toBe(false);
   });
 });
 
@@ -70,6 +84,16 @@ const STOP_SHORT: Recording = {
   ],
   ticks: 360,
 };
+
+/** How many ticks a finished level stays before the next one starts. */
+const PAUSE_TICKS = Math.round(LEVEL_END.pauseBeforeNextLevel * TICK_RATE);
+
+/** Walks him right from where he is until the tick the flag is reached. */
+function walkUntilTheFlagIsReached(sim: SimHandle): void {
+  sim.step([{ type: 'player/walk', direction: 1 }]);
+  for (let tick = 0; tick < 600 && !flagOf(sim)!.reached; tick += 1) sim.step();
+  expect(flagOf(sim)!.reached).toBe(true);
+}
 
 function play(sim: SimHandle, { commands, ticks }: Recording): void {
   for (let tick = 0; tick < ticks; tick += 1) {

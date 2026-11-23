@@ -29,4 +29,6 @@ export interface Level {
   /** Where the stick man's feet are when the level starts. */
   readonly start: Point;
   readonly placements: readonly Placement[];
+  /** The def id of the item the stick man is given when he reaches this level's flag (level 2's paper). Most levels give none. */
+  readonly flagGivesItem?: number;
 }

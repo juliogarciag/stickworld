@@ -1,5 +1,6 @@
 import { flagOf, levelOf, stickManOf, type StickManView } from '@stickworld/sim';
 import Phaser from 'phaser';
+import { sendItemSlotCommands } from '../input/itemSlotKeys';
 import { keysToCommands, type KeysNow } from '../input/playerCommands';
 import { watchPlayerKeys } from '../input/playerKeys';
 import type { GameLoop } from '../loop/GameLoop';
@@ -36,6 +37,7 @@ export class LevelScene extends Phaser.Scene {
     this.flag = createStrokeLayer(this);
     this.stickMan = createStrokeLayer(this);
     this.keysNow = watchPlayerKeys(this);
+    sendItemSlotCommands(this, (command) => this.loop.queueCommand(command));
     this.follow = followStickManWith(this.cameras.main);
   }
 
@@ -52,6 +54,6 @@ export class LevelScene extends Phaser.Scene {
     this.paper.cover(this.cameras.main);
     this.floor.show(floorStrokes(levelOf(sim)));
     this.flag.show(flag ? flagStrokes(flag) : []);
-    this.stickMan.show(stickManStrokes(this.poseFor(stickMan, seconds)));
+    this.stickMan.show(stickManStrokes(this.poseFor(stickMan, seconds, levelOf(sim).floor)));
   }
 }

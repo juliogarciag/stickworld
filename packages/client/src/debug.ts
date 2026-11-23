@@ -1,8 +1,11 @@
-import type { Command, Def, FlagView, Level, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
-import { defs, flagOf, hashSnapshot, levelOf, STICK_MAN_HEIGHT, stickManOf } from '@stickworld/sim';
+import type { Command, Def, FlagView, ItemSlot, Level, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
+import { defs, flagOf, hashSnapshot, itemSlotsOf, levelOf, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf } from '@stickworld/sim';
 import type Phaser from 'phaser';
+import { itemSlotBox, type Rectangle } from './hud/itemSlots';
 import type { GameLoop } from './loop/GameLoop';
+import { worldSeenBy } from './render/cameraView';
 import { PIXELS_PER_METRE } from './render/units';
+import { HUD_SCENE } from './scenes/HudScene';
 
 /** What dev tooling and end-to-end checks can reach from the page. Dev builds only; listed in AGENTS.md. */
 export interface GameDebugApi {
@@ -15,6 +18,8 @@ export interface GameDebugApi {
   readonly pixelsPerMetre: number;
   /** The stick man's height in metres, as the sim's tuning has it. */
   readonly stickManHeight: number;
+  /** The stick man's width in metres, as the sim's tuning has it: how far the end of a floor line he drops past is kept from the middle of him, half to each side. */
+  readonly stickManWidth: number;
   snapshot(): SimSnapshot;
   hash(): string;
   /** The level camera right now, or undefined until the level scene runs. */
@@ -23,6 +28,8 @@ export interface GameDebugApi {
   stickMan(): StickManView;
   /** The level's flag as the sim has it right now, or undefined when the level has none. */
   flag(): FlagView | undefined;
+  /** Every item slot as the sim has it, with where the HUD draws its box on the page, in CSS pixels. Empty until the HUD scene runs. */
+  itemSlots(): ShownItemSlot[];
   /** Queues a command for the next earned tick, through the same path as keyboard input. */
   queueCommand(command: Command): void;
   /** Plays level `level` from its start. */
@@ -36,6 +43,11 @@ export interface CameraView {
   readonly scrollY: number;
   readonly width: number;
   readonly height: number;
+}
+
+/** An item slot with the rectangle of the page its box is drawn in, in CSS pixels. */
+export interface ShownItemSlot extends ItemSlot {
+  readonly onPage: Rectangle;
 }
 
 declare global {
@@ -56,6 +68,7 @@ export function exposeDebugApi({ loop, game }: { loop: GameLoop; game: Phaser.Ga
     defs,
     pixelsPerMetre: PIXELS_PER_METRE,
     stickManHeight: STICK_MAN_HEIGHT,
+    stickManWidth: STICK_MAN_WIDTH,
     snapshot: () => loop.sim.snapshot(),
     hash: () => hashSnapshot(loop.sim.snapshot()),
     camera: () => {
@@ -65,6 +78,16 @@ export function exposeDebugApi({ loop, game }: { loop: GameLoop; game: Phaser.Ga
     },
     stickMan: () => stickManOf(loop.sim),
     flag: () => flagOf(loop.sim),
+    itemSlots: () => {
+      if (!game.scene.isActive(HUD_SCENE)) return [];
+      const seen = worldSeenBy(game.scene.getScene(HUD_SCENE).cameras.main);
+      // World pixels to canvas pixels by the camera's zoom, canvas pixels to CSS pixels by the game's.
+      const cssPixelsPerWorldPixel = seen.zoom * game.scale.zoom;
+      return itemSlotsOf(loop.sim).map((itemSlot) => {
+        const box = itemSlotBox(itemSlot.slot, seen);
+        return { ...itemSlot, onPage: { x: (box.x - seen.x) * cssPixelsPerWorldPixel, y: (box.y - seen.y) * cssPixelsPerWorldPixel, width: box.width * cssPixelsPerWorldPixel, height: box.height * cssPixelsPerWorldPixel } };
+      });
+    },
     queueCommand: (command) => loop.queueCommand(command),
     loadLevel: (level) => loop.playLevel(level),
   };

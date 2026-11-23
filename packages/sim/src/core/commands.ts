@@ -1,3 +1,4 @@
+import type { InventoryCommand } from '../features/inventory/commands';
 import type { PlayerCommand } from '../features/player/commands';
 
 /**
@@ -14,7 +15,7 @@ import type { PlayerCommand } from '../features/player/commands';
  *     | PlayerCommand
  *     | InventoryCommand;
  */
-export type Command = PlayerCommand;
+export type Command = PlayerCommand | InventoryCommand;
 
 /** True when `value` has the minimal shape of a command. Anything else is dropped by Sim.step. */
 export function isCommandShaped(value: unknown): value is Command {

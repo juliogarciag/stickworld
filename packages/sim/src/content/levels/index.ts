@@ -1,8 +1,9 @@
 import { level1 } from './level1';
+import { level2 } from './level2';
 import type { Level } from './types';
 
 /** Every level, in the order they are played. Add a new level by adding one line here; the level itself is a new file next to this one. */
-export const levels: readonly Level[] = [level1];
+export const levels: readonly Level[] = [level1, level2];
 
 /** The level with this id. Throws for an id no level has: asking for a level that does not exist is a bug in the caller. */
 export function levelById(id: number): Level {
