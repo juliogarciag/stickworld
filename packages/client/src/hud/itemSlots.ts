@@ -1,4 +1,4 @@
-import { PAPER_ITEM_ID, type ItemSlot } from '@stickworld/sim';
+import { AIRPLANE_ITEM_ID, PAPER_ITEM_ID, type ItemSlot } from '@stickworld/sim';
 import type { Stroke, StrokePoint } from '../render/strokes';
 import { PENCIL } from '../render/strokes/pencil';
 
@@ -81,6 +81,20 @@ const ITEM_DRAWINGS: Readonly<Record<number, readonly UnitPath[]>> = {
       { x: 0.6, y: 0.17 },
       { x: 0.61, y: 0.31 },
       { x: 0.74, y: 0.3 },
+    ],
+  ],
+  // The paper airplane from the side: a dart, with the fold along its middle.
+  [AIRPLANE_ITEM_ID]: [
+    [
+      { x: 0.84, y: 0.44 },
+      { x: 0.16, y: 0.26 },
+      { x: 0.26, y: 0.52 },
+      { x: 0.38, y: 0.74 },
+      { x: 0.84, y: 0.44 },
+    ],
+    [
+      { x: 0.84, y: 0.44 },
+      { x: 0.26, y: 0.52 },
     ],
   ],
 };

@@ -22,6 +22,8 @@ export interface StickManView {
   readonly fallingOffAnEdge: boolean;
   /** Which way the sim believes the player wants to walk, whether or not he can right now. */
   readonly walkDirectionAsked: WalkDirection;
+  /** True while he holds something over his head with both hands (the airplane, as `airplaneOf` has it). */
+  readonly carrying: boolean;
 }
 
 export function stickManOf(handle: SimHandle): StickManView {
@@ -36,6 +38,7 @@ export function stickManOf(handle: SimHandle): StickManView {
     horizontalSpeed: player.horizontalSpeed,
     fallingOffAnEdge: isFallingOffAnEdge(player),
     walkDirectionAsked: player.walkDirection,
+    carrying: player.carrying,
   };
 }
 

@@ -1,0 +1,154 @@
+{
+  "letterText": "A sheet of paper can fly. Fold it into an airplane and carry it to the edge.",
+  "jumps": {
+    "carriedJump": {
+      "carrying": true,
+      "height": 0.4499438184514798
+    },
+    "freeJump": {
+      "carrying": false,
+      "height": 0.6999436925511606
+    }
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "level 3 starts after level 2, with the paper its flag gave in slot 1",
+      "pass": true,
+      "details": "level 3, slot 1 holds 200"
+    },
+    {
+      "name": "the letter lies on the floor just in front of the start",
+      "pass": true,
+      "details": "letter at 3.6, start at 2"
+    },
+    {
+      "name": "the letter is drawn on the floor",
+      "pass": true,
+      "details": "222 pencil pixels where it lies"
+    },
+    {
+      "name": "before the letter is read, the paper in his hand has no use, and no key is shown",
+      "pass": true,
+      "details": "item use: null, 0 pencil pixels in the bottom left"
+    },
+    {
+      "name": "J changed nothing, and he walks on with the paper put back",
+      "pass": true,
+      "details": "[{\"slot\":1,\"itemDefId\":200,\"selected\":false}]"
+    },
+    {
+      "name": "next to the letter, K would read it",
+      "pass": true,
+      "details": "interaction: read"
+    },
+    {
+      "name": "K shows the letter: the sim says he reads it, and its text is its def's",
+      "pass": true,
+      "details": "A sheet of paper can fly. Fold it into an airplane and carry it to the edge."
+    },
+    {
+      "name": "the text is written on the screen",
+      "pass": true,
+      "details": "0 pencil pixels in the top middle before, 8498 while reading"
+    },
+    {
+      "name": "reading taught the paper airplane, the only recipe he knows, and the letter says so",
+      "pass": true,
+      "details": "[{\"defId\":400,\"name\":\"paper airplane\"}]"
+    },
+    {
+      "name": "reading put the paper in his hand, and while he reads only K has a use: it puts the letter away",
+      "pass": true,
+      "details": "{\"slots\":[{\"slot\":1,\"itemDefId\":200,\"selected\":true}],\"itemUse\":null,\"interaction\":\"putLetterAway\"}"
+    },
+    {
+      "name": "J while he reads does nothing: the letter stays up and the paper stays paper",
+      "pass": true
+    },
+    {
+      "name": "K puts the letter away: it is gone from the level and from the screen",
+      "pass": true
+    },
+    {
+      "name": "with the letter away, J would fold the paper airplane, and the key and what it does are written in the bottom left",
+      "pass": true,
+      "details": "item use: craft, 1342 pencil pixels in the bottom left"
+    },
+    {
+      "name": "one press of J turns the paper into an airplane in the same slot",
+      "pass": true,
+      "details": "[{\"slot\":1,\"itemDefId\":201,\"selected\":true}]"
+    },
+    {
+      "name": "J with the airplane puts it on the floor in front of him and empties the slot",
+      "pass": true,
+      "details": "{\"airplane\":{\"at\":{\"x\":4.183333333333332,\"y\":0},\"facing\":1,\"length\":1.4,\"height\":0.34,\"state\":\"resting\",\"verticalSpeed\":0,\"onAnEdge\":false},\"feet\":{\"x\":3.283333333333332,\"y\":0}}"
+    },
+    {
+      "name": "the airplane is drawn on the floor, and nothing over his head",
+      "pass": true,
+      "details": "436 pencil pixels where it rests"
+    },
+    {
+      "name": "next to it, K would lift it",
+      "pass": true,
+      "details": "interaction: lift"
+    },
+    {
+      "name": "K lifts it over his head",
+      "pass": true,
+      "details": "{\"at\":{\"x\":3.283333333333332,\"y\":-1.82},\"facing\":1,\"length\":1.4,\"height\":0.34,\"state\":\"carried\",\"verticalSpeed\":0,\"onAnEdge\":false}"
+    },
+    {
+      "name": "the airplane is drawn over his head, and no longer on the floor",
+      "pass": true,
+      "details": "343 pencil pixels over his head"
+    },
+    {
+      "name": "a jump with it keeps it over his head",
+      "pass": true
+    },
+    {
+      "name": "while he walks the airplane is drawn over his head",
+      "pass": true,
+      "details": "351 pencil pixels over his head mid-walk"
+    },
+    {
+      "name": "he carries it as he walks: on every frame the sim has it over his feet",
+      "pass": true,
+      "details": "151 frames, 5.5 m, never more than 0 m apart"
+    },
+    {
+      "name": "while he carries it, K would put it down",
+      "pass": true,
+      "details": "interaction: putDown"
+    },
+    {
+      "name": "K near the edge puts it down in front of him, sitting on the edge with its nose out over the gap",
+      "pass": true,
+      "details": "middle at 9.68, nose at 10.38, edge at 10"
+    },
+    {
+      "name": "there, K would board it (boarding itself is the next ticket), and pressing it changes nothing yet",
+      "pass": true
+    },
+    {
+      "name": "it stays on the edge and no letter falls: nothing is lost",
+      "pass": true
+    },
+    {
+      "name": "carrying shortens the jump",
+      "pass": true,
+      "details": "0.45 m with it, 0.70 m without"
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

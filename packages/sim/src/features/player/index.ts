@@ -71,7 +71,7 @@ function jumpIfAskedAndAble(sim: Sim, player: PlayerState): void {
   if (player.ticksSinceJumpAsked === null) return;
   const walkedOffJustNow = player.ticksSinceWalkedOff !== null && player.ticksSinceWalkedOff < wholeTicksIn(PLAYER.jumpAskedLateWindow, sim.dt);
   if (player.onFloor || walkedOffJustNow) {
-    player.verticalSpeed = -Math.sqrt(2 * PLAYER.gravity * PLAYER.jumpHeight);
+    player.verticalSpeed = -Math.sqrt(2 * PLAYER.gravity * (player.carrying ? PLAYER.jumpHeightCarrying : PLAYER.jumpHeight));
     player.onFloor = false;
     player.ticksSinceWalkedOff = null;
     player.ticksSinceJumpAsked = null;
