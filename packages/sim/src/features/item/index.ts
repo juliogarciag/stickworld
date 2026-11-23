@@ -1,8 +1,8 @@
 import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
 import { airplaneItemUse } from '../airplane';
-import { recipeListUse } from '../crafting';
-import { letterBeingRead } from '../letter';
+import { craftingUse } from '../crafting';
+import { isReadingALetter } from '../letter';
 import { hasFinishedLevel } from '../player';
 
 /**
@@ -23,7 +23,8 @@ export const itemFeature: Feature = {
 
 /** What `'item/use'` would do right now, with the function that does it, or undefined when it would do nothing. */
 export function itemUseNow(sim: Sim): ItemUse | undefined {
-  if (hasFinishedLevel(sim)) return undefined;
+  // A letter he reads fills his hands: it is put away by interacting, and until then no item is used.
+  if (hasFinishedLevel(sim) || isReadingALetter(sim)) return undefined;
   for (const answer of ANSWERS) {
     const use = answer(sim);
     if (use) return use;
@@ -31,10 +32,10 @@ export function itemUseNow(sim: Sim): ItemUse | undefined {
   return undefined;
 }
 
-/** Every use an item has, most pressing first: a letter he reads is put away before anything else starts. */
-const ANSWERS = [letterBeingRead, recipeListUse, airplaneItemUse] as const;
+/** Every use an item has. No item has two yet, so the order decides nothing so far. */
+const ANSWERS = [craftingUse, airplaneItemUse] as const;
 
 export type ItemUse = NonNullable<ReturnType<(typeof ANSWERS)[number]>>;
 
-/** What using the held item means: put away the letter he reads, open the recipe list, make the listed recipe, close a list with nothing to make, or put the airplane on the floor. */
+/** What using the held item means: make the recipe he knows for it, or put the airplane on the floor. */
 export type ItemUseMeaning = ItemUse['means'];

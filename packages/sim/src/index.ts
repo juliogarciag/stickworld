@@ -26,7 +26,7 @@ export { itemUseOf } from './features/item/view';
 export type { WorldCommand, WorldInteractCommand } from './features/world/commands';
 export type { InteractionMeaning } from './features/world';
 export { interactionOf } from './features/world/view';
-export { recipeListOf, type RecipeListView } from './features/crafting/view';
+export { craftingOf, type CraftingView, type RecipeView } from './features/crafting/view';
 export { letterOf, type LetterView } from './features/letter/view';
 export type { AirplaneCommand, AirplaneSteerCommand, SteerDirection } from './features/airplane/commands';
 export { airplaneOf, steeringAskedOf, type AirplaneView } from './features/airplane/view';

@@ -1,34 +1,34 @@
-import type { RecipeListView } from '@stickworld/sim';
 import type { Stroke, StrokePoint } from '../render/strokes';
 import { PENCIL } from '../render/strokes/pencil';
 import { written } from './handwriting';
-import { itemSlotBox, type Rectangle } from './itemSlots';
+import type { Rectangle } from './itemSlots';
 
 /**
  * What he holds up to look at, drawn over the level: the letter he is
- * reading, as a sheet with its text, and the list of recipes he knows. What
- * the letter says, which recipes are listed and whether either is out are the
- * sim's (`letterOf`, `recipeListOf`); only where and how they are drawn is
- * decided here.
+ * reading, as a sheet with its text and, under it, what it has taught him.
+ * What the letter says, what it teaches and whether it is out are the sim's
+ * (`letterOf`); only where and how they are drawn is decided here.
  */
 
-/** The sheet of the letter he reads, centred near the top of what the HUD camera sees, as tall as its text needs. */
-export function letterSheetStrokes(text: string, seen: Rectangle): Stroke[] {
-  const width = Math.min(SHEET.width, seen.width - 2 * SHEET.fromTheTop);
-  const textAt = { x: seen.x + (seen.width - width) / 2 + SHEET.padding, y: seen.y + SHEET.fromTheTop + SHEET.padding };
-  const words = written(text, { at: textAt, letterHeight: SHEET.letterHeight, lineWidth: width - 2 * SHEET.padding });
-  const sheet = { x: textAt.x - SHEET.padding, y: textAt.y - SHEET.padding, width, height: words.height + 2 * SHEET.padding };
-  return [{ points: askew(sheet, SHEET.askew), thickness: PENCIL.thickness, closed: true }, ...words.strokes];
+/** A letter as it is held up: what it says, and the name of what reading it has taught him, or null when it teaches nothing. */
+export interface LetterHeldUp {
+  readonly text: string;
+  readonly teaches: string | null;
 }
 
-/** The list of recipes, in a box beside the item slots: a line for each recipe he knows, or a line that says there is none. */
-export function recipeListStrokes(list: RecipeListView, seen: Rectangle): Stroke[] {
-  const lastSlot = itemSlotBox(1, seen);
-  const corner = { x: lastSlot.x + lastSlot.width + LIST.besideTheSlots, y: lastSlot.y };
-  const rows = list.recipes.length === 0 ? [LIST.whenEmpty] : list.recipes.map((recipe) => recipe.name);
-  const lines = rows.map((row, index) => written(row, { at: { x: corner.x + LIST.padding, y: corner.y + LIST.padding + index * LIST.rowHeight }, letterHeight: LIST.letterHeight }));
-  const box = { x: corner.x, y: corner.y, width: Math.max(...lines.map((line) => line.width)) + 2 * LIST.padding, height: (rows.length - 1) * LIST.rowHeight + LIST.letterHeight + 2 * LIST.padding };
-  return [{ points: askew(box, LIST.askew), thickness: PENCIL.thickness, closed: true }, ...lines.flatMap((line) => line.strokes)];
+/**
+ * The sheet of the letter he reads, centred near the top of what the HUD camera sees, as tall as what is on it
+ * needs: its text and, a little apart under it, a line that says what he has learned.
+ */
+export function letterSheetStrokes({ text, teaches }: LetterHeldUp, seen: Rectangle): Stroke[] {
+  const width = Math.min(SHEET.width, seen.width - 2 * SHEET.fromTheTop);
+  const textAt = { x: seen.x + (seen.width - width) / 2 + SHEET.padding, y: seen.y + SHEET.fromTheTop + SHEET.padding };
+  const lineWidth = width - 2 * SHEET.padding;
+  const words = written(text, { at: textAt, letterHeight: SHEET.letterHeight, lineWidth });
+  const learned = teaches === null ? null : written(`${SHEET.learned} ${teaches}`, { at: { x: textAt.x, y: textAt.y + words.height + SHEET.aboveWhatHeLearned }, letterHeight: SHEET.letterHeight, lineWidth });
+  const heightOfWhatIsWritten = learned === null ? words.height : words.height + SHEET.aboveWhatHeLearned + learned.height;
+  const sheet = { x: textAt.x - SHEET.padding, y: textAt.y - SHEET.padding, width, height: heightOfWhatIsWritten + 2 * SHEET.padding };
+  return [{ points: askew(sheet, SHEET.askew), thickness: PENCIL.thickness, closed: true }, ...words.strokes, ...(learned?.strokes ?? [])];
 }
 
 // ---- Helpers ----
@@ -41,17 +41,10 @@ const SHEET = {
   letterHeight: 30,
   /** How far each corner of the sheet is off a true rectangle: it was cut by hand. */
   askew: 7,
-} as const;
-
-const LIST = {
-  besideTheSlots: 52,
-  padding: 30,
-  letterHeight: 28,
-  /** From the top of one recipe's line to the top of the next. */
-  rowHeight: 52,
-  askew: 4,
-  /** What the list says while he knows no recipe. The HUD's own words: no def has them. */
-  whenEmpty: 'nothing yet',
+  /** From the bottom of the letter's text to the top of the line that says what he learned. */
+  aboveWhatHeLearned: 40,
+  /** What goes before the name of what he learned. The HUD's own words: no def has them. */
+  learned: 'learned:',
 } as const;
 
 /** The four corners of `box`, each a little off: clockwise from the top left. */

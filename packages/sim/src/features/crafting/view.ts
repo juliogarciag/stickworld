@@ -1,16 +1,22 @@
 import { Sim, type SimHandle } from '../../core/sim';
-import { knownRecipes } from './index';
-import { recipeListSlice } from './state';
+import { knownRecipes, recipeHeCanMake } from './index';
 
-/** The list of recipes as a view shows it. */
-export interface RecipeListView {
-  /** True while he has the list out. */
-  readonly open: boolean;
-  /** The recipes he knows, in the order he learned them. */
-  readonly recipes: readonly { readonly defId: number; readonly name: string }[];
+/** A recipe as a view names it. */
+export interface RecipeView {
+  readonly defId: number;
+  readonly name: string;
 }
 
-export function recipeListOf(handle: SimHandle): RecipeListView {
+/** What he knows how to make, as a view shows it. */
+export interface CraftingView {
+  /** The recipes he knows, in the order he learned them. */
+  readonly knownRecipes: readonly RecipeView[];
+  /** The recipe that using the held item would make right now, or null when it would make none. */
+  readonly canMake: RecipeView | null;
+}
+
+export function craftingOf(handle: SimHandle): CraftingView {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
-  return { open: handle.stateOf(recipeListSlice).open, recipes: knownRecipes(handle).map(({ id, name }) => ({ defId: id, name })) };
+  const canMake = recipeHeCanMake(handle);
+  return { knownRecipes: knownRecipes(handle).map(({ id, name }) => ({ defId: id, name })), canMake: canMake ? { defId: canMake.id, name: canMake.name } : null };
 }

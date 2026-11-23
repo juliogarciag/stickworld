@@ -23,10 +23,9 @@ try {
 
   let now = await seen(page);
   results.push(check('level 3 started on its own: no paper, and the letter lies there', now.level === 3 && now.slots[0].itemDefId === null && now.letter?.height === 0));
-  await tap(page, '1');
   await readTheLetter(page, level);
   now = await seen(page);
-  results.push(check('the first letter gives the paper to him who has none', now.slots[0].itemDefId === level.paper, JSON.stringify(now.slots)));
+  results.push(check('the first letter gives the paper to him who has none, in his hand', now.slots[0].itemDefId === level.paper && now.slots[0].selected, JSON.stringify(now.slots)));
   await fold(page);
 
   const ways = [
@@ -145,10 +144,9 @@ async function readTheLetter(page, level) {
   await waitInGame(page, () => window.__game.letter()?.beingRead === true, null, 5000);
 }
 
-/** Puts the letter away and folds the paper: K, J, J. The airplane ends up as the item in his selected slot. */
+/** Puts the letter away and folds the paper, which reading put in his hand: K, J. The airplane ends up as the item in his selected slot. */
 async function fold(page) {
   await tap(page, 'k');
-  await tap(page, 'j');
   await tap(page, 'j');
   const now = await seen(page);
   results.push(check('the paper folds into an airplane', now.slots[0].itemDefId !== null && now.itemUse === 'place' && now.letter === null, JSON.stringify(now.slots)));

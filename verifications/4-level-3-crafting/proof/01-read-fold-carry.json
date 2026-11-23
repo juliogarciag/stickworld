@@ -1,5 +1,5 @@
 {
-  "letterText": "A sheet of paper can fly. Hold yours and fold it into an airplane. Set it down, lift it over your head and carry it to the edge.",
+  "letterText": "A sheet of paper can fly. Fold it into an airplane and carry it to the edge.",
   "jumps": {
     "carriedJump": {
       "carrying": true,
@@ -28,12 +28,17 @@
     {
       "name": "the letter is drawn on the floor",
       "pass": true,
-      "details": "205 pencil pixels where it lies"
+      "details": "222 pencil pixels where it lies"
     },
     {
-      "name": "before the letter is read, J with the paper opens an empty recipe list",
+      "name": "before the letter is read, the paper in his hand has no use, and no key is shown",
       "pass": true,
-      "details": "{\"open\":true,\"recipes\":[]}"
+      "details": "item use: null, 0 pencil pixels in the bottom left"
+    },
+    {
+      "name": "J changed nothing, and he walks on with the paper put back",
+      "pass": true,
+      "details": "[{\"slot\":1,\"itemDefId\":200,\"selected\":false}]"
     },
     {
       "name": "next to the letter, K would read it",
@@ -43,39 +48,38 @@
     {
       "name": "K shows the letter: the sim says he reads it, and its text is its def's",
       "pass": true,
-      "details": "A sheet of paper can fly. Hold yours and fold it into an airplane. Set it down, lift it over your head and carry it to the edge."
+      "details": "A sheet of paper can fly. Fold it into an airplane and carry it to the edge."
     },
     {
       "name": "the text is written on the screen",
       "pass": true,
-      "details": "0 pencil pixels in the top middle before, 9789 while reading"
+      "details": "0 pencil pixels in the top middle before, 8498 while reading"
     },
     {
-      "name": "reading taught the paper airplane, the only recipe he knows",
+      "name": "reading taught the paper airplane, the only recipe he knows, and the letter says so",
       "pass": true,
       "details": "[{\"defId\":400,\"name\":\"paper airplane\"}]"
     },
     {
-      "name": "K again puts the letter away: it is gone from the level and from the screen",
+      "name": "reading put the paper in his hand, and while he reads only K has a use: it puts the letter away",
+      "pass": true,
+      "details": "{\"slots\":[{\"slot\":1,\"itemDefId\":200,\"selected\":true}],\"itemUse\":null,\"interaction\":\"putLetterAway\"}"
+    },
+    {
+      "name": "J while he reads does nothing: the letter stays up and the paper stays paper",
       "pass": true
     },
     {
-      "name": "with the paper selected, J would open the recipes",
-      "pass": true,
-      "details": "item use: openRecipes"
+      "name": "K puts the letter away: it is gone from the level and from the screen",
+      "pass": true
     },
     {
-      "name": "J opens the recipe list, which lists only the paper airplane",
+      "name": "with the letter away, J would fold the paper airplane, and the key and what it does are written in the bottom left",
       "pass": true,
-      "details": "{\"open\":true,\"recipes\":[{\"defId\":400,\"name\":\"paper airplane\"}]}"
+      "details": "item use: craft, 1342 pencil pixels in the bottom left"
     },
     {
-      "name": "the list is written beside the item slots",
-      "pass": true,
-      "details": "0 pencil pixels there before, 2183 with the list open"
-    },
-    {
-      "name": "choosing it turns the paper into an airplane in the same slot",
+      "name": "one press of J turns the paper into an airplane in the same slot",
       "pass": true,
       "details": "[{\"slot\":1,\"itemDefId\":201,\"selected\":true}]"
     },
@@ -87,7 +91,7 @@
     {
       "name": "the airplane is drawn on the floor, and nothing over his head",
       "pass": true,
-      "details": "412 pencil pixels where it rests"
+      "details": "436 pencil pixels where it rests"
     },
     {
       "name": "next to it, K would lift it",
@@ -102,7 +106,7 @@
     {
       "name": "the airplane is drawn over his head, and no longer on the floor",
       "pass": true,
-      "details": "328 pencil pixels over his head"
+      "details": "343 pencil pixels over his head"
     },
     {
       "name": "a jump with it keeps it over his head",
@@ -111,7 +115,7 @@
     {
       "name": "while he walks the airplane is drawn over his head",
       "pass": true,
-      "details": "373 pencil pixels over his head mid-walk"
+      "details": "351 pencil pixels over his head mid-walk"
     },
     {
       "name": "he carries it as he walks: on every frame the sim has it over his feet",

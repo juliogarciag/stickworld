@@ -69,11 +69,6 @@ export function isFallingOffAnEdge(player: PlayerState): boolean {
   return !player.onFloor && player.ticksSinceWalkedOff !== null;
 }
 
-/** True while his feet are on the floor and he is not walking. */
-export function isStandingStill(sim: Sim): boolean {
-  return sim.stateOf(playerSlice).onFloor && walkDirectionNow(sim) === 0;
-}
-
 export function hasFinishedLevel(sim: Sim): boolean {
   return sim.stateOf(flagSlice).reachedAtTick !== null;
 }

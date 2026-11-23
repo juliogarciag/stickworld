@@ -32,9 +32,10 @@ try {
   const hintsStanding = await pencilPixelsIn(page, await page.screenshot({ clip: HINTS }));
   await page.keyboard.press('k');
   await untilTheSim(page, 'him to be seated', (api) => api.stickMan().action === 'seated');
-  await untilTheSim(page, 'it to sink below the line', (api) => api.stickMan().action === 'seated' && api.airplane().at.y > 1);
-  const sinking = await stateOf(page);
+  // Read while it is still over the line: a screenshot takes time, and what follows has little of it before it is out of sight.
   const hintsSeated = await pencilPixelsIn(page, await page.screenshot({ clip: HINTS }));
+  await untilTheSim(page, 'it to sink below the line', (api) => api.stickMan().action === 'seated' && api.airplane().at.y > 0.2);
+  const sinking = await stateOf(page);
   await page.screenshot({ path: path.join(PROOF, '07-sinking-into-the-gap.png') });
   results.push(check('while he is seated the page names the keys that fly it, below what K would do before', hintsSeated > hintsStanding + 300, `${hintsStanding} pencil-dark pixels in the bottom left corner standing next to it, ${hintsSeated} seated`));
   // Already lost, he pushes the nose down with the other down key: it dives steeper than it sinks by itself.

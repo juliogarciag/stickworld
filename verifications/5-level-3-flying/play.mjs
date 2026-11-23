@@ -102,14 +102,10 @@ export async function putTheAirplaneOnTheEdge(page) {
   await untilTheSim(page, 'a letter lying on the floor', (api) => api.letter() !== undefined && api.letter().height === 0);
   const before = await stateOf(page);
   await walkTo(page, before.letter.at.x);
-  await press(page, 'k'); // read: it teaches the recipe and gives the paper when he has none
-  await press(page, 'k'); // put it away
-  await press(page, '1'); // select the slot (pressing it again would unselect: only when it is not selected yet)
-  const selected = await page.evaluate(() => window.__game.itemSlots()[0].selected);
-  if (!selected) await press(page, '1');
-  await press(page, 'j'); // what can it make?
-  await press(page, 'j'); // fold it
-  await press(page, 'j'); // set it down
+  await press(page, 'k'); // read: it teaches the recipe, gives the paper when he has none and puts it in his hand
+  await press(page, 'k'); // put the letter away
+  await press(page, 'j'); // fold a paper airplane: one press
+  await press(page, 'j'); // set the airplane down
   const placed = await stateOf(page);
   if (!placed.airplane) throw new Error(`no airplane was set down (slots ${JSON.stringify(placed.slots)}, J would ${placed.itemUse})`);
   // How far in front of him he puts it down, as the sim just did it: nothing typed in here.

@@ -8,7 +8,7 @@ import { PAPER_ITEM_ID } from '../inventory/defs';
  * placed in a level by its id.
  */
 export interface LetterDef extends Def {
-  /** What it says. It never names a key: which keys there are is the client's business. */
+  /** What it says: what to do, not how. It never names a key (which keys there are is the client's business), and what the keys do is shown beside them as it becomes possible. */
   readonly text: string;
   /** The def id of the recipe that reading it teaches. */
   readonly teachesRecipe: number;
@@ -23,7 +23,7 @@ export const letterDefs: readonly LetterDef[] = [
   {
     id: AIRPLANE_LETTER_ID,
     name: 'the letter about the paper airplane',
-    text: 'A sheet of paper can fly. Hold yours and fold it into an airplane. Set it down, lift it over your head and carry it to the edge. Sit in it there and it flies: climbing slows it, diving speeds it up, and too slow it falls.',
+    text: 'A sheet of paper can fly. Fold it into an airplane and carry it to the edge.',
     teachesRecipe: PAPER_AIRPLANE_RECIPE_ID,
     gives: PAPER_ITEM_ID,
   },

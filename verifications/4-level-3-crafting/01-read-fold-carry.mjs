@@ -39,12 +39,16 @@ try {
   results.push(check('the letter is drawn on the floor', letterPixels > 80, `${letterPixels} pencil pixels where it lies`));
   await screenshot(page, '01-level-3-start.png');
 
-  // ---- The paper folds into nothing before he has read the letter ----
+  // ---- The paper has no use before he has read the letter ----
+  const promptArea = { x: 20, y: VIEWPORT.height - 150, width: 520, height: 140 };
   await tap(page, '1');
-  await tap(page, 'j');
   now = await seen(page);
-  results.push(check('before the letter is read, J with the paper opens an empty recipe list', now.slots[0].selected && now.recipeList.open && now.recipeList.recipes.length === 0, JSON.stringify(now.recipeList)));
+  const promptsWithNoUse = await pencilPixelsIn(page, promptArea);
+  results.push(check('before the letter is read, the paper in his hand has no use, and no key is shown', now.slots[0].selected && now.itemUse === null && now.crafting.knownRecipes.length === 0 && promptsWithNoUse < 30, `item use: ${now.itemUse}, ${promptsWithNoUse} pencil pixels in the bottom left`));
   await tap(page, 'j');
+  await tap(page, '1');
+  now = await seen(page);
+  results.push(check('J changed nothing, and he walks on with the paper put back', now.slots[0].itemDefId === level.paper && !now.slots[0].selected, JSON.stringify(now.slots)));
 
   // ---- Reading the letter ----
   await walkTo(page, level.letterAt.x - 0.35);
@@ -58,29 +62,27 @@ try {
   const sheetWhileReading = await pencilPixelsIn(page, sheetArea);
   results.push(check('K shows the letter: the sim says he reads it, and its text is its def\'s', now.letter?.beingRead === true && now.letter.text.length > 20, now.letter?.text));
   results.push(check('the text is written on the screen', sheetBefore < 50 && sheetWhileReading > 2500, `${sheetBefore} pencil pixels in the top middle before, ${sheetWhileReading} while reading`));
-  results.push(check('reading taught the paper airplane, the only recipe he knows', now.recipeList.recipes.length === 1 && now.recipeList.recipes[0].name === 'paper airplane', JSON.stringify(now.recipeList.recipes)));
+  results.push(check('reading taught the paper airplane, the only recipe he knows, and the letter says so', now.crafting.knownRecipes.length === 1 && now.crafting.knownRecipes[0].name === 'paper airplane' && now.letter.teaches === 'paper airplane', JSON.stringify(now.crafting.knownRecipes)));
+  results.push(check('reading put the paper in his hand, and while he reads only K has a use: it puts the letter away', now.slots[0].itemDefId === level.paper && now.slots[0].selected && now.itemUse === null && now.interaction === 'putLetterAway', JSON.stringify({ slots: now.slots, itemUse: now.itemUse, interaction: now.interaction })));
   await screenshot(page, '02-reading-the-letter.png');
   report.letterText = now.letter?.text;
+  await tap(page, 'j');
+  now = await seen(page);
+  results.push(check('J while he reads does nothing: the letter stays up and the paper stays paper', now.letter?.beingRead === true && now.slots[0].itemDefId === level.paper));
   await tap(page, 'k');
   await page.waitForTimeout(200);
   now = await seen(page);
-  results.push(check('K again puts the letter away: it is gone from the level and from the screen', now.letter === null && (await pencilPixelsIn(page, sheetArea)) < 50 && (await pencilPixelsIn(page, letterOnTheFloor)) < 40));
+  results.push(check('K puts the letter away: it is gone from the level and from the screen', now.letter === null && (await pencilPixelsIn(page, sheetArea)) < 50 && (await pencilPixelsIn(page, letterOnTheFloor)) < 40));
 
-  // ---- The recipe list ----
-  const listArea = { x: 140, y: 20, width: 330, height: 100 };
-  const listBefore = await pencilPixelsIn(page, listArea);
-  results.push(check('with the paper selected, J would open the recipes', now.itemUse === 'openRecipes', `item use: ${now.itemUse}`));
+  // ---- Folding ----
+  await page.waitForTimeout(300);
+  const promptsWithAUse = await pencilPixelsIn(page, promptArea);
+  results.push(check('with the letter away, J would fold the paper airplane, and the key and what it does are written in the bottom left', now.itemUse === 'craft' && now.crafting.canMake?.name === 'paper airplane' && promptsWithAUse > 400, `item use: ${now.itemUse}, ${promptsWithAUse} pencil pixels in the bottom left`));
+  await screenshot(page, '03-ready-to-fold.png');
   await tap(page, 'j');
   await page.waitForTimeout(300);
   now = await seen(page);
-  const listOpen = await pencilPixelsIn(page, listArea);
-  results.push(check('J opens the recipe list, which lists only the paper airplane', now.recipeList.open && now.recipeList.recipes.map((recipe) => recipe.name).join() === 'paper airplane' && now.itemUse === 'craft', JSON.stringify(now.recipeList)));
-  results.push(check('the list is written beside the item slots', listBefore < 30 && listOpen > 600, `${listBefore} pencil pixels there before, ${listOpen} with the list open`));
-  await screenshot(page, '03-recipe-list.png');
-  await tap(page, 'j');
-  await page.waitForTimeout(300);
-  now = await seen(page);
-  results.push(check('choosing it turns the paper into an airplane in the same slot', now.slots[0].itemDefId === level.airplaneItem && now.slots[0].selected && !now.recipeList.open && now.airplane === null, JSON.stringify(now.slots)));
+  results.push(check('one press of J turns the paper into an airplane in the same slot', now.slots[0].itemDefId === level.airplaneItem && now.slots[0].selected && now.airplane === null && now.itemUse === 'place', JSON.stringify(now.slots)));
   await screenshot(page, '04-airplane-in-the-slot.png');
 
   // ---- Setting it down ----

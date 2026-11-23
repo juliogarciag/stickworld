@@ -16,7 +16,7 @@
       "pass": true
     },
     {
-      "name": "the first letter gives the paper to him who has none",
+      "name": "the first letter gives the paper to him who has none, in his hand",
       "pass": true,
       "details": "[{\"slot\":1,\"itemDefId\":200,\"selected\":true}]"
     },
@@ -37,7 +37,7 @@
     {
       "name": "put down too far past the edge: a new letter falls from the sky to where the old one was",
       "pass": true,
-      "details": "seen at 8.5 m, then 4.2 m, then on the floor at x 3.6; 307 pencil pixels on its way down"
+      "details": "seen at 8.5 m, then 4.2 m, then on the floor at x 3.6; 339 pencil pixels on its way down"
     },
     {
       "name": "put down too far past the edge: reading it gives a new paper",
@@ -113,7 +113,7 @@
     {
       "name": "carried into the gap by a jump from the edge: a new letter falls from the sky to where the old one was",
       "pass": true,
-      "details": "seen at 8.5 m, then 4.2 m, then on the floor at x 3.6; 302 pencil pixels on its way down"
+      "details": "seen at 8.5 m, then 4.2 m, then on the floor at x 3.6; 293 pencil pixels on its way down"
     },
     {
       "name": "carried into the gap by a jump from the edge: reading it gives a new paper",
@@ -136,7 +136,7 @@
     {
       "name": "left on the floor when he dies: a new letter falls from the sky to where the old one was",
       "pass": true,
-      "details": "seen at 8.5 m, then 4.2 m, then on the floor at x 3.6; 368 pencil pixels on its way down"
+      "details": "seen at 8.5 m, then 4.2 m, then on the floor at x 3.6; 306 pencil pixels on its way down"
     },
     {
       "name": "left on the floor when he dies: reading it gives a new paper",

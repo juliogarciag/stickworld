@@ -129,7 +129,7 @@ function seatedInTheAirplane(): SimHandle {
   };
   walkTo(letterOf(sim)!.at.x);
   // Read the letter, put it away, select the paper, open the recipes, fold, set down, lift.
-  for (const command of [interact, interact, { type: 'inventory/select', slot: 1 } as const, useItem, useItem, useItem, interact]) sim.step([command]);
+  for (const command of [interact, interact, useItem, useItem, interact]) sim.step([command]);
   // Carried to where putting it down leaves it on the edge with its nose out, then put down and boarded.
   const edge = levelById(3).floor[0]!.to.x;
   for (let x = edge - 2; airplaneOf(sim)?.onAnEdge !== true && x < edge; x += 0.1) {

@@ -8,8 +8,8 @@ import { airplaneOf } from '../airplane/view';
 import { flagOf } from '../flag/view';
 import { AIRPLANE_ITEM_ID, PAPER_ITEM_ID } from '../inventory/defs';
 import { giveItem } from '../inventory/give';
+import { itemSlotsOf } from '../inventory/view';
 import { itemUseOf } from '../item/view';
-import { recipeListOf } from '../crafting/view';
 import { letterOf } from '../letter/view';
 import { stickManOf } from '../player/view';
 import { interactionOf } from './view';
@@ -30,34 +30,20 @@ describe("'world/interact' and 'item/use'", () => {
     expect(interactionOf(sim)).toBe('putDown');
   });
 
-  it('put the letter he is reading away before anything else, whichever key it is, and do nothing more with that press', () => {
-    for (const key of [INTERACT, USE_ITEM]) {
-      const sim = new Sim({ features, start: { seed: 1, level: 3 } });
-      giveItem(sim, PAPER_ITEM_ID);
-      sim.step([SELECT_SLOT_1]);
-      walkTo(sim, letterOf(sim)!.at.x);
-      sim.step([INTERACT]);
-      expect(interactionOf(sim)).toBe('putLetterAway');
-      expect(itemUseOf(sim)).toBe('putLetterAway');
-      sim.step([key]);
-      expect(letterOf(sim)).toBeUndefined();
-      expect(recipeListOf(sim).open).toBe(false);
-    }
-  });
-
-  it('put the recipe list away on an interact, and do nothing more with that press: the airplane next to him stays on the floor', () => {
+  it('leave the letter he is reading to the interact key: using an item does nothing until it is put away, and putting it away does nothing more', () => {
     const sim = new Sim({ features, start: { seed: 1, level: 3 } });
-    walkTo(sim, letterOf(sim)!.at.x);
-    // Read (which gives the paper), put away, select, open, fold, set down: an airplane at his feet and an empty slot.
-    for (const command of [INTERACT, INTERACT, SELECT_SLOT_1, USE_ITEM, USE_ITEM, USE_ITEM]) sim.step([command]);
     giveItem(sim, PAPER_ITEM_ID);
-    sim.step([USE_ITEM]);
-    expect(recipeListOf(sim).open).toBe(true);
-    expect(interactionOf(sim)).toBe('closeRecipes');
+    walkTo(sim, letterOf(sim)!.at.x);
     sim.step([INTERACT]);
-    expect(recipeListOf(sim).open).toBe(false);
-    expect(airplaneOf(sim)!.state).toBe('resting');
-    expect(interactionOf(sim)).toBe('lift');
+    expect(interactionOf(sim)).toBe('putLetterAway');
+    expect(itemUseOf(sim)).toBeNull();
+    sim.step([USE_ITEM]);
+    expect(letterOf(sim)).toMatchObject({ beingRead: true });
+    expect(itemSlotsOf(sim)[0]?.itemDefId).toBe(PAPER_ITEM_ID);
+    sim.step([INTERACT]);
+    expect(letterOf(sim)).toBeUndefined();
+    expect(itemSlotsOf(sim)[0]?.itemDefId).toBe(PAPER_ITEM_ID);
+    expect(itemUseOf(sim)).toBe('craft');
   });
 
   it.each(levels.map((level) => [level.id]))('change nothing on level %i when there is nothing to use or interact with', (level) => {

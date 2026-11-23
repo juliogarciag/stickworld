@@ -4,7 +4,7 @@ import { createSim } from '../../core/create';
 import type { SimHandle } from '../../core/sim';
 import { AIRPLANE } from '../../features/airplane/defs';
 import { airplaneOf } from '../../features/airplane/view';
-import { recipeListOf } from '../../features/crafting/view';
+import { craftingOf } from '../../features/crafting/view';
 import { FLAG_DEF_ID, LEVEL_END } from '../../features/flag/defs';
 import { flagOf } from '../../features/flag/view';
 import { AIRPLANE_ITEM_ID, PAPER_ITEM_ID } from '../../features/inventory/defs';
@@ -50,7 +50,7 @@ describe('level 3', () => {
       const sim = createSim({ level: 3 });
       // Read, put away, select, open, fold, set down, lift: the letter gives the paper to a level 3 started on its own.
       walkTo(sim, LETTER_AT.x);
-      for (const command of [INTERACT, INTERACT, SELECT_SLOT_1, USE_ITEM, USE_ITEM, USE_ITEM, INTERACT]) sim.step([command]);
+      for (const command of [INTERACT, INTERACT, USE_ITEM, USE_ITEM, INTERACT]) sim.step([command]);
       walkTo(sim, level3.start.x);
       expect(stickManOf(sim).carrying).toBe(true);
       // Back where the level starts him, so the walk to the edge takes as many ticks as it does from the start.
@@ -76,30 +76,31 @@ describe('level 3', () => {
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBe(PAPER_ITEM_ID);
     expect(letterOf(sim)).toMatchObject({ at: LETTER_AT, height: 0, beingRead: false });
 
-    // The paper alone folds into nothing: he has not learned how.
+    // The paper alone has no use, in his hand or not: he has not learned what to make of it.
+    expect(itemSlotsOf(sim)[0]?.selected).toBe(false);
     sim.step([SELECT_SLOT_1]);
+    expect(itemUseOf(sim)).toBeNull();
     sim.step([USE_ITEM]);
-    expect(recipeListOf(sim)).toEqual({ open: true, recipes: [] });
-    expect(itemUseOf(sim)).toBe('closeRecipes');
-    sim.step([USE_ITEM]);
-    expect(recipeListOf(sim).open).toBe(false);
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBe(PAPER_ITEM_ID);
+    sim.step([SELECT_SLOT_1]);
 
     walkTo(sim, LETTER_AT.x);
     expect(interactionOf(sim)).toBe('read');
     sim.step([INTERACT]);
     expect(letterOf(sim)).toMatchObject({ beingRead: true });
     expect(letterOf(sim)!.text.length).toBeGreaterThan(0);
+    expect(letterOf(sim)!.teaches).toBe('paper airplane');
+    // Reading put the paper in his hand, and while he reads the only thing a key does is put the letter away.
+    expect(itemSlotsOf(sim)[0]).toMatchObject({ itemDefId: PAPER_ITEM_ID, selected: true });
+    expect(itemUseOf(sim)).toBeNull();
     expect(interactionOf(sim)).toBe('putLetterAway');
     sim.step([INTERACT]);
     expect(letterOf(sim)).toBeUndefined();
 
-    expect(itemUseOf(sim)).toBe('openRecipes');
-    sim.step([USE_ITEM]);
-    expect(recipeListOf(sim)).toMatchObject({ open: true, recipes: [{ name: 'paper airplane' }] });
+    // One press folds it.
     expect(itemUseOf(sim)).toBe('craft');
+    expect(craftingOf(sim).canMake).toMatchObject({ name: 'paper airplane' });
     sim.step([USE_ITEM]);
-    expect(recipeListOf(sim).open).toBe(false);
     expect(itemSlotsOf(sim)).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, selected: true }]);
     expect(airplaneOf(sim)).toBeUndefined();
 
@@ -319,7 +320,7 @@ function playFlight(
 /** From the start of level 3 on its own: reads the letter, which gives the paper, folds it, sets the airplane down, lifts it, carries it to the edge and puts it down there. */
 function putTheAirplaneOnTheEdge(sim: SimHandle): void {
   walkTo(sim, LETTER_AT.x);
-  for (const command of [INTERACT, INTERACT, SELECT_SLOT_1, USE_ITEM, USE_ITEM, USE_ITEM, INTERACT]) sim.step([command]);
+  for (const command of [INTERACT, INTERACT, USE_ITEM, USE_ITEM, INTERACT]) sim.step([command]);
   walkTo(sim, GAP.from - AIRPLANE.putDownAhead - AIRPLANE.length / 4);
   sim.step([INTERACT]);
   expect(airplaneOf(sim)).toMatchObject({ state: 'resting', onAnEdge: true });

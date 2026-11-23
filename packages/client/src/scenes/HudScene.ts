@@ -1,7 +1,7 @@
-import { flagOf, interactionOf, itemSlotsOf, itemUseOf, letterOf, recipeListOf, stickManOf } from '@stickworld/sim';
+import { craftingOf, flagOf, interactionOf, itemSlotsOf, itemUseOf, letterOf, stickManOf } from '@stickworld/sim';
 import Phaser from 'phaser';
 import { itemSlotStrokes } from '../hud/itemSlots';
-import { letterSheetStrokes, recipeListStrokes } from '../hud/panels';
+import { letterSheetStrokes } from '../hud/panels';
 import { promptsFor, promptStrokes } from '../hud/prompts';
 import { theEndIsWritten, theEndStrokes } from '../hud/theEnd';
 import { keptWhileUnchanged } from '../hud/unchanged';
@@ -14,7 +14,7 @@ import { createStrokeLayer, type Stroke, type StrokeLayer } from '../render/stro
 
 /**
  * What is shown over the sheet of paper and does not move with it: the item
- * slots, the letter he reads or the list of recipes he looks at, what the
+ * slots, the letter he reads, what the
  * keys would do right now, and the words that end the game. It runs beside the level scene, after it, so it is drawn above the
  * paper's tooth and reads the sim the level scene has just advanced. Its
  * camera never scrolls and keeps the level's zoom, so a HUD line is as heavy
@@ -48,17 +48,12 @@ export class HudScene extends Phaser.Scene {
     this.itemSlots.show(itemSlotStrokes(itemSlotsOf(sim), seen));
 
     const letter = letterOf(sim);
-    const recipeList = recipeListOf(sim);
-    const reading = letter?.beingRead ? letter.text : null;
-    this.heldUp.show(
-      this.strokesOfWhatIsHeldUp(JSON.stringify([reading, recipeList, seen]), () => {
-        if (reading !== null) return letterSheetStrokes(reading, seen);
-        return recipeList.open ? recipeListStrokes(recipeList, seen) : [];
-      }),
-    );
+    const reading = letter?.beingRead ? { text: letter.text, teaches: letter.teaches } : null;
+    this.heldUp.show(this.strokesOfWhatIsHeldUp(JSON.stringify([reading, seen]), () => (reading === null ? [] : letterSheetStrokes(reading, seen))));
 
     const prompts = promptsFor({
       itemUse: itemUseOf(sim),
+      wouldMake: craftingOf(sim).canMake?.name ?? null,
       useItemKey: ACTION_KEY_NAMES.useItem,
       interaction: interactionOf(sim),
       interactKey: ACTION_KEY_NAMES.interact,

@@ -1,5 +1,5 @@
-import type { AirplaneView, Command, Def, FlagView, InteractionMeaning, ItemSlot, ItemUseMeaning, LetterView, Level, RecipeListView, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
-import { airplaneOf, defs, flagOf, hashSnapshot, interactionOf, itemSlotsOf, itemUseOf, letterOf, levelOf, recipeListOf, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf } from '@stickworld/sim';
+import type { AirplaneView, Command, CraftingView, Def, FlagView, InteractionMeaning, ItemSlot, ItemUseMeaning, LetterView, Level, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
+import { airplaneOf, craftingOf, defs, flagOf, hashSnapshot, interactionOf, itemSlotsOf, itemUseOf, letterOf, levelOf, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf } from '@stickworld/sim';
 import type Phaser from 'phaser';
 import { itemSlotBox, type Rectangle } from './hud/itemSlots';
 import type { GameLoop } from './loop/GameLoop';
@@ -32,8 +32,8 @@ export interface GameDebugApi {
   itemSlots(): ShownItemSlot[];
   /** The level's letter as the sim has it right now, or undefined when there is none to read. */
   letter(): LetterView | undefined;
-  /** The list of recipes as the sim has it right now: whether it is open, and the recipes he knows. */
-  recipeList(): RecipeListView;
+  /** What he knows how to make as the sim has it right now: the recipes he knows, and the one using the held item would make. */
+  crafting(): CraftingView;
   /** The airplane in the world as the sim has it right now, or undefined while there is none. */
   airplane(): AirplaneView | undefined;
   /** What using the held item would do right now, or null. */
@@ -99,7 +99,7 @@ export function exposeDebugApi({ loop, game }: { loop: GameLoop; game: Phaser.Ga
       });
     },
     letter: () => letterOf(loop.sim),
-    recipeList: () => recipeListOf(loop.sim),
+    crafting: () => craftingOf(loop.sim),
     airplane: () => airplaneOf(loop.sim),
     itemUse: () => itemUseOf(loop.sim),
     interaction: () => interactionOf(loop.sim),

@@ -249,8 +249,8 @@ function holdingTheAirplane(): Sim {
   const sim = new Sim({ features, start: { seed: 1, level: 3 } });
   giveItem(sim, PAPER_ITEM_ID);
   walkTo(sim, letterOf(sim)!.at.x);
-  // Read the letter, put it away, select the paper, open the recipes, fold.
-  for (const command of [INTERACT, INTERACT, SELECT_SLOT_1, USE_ITEM, USE_ITEM]) sim.step([command]);
+  // Read the letter, which puts the paper in his hand, put it away, fold.
+  for (const command of [INTERACT, INTERACT, USE_ITEM]) sim.step([command]);
   expect(itemSlotsOf(sim)).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, selected: true }]);
   return sim;
 }
