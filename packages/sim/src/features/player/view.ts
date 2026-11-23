@@ -16,6 +16,8 @@ export interface StickManView {
   readonly distanceWalked: number;
   /** Metres per second, positive when he falls: how far along a jump he is. 0 on the floor. */
   readonly verticalSpeed: number;
+  /** Metres per second, positive to the right: how fast he is going sideways, on the floor or drifting in the air. */
+  readonly horizontalSpeed: number;
   /** Which way the sim believes the player wants to walk, whether or not he can right now. */
   readonly walkDirectionAsked: WalkDirection;
 }
@@ -29,6 +31,7 @@ export function stickManOf(handle: SimHandle): StickManView {
     action: !player.onFloor ? 'jumping' : hasFinishedLevel(sim) ? 'cheering' : walkDirectionNow(sim) !== 0 ? 'walking' : 'standing',
     distanceWalked: player.distanceWalked,
     verticalSpeed: player.verticalSpeed,
+    horizontalSpeed: player.horizontalSpeed,
     walkDirectionAsked: player.walkDirection,
   };
 }

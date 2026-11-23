@@ -46,6 +46,24 @@ describe('level 2', () => {
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBeNull();
   });
 
+  it('cannot be finished by letting his momentum carry him: the far end of the gap stops him and he drops beside it', () => {
+    const sim = createSim({ level: 2 });
+    const { overTheGap, restartedAtTick } = play(sim, { commands: [WALK_RIGHT_AT_0, { atTick: TICK_PAST_THE_EDGE, command: { type: 'player/walk', direction: 0 } }], ticks: 400 });
+    expect(Math.max(...overTheGap.map((feet) => feet.x))).toBeCloseTo(GAP.to - PLAYER.width / 2, 6);
+    expect(restartedAtTick).not.toBeNull();
+    expect(flagOf(sim)!.reached).toBe(false);
+  });
+
+  it('cannot be finished by jumping from a standstill at the edge: he needs the speed of a walk', () => {
+    const sim = createSim({ level: 2 });
+    const { restartedAtTick } = play(sim, {
+      commands: [WALK_RIGHT_AT_0, { atTick: TICK_AT_THE_EDGE, command: { type: 'player/walk', direction: 0 } }, { atTick: TICK_AT_THE_EDGE + 30, command: { type: 'player/jump' } }, { atTick: TICK_AT_THE_EDGE + 31, command: { type: 'player/walk', direction: 1 } }],
+      ticks: 400,
+    });
+    expect(restartedAtTick).not.toBeNull();
+    expect(flagOf(sim)!.reached).toBe(false);
+  });
+
   it('cannot be finished by jumping too early: he lands before the gap and walks into it', () => {
     const sim = createSim({ level: 2 });
     const { restartedAtTick } = play(sim, { commands: [WALK_RIGHT_AT_0, { atTick: 30, command: { type: 'player/jump' } }], ticks: 400 });
@@ -138,6 +156,10 @@ const ONE_TICK_OF_FALL = Math.sqrt(2 * PLAYER.gravity * PLAYER.fallBelowFloor) /
 
 /** The tick on which he is a quarter of the gap's width before its edge, walking right from the start: where a player would jump. */
 const TICK_NEAR_THE_EDGE = Math.round(((GAP.from - 0.25 * (GAP.to - GAP.from) - level2.start.x) / PLAYER.walkSpeed) * TICK_RATE);
+/** The last tick on which he still stands on the first segment, walking right from the start. */
+const TICK_AT_THE_EDGE = Math.floor(((GAP.from - level2.start.x) / PLAYER.walkSpeed) * TICK_RATE) - 1;
+/** A few ticks later he has walked off it and is falling. */
+const TICK_PAST_THE_EDGE = TICK_AT_THE_EDGE + 4;
 /** A second later he has landed and walked on, well short of the flag. */
 const TICK_PAST_THE_GAP = TICK_NEAR_THE_EDGE + TICK_RATE;
 

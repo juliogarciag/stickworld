@@ -7,6 +7,8 @@ export interface PlayerState {
   y: number;
   /** Metres per second, positive when he falls. 0 on the floor. */
   verticalSpeed: number;
+  /** Metres per second, positive to the right. In the air it is his own: he keeps it when the key is let go. */
+  horizontalSpeed: number;
   /** 1 when he looks right, -1 when he looks left. */
   facing: 1 | -1;
   /** Which way the player last asked him to walk. */
@@ -24,6 +26,7 @@ export const playerSlice = defineSlice<PlayerState>('player', (level) => ({
   x: level.start.x,
   y: level.start.y,
   verticalSpeed: 0,
+  horizontalSpeed: 0,
   facing: 1,
   walkDirection: 0,
   onFloor: true,

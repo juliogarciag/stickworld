@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { levelById } from '../../content/levels';
+import { levelById, levels } from '../../content/levels';
+import { STICK_MAN_HEIGHT } from '../../content/tuning';
 import type { Command } from '../../core/commands';
 import { createSim, restoreSim } from '../../core/create';
 import type { SimHandle } from '../../core/sim';
@@ -104,6 +105,130 @@ describe('jumping', () => {
   });
 });
 
+describe('momentum in the air', () => {
+  it('carries him forward after he walks off an edge and the key is let go', () => {
+    const sim = justWalkedOffTheEdge();
+    sim.step([STOP]);
+    const from = stickManOf(sim).feet.x;
+    stepFor(sim, 20);
+    expect(stickManOf(sim)).toMatchObject({ action: 'jumping', horizontalSpeed: -PLAYER.walkSpeed, walkDirectionAsked: 0 });
+    expect(stickManOf(sim).feet.x - from).toBeCloseTo(-20 * PLAYER.walkSpeed * sim.dt, 6);
+  });
+
+  it('carries him forward through a jump after the key is let go', () => {
+    const sim = createSim({ level: 1 });
+    sim.step([WALK_RIGHT, JUMP]);
+    sim.step([STOP]);
+    const from = stickManOf(sim).feet.x;
+    stepFor(sim, 10);
+    expect(stickManOf(sim).feet.x - from).toBeCloseTo(10 * PLAYER.walkSpeed * sim.dt, 6);
+  });
+
+  it('stops him where he lands when no key is held', () => {
+    const sim = createSim({ level: 1 });
+    sim.step([WALK_RIGHT, JUMP]);
+    sim.step([STOP]);
+    while (stickManOf(sim).action === 'jumping') sim.step();
+    const landedAt = stickManOf(sim).feet.x;
+    stepFor(sim, 10);
+    expect(stickManOf(sim)).toMatchObject({ action: 'standing', horizontalSpeed: 0 });
+    expect(stickManOf(sim).feet.x).toBe(landedAt);
+  });
+
+  it('lets the keys steer him only as fast as the air steering allows, and never past walk speed', () => {
+    const sim = createSim({ level: 1 });
+    sim.step([JUMP]);
+    sim.step([WALK_RIGHT]);
+    expect(stickManOf(sim).horizontalSpeed).toBeCloseTo(PLAYER.airSteering * sim.dt, 9);
+    stepFor(sim, 9);
+    expect(stickManOf(sim).horizontalSpeed).toBeCloseTo(10 * PLAYER.airSteering * sim.dt, 9);
+    expect(stickManOf(sim).horizontalSpeed).toBeLessThan(PLAYER.walkSpeed);
+
+    const fast = createSim({ level: 1 });
+    fast.step([WALK_RIGHT, JUMP]);
+    stepFor(fast, 15);
+    expect(stickManOf(fast)).toMatchObject({ action: 'jumping', horizontalSpeed: PLAYER.walkSpeed });
+  });
+
+  it('slows him, then turns him round, when the other way is held', () => {
+    const sim = justWalkedOffTheEdge();
+    sim.step([WALK_RIGHT]);
+    expect(stickManOf(sim).horizontalSpeed).toBeCloseTo(-PLAYER.walkSpeed + PLAYER.airSteering * sim.dt, 9);
+    stepFor(sim, Math.ceil(PLAYER.walkSpeed / (PLAYER.airSteering * sim.dt)));
+    expect(stickManOf(sim).action).toBe('jumping');
+    expect(stickManOf(sim).horizontalSpeed).toBeGreaterThanOrEqual(0);
+  });
+});
+
+describe('dropping past the end of a floor line', () => {
+  it('never leaves the end of a floor line inside his body, whatever he does', () => {
+    for (const level of levels) {
+      for (let pattern = 0; pattern < PATTERNS_PER_LEVEL; pattern += 1) {
+        const sim = createSim({ level: level.id });
+        for (let tick = 0; tick < 500; tick += 1) {
+          sim.step(commandsOfPattern(pattern, tick));
+          if (sim.level !== level.id) break;
+          const { feet } = stickManOf(sim);
+          for (const { from, to } of level.floor) {
+            const reach = Math.max(halfWidthOfHisBody(feet.y - from.y), halfWidthOfHisBody(feet.y - to.y));
+            const inside = feet.x > from.x - reach + 1e-9 && feet.x < to.x + reach - 1e-9;
+            if (reach > 0 && inside) throw new Error(`level ${level.id}, pattern ${pattern}, tick ${tick}: his feet at (${feet.x}, ${feet.y}) leave the floor from ${from.x} to ${to.x} inside his body`);
+          }
+        }
+      }
+    }
+  });
+
+  it('is pushed aside by the end as he comes down beside it, a little every tick, until his whole width is clear of it', () => {
+    const sim = standingAtTheEdge();
+    const end = LEVEL.floor[0]!.from.x;
+    // A hop on the spot with the lightest touch outward: he comes down just past the end, all but straight.
+    sim.step([JUMP]);
+    stepFor(sim, 2, [WALK_LEFT]);
+    sim.step([STOP]);
+    const drift = stickManOf(sim).horizontalSpeed;
+    expect(drift).toBeCloseTo(-2 * PLAYER.airSteering * sim.dt, 9);
+
+    const besideTheEnd: number[] = [];
+    for (let tick = 0; tick < 200 && stickManOf(sim).feet.y < PLAYER.fullWidthAbove; tick += 1) {
+      if (stickManOf(sim).feet.y > 0) besideTheEnd.push(stickManOf(sim).feet.x);
+      sim.step();
+    }
+    expect(besideTheEnd.length).toBeGreaterThan(3);
+    // Drifting alone would have left the end of the line inside his body: the end put him where he is.
+    expect(stickManOf(sim).feet.x).toBeCloseTo(end - PLAYER.width / 2, 9);
+    expect(stickManOf(sim).horizontalSpeed).toBe(drift);
+    for (let tick = 1; tick < besideTheEnd.length; tick += 1) expect(Math.abs(besideTheEnd[tick]! - besideTheEnd[tick - 1]!)).toBeLessThan(0.06);
+  });
+
+  it('is stopped by the end of a line he drifts into, and goes under it once his head has dropped below it', () => {
+    const sim = createSim({ level: 2 });
+    const farEnd = levelById(2).floor[1]!.from.x;
+    sim.step([WALK_RIGHT]);
+    while (stickManOf(sim).feet.y <= 0 || stickManOf(sim).feet.x < farEnd - PLAYER.width / 2 - 1e-9) sim.step();
+    expect(stickManOf(sim).feet.y).toBeLessThan(STICK_MAN_HEIGHT);
+    expect(stickManOf(sim)).toMatchObject({ feet: { x: farEnd - PLAYER.width / 2 }, horizontalSpeed: 0 });
+    while (stickManOf(sim).feet.y < STICK_MAN_HEIGHT) {
+      expect(stickManOf(sim).feet.x).toBe(farEnd - PLAYER.width / 2);
+      sim.step();
+    }
+    stepFor(sim, 10);
+    expect(stickManOf(sim).feet.x).toBeGreaterThan(farEnd - PLAYER.width / 2);
+  });
+
+  it('is not pushed while he stands, walks or jumps over the line', () => {
+    const sim = createSim({ level: 1 });
+    sim.step([WALK_LEFT]);
+    const end = LEVEL.floor[0]!.from.x;
+    while (stickManOf(sim).feet.x > end + 0.3) sim.step();
+    sim.step([JUMP]);
+    stepFor(sim, 3);
+    expect(stickManOf(sim).feet.x).toBeGreaterThan(end);
+    expect(stickManOf(sim).feet.x).toBeLessThan(end + PLAYER.width / 2);
+    expect(stickManOf(sim).horizontalSpeed).toBe(-PLAYER.walkSpeed);
+  });
+});
+
 describe('falling off the paper', () => {
   it('starts the level again', () => {
     const sim = justWalkedOffTheEdge();
@@ -141,6 +266,29 @@ const DT = createSim({ level: 1 }).dt;
 const EARLY_TICKS = Math.round(PLAYER.jumpAskedEarlyWindow / DT);
 const LATE_TICKS = Math.round(PLAYER.jumpAskedLateWindow / DT);
 
+/** Enough different ways of pressing the keys that he leaves every edge walking, drifting, steering back and jumping. */
+const PATTERNS_PER_LEVEL = 240;
+
+/**
+ * What the player presses on `tick` in pattern number `pattern`: he sets off one way, and from some tick on changes
+ * direction or jumps every few ticks. Worked out from the two numbers alone, so every run plays the same.
+ */
+function commandsOfPattern(pattern: number, tick: number): Command[] {
+  const setsOff = pattern % 2 === 0 ? WALK_RIGHT : WALK_LEFT;
+  if (tick === 0) return [setsOff];
+  const every = 3 + (pattern % 7);
+  const startsAt = 20 + ((pattern * 13) % 110);
+  if (tick < startsAt || (tick - startsAt) % every !== 0) return [];
+  const turn = (pattern * 31 + ((tick - startsAt) / every) * 17) % 5;
+  return [[WALK_LEFT], [WALK_RIGHT], [STOP], [JUMP], [setsOff, JUMP]][turn]!;
+}
+
+/** His body as the tuning describes it, worked out here again so the test does not lean on the code it checks. */
+function halfWidthOfHisBody(aboveFeet: number): number {
+  if (aboveFeet <= 0 || aboveFeet >= STICK_MAN_HEIGHT) return 0;
+  return (PLAYER.width / 2) * Math.min(1, aboveFeet / PLAYER.fullWidthAbove);
+}
+
 /** Steps `ticks` times, with `commands` on the first tick only. */
 function stepFor(sim: SimHandle, ticks: number, commands: readonly Command[] = []): void {
   for (let tick = 0; tick < ticks; tick += 1) sim.step(tick === 0 ? commands : []);
@@ -177,6 +325,17 @@ function justWalkedOffTheEdge(): SimHandle {
   sim.step([WALK_LEFT]);
   for (let tick = 0; tick < 600 && playerIn(sim).onFloor; tick += 1) sim.step();
   expect(playerIn(sim)).toMatchObject({ onFloor: false, ticksSinceWalkedOff: 0 });
+  return sim;
+}
+
+/** A sim in which he stands still on the last bit of floor before its start, having walked left to it. */
+function standingAtTheEdge(): SimHandle {
+  const sim = createSim({ level: 1 });
+  sim.step([WALK_LEFT]);
+  while (stickManOf(sim).feet.x - 2 * PLAYER.walkSpeed * sim.dt >= LEVEL.floor[0]!.from.x) sim.step();
+  sim.step([STOP]);
+  expect(stickManOf(sim).action).toBe('standing');
+  expect(stickManOf(sim).feet.x).toBeLessThan(LEVEL.floor[0]!.from.x + 0.1);
   return sim;
 }
 
