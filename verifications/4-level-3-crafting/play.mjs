@@ -50,7 +50,7 @@ export function seen(page) {
       stickMan: game.stickMan(),
       slots: game.itemSlots().map(({ slot, itemDefId, selected }) => ({ slot, itemDefId, selected })),
       letter: game.letter() ?? null,
-      recipeList: game.recipeList(),
+      crafting: game.crafting(),
       airplane: game.airplane() ?? null,
       itemUse: game.itemUse(),
       interaction: game.interaction(),

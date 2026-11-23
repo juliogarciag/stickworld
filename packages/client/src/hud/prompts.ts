@@ -21,6 +21,8 @@ export interface Prompt {
 export interface KeysWouldDo {
   /** What using the held item would do, and the name of the key that does it. */
   readonly itemUse: ItemUseMeaning | null;
+  /** The name of what using the held item would make, or null when it would make nothing. */
+  readonly wouldMake: string | null;
   readonly useItemKey: string;
   /** What interacting with the world would do, and the name of the key that does it. */
   readonly interaction: InteractionMeaning | null;
@@ -28,8 +30,8 @@ export interface KeysWouldDo {
 }
 
 /** The prompts to show: the item key first, then the interact key, each only when it would do something. */
-export function promptsFor({ itemUse, useItemKey, interaction, interactKey }: KeysWouldDo): Prompt[] {
-  return [...(itemUse === null ? [] : [{ key: useItemKey, words: ITEM_USE_WORDS[itemUse] }]), ...(interaction === null ? [] : [{ key: interactKey, words: INTERACTION_WORDS[interaction] }])];
+export function promptsFor({ itemUse, wouldMake, useItemKey, interaction, interactKey }: KeysWouldDo): Prompt[] {
+  return [...(itemUse === null ? [] : [{ key: useItemKey, words: ITEM_USE_WORDS[itemUse](wouldMake) }]), ...(interaction === null ? [] : [{ key: interactKey, words: INTERACTION_WORDS[interaction] }])];
 }
 
 /** The strokes that draw `prompts` in the bottom left corner of what the HUD camera sees, one above the other. */
@@ -49,22 +51,21 @@ export function promptStrokes(prompts: readonly Prompt[], seen: Rectangle): Stro
 
 // ---- Helpers ----
 
-/** The HUD's own words for what a key would do. */
-const ITEM_USE_WORDS: Readonly<Record<ItemUseMeaning, string>> = {
-  putLetterAway: 'put it away',
-  openRecipes: 'what can it make?',
-  craft: 'fold it',
-  closeRecipes: 'put it back',
-  place: 'set it down',
+/**
+ * The HUD's own words for what a key would do. Each names the thing it is done to: "it" would be the letter in one
+ * prompt and the airplane in the next. Everything he makes so far is folded paper, so making is called folding.
+ */
+const ITEM_USE_WORDS: Readonly<Record<ItemUseMeaning, (wouldMake: string | null) => string>> = {
+  craft: (wouldMake) => (wouldMake === null ? 'fold it' : `fold a ${wouldMake}`),
+  place: () => 'set the airplane down',
 };
 
 const INTERACTION_WORDS: Readonly<Record<InteractionMeaning, string>> = {
-  read: 'read',
-  putLetterAway: 'put it away',
-  closeRecipes: 'put it back',
-  lift: 'lift',
-  putDown: 'put down',
-  board: 'board',
+  read: 'read the letter',
+  putLetterAway: 'put the letter away',
+  lift: 'lift the airplane',
+  putDown: 'put the airplane down',
+  board: 'board the airplane',
 };
 
 /** Sizes in the HUD camera's world pixels, which are the level's. */

@@ -5,15 +5,15 @@ import { hasAirplane } from '../airplane';
 import { teachRecipe } from '../crafting';
 import { recipeDef } from '../crafting/defs';
 import { giveItem } from '../inventory/give';
-import { holdsItem } from '../inventory/held';
+import { holdsItem, selectItem } from '../inventory/held';
 import { playerSlice } from '../player/state';
 import { LETTER, letterDef, type LetterDef } from './defs';
 import { letterSlice, lettersReadSlice } from './state';
 
 /**
  * The letter a level leaves on the floor. Interacting next to it reads it,
- * which teaches its recipe; interacting again, using an item or walking away
- * puts it away, and then it is gone. Whenever he has lost everything the
+ * which teaches its recipe and puts the item the recipe is made from in his
+ * hand; interacting again or walking away puts it away, and then it is gone. Whenever he has lost everything the
  * letter was for (its item, and what its recipe makes of it), a new letter
  * falls from the sky to where the old one was, and reading that one gives
  * him the item again. So he can never be left without a way on.
@@ -57,7 +57,12 @@ export function letterPlacedIn(level: Level): Placement | undefined {
   return level.placements.find((placement) => letterDef(placement.defId) !== undefined);
 }
 
-/** What either action key does while he reads a letter, for `features/world` and `features/item`: he puts it away, and the press does nothing else. */
+/** True while he reads a letter. */
+export function isReadingALetter(sim: Sim): boolean {
+  return sim.stateOf(letterSlice).beingRead;
+}
+
+/** What interacting does while he reads a letter, for `features/world`: he puts it away, and the press does nothing else. */
 export function letterBeingRead(sim: Sim) {
   if (!sim.stateOf(letterSlice).beingRead) return undefined;
   return { means: 'putLetterAway' as const, perform: () => putAway(sim) };
@@ -77,6 +82,8 @@ export function letterInteraction(sim: Sim) {
       if (!lettersRead.includes(def.id)) lettersRead.push(def.id);
       teachRecipe(sim, def.teachesRecipe);
       if (!hasWhatItIsFor(sim, def)) giveItem(sim, def.gives);
+      // What the letter is about is in his hand when he looks up from it, so the key that uses it has a use at once.
+      selectItem(sim, def.gives);
     },
   };
 }

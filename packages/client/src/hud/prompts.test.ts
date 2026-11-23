@@ -10,15 +10,22 @@ describe('promptsFor', () => {
 
   it('names each key with what it would do, the item key first', () => {
     expect(promptsFor({ ...KEYS, itemUse: 'place', interaction: 'lift' })).toEqual([
-      { key: 'J', words: 'set it down' },
-      { key: 'K', words: 'lift' },
+      { key: 'J', words: 'set the airplane down' },
+      { key: 'K', words: 'lift the airplane' },
     ]);
-    expect(promptsFor({ ...KEYS, itemUse: null, interaction: 'board' })).toEqual([{ key: 'K', words: 'board' }]);
+    expect(promptsFor({ ...KEYS, itemUse: null, interaction: 'board' })).toEqual([{ key: 'K', words: 'board the airplane' }]);
   });
 
-  it('has words for everything a key can mean', () => {
-    for (const itemUse of ['putLetterAway', 'openRecipes', 'craft', 'closeRecipes', 'place'] as const) expect(promptsFor({ ...KEYS, itemUse, interaction: null })[0]?.words).toBeTruthy();
-    for (const interaction of ['read', 'putLetterAway', 'closeRecipes', 'lift', 'putDown', 'board'] as const) expect(promptsFor({ ...KEYS, itemUse: null, interaction })[0]?.words).toBeTruthy();
+  it('says what would be made, by the name the sim gives it', () => {
+    expect(promptsFor({ ...KEYS, itemUse: 'craft', wouldMake: 'paper airplane', interaction: null })).toEqual([{ key: 'J', words: 'fold a paper airplane' }]);
+  });
+
+  it('has words for everything a key can mean, and each names what it is done to', () => {
+    const words = [
+      ...(['craft', 'place'] as const).map((itemUse) => promptsFor({ ...KEYS, itemUse, wouldMake: 'paper airplane', interaction: null })[0]?.words),
+      ...(['read', 'putLetterAway', 'lift', 'putDown', 'board'] as const).map((interaction) => promptsFor({ ...KEYS, itemUse: null, interaction })[0]?.words),
+    ];
+    for (const prompt of words) expect(prompt).toMatch(/letter|airplane/);
   });
 });
 
@@ -58,6 +65,6 @@ describe('keptWhileUnchanged', () => {
 
 // ---- Helpers ----
 
-const KEYS = { useItemKey: 'J', interactKey: 'K' } as const;
+const KEYS = { useItemKey: 'J', interactKey: 'K', wouldMake: null } as const;
 const CAMERA_SEES = { x: 40, y: -20, width: 1920, height: 1080 };
 const WRITING = { at: { x: 0, y: 0 }, letterHeight: 28 };

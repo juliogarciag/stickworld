@@ -40,7 +40,7 @@ describe('letterStrokes', () => {
 
 // ---- Helpers ----
 
-const LYING: LetterView = { at: { x: 3.6, y: 0 }, height: 0, beingRead: false, text: 'A letter.' };
+const LYING: LetterView = { at: { x: 3.6, y: 0 }, height: 0, beingRead: false, text: 'A letter.', teaches: null };
 
 /** The rectangle the drawing of `letter` covers, in metres. */
 function boundsOf(letter: LetterView) {

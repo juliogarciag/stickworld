@@ -4,7 +4,7 @@ Status: accepted. Date: 2026-11-23.
 
 ## Context
 
-Level 3 is the first time the game shows words: the letter's text, the recipe list and what the action keys would do. Everything else on screen is a pencil stroke drawn through `render/strokes/` (ADR 0002), with its wobble, its pressure and its boil.
+Level 3 is the first time the game shows words: the letter's text and what the action keys would do. Everything else on screen is a pencil stroke drawn through `render/strokes/` (ADR 0002), with its wobble, its pressure and its boil.
 
 ## Decision
 
