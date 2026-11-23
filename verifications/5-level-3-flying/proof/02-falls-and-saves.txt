@@ -1,0 +1,15 @@
+PASS  dev server up, started by this run
+PASS  left alone it sinks below the line short of the far side, with him in it  (1.01 m below the line at x 14.73, the far side starts at 19)
+PASS  falling while flying kills him: the level starts again from its start  (feet at {"x":2,"y":0})
+PASS  the airplane is lost with him: none in the world, none in his slot  (slots [null])
+PASS  so a new letter falls from the sky, as issue #4 defined  (8.50 m up, coming down)
+PASS  the new letter gives a new paper, which folds into a new airplane he carries to the edge
+PASS  held up all the way, it climbs until it is too slow and stalls high over the gap  (stalled 3.30 m up at x 14.25, at 2.19 m/s sideways (stall speed 3))
+PASS  stalled it falls faster and faster with him in it, whatever is held  (-2.04 -> 2.04 m/s down)
+PASS  it falls short of the far side and the level starts again
+PASS  the airplane came in too low to land: at or under the height of the line just before the far edge  (0.05 m above the line at x 18.30, sinking)
+PASS  the jump key stands him up and jumps him out; the airplane falls on without him  (he rises at 4.08 m/s, the airplane is falling)
+PASS  the jump saves him: he stands on the far side, and the level did not start again  (feet at x 19.53, the far side starts at 19)
+PASS  no page errors
+
+ALL 13 CHECKS PASSED

@@ -1,45 +1,24 @@
-# Verification template
+# Issue #5: level 3, flying the airplane
 
-The starting point for a ticket's `verifications/<ticket>/` folder, and the only folder under `verifications/` that is kept working. Every other folder is the proof of one ticket, frozen when its PR merged: do not run, repair, read or copy from them.
+Proof that the second half of level 3 works in the real app: Chromium, driven through the real keyboard with Playwright, against `pnpm dev` started on level 3. Every expected number is read from `window.__game` (the level's floor, the airplane and the stick man as the sim has them); the only things typed into the scripts are what a player would decide by eye, such as "let go of up once he is a metre above the line".
 
-## Start a ticket's folder
+The headless proof is in the sim's tests: `packages/sim/src/features/airplane/flight.test.ts` (the rules of the glide, landing, jumping out, dying) and `packages/sim/src/content/levels/level3.test.ts` (recorded flights: one that crosses and reaches the flag, the window of climbs that cross, doing nothing, climbing too long, a save by jumping out).
 
-From the repo root, in the ticket's worktree:
-
-```bash
-cp -R verifications/_template verifications/<ticketNumber>-<ticketKebabTitle>
-```
-
-If the template was run in place before, the copy carries its `proof/` and `node_modules/`: delete both from the copy.
-
-Then, in the copy:
-
-1. Rename `solo.mjs` after what it proves (`01-walks-to-the-flag.mjs`, ...), add more scripts beside it if the ticket needs them, and list them in `run.sh`.
-2. Change the port at the top of each script to one no other session uses. It must differ from the dev server you leave running for the human, because a pinned port refuses to start twice.
-3. Replace the example checks with what the ticket promises, from the point of view of the player. Derive expected numbers from `window.__game` (level, defs, camera, pixelsPerMetre), never from constants typed into the script.
-4. Replace this README with the ticket's own: what is verified, how to run it, and a table of script, what it proves, and proof file.
-
-Run it from anywhere; the first run installs Playwright in the folder:
+## Run it
 
 ```bash
-bash verifications/<ticketNumber>-<ticketKebabTitle>/run.sh
+bash verifications/5-level-3-flying/run.sh
 ```
 
-Each script prints `PASS`/`FAIL` lines, exits non-zero on failure and writes into `proof/`: the JSON report, the screenshots, and the console output as `proof/<script>.txt`. Commit `proof/` with the ticket. A change in how something looks needs before and after screenshots; a change in how something moves, a short screen recording (Playwright's `recordVideo` option on `browser.newContext`).
+The first run installs Playwright in this folder. Each script starts its own dev server (ports 5915 and 5916), prints `PASS`/`FAIL` lines, exits non-zero on a failure and writes into `proof/`.
 
-Content search skips every ticket folder, yours included (the root `.ignore`). To search yours, name it as the path: `rg <pattern> verifications/<ticket>/`.
+## What is verified
 
-## What is here
+| Script | What it proves | Proof |
+|---|---|---|
+| `01-full-flight.mjs` (20 checks) | From the start of level 3: the airplane is carried to the edge, K boards it and it is launched; holding up climbs and costs speed; a walk key does nothing while he is seated; left alone the nose sinks and it glides down, gaining speed; it reaches the far side above the line, comes down on it, slides to a stop and he stands up; he walks to the flag; the game writes "THE END" and no level follows | `proof/01-full-flight.webm` (the recording), `01-ready-to-board.png` to `06-the-end.png`, `01-full-flight.json`, `01-full-flight.txt` |
+| `02-falls-and-saves.mjs` (13 checks) | Boarding and doing nothing sinks into the gap, the level starts again, the airplane is lost and a new letter falls; the new letter's paper makes a new airplane; holding up all the way stalls high over the gap and falls short; a climb a little too short is saved by jumping out with space next to the far edge | `proof/02-falls-and-saves.webm`, `07-sinking-into-the-gap.png` to `11-saved-on-the-far-side.png`, `02-falls-and-saves.json`, `02-falls-and-saves.txt` |
 
-| File | What it gives you |
-|---|---|
-| `solo.mjs` | Starts `PORT=<n> pnpm dev`, opens Chromium, reads the sim through `window.__game`, checks it runs with real time and restarts a level, writes a screenshot and a report |
-| `lib.mjs` | `start` (a server that stops with the script, printing without colours), `waitForPort`, `waitFor`, `lastLinesOf`, `check`, `summarize`, `writeProof`, and the `ROOT` and `PROOF` paths |
-| `run.sh` | Installs on first run, runs the scripts in order, keeps their console output as proof |
+`play.mjs` holds what both scripts share: starting the server, opening the page with a recording, reading the sim, and playing level 3 as far as the airplane on the edge. `lib.mjs` is the template's, unchanged.
 
-## What the template relies on
-
-A ticket that changes any of these updates the template in the same PR, and runs it once to show it still passes (`bash verifications/_template/run.sh`; the `proof/` and `node_modules/` it leaves here are gitignored):
-
-- `PORT=<n> pnpm dev` pins the client's port and prints `localhost:<n>/` when ready.
-- `window.__game`: `sim.tick`, `sim.dt`, `level.id`, `hash()` and `loadLevel(n)`, which plays level `n` again from tick 0.
+How the seated stick man, the flying airplane, the flight hints and the end look cannot be asserted, only shown: the screenshots and the two recordings are that proof.

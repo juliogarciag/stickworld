@@ -1,0 +1,629 @@
+{
+  "ready": {
+    "tick": 257,
+    "dt": 0.016666666666666666,
+    "level": 3,
+    "start": {
+      "x": 2,
+      "y": 0
+    },
+    "gap": {
+      "from": 10,
+      "to": 19
+    },
+    "farEnd": 27,
+    "stickMan": {
+      "feet": {
+        "x": 8.783333333333383,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "standing",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "fallingOffAnEdge": false,
+      "walkDirectionAsked": 0,
+      "carrying": false
+    },
+    "airplane": {
+      "at": {
+        "x": 9.683333333333383,
+        "y": 0
+      },
+      "facing": 1,
+      "length": 1.4,
+      "height": 0.34,
+      "state": "resting",
+      "verticalSpeed": 0,
+      "speed": 0,
+      "pitch": 0,
+      "stallSpeed": 3,
+      "onAnEdge": true
+    },
+    "letter": null,
+    "flag": {
+      "at": {
+        "x": 24,
+        "y": 0
+      },
+      "height": 2.2,
+      "reached": false,
+      "raised": 0,
+      "endsTheGame": true
+    },
+    "slots": [
+      null
+    ],
+    "interaction": "board",
+    "itemUse": null
+  },
+  "boarded": {
+    "tick": 274,
+    "dt": 0.016666666666666666,
+    "level": 3,
+    "start": {
+      "x": 2,
+      "y": 0
+    },
+    "gap": {
+      "from": 10,
+      "to": 19
+    },
+    "farEnd": 27,
+    "stickMan": {
+      "feet": {
+        "x": 10.294411306450376,
+        "y": -0.10173705389082886
+      },
+      "facing": 1,
+      "action": "seated",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "fallingOffAnEdge": false,
+      "walkDirectionAsked": 0,
+      "carrying": false
+    },
+    "airplane": {
+      "at": {
+        "x": 10.294411306450376,
+        "y": -0.10173705389082886
+      },
+      "facing": 1,
+      "length": 1.4,
+      "height": 0.34,
+      "state": "flying",
+      "verticalSpeed": 0,
+      "speed": 7.336248868664337,
+      "pitch": 0.19166666666666665,
+      "stallSpeed": 3,
+      "onAnEdge": false
+    },
+    "letter": null,
+    "flag": {
+      "at": {
+        "x": 24,
+        "y": 0
+      },
+      "height": 2.2,
+      "reached": false,
+      "raised": 0,
+      "endsTheGame": true
+    },
+    "slots": [
+      null
+    ],
+    "interaction": null,
+    "itemUse": null
+  },
+  "climbing": {
+    "tick": 295,
+    "dt": 0.016666666666666666,
+    "level": 3,
+    "start": {
+      "x": 2,
+      "y": 0
+    },
+    "gap": {
+      "from": 10,
+      "to": 19
+    },
+    "farEnd": 27,
+    "stickMan": {
+      "feet": {
+        "x": 12.34790862617968,
+        "y": -1.1868172764536435
+      },
+      "facing": 1,
+      "action": "seated",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "fallingOffAnEdge": false,
+      "walkDirectionAsked": 0,
+      "carrying": false
+    },
+    "airplane": {
+      "at": {
+        "x": 12.34790862617968,
+        "y": -1.1868172764536435
+      },
+      "facing": 1,
+      "length": 1.4,
+      "height": 0.34,
+      "state": "flying",
+      "verticalSpeed": 0,
+      "speed": 5.85915260158895,
+      "pitch": 0.6866666666666663,
+      "stallSpeed": 3,
+      "onAnEdge": false
+    },
+    "letter": null,
+    "flag": {
+      "at": {
+        "x": 24,
+        "y": 0
+      },
+      "height": 2.2,
+      "reached": false,
+      "raised": 0,
+      "endsTheGame": true
+    },
+    "slots": [
+      null
+    ],
+    "interaction": null,
+    "itemUse": null
+  },
+  "top": {
+    "tick": 336,
+    "dt": 0.016666666666666666,
+    "level": 3,
+    "start": {
+      "x": 2,
+      "y": 0
+    },
+    "gap": {
+      "from": 10,
+      "to": 19
+    },
+    "farEnd": 27,
+    "stickMan": {
+      "feet": {
+        "x": 15.486956744779636,
+        "y": -1.9954874881350193
+      },
+      "facing": 1,
+      "action": "seated",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "fallingOffAnEdge": false,
+      "walkDirectionAsked": 0,
+      "carrying": false
+    },
+    "airplane": {
+      "at": {
+        "x": 15.486956744779636,
+        "y": -1.9954874881350193
+      },
+      "facing": 1,
+      "length": 1.4,
+      "height": 0.34,
+      "state": "flying",
+      "verticalSpeed": 0,
+      "speed": 4.5158654830352845,
+      "pitch": -0.2016666666666675,
+      "stallSpeed": 3,
+      "onAnEdge": false
+    },
+    "letter": null,
+    "flag": {
+      "at": {
+        "x": 24,
+        "y": 0
+      },
+      "height": 2.2,
+      "reached": false,
+      "raised": 0,
+      "endsTheGame": true
+    },
+    "slots": [
+      null
+    ],
+    "interaction": null,
+    "itemUse": null
+  },
+  "overTheFarSide": {
+    "tick": 383,
+    "dt": 0.016666666666666666,
+    "level": 3,
+    "start": {
+      "x": 2,
+      "y": 0
+    },
+    "gap": {
+      "from": 10,
+      "to": 19
+    },
+    "farEnd": 27,
+    "stickMan": {
+      "feet": {
+        "x": 19.0204362543112,
+        "y": -0.7058498297729869
+      },
+      "facing": 1,
+      "action": "seated",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "fallingOffAnEdge": false,
+      "walkDirectionAsked": 0,
+      "carrying": false
+    },
+    "airplane": {
+      "at": {
+        "x": 19.0204362543112,
+        "y": -0.7058498297729869
+      },
+      "facing": 1,
+      "length": 1.4,
+      "height": 0.34,
+      "state": "flying",
+      "verticalSpeed": 0,
+      "speed": 5.155908943058221,
+      "pitch": -0.36,
+      "stallSpeed": 3,
+      "onAnEdge": false
+    },
+    "letter": null,
+    "flag": {
+      "at": {
+        "x": 24,
+        "y": 0
+      },
+      "height": 2.2,
+      "reached": false,
+      "raised": 0,
+      "endsTheGame": true
+    },
+    "slots": [
+      null
+    ],
+    "interaction": null,
+    "itemUse": null
+  },
+  "touchedDown": {
+    "tick": 406,
+    "dt": 0.016666666666666666,
+    "level": 3,
+    "start": {
+      "x": 2,
+      "y": 0
+    },
+    "gap": {
+      "from": 10,
+      "to": 19
+    },
+    "farEnd": 27,
+    "stickMan": {
+      "feet": {
+        "x": 20.934966452492556,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "seated",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "fallingOffAnEdge": false,
+      "walkDirectionAsked": 0,
+      "carrying": false
+    },
+    "airplane": {
+      "at": {
+        "x": 20.934966452492556,
+        "y": 0
+      },
+      "facing": 1,
+      "length": 1.4,
+      "height": 0.34,
+      "state": "landing",
+      "verticalSpeed": 0,
+      "speed": 5.185570304559642,
+      "pitch": 0,
+      "stallSpeed": 3,
+      "onAnEdge": false
+    },
+    "letter": null,
+    "flag": {
+      "at": {
+        "x": 24,
+        "y": 0
+      },
+      "height": 2.2,
+      "reached": false,
+      "raised": 0,
+      "endsTheGame": true
+    },
+    "slots": [
+      null
+    ],
+    "interaction": null,
+    "itemUse": null
+  },
+  "landed": {
+    "tick": 429,
+    "dt": 0.016666666666666666,
+    "level": 3,
+    "start": {
+      "x": 2,
+      "y": 0
+    },
+    "gap": {
+      "from": 10,
+      "to": 19
+    },
+    "farEnd": 27,
+    "stickMan": {
+      "feet": {
+        "x": 21.938879513684867,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "standing",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "fallingOffAnEdge": false,
+      "walkDirectionAsked": 0,
+      "carrying": false
+    },
+    "airplane": {
+      "at": {
+        "x": 21.938879513684867,
+        "y": 0
+      },
+      "facing": 1,
+      "length": 1.4,
+      "height": 0.34,
+      "state": "resting",
+      "verticalSpeed": 0,
+      "speed": 0,
+      "pitch": 0,
+      "stallSpeed": 3,
+      "onAnEdge": false
+    },
+    "letter": null,
+    "flag": {
+      "at": {
+        "x": 24,
+        "y": 0
+      },
+      "height": 2.2,
+      "reached": false,
+      "raised": 0,
+      "endsTheGame": true
+    },
+    "slots": [
+      null
+    ],
+    "interaction": "lift",
+    "itemUse": null
+  },
+  "atTheFlag": {
+    "tick": 551,
+    "dt": 0.016666666666666666,
+    "level": 3,
+    "start": {
+      "x": 2,
+      "y": 0
+    },
+    "gap": {
+      "from": 10,
+      "to": 19
+    },
+    "farEnd": 27,
+    "stickMan": {
+      "feet": {
+        "x": 23.55221284701814,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "cheering",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "fallingOffAnEdge": false,
+      "walkDirectionAsked": 0,
+      "carrying": false
+    },
+    "airplane": {
+      "at": {
+        "x": 21.938879513684867,
+        "y": 0
+      },
+      "facing": 1,
+      "length": 1.4,
+      "height": 0.34,
+      "state": "resting",
+      "verticalSpeed": 0,
+      "speed": 0,
+      "pitch": 0,
+      "stallSpeed": 3,
+      "onAnEdge": false
+    },
+    "letter": null,
+    "flag": {
+      "at": {
+        "x": 24,
+        "y": 0
+      },
+      "height": 2.2,
+      "reached": true,
+      "raised": 1,
+      "endsTheGame": true
+    },
+    "slots": [
+      null
+    ],
+    "interaction": null,
+    "itemUse": null
+  },
+  "later": {
+    "tick": 746,
+    "dt": 0.016666666666666666,
+    "level": 3,
+    "start": {
+      "x": 2,
+      "y": 0
+    },
+    "gap": {
+      "from": 10,
+      "to": 19
+    },
+    "farEnd": 27,
+    "stickMan": {
+      "feet": {
+        "x": 23.55221284701814,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "cheering",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "fallingOffAnEdge": false,
+      "walkDirectionAsked": 0,
+      "carrying": false
+    },
+    "airplane": {
+      "at": {
+        "x": 21.938879513684867,
+        "y": 0
+      },
+      "facing": 1,
+      "length": 1.4,
+      "height": 0.34,
+      "state": "resting",
+      "verticalSpeed": 0,
+      "speed": 0,
+      "pitch": 0,
+      "stallSpeed": 3,
+      "onAnEdge": false
+    },
+    "letter": null,
+    "flag": {
+      "at": {
+        "x": 24,
+        "y": 0
+      },
+      "height": 2.2,
+      "reached": true,
+      "raised": 1,
+      "endsTheGame": true
+    },
+    "slots": [
+      null
+    ],
+    "interaction": null,
+    "itemUse": null
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "the game starts on level 3, whose flag ends the game",
+      "pass": true,
+      "details": "level 3"
+    },
+    {
+      "name": "the airplane sits on the edge with its nose over the gap, and K would board it",
+      "pass": true,
+      "details": "airplane at x 9.68, edge at 10, K would board"
+    },
+    {
+      "name": "K seats him in the airplane and launches it forward off the edge",
+      "pass": true,
+      "details": "flying at 7.34 m/s from x 10.29"
+    },
+    {
+      "name": "seated, he is where the airplane is",
+      "pass": true
+    },
+    {
+      "name": "holding up turns its nose up and it climbs",
+      "pass": true,
+      "details": "nose 0.69 rad up, 1.19 m above the line"
+    },
+    {
+      "name": "climbing costs speed: it is slower than it was launched",
+      "pass": true,
+      "details": "7.34 -> 5.86 m/s"
+    },
+    {
+      "name": "the walk key held while seated neither turned him nor moved him off the airplane",
+      "pass": true
+    },
+    {
+      "name": "left alone its nose sinks and it glides down",
+      "pass": true,
+      "details": "from 2.00 m to 0.71 m above the line"
+    },
+    {
+      "name": "diving gives speed back",
+      "pass": true,
+      "details": "4.52 -> 5.16 m/s"
+    },
+    {
+      "name": "it never dropped below its stall speed",
+      "pass": true,
+      "details": "stall speed 3 m/s"
+    },
+    {
+      "name": "it reaches the far side above the line, still flying, with him in it",
+      "pass": true,
+      "details": "0.71 m above the line at x 19.02"
+    },
+    {
+      "name": "no letter fell while he flew, and the level never started again",
+      "pass": true
+    },
+    {
+      "name": "it comes down on the line and slides, losing its speed",
+      "pass": true,
+      "details": "landing at 5.19 m/s at x 20.93, at rest at x 21.94"
+    },
+    {
+      "name": "it lands on the far side: at rest on the line, and he stands up where it lies",
+      "pass": true,
+      "details": "at x 21.94, the far side is 19 to 27"
+    },
+    {
+      "name": "the flag was not reached from the airplane",
+      "pass": true
+    },
+    {
+      "name": "he walks to the flag on his own feet and reaches it",
+      "pass": true
+    },
+    {
+      "name": "the game writes across the top of the page once the flag is up, where nothing was written before",
+      "pass": true,
+      "details": "0 pencil-dark pixels in the upper part before, 2426 after (the words are in 06-the-end.png)"
+    },
+    {
+      "name": "no level follows: it is still level 3, finished, and he still cheers",
+      "pass": true,
+      "details": "3.3 s later"
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}
