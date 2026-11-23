@@ -1,0 +1,136 @@
+{
+  "ways": [
+    "put down too far past the edge",
+    "set down from the slot too far past the edge",
+    "carried off the edge",
+    "left on the floor when he dies"
+  ],
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "level 3 started on its own: no paper, and the letter lies there",
+      "pass": true
+    },
+    {
+      "name": "the first letter gives the paper to him who has none",
+      "pass": true,
+      "details": "[{\"slot\":1,\"itemDefId\":200,\"selected\":true}]"
+    },
+    {
+      "name": "the paper folds into an airplane",
+      "pass": true,
+      "details": "[{\"slot\":1,\"itemDefId\":201,\"selected\":true}]"
+    },
+    {
+      "name": "it falls past the edge when he puts it down that close to it",
+      "pass": true,
+      "details": "{\"at\":{\"x\":10.710000000000061,\"y\":0.315},\"facing\":1,\"length\":1.4,\"height\":0.34,\"state\":\"falling\",\"verticalSpeed\":2.1,\"onAnEdge\":false}"
+    },
+    {
+      "name": "put down too far past the edge: the airplane is lost, and he holds nothing",
+      "pass": true
+    },
+    {
+      "name": "put down too far past the edge: a new letter falls from the sky to where the old one was",
+      "pass": true,
+      "details": "seen at 8.5 m, then 4.2 m, then on the floor at x 3.6; 307 pencil pixels on its way down"
+    },
+    {
+      "name": "put down too far past the edge: reading it gives a new paper",
+      "pass": true,
+      "details": "[{\"slot\":1,\"itemDefId\":200,\"selected\":true}]"
+    },
+    {
+      "name": "the paper folds into an airplane",
+      "pass": true,
+      "details": "[{\"slot\":1,\"itemDefId\":201,\"selected\":true}]"
+    },
+    {
+      "name": "it falls past the edge when he sets it down from the slot that close to it",
+      "pass": true,
+      "details": "{\"at\":{\"x\":10.710000000000061,\"y\":0.315},\"facing\":1,\"length\":1.4,\"height\":0.34,\"state\":\"falling\",\"verticalSpeed\":2.1,\"onAnEdge\":false}"
+    },
+    {
+      "name": "set down from the slot too far past the edge: the airplane is lost, and he holds nothing",
+      "pass": true
+    },
+    {
+      "name": "set down from the slot too far past the edge: a new letter falls from the sky to where the old one was",
+      "pass": true,
+      "details": "seen at 8.5 m, then 4.2 m, then on the floor at x 3.6; 329 pencil pixels on its way down"
+    },
+    {
+      "name": "set down from the slot too far past the edge: reading it gives a new paper",
+      "pass": true,
+      "details": "[{\"slot\":1,\"itemDefId\":200,\"selected\":true}]"
+    },
+    {
+      "name": "the paper folds into an airplane",
+      "pass": true,
+      "details": "[{\"slot\":1,\"itemDefId\":201,\"selected\":true}]"
+    },
+    {
+      "name": "it falls out of his hands when he walks off the edge with it",
+      "pass": true,
+      "details": "airplane at 10.03, edge at 10"
+    },
+    {
+      "name": "he dies, and the level starts again",
+      "pass": true
+    },
+    {
+      "name": "carried off the edge: the airplane is lost, and he holds nothing",
+      "pass": true
+    },
+    {
+      "name": "carried off the edge: a new letter falls from the sky to where the old one was",
+      "pass": true,
+      "details": "seen at 8.5 m, then 4.2 m, then on the floor at x 3.6; 334 pencil pixels on its way down"
+    },
+    {
+      "name": "carried off the edge: reading it gives a new paper",
+      "pass": true,
+      "details": "[{\"slot\":1,\"itemDefId\":200,\"selected\":true}]"
+    },
+    {
+      "name": "the paper folds into an airplane",
+      "pass": true,
+      "details": "[{\"slot\":1,\"itemDefId\":201,\"selected\":true}]"
+    },
+    {
+      "name": "it rests on the floor while he walks off the paper to the left",
+      "pass": true
+    },
+    {
+      "name": "left on the floor when he dies: the airplane is lost, and he holds nothing",
+      "pass": true
+    },
+    {
+      "name": "left on the floor when he dies: a new letter falls from the sky to where the old one was",
+      "pass": true,
+      "details": "seen at 8.5 m, then 4.2 m, then on the floor at x 3.6; 331 pencil pixels on its way down"
+    },
+    {
+      "name": "left on the floor when he dies: reading it gives a new paper",
+      "pass": true,
+      "details": "[{\"slot\":1,\"itemDefId\":200,\"selected\":true}]"
+    },
+    {
+      "name": "the paper folds into an airplane",
+      "pass": true,
+      "details": "[{\"slot\":1,\"itemDefId\":201,\"selected\":true}]"
+    },
+    {
+      "name": "with the airplane in his slot again, no further letter falls",
+      "pass": true
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

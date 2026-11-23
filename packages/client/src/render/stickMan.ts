@@ -32,6 +32,8 @@ export interface StickManPose {
   readonly tilt: number;
   /** How far each arm is lifted from where it would point, in radians, so that it rests on a floor line instead of crossing it. */
   readonly armsLifted: readonly [number, number];
+  /** How far his arms have gone up to hold something over his head, from 0 to 1. */
+  readonly carrying: number;
 }
 
 /**
@@ -52,6 +54,7 @@ export function poseOf(stickMan: StickManView): StickManPose {
     landing: 0,
     tilt: tiltOfFall(stickMan),
     armsLifted: [0, 0],
+    carrying: stickMan.carrying ? 1 : 0,
   };
 }
 
@@ -78,14 +81,14 @@ export function keptOffTheFloor(pose: StickManPose, floor: readonly FloorSegment
  */
 export function posesEasedOverTime(): (stickMan: StickManView, seconds: number, floor: readonly FloorSegment[]) => StickManPose {
   // `tilt` is how far he would be tipped with no line in the way: what is shown may be less, and eases from this all the same.
-  let previous: { feet: Point; inTheAir: number; landing: number; falling: boolean; tilt: number; armsLifted: readonly [number, number] } | undefined;
+  let previous: { feet: Point; inTheAir: number; landing: number; falling: boolean; tilt: number; armsLifted: readonly [number, number]; carrying: number } | undefined;
   return (stickMan, seconds, floor) => {
     const pose = poseOf(stickMan);
     const jumpedAcrossThePaper = previous !== undefined && Math.hypot(pose.feet.x - previous.feet.x, pose.feet.y - previous.feet.y) > STICK_MAN_HEIGHT;
     if (!previous || jumpedAcrossThePaper) {
       // The first frame, or the level started again: nothing to ease from.
       const shown = keptOffTheFloor({ ...pose, tilt: 0 }, floor);
-      previous = { feet: pose.feet, inTheAir: pose.inTheAir, landing: 0, falling: false, tilt: 0, armsLifted: shown.armsLifted };
+      previous = { feet: pose.feet, inTheAir: pose.inTheAir, landing: 0, falling: false, tilt: 0, armsLifted: shown.armsLifted, carrying: pose.carrying };
       return shown;
     }
     const share = seconds / (pose.inTheAir === 1 ? EASING.intoTheAir : EASING.ontoTheFloor);
@@ -96,8 +99,10 @@ export function posesEasedOverTime(): (stickMan: StickManView, seconds: number, 
     const tilt = previous.tilt + Math.max(-mostTipping, Math.min(mostTipping, pose.tilt - previous.tilt));
     // An arm the line has let go of comes down over a moment, and stays on the line for as long as that would take it across.
     const mostComingDown = seconds * EASING.armComesDownPerSecond;
-    const shown = keptOffTheFloor({ ...pose, inTheAir, landing, tilt }, floor, [Math.max(0, previous.armsLifted[0] - mostComingDown), Math.max(0, previous.armsLifted[1] - mostComingDown)]);
-    previous = { feet: pose.feet, inTheAir, landing, falling: stickMan.action === 'jumping' && stickMan.verticalSpeed > 0, tilt, armsLifted: shown.armsLifted };
+    const armsMove = seconds / EASING.armsUpAndDown;
+    const carrying = previous.carrying + Math.max(-armsMove, Math.min(armsMove, pose.carrying - previous.carrying));
+    const shown = keptOffTheFloor({ ...pose, inTheAir, landing, tilt, carrying }, floor, [Math.max(0, previous.armsLifted[0] - mostComingDown), Math.max(0, previous.armsLifted[1] - mostComingDown)]);
+    previous = { feet: pose.feet, inTheAir, landing, falling: stickMan.action === 'jumping' && stickMan.verticalSpeed > 0, tilt, armsLifted: shown.armsLifted, carrying };
     return shown;
   };
 }
@@ -169,6 +174,11 @@ const BODY = {
   speedOfFullTilt: 2.5,
   /** How much of his tilt his legs trail behind by, as a share of it. */
   legsTrailTilt: 0.5,
+  /**
+   * Holding something over his head: each hand is at the height of the top of him, this far to its side, and each
+   * elbow out past his head on the way up. His arms reach what he carries, so they are drawn as long as that takes.
+   */
+  carrying: { handOut: 0.14 * STICK_MAN_HEIGHT, elbowOut: 0.165 * STICK_MAN_HEIGHT, elbowUp: 0.8 * STICK_MAN_HEIGHT },
   /** Both arms up once the level is finished. */
   cheeringArm: { swing: 2.2, bend: 0.3 },
 } as const;
@@ -185,6 +195,8 @@ const EASING = {
   tiltPerSecond: 3,
   /** How fast an arm comes back down once the floor line has let go of it, in radians per second. */
   armComesDownPerSecond: 7,
+  /** How long his arms take to go up to hold something over his head, and to come down again. */
+  armsUpAndDown: 0.16,
 } as const;
 
 /** How close to a floor line his arms, body and head may be drawn, in metres: the two pencil lines touch and do not cross. */
@@ -237,7 +249,19 @@ function skeletonOf(pose: StickManPose): Skeleton {
   const neck = { x: hip.x + Math.sin(lean) * BODY.body, y: hip.y - Math.cos(lean) * BODY.body };
   const head = { x: neck.x + Math.sin(lean) * BODY.headRadius, y: neck.y - Math.cos(lean) * BODY.headRadius };
   const shoulder = { x: neck.x - Math.sin(lean) * BODY.shoulderDrop, y: neck.y + Math.cos(lean) * BODY.shoulderDrop };
-  return { head, neck, hip, arms: limbs.arms.map((arm) => armFrom(shoulder, arm, facing)), legs: limbs.legs.map((leg) => legFrom(hip, leg, facing)) };
+  // What he carries takes his arms, whatever the rest of him does: each goes from where it would be to holding it up.
+  const holdingUp = smoothed(pose.carrying);
+  const arms = limbs.arms.map((arm, index) => {
+    const side = (index === 0 ? -1 : 1) * facing;
+    const held = [shoulder, { x: feet.x + side * BODY.carrying.elbowOut, y: feet.y - BODY.carrying.elbowUp }, { x: feet.x + side * BODY.carrying.handOut, y: feet.y - STICK_MAN_HEIGHT }];
+    return armFrom(shoulder, arm, facing).map((joint, jointIndex) => partWay(joint, held[jointIndex]!, holdingUp));
+  });
+  return { head, neck, hip, arms, legs: limbs.legs.map((leg) => legFrom(hip, leg, facing)) };
+}
+
+/** The point `share` of the way from `from` to `to`. */
+function partWay(from: Point, to: Point, share: number): Point {
+  return { x: from.x + (to.x - from.x) * share, y: from.y + (to.y - from.y) * share };
 }
 
 /**

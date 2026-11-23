@@ -20,6 +20,8 @@ export interface PlayerState {
   ticksSinceWalkedOff: number | null;
   /** Ticks since a jump was asked for that has not happened yet, or null when none is waiting. */
   ticksSinceJumpAsked: number | null;
+  /** True while he holds something over his head with both hands. What it is belongs to the feature that put it there (the airplane). */
+  carrying: boolean;
 }
 
 export const playerSlice = defineSlice<PlayerState>('player', (level) => ({
@@ -33,4 +35,5 @@ export const playerSlice = defineSlice<PlayerState>('player', (level) => ({
   distanceWalked: 0,
   ticksSinceWalkedOff: null,
   ticksSinceJumpAsked: null,
+  carrying: false,
 }));

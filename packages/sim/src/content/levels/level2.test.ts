@@ -100,13 +100,12 @@ describe('the paper', () => {
     const held = itemSlotsOf(sim);
     expect(held).toEqual([{ slot: 1, itemDefId: PAPER_ITEM_ID, selected: true }]);
 
-    // Level 3 does not exist yet: any level with an edge to fall from stands in for it.
-    sim.startLevel(1);
+    sim.startLevel(3);
     expect(itemSlotsOf(sim)).toEqual(held);
     const { deepest, restartedAtTick } = play(sim, { commands: [{ atTick: 0, command: { type: 'player/walk', direction: -1 } }], ticks: 400 });
     expect(deepest).toBeGreaterThan(PLAYER.fallBelowFloor - ONE_TICK_OF_FALL);
     expect(restartedAtTick).not.toBeNull();
-    expect(sim.level).toBe(1);
+    expect(sim.level).toBe(3);
     expect(itemSlotsOf(sim)).toEqual(held);
   });
 });
@@ -184,6 +183,8 @@ function play(sim: SimHandle, { commands, ticks }: Recording): Played {
     // He only ever goes back to where a level starts, without walking there, when the level starts again.
     if (Math.abs(feet.x - previousX) > 1) restartedAtTick = tick;
     previousX = feet.x;
+    // The recording ends at the flag: a little later the next level starts.
+    if (sim.level === 2 && flagOf(sim)!.reached) break;
   }
   return { overTheGap, deepest, restartedAtTick };
 }

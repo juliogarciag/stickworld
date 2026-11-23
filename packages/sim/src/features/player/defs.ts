@@ -13,6 +13,8 @@ export const PLAYER = {
   airSteering: 6,
   /** How high his feet get in a jump. A small jump: well under his own height. */
   jumpHeight: 0.7,
+  /** How high his feet get in a jump with something held over his head: his hands are full, so it is a shorter one. The same as `jumpHeight` for a jump that carrying does not change. */
+  jumpHeightCarrying: 0.45,
   /** How fast he falls faster, in metres per second squared. */
   gravity: 22,
   /** Forgiveness: a jump asked for this long before he lands still happens when he does. */

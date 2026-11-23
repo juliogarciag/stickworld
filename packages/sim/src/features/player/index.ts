@@ -56,6 +56,11 @@ export function isFallingOffAnEdge(player: PlayerState): boolean {
   return !player.onFloor && player.ticksSinceWalkedOff !== null;
 }
 
+/** True while his feet are on the floor and he is not walking. */
+export function isStandingStill(sim: Sim): boolean {
+  return sim.stateOf(playerSlice).onFloor && walkDirectionNow(sim) === 0;
+}
+
 export function hasFinishedLevel(sim: Sim): boolean {
   return sim.stateOf(flagSlice).reachedAtTick !== null;
 }
@@ -71,7 +76,7 @@ function jumpIfAskedAndAble(sim: Sim, player: PlayerState): void {
   if (player.ticksSinceJumpAsked === null) return;
   const walkedOffJustNow = player.ticksSinceWalkedOff !== null && player.ticksSinceWalkedOff < wholeTicksIn(PLAYER.jumpAskedLateWindow, sim.dt);
   if (player.onFloor || walkedOffJustNow) {
-    player.verticalSpeed = -Math.sqrt(2 * PLAYER.gravity * PLAYER.jumpHeight);
+    player.verticalSpeed = -Math.sqrt(2 * PLAYER.gravity * (player.carrying ? PLAYER.jumpHeightCarrying : PLAYER.jumpHeight));
     player.onFloor = false;
     player.ticksSinceWalkedOff = null;
     player.ticksSinceJumpAsked = null;
