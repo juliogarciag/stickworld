@@ -124,8 +124,6 @@ describe('the stick man cheering', () => {
 });
 
 describe('the pose for what the sim says', () => {
-  const view = { feet: { x: 3, y: 0.5 }, facing: -1, action: 'walking', distanceWalked: 0, verticalSpeed: 0, walkDirectionAsked: -1 } as const;
-
   it('keeps where he is, which way he faces and what he is doing', () => {
     expect(poseOf(view)).toMatchObject({ feet: view.feet, facing: -1, action: 'walking' });
   });
@@ -148,4 +146,5 @@ describe('the pose for what the sim says', () => {
 const STANDING: StickManPose = { feet: { x: 3, y: 0.5 }, facing: 1, action: 'standing', walkCycle: 0, rise: 0 };
 const WALKING: StickManPose = { feet: { x: 3, y: 0.5 }, facing: 1, action: 'walking', walkCycle: 0, rise: 0 };
 const JUMPING: StickManPose = { feet: { x: 3, y: 0.2 }, facing: 1, action: 'jumping', walkCycle: 0, rise: 1 };
+const view = { feet: { x: 3, y: 0.5 }, facing: -1, action: 'walking', distanceWalked: 0, verticalSpeed: 0, walkDirectionAsked: -1 } as const;
 const CYCLE_SAMPLES = Array.from({ length: 40 }, (_, sample) => sample / 40);

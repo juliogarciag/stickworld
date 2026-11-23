@@ -22,9 +22,8 @@ export const flagFeature: Feature = {
       if (placed && touchesFlag({ feet: { x, y }, placed })) flag.reachedAtTick = sim.tick;
       return;
     }
-    const next = levelAfter(sim.level);
-    const pauseIsOver = (sim.tick - flag.reachedAtTick) * sim.dt >= LEVEL_END.pauseBeforeNextLevel;
-    if (next && pauseIsOver) sim.startLevel(next.id);
+    const nextLevel = levelToStartNow({ levels, level: sim.level, ticksSinceReached: sim.tick - flag.reachedAtTick, dt: sim.dt });
+    if (nextLevel) sim.startLevel(nextLevel.id);
   },
 };
 
@@ -42,6 +41,20 @@ function touchesFlag({ feet, placed }: { feet: { x: number; y: number }; placed:
   return withinReach && levelWithTheStick;
 }
 
-function levelAfter(id: number): Level | undefined {
-  return levels[levels.findIndex((level) => level.id === id) + 1];
+interface FinishedLevel {
+  /** Every level, in the order they are played. */
+  readonly levels: readonly Level[];
+  /** The id of the finished level. */
+  readonly level: number;
+  readonly ticksSinceReached: number;
+  readonly dt: number;
 }
+
+/** The level that follows the finished one, once the pause after its flag is over; undefined during the pause and after the last level. */
+function levelToStartNow({ levels, level, ticksSinceReached, dt }: FinishedLevel): Level | undefined {
+  if (ticksSinceReached < Math.round(LEVEL_END.pauseBeforeNextLevel / dt)) return undefined;
+  const finished = levels.findIndex((candidate) => candidate.id === level);
+  return finished === -1 ? undefined : levels[finished + 1];
+}
+
+export const __testing__ = { levelToStartNow };

@@ -75,20 +75,20 @@ describe('jumping', () => {
     expect(stickManOf(sim).verticalSpeed).toBeGreaterThan(rising);
   });
 
-  it('still jumps when asked just before landing', () => {
+  it('still jumps when asked the whole early window before landing', () => {
     const sim = aboutToLand(EARLY_TICKS);
     sim.step([JUMP]);
     expect(jumpsAgainWithin(sim, EARLY_TICKS + 2)).toBe(true);
   });
 
-  it('forgets a jump asked for too long before landing', () => {
-    const sim = aboutToLand(EARLY_TICKS + 3);
+  it('forgets a jump asked for one tick more than the early window before landing', () => {
+    const sim = aboutToLand(EARLY_TICKS + 1);
     sim.step([JUMP]);
     expect(jumpsAgainWithin(sim, 60)).toBe(false);
     expect(stickManOf(sim).action).toBe('standing');
   });
 
-  it('still jumps when asked just after walking off an edge', () => {
+  it('still jumps when asked the whole late window after walking off an edge', () => {
     const sim = justWalkedOffTheEdge();
     stepFor(sim, LATE_TICKS - 1);
     expect(stickManOf(sim).verticalSpeed).toBeGreaterThan(0);
@@ -96,9 +96,9 @@ describe('jumping', () => {
     expect(stickManOf(sim).verticalSpeed).toBeLessThan(0);
   });
 
-  it('does not jump when asked too long after walking off an edge', () => {
+  it('does not jump when asked one tick more than the late window after walking off an edge', () => {
     const sim = justWalkedOffTheEdge();
-    stepFor(sim, LATE_TICKS + 2);
+    stepFor(sim, LATE_TICKS);
     sim.step([JUMP]);
     expect(stickManOf(sim).verticalSpeed).toBeGreaterThan(0);
   });
@@ -137,9 +137,9 @@ const WALK_RIGHT: Command = { type: 'player/walk', direction: 1 };
 const WALK_LEFT: Command = { type: 'player/walk', direction: -1 };
 const STOP: Command = { type: 'player/walk', direction: 0 };
 const JUMP: Command = { type: 'player/jump' };
-const TICK = createSim({ level: 1 }).dt;
-const EARLY_TICKS = Math.round(PLAYER.jumpAskedEarlyWindow / TICK);
-const LATE_TICKS = Math.round(PLAYER.jumpAskedLateWindow / TICK);
+const DT = createSim({ level: 1 }).dt;
+const EARLY_TICKS = Math.round(PLAYER.jumpAskedEarlyWindow / DT);
+const LATE_TICKS = Math.round(PLAYER.jumpAskedLateWindow / DT);
 
 /** Steps `ticks` times, with `commands` on the first tick only. */
 function stepFor(sim: SimHandle, ticks: number, commands: readonly Command[] = []): void {

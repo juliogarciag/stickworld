@@ -12,18 +12,20 @@ export interface KeysNow {
  * Returns a function that turns what the keys say into the commands the sim
  * has not heard yet. Walking is compared with what the sim believes, not with
  * what was sent last, so a key still held when a level starts again walks him
- * again. A walk command already waiting for the sim's next tick is not sent
- * twice.
+ * again. A walk command still waiting for the sim's next tick counts as
+ * heard: it is not sent twice, and a change of mind before that tick is sent
+ * after it.
  */
-export function commandsFromKeys(): (now: { keys: KeysNow; sim: SimHandle }) => Command[] {
-  let lastAsked: { direction: WalkDirection; sim: SimHandle; tick: number } | undefined;
+export function keysToCommands(): (now: { keys: KeysNow; sim: SimHandle }) => Command[] {
+  let lastWalkAsked: { direction: WalkDirection; sim: SimHandle; tick: number } | undefined;
   return ({ keys, sim }) => {
     const commands: Command[] = [];
     const direction = walkDirectionHeld(keys);
-    const stillWaiting = lastAsked?.direction === direction && lastAsked.sim === sim && lastAsked.tick === sim.tick;
-    if (direction !== stickManOf(sim).walkDirectionAsked && !stillWaiting) {
+    const stillWaiting = lastWalkAsked !== undefined && lastWalkAsked.sim === sim && lastWalkAsked.tick === sim.tick;
+    const simWillBelieve = stillWaiting && lastWalkAsked ? lastWalkAsked.direction : stickManOf(sim).walkDirectionAsked;
+    if (direction !== simWillBelieve) {
       commands.push({ type: 'player/walk', direction });
-      lastAsked = { direction, sim, tick: sim.tick };
+      lastWalkAsked = { direction, sim, tick: sim.tick };
     }
     if (keys.jumpPressed) commands.push({ type: 'player/jump' });
     return commands;

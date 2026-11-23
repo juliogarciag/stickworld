@@ -3,7 +3,8 @@ PASS  he starts standing where level 1 starts, looking right  (standing at x 2.0
 PASS  the flag stands where the level places it, a few metres to his right, not reached  (flag at x 11, start at x 2)
 PASS  the view is sized by his height: he is a sixth of it or so  (90 px of 540)
 PASS  the camera is on him  (feet at screen x 480.0)
-PASS  he is drawn in pencil where the sim says he is, and not beside it  (241 dark pixels on him, 22 beside him)
+PASS  he is drawn in pencil where the sim says he is, and not beside it  (231 dark pixels on him, 3 beside him)
+PASS  the flag is drawn in pencil where the sim says it stands, and not beside it  (166 dark pixels on the stick, 0 beside it)
 PASS  holding the right arrow walks him right  (walking at x 4.24, y 0.00, facing 1, 2.20 m/s)
 PASS  his walk moves on with the distance he walks  (walked 2.24 m)
 PASS  the camera follows him along the line  (scrollX -280 -> -56)
@@ -13,17 +14,18 @@ PASS  a jump moves him on the screen, not the paper: the camera stays at the flo
 PASS  letting go stops him, short of the flag  (standing at x 5.78, y 0.00, facing 1)
 PASS  stopping short does not finish the level
 PASS  holding the left arrow turns him and walks him left  (walking at x 4.68, y 0.00, facing -1)
+PASS  the jump was caught in a screenshot  (03-jumping.png)
 PASS  the up arrow jumps too, straight up when he stands  (feet 0.70 m above the floor at the top)
 PASS  walking on to the flag finishes the level  (cheering at x 10.58, y 0.00, facing 1, flag at x 11)
 PASS  the flag goes up the stick and he cheers  (cheering at x 10.58, y 0.00, facing 1)
-PASS  the flag is drawn in pencil where the sim says it stands  (208 dark pixels on the stick)
+PASS  the cloth is drawn low on the stick before he reaches it and at the top after  (dark pixels low/high: 16/0 at the start, 0/21 at the end)
 PASS  the flag stays in view with him
 PASS  once finished he stays put whatever is pressed, and the last level stays finished  (cheering at x 10.58, y 0.00, facing 1)
 PASS  playing the level again puts him back at the start with the flag down  (standing at x 2.00, y 0.00, facing 1)
-PASS  walking left past the end of the floor, he falls  (jumping at x -0.68, y 0.99, facing -1)
-PASS  and the level starts again: he is back on the floor near the start, the flag not reached  (walking at x 1.93, y 0.00, facing -1)
+PASS  walking left past the end of the floor, he falls  (jumping at x -0.71, y 1.10, facing -1)
+PASS  and the level starts again: he is back on the floor near the start, the flag not reached  (walking at x 1.96, y 0.00, facing -1)
 PASS  the left arrow, still held, walks him again after the restart  (walking at x 1.93, y 0.00, facing -1)
-PASS  no page errors
 PASS  recorded the walk, two jumps and the flag  (07-walk-jump-flag.webm)
+PASS  no page errors
 
-ALL 27 CHECKS PASSED
+ALL 29 CHECKS PASSED

@@ -8,11 +8,13 @@ import type { KeysNow } from './playerCommands';
  */
 export function watchPlayerKeys(scene: Phaser.Scene): () => KeysNow {
   const keys = scene.input.keyboard?.createCursorKeys();
-  // Counted as it goes down, not looked at once a frame: a tap that is over within one frame is still a jump.
+  // Noted as it goes down, not looked at once a frame: a tap that is over within one frame is still a jump.
+  // A repeat is not a press: Phaser forgets held keys when the window loses focus, and a key still held
+  // when it comes back would otherwise jump by itself.
   let jumpPressed = false;
   for (const key of keys ? [keys.up, keys.space] : []) {
-    key.on('down', () => {
-      jumpPressed = true;
+    key.on('down', (_key: Phaser.Input.Keyboard.Key, event: KeyboardEvent) => {
+      if (!event.repeat) jumpPressed = true;
     });
   }
   return () => {
