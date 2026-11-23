@@ -1,8 +1,10 @@
 import type { Command, Def, Level, SimHandle, SimSnapshot } from '@stickworld/sim';
-import { defs, hashSnapshot, levelOf } from '@stickworld/sim';
+import { defs, hashSnapshot, levelOf, STICK_MAN_HEIGHT } from '@stickworld/sim';
 import type Phaser from 'phaser';
+import type { WalkDemo } from './demo/walkAlongTheFloor';
 import type { GameLoop } from './loop/GameLoop';
 import { PIXELS_PER_METRE } from './render/units';
+import type { LevelScene } from './scenes/LevelScene';
 
 /** What dev tooling and end-to-end checks can reach from the page. Dev builds only; listed in AGENTS.md. */
 export interface GameDebugApi {
@@ -13,10 +15,14 @@ export interface GameDebugApi {
   readonly level: Level;
   readonly defs: readonly Def[];
   readonly pixelsPerMetre: number;
+  /** The stick man's height in metres, as the sim's tuning has it. */
+  readonly stickManHeight: number;
   snapshot(): SimSnapshot;
   hash(): string;
   /** The level camera right now, or undefined until the level scene runs. */
   camera(): CameraView | undefined;
+  /** Look test only (issue #1): the stick man's client-only walk, or undefined until the level scene has drawn. `pose()` reads it, `setPaused(true)` holds him still. Goes away with the demo. */
+  walkDemo(): WalkDemo | undefined;
   /** Queues a command for the next earned tick, through the same path as keyboard input. */
   queueCommand(command: Command): void;
   /** Plays level `level` from its start. */
@@ -49,6 +55,7 @@ export function exposeDebugApi({ loop, game }: { loop: GameLoop; game: Phaser.Ga
     },
     defs,
     pixelsPerMetre: PIXELS_PER_METRE,
+    stickManHeight: STICK_MAN_HEIGHT,
     snapshot: () => loop.sim.snapshot(),
     hash: () => hashSnapshot(loop.sim.snapshot()),
     camera: () => {
@@ -56,6 +63,7 @@ export function exposeDebugApi({ loop, game }: { loop: GameLoop; game: Phaser.Ga
       const { zoom, scrollX, scrollY, width, height } = game.scene.getScene('level').cameras.main;
       return { zoom, scrollX, scrollY, width, height };
     },
+    walkDemo: () => (game.scene.isActive('level') ? (game.scene.getScene('level') as LevelScene).walkDemo : undefined),
     queueCommand: (command) => loop.queueCommand(command),
     loadLevel: (level) => loop.playLevel(level),
   };

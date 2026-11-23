@@ -1,0 +1,17 @@
+PASS  dev server up, started by this run
+PASS  he walks along the floor by himself  (from 1.16 m to 2.65 m in a second)
+PASS  his walk cycle moves on as he walks
+PASS  he stays on the floor line
+PASS  the camera keeps him in the middle of the view as he walks  (480.0 480.0 480.0 480.0)
+PASS  his legs and arms swing: how far they spread changes through the cycle  (legs 33 px, arms 23 px | legs 30 px, arms 19 px | legs 12 px, arms 17 px | legs 24 px, arms 19 px)
+PASS  he is a whole stick man while walking: drawn from the floor up to his height  (88.8 px tall, 90.0 px expected)
+PASS  the left arrow key walks him left  (facing -1, 5.30 m then 4.52 m)
+PASS  with no key held he stands where he stopped  (at 4.25 m)
+PASS  the right arrow key walks him right  (facing 1, at 5.30 m)
+PASS  after walking to the far end the floor line is still drawn behind him  (dark share 0.20)
+PASS  the line ends where the floor ends  (floor ends at 510 px, dark share just before it 0.22, past it 0.000)
+PASS  the walk is view only: the sim kept ticking and its state says nothing about him  (tick 5 to 793)
+PASS  no page errors
+PASS  the walk was recorded  (proof/03-walk.webm)
+
+ALL 15 CHECKS PASSED

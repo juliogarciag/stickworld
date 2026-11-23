@@ -1,0 +1,9 @@
+=== 04-lint-rule ===
+
+<repo>/packages/client/src/render/ruleTwelveProbe.ts
+  2:48  error  Only packages/client/src/render/strokes/ draws lines and shapes. Ask createStrokeLayer for a stroke instead (AGENTS.md rule 12)  no-restricted-syntax
+  2:70  error  Only packages/client/src/render/strokes/ draws lines and shapes. Ask createStrokeLayer for a stroke instead (AGENTS.md rule 12)  no-restricted-syntax
+
+✖ 2 problems (2 errors, 0 warnings)
+
+PASS  lint rejects add.graphics() and make.graphics() outside render/strokes/

@@ -1,0 +1,151 @@
+{
+  "byHimself": {
+    "first": {
+      "feet": {
+        "x": 1.1574399999999998,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "walking",
+      "walkCycle": 0.11727382377944373
+    },
+    "second": {
+      "feet": {
+        "x": 2.647609999999999,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "walking",
+      "walkCycle": 0.22727086380366673
+    }
+  },
+  "limbSpreads": [
+    {
+      "legs": 33,
+      "arms": 23
+    },
+    {
+      "legs": 30,
+      "arms": 19
+    },
+    {
+      "legs": 12,
+      "arms": 17
+    },
+    {
+      "legs": 24,
+      "arms": 19
+    }
+  ],
+  "endOfTheFloor": {
+    "pose": {
+      "feet": {
+        "x": 11.4,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "standing",
+      "walkCycle": 0
+    },
+    "endX": 510,
+    "underHimStill": {
+      "pixels": 1600,
+      "meanLuminance": 200.53936587499894,
+      "luminanceSpread": 52.67008454157797,
+      "distinctColours": 492,
+      "darkShare": 0.20375,
+      "topDarkY": 387,
+      "bottomDarkY": 389,
+      "darkWidth": 200
+    },
+    "pastTheEnd": {
+      "pixels": 7800,
+      "meanLuminance": 235.94220025640885,
+      "luminanceSpread": 2.4400470603864957,
+      "distinctColours": 234,
+      "darkShare": 0,
+      "darkWidth": 0
+    }
+  },
+  "snapshotAfterWalking": {
+    "seed": 1,
+    "tick": 793,
+    "level": 1,
+    "rngState": 1,
+    "slices": {}
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "he walks along the floor by himself",
+      "pass": true,
+      "details": "from 1.16 m to 2.65 m in a second"
+    },
+    {
+      "name": "his walk cycle moves on as he walks",
+      "pass": true
+    },
+    {
+      "name": "he stays on the floor line",
+      "pass": true
+    },
+    {
+      "name": "the camera keeps him in the middle of the view as he walks",
+      "pass": true,
+      "details": "480.0 480.0 480.0 480.0"
+    },
+    {
+      "name": "his legs and arms swing: how far they spread changes through the cycle",
+      "pass": true,
+      "details": "legs 33 px, arms 23 px | legs 30 px, arms 19 px | legs 12 px, arms 17 px | legs 24 px, arms 19 px"
+    },
+    {
+      "name": "he is a whole stick man while walking: drawn from the floor up to his height",
+      "pass": true,
+      "details": "88.8 px tall, 90.0 px expected"
+    },
+    {
+      "name": "the left arrow key walks him left",
+      "pass": true,
+      "details": "facing -1, 5.30 m then 4.52 m"
+    },
+    {
+      "name": "with no key held he stands where he stopped",
+      "pass": true,
+      "details": "at 4.25 m"
+    },
+    {
+      "name": "the right arrow key walks him right",
+      "pass": true,
+      "details": "facing 1, at 5.30 m"
+    },
+    {
+      "name": "after walking to the far end the floor line is still drawn behind him",
+      "pass": true,
+      "details": "dark share 0.20"
+    },
+    {
+      "name": "the line ends where the floor ends",
+      "pass": true,
+      "details": "floor ends at 510 px, dark share just before it 0.22, past it 0.000"
+    },
+    {
+      "name": "the walk is view only: the sim kept ticking and its state says nothing about him",
+      "pass": true,
+      "details": "tick 5 to 793"
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "the walk was recorded",
+      "pass": true,
+      "details": "proof/03-walk.webm"
+    }
+  ]
+}

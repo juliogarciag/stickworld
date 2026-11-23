@@ -2,7 +2,7 @@
 
 This is a 2d platformer drawn in pencil on a sheet of paper. The main character is a stick man; the floor is a pencil line; the things he finds and makes are paper. It starts as a three-level proof of concept and grows from there, mostly through AI agents working in parallel. The architecture below exists so that many agents can add things at once without breaking each other.
 
-This file describes the structure the repository has and is growing into. Folders the layout names but no ticket has needed yet (`client/src/input/`, `client/src/hud/`, `client/src/render/strokes/`) appear with the first ticket that needs them. Correct this file in the same PR whenever what you build differs from what it says.
+This file describes the structure the repository has and is growing into. Folders the layout names but no ticket has needed yet (`client/src/hud/`) appear with the first ticket that needs them. Correct this file in the same PR whenever what you build differs from what it says.
 
 **Development process**
 
@@ -52,8 +52,9 @@ packages/
       features/index.ts   The list of features the sim runs (one line per feature).
   client/     Phaser app. Reads sim state, draws it, turns input into commands. No game rules.
     src/main.ts, src/scenes/, src/loop/, src/input/, src/debug.ts
-    src/render/           What is drawn and where.
+    src/render/           What is drawn and where. paper.ts is the sheet and its tooth (the grain every line gets).
     src/render/strokes/   The ONLY place a pencil stroke is drawn. Everything else asks it for a line.
+    src/demo/             Look test only: the stick man's client-only walk. The Level 1 ticket deletes it.
     src/hud/              The item slots, the recipe list, the letter text; view facts, never sim state.
 docs/decisions/   Architecture decision records (ADRs).
 verifications/    One folder per ticket with its verification scripts and proof, frozen when the ticket's PR merges.
@@ -75,7 +76,7 @@ Dependency versions live in one place: the `catalog` in `pnpm-workspace.yaml`. P
 9. Package boundaries are enforced by lint (`eslint.config.js`) and by the sim's `tsconfig` (no DOM lib, no Node types). `sim` imports nothing from `client`; `client` imports `@stickworld/sim` through its package entry only, never deep paths.
 10. Feature-oriented folders. New behaviour goes in `sim/src/features/<feature>/`; parallel agents should rarely touch the same files. The shared files a feature may touch, one line each: `features/index.ts` (register), `content/defs.ts` (spread in the feature's defs and claim an id block), `core/commands.ts` (add the command union), `src/index.ts` (expose something to views), `content/levels/index.ts` (list a new level; the level itself is a new file in `content/levels/`).
 11. Command handlers are the validation boundary: validate every field, ignore what is malformed, never throw. `Sim.step` drops values that are not objects with a string `type`.
-12. Every pencil stroke on screen goes through `client/src/render/strokes/`. The technique behind it (a textured strip, joints stamped with circles, a Canvas 2D surface shown by Phaser) is chosen once, recorded in an ADR, and can be swapped there without touching what calls it.
+12. Every pencil stroke on screen goes through `client/src/render/strokes/`: a caller makes a layer with `createStrokeLayer(scene)` and shows it strokes (points and a thickness, in world pixels). The technique behind it (Phaser Graphics lines with a dab stamped on every joint, grain from the paper's tooth; ADR 0002) can be swapped there without touching what calls it. Lint rejects the Phaser factories that draw lines and shapes (`add.graphics()`, `make.graphics()`, `add.rope()`, the shape factories, `new Graphics`) anywhere else in the client; a factory called through another name gets past it, so reviews still check. Everything drawn on the paper sits between the sheet's depth and its tooth's (`render/paper.ts`); what is not on the paper, such as a HUD, goes above the tooth.
 
 **Naming**
 
@@ -133,7 +134,7 @@ Example: an `airplane` feature where the stick man places a paper airplane and f
 - Test files read top-down: imports, then the `describe` blocks, then fixtures, fakes and helper functions at the bottom under a `// ---- Helpers ----` comment. A reader should see what is being asserted before how it is set up. Function declarations hoist, so this is always safe for them; `const` helpers and fixtures are fine too as long as they are only used inside `it`, `beforeAll` and similar callbacks, never in a `describe` body.
 - For user-facing changes, the ticket's `verifications/<ticket>/` folder holds scripts that exercise the real app (Playwright against `pnpm dev`) and the proof they produced (screenshots, logs, JSON reports). Start from a copy of `verifications/_template/` (its README has the steps).
 - How the game looks cannot be asserted, only shown: a ticket that changes the look puts before and after screenshots in its proof, and a short screen recording when the change is in how something moves.
-- Dev builds expose `window.__game` (`sim`, `game`, `snapshot()`, `hash()`, `level`, `defs`, `pixelsPerMetre`, `camera()`, `queueCommand(command)`, `loadLevel(n)`) so browser checks can read sim state and derive expectations from content instead of hardcoding numbers. It is stripped from production builds. Add to it when a check needs something new, and list the addition here.
+- Dev builds expose `window.__game` (`sim`, `game`, `snapshot()`, `hash()`, `level`, `defs`, `pixelsPerMetre`, `stickManHeight`, `camera()`, `queueCommand(command)`, `loadLevel(n)`, and until the Level 1 ticket removes the demo, `walkDemo()` with `pose()` and `setPaused(paused)`) so browser checks can read sim state and derive expectations from content instead of hardcoding numbers. It is stripped from production builds. Add to it when a check needs something new, and list the addition here.
 - A `verifications/<ticket>/` folder is proof for that ticket only and is frozen when its PR merges. Nobody runs, repairs or reads another ticket's folder afterwards. `verifications/_template/` is the only folder kept working: never copy from a frozen one, and a ticket that changes what the template relies on (its README lists it) updates the template in the same PR.
 - Content search (`rg`, the Grep tool) skips every folder under `verifications/` except `_template` (the root `.ignore`), your own ticket's folder included. To search yours, name it as the path: `rg <pattern> verifications/<ticket>/`.
 - Units: the sim works in metres, y pointing down, from an origin at the start of each level's floor. The stick man's height in metres is a tuning value and everything else is sized against it. The client converts metres to pixels with `PIXELS_PER_METRE` in `client/src/render/units.ts`; on-screen size comes from the camera's zoom, never from that ratio.
@@ -147,4 +148,4 @@ Example: an `airplane` feature where the stick man places a paper airplane and f
 
 **Decisions**
 
-Significant architectural choices are recorded in `docs/decisions/` as numbered ADRs. Add a new one when you make a choice the next agent would otherwise have to rediscover; never edit an accepted one, supersede it. The first ones this project owes: the sim and view split with a fixed step (0001), and how pencil strokes are drawn (0002, after the look test).
+Significant architectural choices are recorded in `docs/decisions/` as numbered ADRs. Add a new one when you make a choice the next agent would otherwise have to rediscover; never edit an accepted one, supersede it. So far: the sim and view split with a fixed step (0001), and how pencil strokes are drawn (0002).

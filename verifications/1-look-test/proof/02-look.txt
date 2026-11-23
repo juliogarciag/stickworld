@@ -1,0 +1,20 @@
+PASS  dev server up, started by this run
+PASS  the paper is not a flat colour: it has a grain  (227 colours, luminance spread 1.81)
+PASS  the paper is still light, with nothing drawn where nothing is  (mean luminance 234.4)
+PASS  the floor is a pencil line where level 1 says the floor is  (8 spots along it, dark share 0.23 0.13 0.25 0.13 0.25 0.25 0.13 0.21)
+PASS  the line stays a line: nothing is drawn under it
+PASS  the line starts where the floor starts  (dark share left of the floor 0.000)
+PASS  the line has a grain: along its middle it is not one flat colour  (luminance 109, spread 27.8 (a flat line has 0))
+PASS  the stick man is drawn standing on the floor line  (dark share 0.044 around him, 0.000 beside him)
+PASS  he is as tall on screen as the sim says he is  (88.8 px drawn, 90.0 px expected)
+PASS  his head is a drawn circle, not a filled one  (dark share inside 0.000)
+PASS  nothing moved between the two pictures
+PASS  a still line boils: the floor is redrawn a little differently  (509 pixels changed)
+PASS  a still stick man boils too  (227 pixels changed)
+PASS  the paper does not boil  (0 pixels changed)
+PASS  in a bigger window he fills the same share of the view  (16.4% of the height, then 16.4%)
+PASS  at pixel ratio 2 he is the same size against the view, mid-stride  (71.5 px drawn, 75.0 px expected)
+PASS  at pixel ratio 3 he is the same size against the view, mid-stride  (47.7 px drawn, 50.0 px expected)
+PASS  no page errors
+
+ALL 18 CHECKS PASSED
