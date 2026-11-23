@@ -125,9 +125,10 @@ Example: an `airplane` feature where the stick man places a paper airplane and f
 
 **Game feel belongs in tuning**
 
-- Jump height, walk speed, the forgiveness around a jump (pressing just before landing, or just after leaving an edge), the glide's speed loss and stall speed: all are named values in data files, never numbers inside logic.
+- Jump height, walk speed, how much the keys steer him in the air, the forgiveness around a jump (pressing just before landing, or just after leaving an edge), the glide's speed loss and stall speed: all are named values in data files, never numbers inside logic.
+- In the air the stick man has a sideways speed of his own: he keeps the speed he left the floor with, and a held key only steers it (`PLAYER.airSteering`). On the floor he is at walk speed, or still, at once.
 - The glide is an exchange, not aerodynamics: climbing costs speed, diving gains it, and below the stall speed the airplane falls. Keep it that simple unless an ADR says otherwise.
-- The stick man is a controlled body with limbs drawn from code, not a ragdoll.
+- The stick man is a controlled body with limbs drawn from code, not a ragdoll. The sim keeps the end of a floor line out of his outline as he drops past it (`STICK_MAN_WIDTH`, `PLAYER.fullWidthAbove`); the view keeps his arms, body and head from being drawn across a line (`keptOffTheFloor` in `client/src/render/stickMan.ts`). Both assume flat floors with gaps wider than he is, which a test on every level checks.
 
 **Verifying work**
 
@@ -135,10 +136,10 @@ Example: an `airplane` feature where the stick man places a paper airplane and f
 - Test files read top-down: imports, then the `describe` blocks, then fixtures, fakes and helper functions at the bottom under a `// ---- Helpers ----` comment. A reader should see what is being asserted before how it is set up. Function declarations hoist, so this is always safe for them; `const` helpers and fixtures are fine too as long as they are only used inside `it`, `beforeAll` and similar callbacks, never in a `describe` body.
 - For user-facing changes, the ticket's `verifications/<ticket>/` folder holds scripts that exercise the real app (Playwright against `pnpm dev`) and the proof they produced (screenshots, logs, JSON reports). Start from a copy of `verifications/_template/` (its README has the steps).
 - How the game looks cannot be asserted, only shown: a ticket that changes the look puts before and after screenshots in its proof, and a short screen recording when the change is in how something moves.
-- Dev builds expose `window.__game` (`sim`, `game`, `snapshot()`, `hash()`, `level`, `defs`, `pixelsPerMetre`, `stickManHeight`, `camera()`, `stickMan()` and `flag()` (each as the sim's view functions give it), `itemSlots()` (each slot as the sim has it, with the rectangle of the page the HUD draws it in), `queueCommand(command)`, `loadLevel(n)`) so browser checks can read sim state and derive expectations from content instead of hardcoding numbers. It is stripped from production builds. Add to it when a check needs something new, and list the addition here.
+- Dev builds expose `window.__game` (`sim`, `game`, `snapshot()`, `hash()`, `level`, `defs`, `pixelsPerMetre`, `stickManHeight`, `stickManWidth`, `camera()`, `stickMan()` and `flag()` (each as the sim's view functions give it), `itemSlots()` (each slot as the sim has it, with the rectangle of the page the HUD draws it in), `queueCommand(command)`, `loadLevel(n)`) so browser checks can read sim state and derive expectations from content instead of hardcoding numbers. It is stripped from production builds. Add to it when a check needs something new, and list the addition here.
 - A `verifications/<ticket>/` folder is proof for that ticket only and is frozen when its PR merges. Nobody runs, repairs or reads another ticket's folder afterwards. `verifications/_template/` is the only folder kept working: never copy from a frozen one, and a ticket that changes what the template relies on (its README lists it) updates the template in the same PR.
 - Content search (`rg`, the Grep tool) skips every folder under `verifications/` except `_template` (the root `.ignore`), your own ticket's folder included. To search yours, name it as the path: `rg <pattern> verifications/<ticket>/`.
-- Units: the sim works in metres, y pointing down, from an origin at the start of each level's floor. The stick man's height in metres is a tuning value and everything else is sized against it. The client converts metres to pixels with `PIXELS_PER_METRE` in `client/src/render/units.ts`; on-screen size comes from the camera's zoom, never from that ratio.
+- Units: the sim works in metres, y pointing down, from an origin at the start of each level's floor. The stick man's height and width in metres are tuning values and everything else is sized against them. The client converts metres to pixels with `PIXELS_PER_METRE` in `client/src/render/units.ts`; on-screen size comes from the camera's zoom, never from that ratio.
 
 **Worktrees and ports**
 

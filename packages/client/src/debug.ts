@@ -1,5 +1,5 @@
 import type { Command, Def, FlagView, ItemSlot, Level, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
-import { defs, flagOf, hashSnapshot, itemSlotsOf, levelOf, STICK_MAN_HEIGHT, stickManOf } from '@stickworld/sim';
+import { defs, flagOf, hashSnapshot, itemSlotsOf, levelOf, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf } from '@stickworld/sim';
 import type Phaser from 'phaser';
 import { itemSlotBox, type Rectangle } from './hud/itemSlots';
 import type { GameLoop } from './loop/GameLoop';
@@ -18,6 +18,8 @@ export interface GameDebugApi {
   readonly pixelsPerMetre: number;
   /** The stick man's height in metres, as the sim's tuning has it. */
   readonly stickManHeight: number;
+  /** The stick man's width in metres, as the sim's tuning has it: how far the end of a floor line he drops past is kept from the middle of him, half to each side. */
+  readonly stickManWidth: number;
   snapshot(): SimSnapshot;
   hash(): string;
   /** The level camera right now, or undefined until the level scene runs. */
@@ -66,6 +68,7 @@ export function exposeDebugApi({ loop, game }: { loop: GameLoop; game: Phaser.Ga
     defs,
     pixelsPerMetre: PIXELS_PER_METRE,
     stickManHeight: STICK_MAN_HEIGHT,
+    stickManWidth: STICK_MAN_WIDTH,
     snapshot: () => loop.sim.snapshot(),
     hash: () => hashSnapshot(loop.sim.snapshot()),
     camera: () => {

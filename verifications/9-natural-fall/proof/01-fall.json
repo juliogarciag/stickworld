@@ -1,0 +1,237 @@
+{
+  "world": {
+    "dt": 0.016666666666666666,
+    "height": 1.8,
+    "width": 0.65,
+    "gap": {
+      "from": 6,
+      "to": 6.8
+    },
+    "floorY": 0
+  },
+  "shots": [
+    {
+      "name": "after-walk-off-0_3m.png",
+      "depth": 0.3,
+      "stickMan": {
+        "tick": 124,
+        "feet": {
+          "x": 6.436666666666691,
+          "y": 0.3697222222222222
+        },
+        "facing": 1,
+        "action": "jumping",
+        "distanceWalked": 4.033333333333354,
+        "verticalSpeed": 4.033333333333333,
+        "horizontalSpeed": 2.2,
+        "walkDirectionAsked": 0
+      }
+    },
+    {
+      "name": "after-walk-off-1m.png",
+      "depth": 1,
+      "stickMan": {
+        "tick": 138,
+        "feet": {
+          "x": 6.475,
+          "y": 1.3475
+        },
+        "facing": 1,
+        "action": "jumping",
+        "distanceWalked": 4.033333333333354,
+        "verticalSpeed": 7.699999999999996,
+        "horizontalSpeed": 0,
+        "walkDirectionAsked": 0
+      }
+    },
+    {
+      "name": "after-walk-off-1_3m.png",
+      "depth": 1.3,
+      "stickMan": {
+        "tick": 139,
+        "feet": {
+          "x": 6.475,
+          "y": 1.3475
+        },
+        "facing": 1,
+        "action": "jumping",
+        "distanceWalked": 4.033333333333354,
+        "verticalSpeed": 7.699999999999996,
+        "horizontalSpeed": 0,
+        "walkDirectionAsked": 0
+      }
+    },
+    {
+      "name": "after-walk-off-1_6m.png",
+      "depth": 1.6,
+      "stickMan": {
+        "tick": 141,
+        "feet": {
+          "x": 6.475,
+          "y": 1.7599999999999998
+        },
+        "facing": 1,
+        "action": "jumping",
+        "distanceWalked": 4.033333333333354,
+        "verticalSpeed": 8.799999999999997,
+        "horizontalSpeed": 0,
+        "walkDirectionAsked": 0
+      }
+    },
+    {
+      "name": "after-straight-drop-1m.png",
+      "depth": 1,
+      "stickMan": {
+        "tick": 165,
+        "feet": {
+          "x": 6.325,
+          "y": 1.0401463993669815
+        },
+        "facing": -1,
+        "action": "jumping",
+        "distanceWalked": 0,
+        "verticalSpeed": 8.750225229795353,
+        "horizontalSpeed": 0,
+        "walkDirectionAsked": 0
+      }
+    },
+    {
+      "name": "after-straight-drop-1_3m.png",
+      "depth": 1.3,
+      "stickMan": {
+        "tick": 166,
+        "feet": {
+          "x": 6.336666666666669,
+          "y": 1.5051576608567492
+        },
+        "facing": -1,
+        "action": "jumping",
+        "distanceWalked": 0,
+        "verticalSpeed": 9.850225229795354,
+        "horizontalSpeed": 0.10000000000000003,
+        "walkDirectionAsked": 0
+      }
+    },
+    {
+      "name": "after-straight-drop-1_6m.png",
+      "depth": 1.6,
+      "stickMan": {
+        "tick": 167,
+        "feet": {
+          "x": 6.325,
+          "y": 1.84572072407215
+        },
+        "facing": -1,
+        "action": "jumping",
+        "distanceWalked": 0,
+        "verticalSpeed": 10.583558563128689,
+        "horizontalSpeed": 2.7755575615628914e-17,
+        "walkDirectionAsked": 0
+      }
+    },
+    {
+      "name": "after-jump-over-the-gap.png",
+      "stickMan": {
+        "tick": 129,
+        "feet": {
+          "x": 6.436666666666691,
+          "y": -0.6893806293357598
+        },
+        "facing": 1,
+        "action": "jumping",
+        "distanceWalked": 3.8133333333333512,
+        "verticalSpeed": 0.6835585631286893,
+        "horizontalSpeed": 2.2,
+        "walkDirectionAsked": 1
+      }
+    }
+  ],
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "he walked off the edge and the key was let go while he fell",
+      "pass": true,
+      "details": "16 frames falling with no key held, 4 of them before the far end"
+    },
+    {
+      "name": "after the key is let go he keeps the speed he walked at",
+      "pass": true,
+      "details": "walked at 2.200 m/s, drifted at 2.200 to 2.200 m/s"
+    },
+    {
+      "name": "his momentum carries him forward over the gap, as far as walking would have",
+      "pass": true,
+      "details": "0.293 m after the key was let go; 0.293 m at walk speed over the same ticks"
+    },
+    {
+      "name": "the far end of the gap stops him: his body never goes through it",
+      "pass": true,
+      "details": "furthest feet x 6.4750 with the line inside his height, far end at 6.8, half his width 0.325"
+    },
+    {
+      "name": "he then drops straight beside the far end",
+      "pass": true,
+      "details": "4 frames at feet x 6.4750 with no sideways speed"
+    },
+    {
+      "name": "falling into the gap still starts the level again",
+      "pass": true
+    },
+    {
+      "name": "he stood at the very edge, hopped, and came down past it",
+      "pass": true,
+      "details": "stood at 5.850, edge at 6, 4 frames dropping beside the line"
+    },
+    {
+      "name": "he came down closer to the end of the line than half his width",
+      "pass": true,
+      "details": "feet x 6.1950 as they passed the line, end of the line at 6, half his width 0.325"
+    },
+    {
+      "name": "the near end pushes him aside: once he is half his height down, the line is not inside his width",
+      "pass": true,
+      "details": "closest feet x 6.3250"
+    },
+    {
+      "name": "it pushes him a little every frame, never across the paper at once",
+      "pass": true,
+      "details": "at most 0.130 m in a frame"
+    },
+    {
+      "name": "it is a straight drop: he falls at least five times faster than he drifts, all the way down the line",
+      "pass": true,
+      "details": "falling 32.8 times faster than drifting at the least"
+    },
+    {
+      "name": "a running jump carries him over the gap, above the line all the way",
+      "pass": true,
+      "details": "8 frames over the gap, lowest -0.403 m"
+    },
+    {
+      "name": "level 2 is still finished: he lands, walks on and reaches the flag",
+      "pass": true
+    },
+    {
+      "name": "level 1 is still finished by walking to the flag",
+      "pass": true
+    },
+    {
+      "name": "a picture of every moment was taken",
+      "pass": true,
+      "details": "after-walk-off-0_3m.png, after-walk-off-1m.png, after-walk-off-1_3m.png, after-walk-off-1_6m.png, after-straight-drop-1m.png, after-straight-drop-1_3m.png, after-straight-drop-1_6m.png, after-jump-over-the-gap.png"
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "the recording of the forward fall, the straight drop and the jump was written",
+      "pass": true,
+      "details": "proof/fall.mp4, proof/fall.gif"
+    }
+  ]
+}

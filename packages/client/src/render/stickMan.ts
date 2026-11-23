@@ -22,6 +22,8 @@ export interface StickManPose {
   readonly rise: number;
   /** Whether he would be walking if his feet were on the floor: what his limbs come from as he takes off and go back to as he lands. */
   readonly striding: boolean;
+  /** How far a fall has gone past the end of a jump, from 0 to 1: at 1 he falls with his arms thrown up and out. */
+  readonly longFall: number;
   /** How far his limbs have gone from what they do on the floor to what they do in the air, from 0 to 1. */
   readonly inTheAir: number;
   /** How deep he is in the knee bend that takes a landing, from 0 to 1. */
@@ -44,6 +46,7 @@ export function poseOf(stickMan: StickManView): StickManPose {
     action,
     walkCycle: (distanceWalked / walkCycleLength()) % 1,
     rise: Math.max(-1, Math.min(1, -verticalSpeed / BODY.speedOfFullRise)),
+    longFall: action === 'jumping' ? Math.max(0, Math.min(1, (verticalSpeed - BODY.speedOfALongFall.from) / (BODY.speedOfALongFall.to - BODY.speedOfALongFall.from))) : 0,
     striding: action === 'walking' || (action === 'jumping' && walkDirectionAsked !== 0),
     inTheAir: action === 'jumping' ? 1 : 0,
     landing: 0,
@@ -148,11 +151,18 @@ const BODY = {
   jumpingUp: { legs: [{ swing: 0.3, bend: 0.55 }, { swing: -0.35, bend: 0.45 }], arms: [{ swing: -0.55, bend: 0.3 }, { swing: 0.9, bend: 0.5 }], lean: 0.1 },
   atTheTop: { legs: [{ swing: 0.75, bend: 1.3 }, { swing: 0.15, bend: 0.9 }], arms: [{ swing: -1.2, bend: 0.1 }, { swing: 1.7, bend: 0.35 }], lean: 0.03 },
   comingDown: { legs: [{ swing: 0.22, bend: 0.2 }, { swing: -0.16, bend: 0.2 }], arms: [{ swing: -0.9, bend: 0.1 }, { swing: 1.0, bend: 0.3 }], lean: -0.04 },
+  /**
+   * A fall that goes on past where a jump would have landed: his arms are thrown up and out and his legs hang apart.
+   * He gets into it between these two falling speeds, in metres per second. The lower one is just above the speed a
+   * jump on level floor lands at, so no such jump ever shows it.
+   */
+  longFall: { legs: [{ swing: 0.3, bend: 0.35 }, { swing: -0.3, bend: 0.3 }], arms: [{ swing: -2.0, bend: -0.15 }, { swing: 2.05, bend: 0.2 }], lean: 0 },
+  speedOfALongFall: { from: 5.7, to: 7.5 },
   /** Knees bent under him, feet where they were: how a landing is taken. `landingDepth` is how far into it the hardest landing goes. */
   landed: { legs: [{ swing: 0.5, bend: 1.0 }, { swing: 0.5, bend: 1.0 }], arms: [{ swing: -0.35, bend: 0.3 }, { swing: 0.5, bend: 0.5 }], lean: 0.12 },
   landingDepth: 0.55,
   /** How far he tips over, in radians, falling as fast sideways as down would tip him all of it; see `tiltOfFall`. */
-  fallTilt: 0.5,
+  fallTilt: 0.6,
   /** The falling speed, in metres per second, from which a fall tips him as far as his sideways speed says. Below it he is still tipping over. */
   speedOfFullTilt: 2.5,
   /** How much of his tilt his legs trail behind by, as a share of it. */
@@ -263,8 +273,9 @@ function leastLiftOffTheFloor(pose: StickManPose, { arm, floor, atLeast }: { arm
 
 /** Where every limb points for what he is doing: what he does on the floor, as far into a jump as he is, as deep in a landing as he is. */
 function limbsOf(pose: StickManPose): Limbs {
-  const { rise, inTheAir, landing } = pose;
-  const jumping = rise >= 0 ? between(BODY.atTheTop, BODY.jumpingUp, rise) : between(BODY.atTheTop, BODY.comingDown, -rise);
+  const { rise, longFall, inTheAir, landing } = pose;
+  const inAJump = rise >= 0 ? between(BODY.atTheTop, BODY.jumpingUp, rise) : between(BODY.atTheTop, BODY.comingDown, -rise);
+  const jumping = between(inAJump, BODY.longFall, smoothed(longFall));
   const offTheFloor = between(limbsOnTheFloor(pose), jumping, smoothed(inTheAir));
   // A landing is deepest the moment he touches down and eases out: fast at first, slow at the end.
   return between(offTheFloor, BODY.landed, BODY.landingDepth * landing * landing);
