@@ -15,12 +15,15 @@ export const lettersReadSlice = defineSlice<number[]>('lettersRead', () => [], {
 
 /** The item a letter gave, given again from the sky to him who has lost it and everything he made of it. */
 export interface FallenItemState {
-  /** True while it is there: on its way down, or lying where the letter lay. */
+  /** True while it is there: on its way down, or lying on the floor. */
   inLevel: boolean;
+  /** Where it lies, or will lie once it has come down, in metres: where he stood when it started to fall. Only read while it is there. */
+  x: number;
+  y: number;
   /** How far above where it will lie it is, in metres. 0 once it lies on the floor. */
   height: number;
   /** Ticks left before one starts to fall, or null when none is on its way. */
   ticksUntilItFalls: number | null;
 }
 
-export const fallenItemSlice = defineSlice<FallenItemState>('fallenItem', () => ({ inLevel: false, height: 0, ticksUntilItFalls: null }));
+export const fallenItemSlice = defineSlice<FallenItemState>('fallenItem', () => ({ inLevel: false, x: 0, y: 0, height: 0, ticksUntilItFalls: null }));

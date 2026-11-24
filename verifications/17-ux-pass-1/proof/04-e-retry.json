@@ -2,23 +2,23 @@
   "wide": {
     "retry": {
       "presses": 2,
-      "seconds": 3.15,
-      "walkedMetres": 6.53
-    },
-    "fallenPaper": {
-      "fellAfterSeconds": 0.62,
-      "inkOnTheFloor": 212
-    }
-  },
-  "narrow": {
-    "retry": {
-      "presses": 2,
       "seconds": 3.13,
       "walkedMetres": 6.53
     },
     "fallenPaper": {
       "fellAfterSeconds": 0.63,
-      "inkOnTheFloor": 132
+      "inkOnTheFloor": 227
+    }
+  },
+  "narrow": {
+    "retry": {
+      "presses": 2,
+      "seconds": 3.17,
+      "walkedMetres": 6.53
+    },
+    "fallenPaper": {
+      "fellAfterSeconds": 0.6,
+      "inkOnTheFloor": 106
     }
   },
   "portrait": {
@@ -29,7 +29,7 @@
     },
     "fallenPaper": {
       "fellAfterSeconds": 0.63,
-      "inkOnTheFloor": 42
+      "inkOnTheFloor": 38
     }
   },
   "results": [
@@ -53,7 +53,7 @@
     {
       "name": "wide: a retry is walk, set down, board: two presses",
       "pass": true,
-      "details": "3.15 s from the restart to the seat, 6.53 m of it walking"
+      "details": "3.13 s from the restart to the seat, 6.53 m of it walking"
     },
     {
       "name": "wide: nothing fell, and no letter lies there: he has nothing to read again",
@@ -66,12 +66,17 @@
     {
       "name": "wide: with neither paper nor airplane a sheet of paper falls from the sky, and no letter",
       "pass": true,
-      "details": "it started 0.62 s after the airplane was lost"
+      "details": "it started 0.63 s after the airplane was lost"
     },
     {
-      "name": "wide: it lies where the letter lay, and one press picks it up into his hand: nothing is read",
+      "name": "wide: it comes down where he stands, in view, and can be picked up without a step",
       "pass": true,
-      "details": "212 pixels of pencil where it lay; J would \"craft\""
+      "details": "at 9.81 m, he stands at 9.81 m; pixel 480 of 1600"
+    },
+    {
+      "name": "wide: it lies there, drawn, and one press picks it up into his hand: nothing is read",
+      "pass": true,
+      "details": "227 pixels of pencil where it lay; J would \"craft\""
     },
     {
       "name": "narrow: a letter he has read is gone once he puts it away, and what it taught stays: J would fold",
@@ -89,7 +94,7 @@
     {
       "name": "narrow: a retry is walk, set down, board: two presses",
       "pass": true,
-      "details": "3.13 s from the restart to the seat, 6.53 m of it walking"
+      "details": "3.17 s from the restart to the seat, 6.53 m of it walking"
     },
     {
       "name": "narrow: nothing fell, and no letter lies there: he has nothing to read again",
@@ -102,12 +107,17 @@
     {
       "name": "narrow: with neither paper nor airplane a sheet of paper falls from the sky, and no letter",
       "pass": true,
-      "details": "it started 0.63 s after the airplane was lost"
+      "details": "it started 0.6 s after the airplane was lost"
     },
     {
-      "name": "narrow: it lies where the letter lay, and one press picks it up into his hand: nothing is read",
+      "name": "narrow: it comes down where he stands, in view, and can be picked up without a step",
       "pass": true,
-      "details": "132 pixels of pencil where it lay; J would \"craft\""
+      "details": "at 9.81 m, he stands at 9.81 m; pixel 246 of 820"
+    },
+    {
+      "name": "narrow: it lies there, drawn, and one press picks it up into his hand: nothing is read",
+      "pass": true,
+      "details": "106 pixels of pencil where it lay; J would \"craft\""
     },
     {
       "name": "portrait: a letter he has read is gone once he puts it away, and what it taught stays: J would fold",
@@ -141,9 +151,14 @@
       "details": "it started 0.63 s after the airplane was lost"
     },
     {
-      "name": "portrait: it lies where the letter lay, and one press picks it up into his hand: nothing is read",
+      "name": "portrait: it comes down where he stands, in view, and can be picked up without a step",
       "pass": true,
-      "details": "42 pixels of pencil where it lay; J would \"craft\""
+      "details": "at 9.81 m, he stands at 9.81 m; pixel 144 of 480"
+    },
+    {
+      "name": "portrait: it lies there, drawn, and one press picks it up into his hand: nothing is read",
+      "pass": true,
+      "details": "38 pixels of pencil where it lay; J would \"craft\""
     },
     {
       "name": "no page errors",

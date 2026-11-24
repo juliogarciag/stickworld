@@ -36,12 +36,12 @@ export interface FallenItemView {
   readonly itemDefId: number;
 }
 
-/** The item on its way down or lying where the level's letter lay, or undefined when there is none. */
+/** The item on its way down or lying on the floor, or undefined when there is none. */
 export function fallenItemOf(handle: SimHandle): FallenItemView | undefined {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
   const placed = letterPlacedIn(handle.levelDef);
   const def = placed && letterDef(placed.defId);
   const fallen = handle.stateOf(fallenItemSlice);
   if (!placed || !def || !fallen.inLevel) return undefined;
-  return { at: placed.at, height: fallen.height, itemDefId: def.gives };
+  return { at: { x: fallen.x, y: fallen.y }, height: fallen.height, itemDefId: def.gives };
 }

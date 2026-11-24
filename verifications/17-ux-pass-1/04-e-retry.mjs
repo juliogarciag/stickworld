@@ -5,7 +5,7 @@
  * Level 3 with real keys. Checked: the letter he has read is gone once he puts it away, since what it taught he
  * knows for good; after a flight that is lost the level starts again with the airplane in his hand at once, no letter falls, and the retry
  * is a walk and two presses; and when he loses the airplane without dying, with nothing left, a sheet of paper
- * falls from the sky where the letter lay, and one press picks it up.
+ * falls from the sky to where he stands, in view, and one press picks it up.
  */
 import { ROOT } from './lib.mjs';
 import { fly, gapOf, putTheCarriedAirplaneOnTheEdge, readTheLetter, round, verify } from './play.mjs';
@@ -70,15 +70,18 @@ await verify({ name: '04-e-retry', port: 5917, cwd: ROOT }, async ({ size, open,
   await game.until((state) => state.fallenItem.height === 0, 600);
   const landed = await game.state();
   expect('with neither paper nor airplane a sheet of paper falls from the sky, and no letter', fallsAfter >= 0 && falling.fallenItem.height > 0 && falling.fallenItem.itemDefId === names.paper && landed.letter === null, `it started ${round(fallsAfter / 60)} s after the airplane was lost`);
-  await game.holdUntil('ArrowLeft', (state) => state.interaction === 'pickUp');
+  const landedOnScreen = await game.onScreen(landed.fallenItem.at);
+  expect('it comes down where he stands, in view, and can be picked up without a step', Math.abs(landed.fallenItem.at.x - landed.stickMan.feet.x) < 0.01 && landedOnScreen.x > 0 && landedOnScreen.x < size.width && landed.interaction === 'pickUp', `at ${round(landed.fallenItem.at.x)} m, he stands at ${round(landed.stickMan.feet.x)} m; pixel ${Math.round(landedOnScreen.x)} of ${size.width}`);
+  // A step aside, so that the sheet is not behind his legs when it is measured.
+  await game.holdUntil('ArrowLeft', (state) => state.stickMan.feet.x < landed.fallenItem.at.x - 0.6);
   // It lies on the floor, drawn: pencil where it is, between his feet and his knees.
-  const where = await game.regionOf({ left: landed.fallenItem.at.x - 0.5, right: landed.fallenItem.at.x + 0.5, top: -0.35, bottom: -0.04 });
+  const where = await game.regionOf({ left: landed.fallenItem.at.x - 0.4, right: landed.fallenItem.at.x + 0.5, top: -0.35, bottom: -0.04 });
   const inkOfTheSheet = await game.inkIn(where);
   await game.shot('e-the-sheet-of-paper-on-the-floor');
   await game.tap('k');
   const given = await game.state();
   report.fallenPaper = { fellAfterSeconds: round(fallsAfter / 60), inkOnTheFloor: inkOfTheSheet };
-  expect('it lies where the letter lay, and one press picks it up into his hand: nothing is read', inkOfTheSheet > 15 && given.fallenItem === null && given.letter === null && given.itemSlots[0].itemDefId === names.paper && given.itemSlots[0].selected && given.itemUse === 'craft', `${inkOfTheSheet} pixels of pencil where it lay; J would "${given.itemUse}"`);
+  expect('it lies there, drawn, and one press picks it up into his hand: nothing is read', inkOfTheSheet > 15 && given.fallenItem === null && given.letter === null && given.itemSlots[0].itemDefId === names.paper && given.itemSlots[0].selected && given.itemUse === 'craft', `${inkOfTheSheet} pixels of pencil where it lay; J would "${given.itemUse}"`);
   await game.close();
   return report;
 });

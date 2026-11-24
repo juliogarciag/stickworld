@@ -12,7 +12,7 @@ export interface LetterDef extends Def {
   readonly text: string;
   /** The def id of the recipe that reading it teaches. */
   readonly teachesRecipe: number;
-  /** The def id of the item that reading it gives him when he has neither that item nor what the recipe makes of it. It is also what falls from the sky for him who has read it and lost both; a level that starts again for him gives what the recipe makes instead. */
+  /** The def id of the item that reading it gives him when he has neither that item nor what the recipe makes of it. It is also what falls from the sky, where he stands, for him who has read it and lost both; a level that starts again for him gives what the recipe makes instead. */
   readonly gives: number;
 }
 

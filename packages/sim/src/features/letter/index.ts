@@ -19,8 +19,8 @@ import { fallenItemSlice, letterSlice, lettersReadSlice } from './state';
  * that starts again for him who has read its letter and has nothing left of
  * what it was for gives him what its recipe makes at once. And whenever he
  * loses everything it was for without dying, the item itself falls from the
- * sky to where the letter lay, and interacting next to it picks it up. So he
- * can never be left without a way on.
+ * sky to where he stands, and interacting next to it picks it up. So he can
+ * never be left without a way on.
  */
 export const letterFeature: Feature = {
   name: 'letter',
@@ -43,7 +43,7 @@ export const letterFeature: Feature = {
     const placed = letterPlacedIn(sim.levelDef);
     const def = placed && letterDef(placed.defId);
     if (!placed || !def) return;
-    if (sim.stateOf(letterSlice).beingRead && !isWithinReach(sim, placed)) putAway(sim);
+    if (sim.stateOf(letterSlice).beingRead && !isWithinReach(sim, placed.at)) putAway(sim);
     const fallen = sim.stateOf(fallenItemSlice);
     if (fallen.inLevel) {
       fallen.height = Math.max(0, fallen.height - LETTER.fallSpeed * sim.dt);
@@ -56,9 +56,13 @@ export const letterFeature: Feature = {
       fallen.ticksUntilItFalls = Math.round(LETTER.fallsAfter / sim.dt);
     } else if (fallen.ticksUntilItFalls > 0) {
       fallen.ticksUntilItFalls -= 1;
-    } else {
+    } else if (sim.stateOf(playerSlice).onFloor) {
+      // It comes down where he stands, so he sees it and has it at his feet. In the air he has no place for it yet: it waits for him to land.
+      const { x, y } = sim.stateOf(playerSlice);
       fallen.ticksUntilItFalls = null;
       fallen.inLevel = true;
+      fallen.x = x;
+      fallen.y = y;
       fallen.height = LETTER.fallsFromHeight;
     }
   },
@@ -85,7 +89,7 @@ export function letterInteraction(sim: Sim) {
   const placed = letterPlacedIn(sim.levelDef);
   const def = placed && letterDef(placed.defId);
   const letter = sim.stateOf(letterSlice);
-  if (!placed || !def || !letter.inLevel || letter.beingRead || !isWithinReach(sim, placed)) return undefined;
+  if (!placed || !def || !letter.inLevel || letter.beingRead || !isWithinReach(sim, placed.at)) return undefined;
   return {
     means: 'read' as const,
     perform: () => {
@@ -105,7 +109,7 @@ export function fallenItemInteraction(sim: Sim) {
   const placed = letterPlacedIn(sim.levelDef);
   const def = placed && letterDef(placed.defId);
   const fallen = sim.stateOf(fallenItemSlice);
-  if (!placed || !def || !fallen.inLevel || fallen.height > 0 || !isWithinReach(sim, placed)) return undefined;
+  if (!def || !fallen.inLevel || fallen.height > 0 || !isWithinReach(sim, fallen)) return undefined;
   return {
     means: 'pickUp' as const,
     perform: () => {
@@ -126,10 +130,10 @@ function putAway(sim: Sim): void {
   letter.inLevel = false;
 }
 
-/** True while he stands on the floor within reach of where the letter lies, and where the item falls. */
-function isWithinReach(sim: Sim, placed: Placement): boolean {
+/** True while he stands on the floor within reach of something that lies at `at`: the letter, or the item that fell. */
+function isWithinReach(sim: Sim, at: { readonly x: number }): boolean {
   const player = sim.stateOf(playerSlice);
-  return player.onFloor && Math.abs(player.x - placed.at.x) <= LETTER.reach;
+  return player.onFloor && Math.abs(player.x - at.x) <= LETTER.reach;
 }
 
 /**
