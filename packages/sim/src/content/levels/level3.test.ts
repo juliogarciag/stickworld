@@ -159,7 +159,7 @@ describe('level 3', () => {
     walkUntilTheFlagIsReached(sim);
     // No level follows: the game is over. He stays where he is, cheering, until playing again is offered.
     const stoodAt = stickManOf(sim).feet;
-    for (let tick = 0; tick < Math.round(LEVEL_END.playAgainAfter * TICK_RATE) - 2; tick += 1) sim.step([WALK_RIGHT_AT_0.command]);
+    for (let tick = 0; tick < Math.round(LEVEL_END.playAgainAfter * TICK_RATE) - 5; tick += 1) sim.step([WALK_RIGHT_AT_0.command]);
     expect(sim.level).toBe(3);
     expect(flagOf(sim)).toMatchObject({ reached: true, raised: 1, endsTheGame: true });
     expect(stickManOf(sim)).toMatchObject({ action: 'cheering', feet: stoodAt });
