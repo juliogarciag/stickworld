@@ -43,7 +43,7 @@ The last frame of level 1, and the next frame:
 
 ### 2. The first sheet teaches nothing
 
-**Today.** The first frame, and the same frame six seconds later:
+**Today.** The first frame. Six seconds later it is the same picture (`proof/wide/02`, shown in finding 10):
 
 ![The first frame of the game](../../verifications/15-ux-review/proof/wide/01-l1-first-frame.jpg)
 
@@ -123,7 +123,7 @@ On level 3 a lost airplane also sends him to the start, with nothing in his slot
 
 ![The end, ten seconds after the last flag](../../verifications/15-ux-review/proof/wide/60-end-ten-seconds-later.jpg)
 
-Ten seconds later nothing has changed: he is still cheering, the empty item slot is still drawn with its second box, and J, K, Enter, space and three seconds of holding right do nothing. There is no way to play again short of reloading the page. On the portrait window the words do not fit and run under the item slot:
+Ten seconds later nothing has changed: he is still cheering, the empty item slot is still drawn with its second box, and J, K, Enter, space and three seconds of holding right do nothing (`proof/wide/61`: the same picture, and he has not moved). There is no way to play again short of reloading the page. On the portrait window the words do not fit and run under the item slot:
 
 <img src="../../verifications/15-ux-review/proof/portrait/59-end-the-end-written.jpg" width="240" alt="Portrait window: THE END is cut off at both sides">
 
@@ -199,7 +199,7 @@ Also: once read, the letter is gone from the floor, so its one sentence cannot b
 
 **Size.** Medium for the hands (J below) and Medium for the speed streaks (K). Letting the letter stay is a rule of the `letter` feature and goes with ticket E, which changes the same rules.
 
-### 9. Three wordings and two keys for putting the airplane down
+### 9. Two wordings and two keys for putting the airplane down, and a third meaning nobody announces
 
 **Today.** J "SET THE AIRPLANE DOWN" takes it from the slot to the floor. K "LIFT THE AIRPLANE" picks it up, and K "PUT THE AIRPLANE DOWN" puts it back. K "BOARD THE AIRPLANE" replaces "lift" only when it rests on an edge over a gap. A player who sets it down where he folded it, which the script did, is offered "lift" and nothing else; nothing says that boarding exists or what would make it possible, and at the edge nothing says why the word changed.
 
@@ -257,8 +257,8 @@ Plainly wrong rather than rough. None was fixed here.
 2. **Prompts are cut off at the right edge of a portrait window** (finding 6). `hud/prompts.ts` never wraps.
 3. **The second box of a selected slot covers the slot's numeral** (finding 7). `hud/itemSlots.ts`: the top of the numeral is 1.13 box heights down and the second box's lower line is at 1.12, half as heavy again as a usual line, so the 1's flag is swallowed and a tick is left.
 4. **The letter's sheet is drawn over the item slot** on narrow and portrait windows. Already in #12.
-5. **A climb that starts a moment late can be held for ever.** `level3.test.ts` counts a climb from the tick he boards: 16 to 42 ticks of it cross, and its test "cannot be finished by climbing all the way" shows that holding on from that tick stalls short and restarts the level. A person cannot press climb on the boarding tick. The script pressed it a quarter of a second after boarding and never let go: the airplane stalled over the gap (x = 17.2 m, 3.1 m up), drifted on, and came down on the far side at x = 20.1 m, where he stood up unharmed (`proof/wide/46` to `48`). The reviewer of this report replayed it in the sim and found the same: started 15 ticks late the climb crosses however long it is held, started 10 ticks late or less it does not. So for a human player the rule "climb too long and you stall into the gap" mostly does not hold, and the only flights that failed here were the one with no key held and the one he jumped out of. The texts and the test are right about what they measure; what they measure is not how the level is played.
-6. **Flying over the flag does not reach it.** By design (`features/flag/index.ts`: a flag is reached on his own feet), but nothing on screen says so, and a flight that lands beyond the flag looks like a missed win. Not captured in the proof kept; noted because it reads as a bug to a player.
+5. **A climb that starts a moment late can be held for ever.** `level3.test.ts` counts a climb from the tick he boards: 16 to 42 ticks of it cross, and its test "cannot be finished by climbing all the way" shows that holding on from that tick stalls short and restarts the level. A new player does not press climb on the boarding tick: that takes holding the up key before pressing K, which costs a jump. The script pressed it a quarter of a second after boarding (14 ticks late) and never let go: the airplane stalled over the gap (x = 17.2 m, 3.1 m up), drifted on, and came down on the far side at x = 20.1 m, where he stood up unharmed (`proof/wide/46` to `48`). The reviewers of this report replayed it in the sim with the test's own counting (the replay is not kept in the repo): started 10 ticks late or more the climb crosses however long it is held, started 9 ticks late or less it does not. So for a human player the rule "climb too long and you stall into the gap" mostly does not hold, and the only flights that failed here were the one with no key held and the one he jumped out of. The texts and the test are right about what they measure; what they measure is not how the level is played.
+6. **Flying over the flag does not reach it.** By design (`features/flag/index.ts`: a flag is reached on his own feet), but nothing on screen says so, and a flight that lands beyond the flag looks like a missed win. Not captured in the proof kept, and no ticket is proposed for it: it is by design, and ticket N's doodles could say it.
 
 ## Proposed tickets
 
@@ -282,6 +282,6 @@ Each is one PR. None has been filed. The order is the order I would do them in.
 | N | Doodles on the levels | Drawings as level data (a sun, a cloud, an arrow toward the flag), with a first set for the three levels. After B, whose placement it extends | 10 | Medium |
 | O | He waits like a person | An idle pose after a few seconds of standing | 10 | Medium |
 | P | Sound | The first sounds (flight, page turn, eraser) and the ADR for how the view hears the sim | 11 | Large |
-| Q | A late climb should not be a free pass | Decide whether a climb held for ever should cross when it starts a moment after boarding; if not, retune `FLIGHT` and add late starts to `level3.test.ts` | bug 5 | Small (tuning values and their test) |
+| Q | A late climb should not be a free pass | Decide whether a climb held for ever should cross when it starts a moment after boarding; if not, retune `FLIGHT` and add late starts to `level3.test.ts` | bug 5 | Medium (a decision, then `FLIGHT` and level 3's test together) |
 
-A, B, C, E and G together answer the first impression that this was one level with nothing to tell the player. D, K and Q make level 3 fair; F makes failing readable. The rest is polish, and P is the one that needs a decision before any work. E should land before J (both touch what he holds at a restart), and I before G (I takes the slot away at the end).
+A, B, C, E and G together answer the first impression that this was one level with nothing to tell the player. D, K and Q make level 3 fair; F makes failing readable. The rest is polish, and P is the one that needs a decision before any work. Where tickets touch the same thing, the order is: E before J (both touch what he holds at a restart); I before G (I takes the slot away at the end) and before J (I draws the slot when the paper arrives, J adds the sheet that flutters into it); C before H and before M (C sets how wide the view is, and M then has to choose between its edges and C's twelve metres on levels that are fourteen metres long: let the view show the desk beyond the sheet's edge); D before H (D moves the flight prompts, H wraps whatever is left).
