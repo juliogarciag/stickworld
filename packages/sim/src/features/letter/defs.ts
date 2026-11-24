@@ -12,7 +12,7 @@ export interface LetterDef extends Def {
   readonly text: string;
   /** The def id of the recipe that reading it teaches. */
   readonly teachesRecipe: number;
-  /** The def id of the item that reading it gives him when he has neither that item nor what the recipe makes of it. */
+  /** The def id of the item that reading it gives him when he has neither that item nor what the recipe makes of it. A level that starts again for him who has read it gives what the recipe makes instead. */
   readonly gives: number;
 }
 
@@ -38,7 +38,7 @@ export function letterDef(id: number): LetterDef | undefined {
 export const LETTER = {
   /** How close to it his feet have to be to read it, and to go on reading. */
   reach: 0.8,
-  /** How long after he has lost everything it was for a new one starts to fall. */
+  /** How long after he has lost everything it was for, and is still alive, a new one starts to fall. */
   fallsAfter: 0.6,
   /** How high above the floor a new one starts: above the top of the screen. */
   fallsFromHeight: 8.5,

@@ -155,7 +155,7 @@ const TICK_PAST_THE_GAP = TICK_NEAR_THE_EDGE + TICK_RATE;
 /** Walk right, jump just before the edge, keep walking to the flag. */
 const JUMP_THE_GAP: Recording = {
   commands: [WALK_RIGHT_AT_0, { atTick: TICK_NEAR_THE_EDGE, command: { type: 'player/jump' } }],
-  ticks: 400,
+  ticks: 280,
 };
 
 /** Walk right and never jump. */

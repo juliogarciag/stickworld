@@ -13,7 +13,7 @@ export { levelOf } from './core/view';
 export { FIXED_DT, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, TICK_RATE } from './content/tuning';
 export { defs, getDef, type Def } from './content/defs';
 export { levelById, levels } from './content/levels';
-export type { FloorSegment, Level, Placement, Point } from './content/levels/types';
+export type { FloorSegment, Level, Note, Placement, Point } from './content/levels/types';
 export type { JumpCommand, PlayerCommand, WalkCommand, WalkDirection } from './features/player/commands';
 export { stickManOf, type StickManView } from './features/player/view';
 export { flagOf, type FlagView } from './features/flag/view';
@@ -30,3 +30,6 @@ export { craftingOf, type CraftingView, type RecipeView } from './features/craft
 export { letterOf, type LetterView } from './features/letter/view';
 export type { AirplaneCommand, AirplaneSteerCommand, SteerDirection } from './features/airplane/commands';
 export { airplaneOf, steeringAskedOf, type AirplaneView } from './features/airplane/view';
+export type { GameCommand, GamePlayAgainCommand } from './features/game/commands';
+export { gameOf, type GameView } from './features/game/view';
+export { notesOf, type NoteView } from './features/note/view';

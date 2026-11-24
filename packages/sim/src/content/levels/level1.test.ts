@@ -67,13 +67,13 @@ interface Recording {
   readonly ticks: number;
 }
 
-/** Walk right, jump once on the way, keep walking: he reaches the flag after about four seconds. */
+/** Walk right, jump once on the way, keep walking: he reaches the flag after about four seconds. It ends with the flag up, before the next level starts. */
 const WALK_TO_THE_FLAG: Recording = {
   commands: [
     { atTick: 10, command: { type: 'player/walk', direction: 1 } },
     { atTick: 90, command: { type: 'player/jump' } },
   ],
-  ticks: 360,
+  ticks: 290,
 };
 
 /** Walk right for two seconds and let go, more than a metre before the flag. */

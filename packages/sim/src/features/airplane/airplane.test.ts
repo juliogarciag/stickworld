@@ -45,11 +45,12 @@ describe('placing the airplane', () => {
 describe('lifting, carrying and putting down', () => {
   it('lifts it only from within reach', () => {
     const sim = airplaneOnTheFloor();
-    walkTo(sim, airplaneOf(sim)!.at.x - AIRPLANE.reach - 0.3);
+    // From the far side of it: on the near side lies the letter, which the same key reads.
+    walkTo(sim, airplaneOf(sim)!.at.x + AIRPLANE.reach + 0.3);
     expect(interactionOf(sim)).toBeNull();
     sim.step([INTERACT]);
     expect(airplaneOf(sim)!.state).toBe('resting');
-    walkTo(sim, airplaneOf(sim)!.at.x - AIRPLANE.reach + 0.2);
+    walkTo(sim, airplaneOf(sim)!.at.x + AIRPLANE.reach - 0.2);
     sim.step([INTERACT]);
     expect(airplaneOf(sim)!.state).toBe('carried');
   });
@@ -177,11 +178,11 @@ describe('losing the airplane', () => {
     expectItToFallAndBeLost(sim);
   });
 
-  it('falls out of his hands when he carries it off the edge, and is lost', () => {
+  it('falls out of his hands when he carries it off the edge: it is not carried down the gap with him', () => {
     const sim = carryingTheAirplane();
     sim.step([{ type: 'player/walk', direction: 1 }]);
     let letGoWhileHeFell = false;
-    for (let tick = 0; tick < 600 && hasAirplane(sim); tick += 1) {
+    for (let tick = 0; tick < 600 && airplaneOf(sim); tick += 1) {
       sim.step();
       const airplane = airplaneOf(sim);
       if (airplane?.state === 'falling') {
@@ -191,7 +192,7 @@ describe('losing the airplane', () => {
       }
     }
     expect(letGoWhileHeFell).toBe(true);
-    expect(hasAirplane(sim)).toBe(false);
+    expect(airplaneOf(sim)).toBeUndefined();
   });
 
   it('falls out of his hands when he jumps into the gap with it', () => {
@@ -199,18 +200,19 @@ describe('losing the airplane', () => {
     walkTo(sim, EDGE - 0.3);
     sim.step([{ type: 'player/walk', direction: 1 }, { type: 'player/jump' }]);
     const states = new Set<string>();
-    for (let tick = 0; tick < 600 && hasAirplane(sim); tick += 1) {
+    for (let tick = 0; tick < 600 && airplaneOf(sim); tick += 1) {
       sim.step();
       states.add(airplaneOf(sim)?.state ?? 'lost');
     }
     expect([...states]).toEqual(['carried', 'falling', 'lost']);
   });
 
-  it('is lost when he dies while it rests on the floor: the level starts again without it', () => {
+  it('is gone from the floor when he dies while it rests there: the level starts again with one in his hand instead', () => {
     const sim = airplaneOnTheFloor();
     sim.step([{ type: 'player/walk', direction: -1 }]);
-    for (let tick = 0; tick < 600 && hasAirplane(sim); tick += 1) sim.step();
-    expect(hasAirplane(sim)).toBe(false);
+    for (let tick = 0; tick < 600 && airplaneOf(sim); tick += 1) sim.step();
+    expect(airplaneOf(sim)).toBeUndefined();
+    expect(itemSlotsOf(sim)).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, selected: true }]);
     expect(stickManOf(sim).feet).toEqual(level3.start);
   });
 
@@ -219,7 +221,7 @@ describe('losing the airplane', () => {
     sim.step([{ type: 'player/walk', direction: -1 }]);
     for (let tick = 0; tick < 300; tick += 1) sim.step();
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBe(AIRPLANE_ITEM_ID);
-    expect(letterOf(sim)).toBeUndefined();
+    expect(letterOf(sim)).toMatchObject({ height: 0, opened: true });
   });
 });
 

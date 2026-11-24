@@ -2,9 +2,10 @@ import type { FloorSegment } from '../../content/levels/types';
 import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
 import { flagSlice } from '../flag/state';
+import { playingAgainIsOffered } from '../game';
 import type { WalkDirection } from './commands';
 import { PLAYER } from './defs';
-import { clearOfFloorEnds, floorHeightAt, lowestFloorHeight } from './floor';
+import { clearOfFloorEnds, floorHeightAt, keptOverTheLine, lowestFloorHeight } from './floor';
 import { playerSlice, type PlayerState } from './state';
 
 /**
@@ -13,7 +14,9 @@ import { playerSlice, type PlayerState } from './state';
  * edge he keeps the sideways speed he had and the keys only steer it; in a
  * jump they move him as they do on the floor. The end of a floor line pushes
  * him aside as he drops past it. Seated in the airplane he does none of
- * that until a jump takes him out of it. Plain
+ * that until a jump takes him out of it. Under a flag he has reached he
+ * stands and cheers; once the game is over and he is done cheering he walks
+ * and jumps again, but not off the line he is on. Plain
  * arithmetic on the level's floor segments; no physics library.
  */
 export const playerFeature: Feature = {
@@ -43,14 +46,16 @@ export const playerFeature: Feature = {
     }
     const direction = walkDirectionNow(sim);
     if (direction !== 0) player.facing = direction;
-    if (hasFinishedLevel(sim)) player.ticksSinceJumpAsked = null;
+    if (standsCheering(sim)) player.ticksSinceJumpAsked = null;
     // Only a fall that began by walking off an edge has momentum: on the floor and in a jump the keys move him at once.
     // A jump from the floor takes off with the speed the floor gives him this tick, so the speed comes first.
     player.horizontalSpeed = isFallingOffAnEdge(player) ? speedAfterSteering(player.horizontalSpeed, { direction, dt: sim.dt }) : direction * PLAYER.walkSpeed;
     jumpIfAskedAndAble(sim, player);
 
     const { floor } = sim.levelDef;
-    const x = player.x + player.horizontalSpeed * sim.dt;
+    const wanted = player.x + player.horizontalSpeed * sim.dt;
+    // After the end there is nothing left to lose: the ends of his line stop him.
+    const x = playingAgainIsOffered(sim) ? keptOverTheLine(floor, { from: player.x, to: wanted }) : wanted;
     if (player.onFloor) walkTo(player, { x, floorHeight: floorHeightAt(floor, x), walking: direction !== 0 });
     else fallTo(player, { x, floorHeight: floorHeightAt(floor, x), dt: sim.dt });
     if (!player.onFloor) slideOffFloorEnds(player, floor);
@@ -59,9 +64,17 @@ export const playerFeature: Feature = {
   },
 };
 
-/** Which way he walks this tick: the way the player asked, or nowhere once the level is finished. */
+/** Which way he walks this tick: the way the player asked, or nowhere while he cheers under the flag. */
 export function walkDirectionNow(sim: Sim): WalkDirection {
-  return hasFinishedLevel(sim) ? 0 : sim.stateOf(playerSlice).walkDirection;
+  return standsCheering(sim) ? 0 : sim.stateOf(playerSlice).walkDirection;
+}
+
+/**
+ * True while he stands under the flag he reached and the keys do not move him: until the next level starts, or on the
+ * last level until playing again is offered.
+ */
+export function standsCheering(sim: Sim): boolean {
+  return hasFinishedLevel(sim) && !playingAgainIsOffered(sim);
 }
 
 /** True while he is in the air because he walked off an edge, and not because he jumped. */

@@ -11,6 +11,8 @@ export interface LetterView {
   readonly at: Point;
   /** How far above that it still is, in metres: 0 once it lies on the floor. */
   readonly height: number;
+  /** True once it has been read: it lies there opened, and can be read again. */
+  readonly opened: boolean;
   /** True while he reads it: `text` is what to show him. */
   readonly beingRead: boolean;
   readonly text: string;
@@ -18,12 +20,12 @@ export interface LetterView {
   readonly teaches: string | null;
 }
 
-/** The letter in the level being played, or undefined when there is none: the level has no letter, or he has read it and put it away. */
+/** The letter in the level being played, or undefined when the level has none. */
 export function letterOf(handle: SimHandle): LetterView | undefined {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
   const placed = letterPlacedIn(handle.levelDef);
   const def = placed && letterDef(placed.defId);
   const letter = handle.stateOf(letterSlice);
-  if (!placed || !def || !letter.inLevel) return undefined;
-  return { at: placed.at, height: letter.height, beingRead: letter.beingRead, text: def.text, teaches: recipeDef(def.teachesRecipe)?.name ?? null };
+  if (!placed || !def) return undefined;
+  return { at: placed.at, height: letter.height, opened: letter.opened, beingRead: letter.beingRead, text: def.text, teaches: recipeDef(def.teachesRecipe)?.name ?? null };
 }
