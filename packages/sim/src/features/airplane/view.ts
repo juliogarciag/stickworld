@@ -59,7 +59,7 @@ export function steeringAskedOf(handle: SimHandle): SteerDirection {
 
 /**
  * What he has still to be told about flying the airplane he has, or null when there is nothing to tell: that it has
- * to be taken to an edge, until he has boarded one on this try at the level. For a view that says so beside the keys.
+ * to be taken to an edge, until he has boarded one since the level started. For a view that says so beside the keys.
  */
 export function flyingHintOf(handle: SimHandle): 'takeItToAnEdge' | null {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');

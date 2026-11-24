@@ -302,7 +302,7 @@ describe('the airplane in a snapshot', () => {
 
 const EDGE = level3.floor[0]!.to.x;
 const FAR_SIDE = level3.floor[1]!.from.x;
-/** A climb of this many ticks from the boarding crosses level 3's gap: the middle of the window `level3.test.ts` holds. */
+/** A climb of this many ticks from the boarding crosses level 3's gap: well inside the window `level3.test.ts` holds. */
 const CLIMB_TICKS_THAT_CROSS = 28;
 
 const SELECT_SLOT_1: Command = { type: 'inventory/select', slot: 1 };

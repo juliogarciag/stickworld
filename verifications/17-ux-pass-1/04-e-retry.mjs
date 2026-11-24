@@ -3,7 +3,7 @@
  * E. Try again without the chores.
  *
  * Level 3 with real keys. Checked: once he has an airplane he is told in the prompts to take it to the edge, until
- * it sits on one, and never again once he has boarded. Also: the letter he has read is gone once he puts it away, since what it taught he
+ * it sits on one, and again when the level starts again after a lost flight. Also: the letter he has read is gone once he puts it away, since what it taught he
  * knows for good; after a flight that is lost the level starts again with the airplane in his hand at once, no letter falls, and the retry
  * is a walk and two presses; and when he loses the airplane without dying, with nothing left, a sheet of paper
  * falls from the sky to where he stands, in view, and one press picks it up.
