@@ -1,0 +1,45 @@
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+index d84400a..4d56d04 100644
+--- a/.github/pull_request_template.md
++++ b/.github/pull_request_template.md
+@@ -1,6 +1,6 @@
+ <!-- Keep the headings and their order. Fill in the placeholders, replace each section's comment with what it asks for, and delete this comment and the next. Delete a section that does not apply: never leave it empty or write "N/A". -->
+ 
+-<!-- The ticket this PR closes, then the size with its one-line reason. Only when the base is not `main`, add a third line: "Stacked on #<parent PR number> (`<parent branch>`)". -->
++<!-- The ticket this PR closes, then the size with its one-line reason. The base is always `main`. Only when another ticket's unmerged branch was merged into this one, add a third line: "Includes the commits of #<other PR number> (`<other branch>`) until that one merges". -->
+ Closes #<ticket number>
+ 
+ Size: <Small | Medium | Large> (<one-line reason>)
+diff --git a/AGENTS.md b/AGENTS.md
+index c2ebfe4..9dcaf95 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -17,7 +17,8 @@ This file describes the structure the repository has and is growing into. A fold
+     - Large is any other change under `packages/sim/src/core`, a change to how the packages talk to each other, a change to how strokes are drawn for the whole game, new architecture, or a choice that needs an ADR. It gets 3 independent reviews, an ADR, and the same end-to-end verification.
+     - A security pass is added to any tier when the change adds a dependency, or reads anything from outside the game: browser storage, the URL, a file, the network.
+   - Review rounds are capped for every tier: apply must-fix findings and re-review once. If the second round still finds a must-fix, fix it and say so in the PR; there is no third round, the human's PR review is the last check. Should-fix findings go into one follow-up commit, which is not reviewed, or into a ticket.
+-  - When you start to work, create a git worktree named `{ticketNumber}-{ticketKebabTitle}` with a branch of the same name, cut from `origin/main` after a fetch (never from local `main`, which may lag). A ticket that depends on an unmerged one starts from that ticket's branch instead of waiting for the merge.
++  - A ticket whose result is only findings (a review, an analysis, a comparison) reports them in its session's final message and proposes tickets there. It gets no worktree, branch or PR unless the human asks for a file in the repository, so the steps below that need one (the verifications folder, the code reviews, the PR, the dev server) do not apply to it.
++  - When you start to work, create a git worktree named `{ticketNumber}-{ticketKebabTitle}` with a branch of the same name, cut from `origin/main` after a fetch (never from local `main`, which may lag, and never from another ticket's branch). A ticket that cannot be built without code from an unmerged ticket merges that ticket's branch into its own (a merge, never a rebase) instead of waiting for that ticket's PR to be merged.
+   - Then, think of the verifications you need to run to be sure your work is complete, and store them in a folder called `verifications/{ticketNumber}-{ticketKebabTitle}`. You can use any code you want in these verifications. The verifications are very important and have to validate your work in its entirety, from the perspective of the highest-level user of the ticket, which means user-facing features need verifications that are equal in scope to end-to-end tests. A Small ticket's folder holds only the proof of running the change once; any other starts as a copy of `verifications/_template/`. The folder is proof for its own ticket and is frozen when the PR merges: nobody runs, repairs or reads another ticket's folder afterwards, and a frozen script that fails against a later `main` is expected, not a bug.
+   - Then, they should work until the work is done. The work is only done when:
+     - The verifications are true.
+@@ -25,7 +26,9 @@ This file describes the structure the repository has and is growing into. A fold
+     - The independent code reviews (sub-agents) the ticket's size calls for have run and passed.
+     - A security pass has been completed, when the change calls for one.
+   - When the work is done, it should create a PR. Tickets should aim for a 1-to-1 relationship with PRs.
++  - Every PR's base is `main`. No PR targets another ticket's branch: merging such a PR puts the work into that branch instead of `main`. A ticket that merged an unmerged ticket's branch into its own still opens its PR against `main`, and says at the top of the PR body that the diff includes the other ticket's commits until that one merges.
+   - The PR body is `.github/pull_request_template.md` filled in. `gh pr create --body` does not apply the template by itself: read the file, keep its headings and their order, fill in the placeholders, replace each section's comment with what it asks for, and delete a section that does not apply. Lead with a plain summary of what changed and why before any file or mechanism.
++  - `gh pr edit` fails in this repository on a deprecated projects query. Change a PR's base or body with `gh api -X PATCH repos/juliogarciag/stickworld/pulls/<n>` (`-f base=main`, `-F body=@<file>`).
+   - When the PR is ready, the result must be ready to try, without being asked: leave a dev server running from the worktree on a pinned port (`PORT=<n> pnpm dev`, see "Worktrees and ports"), open it in the browser pane, and put the URL and the proof screenshots in the final message. The human should be able to play the change the moment they read the message. Keep the server running until the PR is merged or the human stops it.
+   - The session then stays open for regular feedback loop with the human in charge.
+   - Once the PR has been approved by a human, you merge it.
+@@ -175,7 +178,7 @@ Example: an `airplane` feature where the stick man places a paper airplane and f
+ 
+ **Worktrees and ports**
+ 
+-- Every ticket is worked on in its own git worktree under `.worktrees/` (gitignored) on a branch with the same name. Each worktree needs its own `pnpm install`.
++- Every ticket that changes the repository is worked on in its own git worktree under `.worktrees/` (gitignored) on a branch with the same name. Each worktree needs its own `pnpm install`.
+ - Nothing hardcodes a port. `PORT=<n> pnpm dev` pins the dev server (and fails if `<n>` is busy); unset, Vite picks a free one starting at 5173. Only the shell environment counts: `.env` files are not read for this.
+ - `.claude/launch.json` lets the desktop app preview the client from the main checkout; it lists 5173 as the port to open. Worktrees are previewed by starting `PORT=<n> pnpm dev` and opening that URL.
+ - Pick a port for the ticket that no other session is likely to use (for example `5200 + ticketNumber`), start the server in the background so it outlives the command, and mention the exact `PORT=<n> pnpm dev` line in the final message so the human can restart it in their own terminal. If they do, stop yours first: a pinned port refuses to start twice.
