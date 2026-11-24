@@ -19,8 +19,6 @@ export const AIRPLANE = {
   savedPastTheEdge: 0.35,
   /** How far back from the end of the line its middle sits once it has been pulled back. */
   sitsBackFromTheEdge: 0.1,
-  /** Where he is shown to put it to board it: its middle this share of its length back from the end of the line, so its nose is well out over the gap. */
-  shownBackFromTheEdge: 0.25,
   /** How fast it falls faster, in metres per second squared. Paper: much slower than he does. */
   gravity: 7,
 } as const;

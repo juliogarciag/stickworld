@@ -1,59 +1,47 @@
 {
   "wide": {
-    "outline": {
-      "at": {
-        "x": 9.65,
-        "y": 0
-      },
-      "edge": 10,
-      "ink": 212
+    "hint": {
+      "inkOfThePromptsWithIt": 4645,
+      "inkOfThePromptsOnTheEdge": 2377
     },
     "retry": {
       "presses": 2,
-      "seconds": 4.18,
-      "walkedMetres": 6.53
+      "seconds": 3.17,
+      "walkedMetres": 6.56
     },
     "fallenPaper": {
       "fellAfterSeconds": 0.62,
-      "inkOnTheFloor": 185
+      "inkOnTheFloor": 182
     }
   },
   "narrow": {
-    "outline": {
-      "at": {
-        "x": 9.65,
-        "y": 0
-      },
-      "edge": 10,
-      "ink": 40
+    "hint": {
+      "inkOfThePromptsWithIt": 3114,
+      "inkOfThePromptsOnTheEdge": 1549
     },
     "retry": {
       "presses": 2,
-      "seconds": 4.18,
-      "walkedMetres": 6.53
-    },
-    "fallenPaper": {
-      "fellAfterSeconds": 0.63,
-      "inkOnTheFloor": 106
-    }
-  },
-  "portrait": {
-    "outline": {
-      "at": {
-        "x": 9.65,
-        "y": 0
-      },
-      "edge": 10,
-      "ink": 11
-    },
-    "retry": {
-      "presses": 2,
-      "seconds": 4.18,
+      "seconds": 3.17,
       "walkedMetres": 6.53
     },
     "fallenPaper": {
       "fellAfterSeconds": 0.6,
-      "inkOnTheFloor": 26
+      "inkOnTheFloor": 103
+    }
+  },
+  "portrait": {
+    "hint": {
+      "inkOfThePromptsWithIt": 915,
+      "inkOfThePromptsOnTheEdge": 466
+    },
+    "retry": {
+      "presses": 2,
+      "seconds": 3.15,
+      "walkedMetres": 6.53
+    },
+    "fallenPaper": {
+      "fellAfterSeconds": 0.62,
+      "inkOnTheFloor": 28
     }
   },
   "results": [
@@ -66,18 +54,17 @@
       "pass": true
     },
     {
-      "name": "wide: nothing shows where an airplane goes until he has one",
+      "name": "wide: nothing is said about the edge until he has an airplane",
       "pass": true
     },
     {
-      "name": "wide: once he has one, its outline is drawn on the ground at the edge of the gap, nose out over it",
+      "name": "wide: carrying it, he is told in the prompts to take the airplane to the edge: a line of words above the key",
       "pass": true,
-      "details": "at 9.65 m, the edge is at 10 m; 212 pixels of pencil there"
+      "details": "4645 pixels of pencil in the prompts' corner with it, 2377 once it sits on the edge and only \"board the airplane\" is left"
     },
     {
-      "name": "wide: put down in the outline it sits on the edge, K boards it, and the outline has nothing left to show",
-      "pass": true,
-      "details": "the airplane's middle is at 9.43 m"
+      "name": "wide: once it sits on the edge the line is gone and K boards it",
+      "pass": true
     },
     {
       "name": "wide: the first flight was flown from the edge and lost",
@@ -89,14 +76,13 @@
       "details": "slot 1 holds def 201, J would \"place\""
     },
     {
-      "name": "wide: he has boarded once: on the retry no outline is drawn, he knows where it goes",
-      "pass": true,
-      "details": "0 pixels of pencil where it was"
+      "name": "wide: he has boarded once: on the retry he is not told again",
+      "pass": true
     },
     {
       "name": "wide: a retry is walk, set down, board: two presses",
       "pass": true,
-      "details": "4.18 s from the restart to the seat, 6.53 m of it walking"
+      "details": "3.17 s from the restart to the seat, 6.56 m of it walking"
     },
     {
       "name": "wide: nothing fell, and no letter lies there: he has nothing to read again",
@@ -119,25 +105,24 @@
     {
       "name": "wide: it lies there, drawn, and one press picks it up into his hand: nothing is read",
       "pass": true,
-      "details": "185 pixels of pencil where it lay; J would \"craft\""
+      "details": "182 pixels of pencil where it lay; J would \"craft\""
     },
     {
       "name": "narrow: a letter he has read is gone once he puts it away, and what it taught stays: J would fold",
       "pass": true
     },
     {
-      "name": "narrow: nothing shows where an airplane goes until he has one",
+      "name": "narrow: nothing is said about the edge until he has an airplane",
       "pass": true
     },
     {
-      "name": "narrow: once he has one, its outline is drawn on the ground at the edge of the gap, nose out over it",
+      "name": "narrow: carrying it, he is told in the prompts to take the airplane to the edge: a line of words above the key",
       "pass": true,
-      "details": "at 9.65 m, the edge is at 10 m; 40 pixels of pencil there"
+      "details": "3114 pixels of pencil in the prompts' corner with it, 1549 once it sits on the edge and only \"board the airplane\" is left"
     },
     {
-      "name": "narrow: put down in the outline it sits on the edge, K boards it, and the outline has nothing left to show",
-      "pass": true,
-      "details": "the airplane's middle is at 9.43 m"
+      "name": "narrow: once it sits on the edge the line is gone and K boards it",
+      "pass": true
     },
     {
       "name": "narrow: the first flight was flown from the edge and lost",
@@ -149,14 +134,13 @@
       "details": "slot 1 holds def 201, J would \"place\""
     },
     {
-      "name": "narrow: he has boarded once: on the retry no outline is drawn, he knows where it goes",
-      "pass": true,
-      "details": "0 pixels of pencil where it was"
+      "name": "narrow: he has boarded once: on the retry he is not told again",
+      "pass": true
     },
     {
       "name": "narrow: a retry is walk, set down, board: two presses",
       "pass": true,
-      "details": "4.18 s from the restart to the seat, 6.53 m of it walking"
+      "details": "3.17 s from the restart to the seat, 6.53 m of it walking"
     },
     {
       "name": "narrow: nothing fell, and no letter lies there: he has nothing to read again",
@@ -169,7 +153,7 @@
     {
       "name": "narrow: with neither paper nor airplane a sheet of paper falls from the sky, and no letter",
       "pass": true,
-      "details": "it started 0.63 s after the airplane was lost"
+      "details": "it started 0.6 s after the airplane was lost"
     },
     {
       "name": "narrow: it comes down where he stands, in view, and can be picked up without a step",
@@ -179,25 +163,24 @@
     {
       "name": "narrow: it lies there, drawn, and one press picks it up into his hand: nothing is read",
       "pass": true,
-      "details": "106 pixels of pencil where it lay; J would \"craft\""
+      "details": "103 pixels of pencil where it lay; J would \"craft\""
     },
     {
       "name": "portrait: a letter he has read is gone once he puts it away, and what it taught stays: J would fold",
       "pass": true
     },
     {
-      "name": "portrait: nothing shows where an airplane goes until he has one",
+      "name": "portrait: nothing is said about the edge until he has an airplane",
       "pass": true
     },
     {
-      "name": "portrait: once he has one, its outline is drawn on the ground at the edge of the gap, nose out over it",
+      "name": "portrait: carrying it, he is told in the prompts to take the airplane to the edge: a line of words above the key",
       "pass": true,
-      "details": "at 9.65 m, the edge is at 10 m; 11 pixels of pencil there"
+      "details": "915 pixels of pencil in the prompts' corner with it, 466 once it sits on the edge and only \"board the airplane\" is left"
     },
     {
-      "name": "portrait: put down in the outline it sits on the edge, K boards it, and the outline has nothing left to show",
-      "pass": true,
-      "details": "the airplane's middle is at 9.43 m"
+      "name": "portrait: once it sits on the edge the line is gone and K boards it",
+      "pass": true
     },
     {
       "name": "portrait: the first flight was flown from the edge and lost",
@@ -209,14 +192,13 @@
       "details": "slot 1 holds def 201, J would \"place\""
     },
     {
-      "name": "portrait: he has boarded once: on the retry no outline is drawn, he knows where it goes",
-      "pass": true,
-      "details": "0 pixels of pencil where it was"
+      "name": "portrait: he has boarded once: on the retry he is not told again",
+      "pass": true
     },
     {
       "name": "portrait: a retry is walk, set down, board: two presses",
       "pass": true,
-      "details": "4.18 s from the restart to the seat, 6.53 m of it walking"
+      "details": "3.15 s from the restart to the seat, 6.53 m of it walking"
     },
     {
       "name": "portrait: nothing fell, and no letter lies there: he has nothing to read again",
@@ -229,7 +211,7 @@
     {
       "name": "portrait: with neither paper nor airplane a sheet of paper falls from the sky, and no letter",
       "pass": true,
-      "details": "it started 0.6 s after the airplane was lost"
+      "details": "it started 0.62 s after the airplane was lost"
     },
     {
       "name": "portrait: it comes down where he stands, in view, and can be picked up without a step",
@@ -239,7 +221,7 @@
     {
       "name": "portrait: it lies there, drawn, and one press picks it up into his hand: nothing is read",
       "pass": true,
-      "details": "26 pixels of pencil where it lay; J would \"craft\""
+      "details": "28 pixels of pencil where it lay; J would \"craft\""
     },
     {
       "name": "no page errors",

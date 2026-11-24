@@ -1,8 +1,8 @@
-import { airplaneOf, boardingSpotOf, fallenItemOf, flagOf, letterOf, levelOf, notesOf, stickManOf, type SimHandle } from '@stickworld/sim';
+import { airplaneOf, fallenItemOf, flagOf, letterOf, levelOf, notesOf, stickManOf, type SimHandle } from '@stickworld/sim';
 import type Phaser from 'phaser';
 import { keptWhileUnchanged } from '../hud/unchanged';
 import { MOVE_KEY_NAMES } from '../input/playerKeys';
-import { airplanesEasedOverTime, airplaneStrokes, boardingSpotStrokes, heightItTurnsAbout } from '../render/airplane';
+import { airplanesEasedOverTime, airplaneStrokes, heightItTurnsAbout } from '../render/airplane';
 import { worldSeenBy } from '../render/cameraView';
 import { flagStrokes } from '../render/flag';
 import { floorStrokes } from '../render/floor';
@@ -31,8 +31,7 @@ export interface SheetNow {
  * One sheet of paper with a level drawn on it, in a scene of its own camera:
  * the paper, what is written on it (the level's name, its notes, the page
  * number), the floor line, the flag, the letter or the sheet of paper that
- * fell in its place, the outline of where the airplane goes, the airplane
- * and the stick
+ * fell in its place, the airplane and the stick
  * man, each as the sim it is shown says it is. The level being played is one
  * of these, and so is the sheet that is turned away when a level is finished.
  */
@@ -43,14 +42,12 @@ export class Sheet {
   private readonly floor: StrokeLayer;
   private readonly flag: StrokeLayer;
   private readonly letter: StrokeLayer;
-  private readonly boardingSpot: StrokeLayer;
   private readonly airplane: StrokeLayer;
   private readonly stickMan: StrokeLayer;
   private readonly poseFor = posesEasedOverTime();
   private readonly airplaneShownFor = airplanesEasedOverTime();
   private readonly strokesOfWhatIsWritten = keptWhileUnchanged<readonly Stroke[]>();
   private readonly strokesOfThePageNumber = keptWhileUnchanged<Stroke[]>();
-  private readonly strokesOfTheBoardingSpot = keptWhileUnchanged<Stroke[]>();
 
   constructor(private readonly scene: Phaser.Scene) {
     this.paper = layPaper(scene);
@@ -59,14 +56,13 @@ export class Sheet {
     this.floor = createStrokeLayer(scene);
     this.flag = createStrokeLayer(scene);
     this.letter = createStrokeLayer(scene);
-    this.boardingSpot = createStrokeLayer(scene);
     this.airplane = createStrokeLayer(scene);
     this.stickMan = createStrokeLayer(scene);
   }
 
   /** Takes everything off the sheet: its layers have nothing to draw, or to redraw as they boil, until it is drawn again. */
   clear(): void {
-    for (const layer of [this.written, this.pageNumber, this.floor, this.flag, this.letter, this.boardingSpot, this.airplane, this.stickMan]) layer.show(NOTHING);
+    for (const layer of [this.written, this.pageNumber, this.floor, this.flag, this.letter, this.airplane, this.stickMan]) layer.show(NOTHING);
   }
 
   /** Draws the sheet as the scene's camera sees it right now. Call after moving the camera, every frame. */
@@ -93,8 +89,6 @@ export class Sheet {
     // One layer for both: the sheet only ever falls where a letter no longer lies.
     const fallenItem = fallenItemOf(sim);
     this.letter.show(letter ? letterStrokes(letter) : fallenItem ? fallenPaperStrokes(fallenItem) : []);
-    const boardingSpot = boardingSpotOf(sim);
-    this.boardingSpot.show(this.strokesOfTheBoardingSpot(JSON.stringify(boardingSpot ?? null), () => (boardingSpot ? boardingSpotStrokes(boardingSpot) : [])));
     this.airplane.show(airplane ? airplaneStrokes(airplane) : []);
     const pose = this.poseFor(stickMan, seconds, level.floor);
     // Seated, he tips with the airplane as it is drawn, about the point it is drawn turning about: its middle.

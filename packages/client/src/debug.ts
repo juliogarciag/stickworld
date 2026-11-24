@@ -1,5 +1,5 @@
-import type { AirplaneView, BoardingSpotView, Command, CraftingView, Def, FallenItemView, FlagView, GameView, InteractionMeaning, ItemSlot, ItemUseMeaning, LetterView, Level, NoteView, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
-import { airplaneOf, boardingSpotOf, craftingOf, defs, fallenItemOf, flagOf, gameOf, hashSnapshot, interactionOf, itemSlotsOf, itemUseOf, letterOf, levelOf, notesOf, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf } from '@stickworld/sim';
+import type { AirplaneView, Command, CraftingView, Def, FallenItemView, FlagView, GameView, InteractionMeaning, ItemSlot, ItemUseMeaning, LetterView, Level, NoteView, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
+import { airplaneOf, craftingOf, defs, fallenItemOf, flagOf, flyingHintOf, gameOf, hashSnapshot, interactionOf, itemSlotsOf, itemUseOf, letterOf, levelOf, notesOf, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf } from '@stickworld/sim';
 import type Phaser from 'phaser';
 import { itemSlotBox, type Rectangle } from './hud/itemSlots';
 import type { GameLoop } from './loop/GameLoop';
@@ -50,8 +50,8 @@ export interface GameDebugApi {
   crafting(): CraftingView;
   /** The airplane in the world as the sim has it right now, or undefined while there is none. */
   airplane(): AirplaneView | undefined;
-  /** Where he is shown to put the airplane to board it, as the sim has it right now, or undefined when nothing is shown. */
-  boardingSpot(): BoardingSpotView | undefined;
+  /** What he has still to be told about flying the airplane he has, as the sim has it right now, or null. */
+  flyingHint(): 'takeItToAnEdge' | null;
   /** What using the held item would do right now, or null. */
   itemUse(): ItemUseMeaning | null;
   /** What interacting with the world would do right now, or null. */
@@ -139,7 +139,7 @@ export function exposeDebugApi({ loop, game, pageTurn }: { loop: GameLoop; game:
     fallenItem: () => fallenItemOf(loop.sim),
     crafting: () => craftingOf(loop.sim),
     airplane: () => airplaneOf(loop.sim),
-    boardingSpot: () => boardingSpotOf(loop.sim),
+    flyingHint: () => flyingHintOf(loop.sim),
     itemUse: () => itemUseOf(loop.sim),
     interaction: () => interactionOf(loop.sim),
     queueCommand: (command) => loop.queueCommand(command),

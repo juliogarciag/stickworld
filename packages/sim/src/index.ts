@@ -29,7 +29,7 @@ export { interactionOf } from './features/world/view';
 export { craftingOf, type CraftingView, type RecipeView } from './features/crafting/view';
 export { fallenItemOf, letterOf, type FallenItemView, type LetterView } from './features/letter/view';
 export type { AirplaneCommand, AirplaneSteerCommand, SteerDirection } from './features/airplane/commands';
-export { airplaneOf, boardingSpotOf, steeringAskedOf, type AirplaneView, type BoardingSpotView } from './features/airplane/view';
+export { airplaneOf, flyingHintOf, steeringAskedOf, type AirplaneView } from './features/airplane/view';
 export type { GameCommand, GamePlayAgainCommand } from './features/game/commands';
 export { gameOf, type GameView } from './features/game/view';
 export { notesOf, type NoteView } from './features/note/view';

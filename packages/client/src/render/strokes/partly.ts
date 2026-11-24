@@ -26,20 +26,6 @@ export function rubbedOutSoFar(strokes: readonly Stroke[], share: number): reado
   return keptBetween(strokes, { from: Math.min(1, share), to: 1 });
 }
 
-/**
- * `strokes` as dotted lines: short dashes `dash` long with `gap` between them, along the same paths. For the outline
- * of something that is not there: where a thing goes.
- */
-export function dotted(strokes: readonly Stroke[], { dash, gap }: { dash: number; gap: number }): Stroke[] {
-  return strokes.flatMap((stroke) => {
-    const path = pathOf(stroke);
-    const length = lengthOf(path);
-    const dashes: Stroke[] = [];
-    for (let from = 0; from < length - SHORTEST_PIECE; from += dash + gap) dashes.push({ points: cutBetween(path, { from, to: Math.min(length, from + dash) }), thickness: stroke.thickness });
-    return dashes;
-  });
-}
-
 // ---- Helpers ----
 
 /** Every stroke cut down to the part of it between the shares `from` and `to` of the length of all of them together. */

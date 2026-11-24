@@ -68,20 +68,16 @@ export function sitsOnAnEdge(sim: Sim): boolean {
 }
 
 /**
- * Where the middle of an airplane's underside is when it sits on the nearest edge it could be boarded from, nose to
- * the right: the end of a floor line with floor further on, the airplane a quarter of its length out over the gap.
- * Undefined unless he has an airplane he has still to put there, and has never boarded one: after that he knows.
+ * True while he has an airplane that he has still to take to an edge: it is in his slot, on the floor away from an
+ * edge or over his head, the level has an edge to fly from, and he has never boarded one. After his first boarding
+ * he knows, and it is never true again in that game.
  */
-export function whereToPutItToBoard(sim: Sim): { x: number; y: number } | undefined {
+export function hasYetToTakeItToAnEdge(sim: Sim): boolean {
   const airplane = sim.stateOf(airplaneSlice);
   const inFlight = airplane.inWorld && (airplane.flying || airplane.falling || airplane.sliding);
-  if (sim.stateOf(hasBoardedSlice) || !hasAirplane(sim) || inFlight || sitsOnAnEdge(sim)) return undefined;
+  if (sim.stateOf(hasBoardedSlice) || !hasAirplane(sim) || inFlight || sitsOnAnEdge(sim)) return false;
   const { floor } = sim.levelDef;
-  const { x } = sim.stateOf(playerSlice);
-  const edges = floor.filter((line) => floor.some((other) => other.from.x > line.to.x)).map((line) => line.to);
-  if (edges.length === 0) return undefined;
-  const nearest = edges.reduce((best, edge) => (Math.abs(edge.x - x) < Math.abs(best.x - x) ? edge : best));
-  return { x: nearest.x - AIRPLANE.length * AIRPLANE.shownBackFromTheEdge, y: nearest.y };
+  return floor.some((line) => floor.some((other) => other.from.x > line.to.x));
 }
 
 /** What using the held item does when it is the airplane, for `features/item`: it is put on the floor in front of him. */

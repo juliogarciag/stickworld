@@ -2,17 +2,14 @@
 /**
  * E. Try again without the chores.
  *
- * Level 3 with real keys. Checked: once he has an airplane, the outline of one is drawn on the ground at the edge,
- * where it is boarded from, until he has boarded once. Also: the letter he has read is gone once he puts it away, since what it taught he
+ * Level 3 with real keys. Checked: once he has an airplane he is told in the prompts to take it to the edge, until
+ * it sits on one, and never again once he has boarded. Also: the letter he has read is gone once he puts it away, since what it taught he
  * knows for good; after a flight that is lost the level starts again with the airplane in his hand at once, no letter falls, and the retry
  * is a walk and two presses; and when he loses the airplane without dying, with nothing left, a sheet of paper
  * falls from the sky to where he stands, in view, and one press picks it up.
  */
 import { ROOT } from './lib.mjs';
 import { fly, gapOf, putTheCarriedAirplaneOnTheEdge, readTheLetter, round, verify } from './play.mjs';
-
-/** The outline as small as the portrait window draws it, with the view pulled back, is this many pixels of pencil at the least; bare ground is none. */
-const LEAST_INK_OF_THE_OUTLINE = 5;
 
 await verify({ name: '04-e-retry', port: 5917, cwd: ROOT }, async ({ size, open, expect }) => {
   const report = {};
@@ -39,21 +36,23 @@ await verify({ name: '04-e-retry', port: 5917, cwd: ROOT }, async ({ size, open,
   for (const key of ['j', 'k']) await game.tap(key);
   await game.seconds(0.3);
 
-  // Where it goes: a dotted outline of the airplane on the ground at the edge, from the moment he has one. Seen as he carries it there.
+  // Where it goes: said above the keys, in words, from the moment he has one. Seen as he carries it there.
   await game.walkRightTo(gap.from - 3);
   await game.seconds(1.2);
   const carrying = await game.state();
-  const outlineOf = (spot) => game.regionOf({ left: spot.at.x - spot.length / 2 - 0.05, right: spot.at.x + spot.length / 2 + 0.05, top: -spot.height - 0.06, bottom: -0.05 });
-  const whereItGoes = carrying.boardingSpot;
-  const inkOfTheOutline = whereItGoes ? await game.inkIn(await outlineOf(whereItGoes)) : 0;
-  await game.shot('e-the-outline-of-where-the-airplane-goes');
-  report.outline = { at: whereItGoes?.at ?? null, edge: gap.from, ink: inkOfTheOutline };
-  expect('nothing shows where an airplane goes until he has one', beforeTheFold.boardingSpot === null && folded.boardingSpot !== null);
-  expect('once he has one, its outline is drawn on the ground at the edge of the gap, nose out over it', whereItGoes && whereItGoes.at.x < gap.from && whereItGoes.at.x + whereItGoes.length / 2 > gap.from && inkOfTheOutline > LEAST_INK_OF_THE_OUTLINE, `at ${round(whereItGoes?.at.x ?? 0)} m, the edge is at ${gap.from} m; ${inkOfTheOutline} pixels of pencil there`);
+  /** The corner of the window the prompts are written in. */
+  const prompts = { x: 0, y: size.height * 0.75, width: size.width * 0.8, height: size.height * 0.25 };
+  const inkWithTheHint = await game.inkIn(prompts);
+  await game.shot('e-told-to-take-the-airplane-to-the-edge');
+  expect('nothing is said about the edge until he has an airplane', beforeTheFold.flyingHint === null && folded.flyingHint === 'takeItToAnEdge');
   const carried = await putTheCarriedAirplaneOnTheEdge(game);
+  await game.seconds(0.3);
   const onTheEdge = await game.state();
-  expect('put down in the outline it sits on the edge, K boards it, and the outline has nothing left to show', carried && onTheEdge.interaction === 'board' && onTheEdge.boardingSpot === null && Math.abs(onTheEdge.airplane.at.x - whereItGoes.at.x) < 0.6, `the airplane's middle is at ${round(onTheEdge.airplane.at.x)} m`);
-  const edgeSpot = (await game.state()).stickMan.feet.x;
+  const edgeSpot = onTheEdge.stickMan.feet.x;
+  const inkOnTheEdge = await game.inkIn(prompts);
+  report.hint = { inkOfThePromptsWithIt: inkWithTheHint, inkOfThePromptsOnTheEdge: inkOnTheEdge };
+  expect('carrying it, he is told in the prompts to take the airplane to the edge: a line of words above the key', carrying.flyingHint === 'takeItToAnEdge' && carrying.interaction === 'putDown' && inkWithTheHint > inkOnTheEdge * 1.5, `${inkWithTheHint} pixels of pencil in the prompts' corner with it, ${inkOnTheEdge} once it sits on the edge and only "board the airplane" is left`);
+  expect('once it sits on the edge the line is gone and K boards it', carried && onTheEdge.interaction === 'board' && onTheEdge.flyingHint === null);
   await game.seconds(0.5);
   await fly(game, 0);
   await game.until((state) => state.stickMan.feet.x < gap.from && state.stickMan.action === 'standing' && state.airplane === null);
@@ -67,9 +66,7 @@ await verify({ name: '04-e-retry', port: 5917, cwd: ROOT }, async ({ size, open,
   const retryStartedAt = restarted.tick;
   await game.walkRightTo(edgeSpot);
   const noLetterFell = await game.state();
-  await game.seconds(1);
-  const inkWhereTheOutlineWas = await game.inkIn(await outlineOf(whereItGoes));
-  expect('he has boarded once: on the retry no outline is drawn, he knows where it goes', noLetterFell.boardingSpot === null && inkWhereTheOutlineWas === 0, `${inkWhereTheOutlineWas} pixels of pencil where it was`);
+  expect('he has boarded once: on the retry he is not told again', noLetterFell.flyingHint === null && restarted.flyingHint === null);
   await game.tap('j');
   const setDown = await game.state();
   await game.shot('e-retry-airplane-set-down-on-the-edge');

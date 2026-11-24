@@ -1,4 +1,4 @@
-import { craftingOf, flagOf, gameOf, interactionOf, itemSlotsOf, itemUseOf, letterOf, stickManOf } from '@stickworld/sim';
+import { craftingOf, flagOf, flyingHintOf, gameOf, interactionOf, itemSlotsOf, itemUseOf, letterOf, stickManOf } from '@stickworld/sim';
 import Phaser from 'phaser';
 import { itemSlotStrokes } from '../hud/itemSlots';
 import { pageEdgeStrokes } from '../hud/pageEdge';
@@ -72,6 +72,7 @@ export class HudScene extends Phaser.Scene {
       interactKey: ACTION_KEY_NAMES.interact,
       seated: stickManOf(sim).action === 'seated',
       flightKeys: FLIGHT_KEY_NAMES,
+      flyingHint: flyingHintOf(sim),
     });
     this.prompts.show(this.strokesOfPrompts(JSON.stringify([prompts, seen]), () => promptStrokes(prompts, seen)));
 

@@ -14,7 +14,7 @@ import { stickManOf } from '../player/view';
 import { interactionOf } from '../world/view';
 import { AIRPLANE, FLIGHT } from './defs';
 import { __testing__, hasAirplane } from './index';
-import { airplaneOf, boardingSpotOf } from './view';
+import { airplaneOf, flyingHintOf } from './view';
 
 describe('placing the airplane', () => {
   it('puts it on the floor in front of him, the way he faces, and empties the slot', () => {
@@ -225,58 +225,55 @@ describe('losing the airplane', () => {
   });
 });
 
-describe('where the airplane is put to be boarded', () => {
-  it('is not shown to him who has no airplane: before the letter, and with only the paper', () => {
+describe('that the airplane has to be taken to an edge', () => {
+  it('is not said to him who has no airplane: before the letter, and with only the paper', () => {
     const sim = new Sim({ features, start: { seed: 1, level: 3 } });
-    expect(boardingSpotOf(sim)).toBeUndefined();
+    expect(flyingHintOf(sim)).toBeNull();
     giveItem(sim, PAPER_ITEM_ID);
-    expect(boardingSpotOf(sim)).toBeUndefined();
+    expect(flyingHintOf(sim)).toBeNull();
   });
 
-  it('is shown from the moment he has one, in his slot, on the floor or over his head: at the edge of the gap, nose out', () => {
-    const spot = { at: { x: EDGE - AIRPLANE.length * AIRPLANE.shownBackFromTheEdge, y: 0 }, facing: 1, length: AIRPLANE.length, height: AIRPLANE.height };
+  it('is said from the moment he has one, in his slot, on the floor away from an edge or over his head', () => {
     const sim = holdingTheAirplane();
-    expect(boardingSpotOf(sim)).toEqual(spot);
-    expect(spot.at.x + AIRPLANE.length / 2).toBeGreaterThan(EDGE);
+    expect(flyingHintOf(sim)).toBe('takeItToAnEdge');
     sim.step([USE_ITEM]);
     expect(airplaneOf(sim)).toMatchObject({ state: 'resting', onAnEdge: false });
-    expect(boardingSpotOf(sim)).toEqual(spot);
+    expect(flyingHintOf(sim)).toBe('takeItToAnEdge');
     sim.step([INTERACT]);
-    expect(boardingSpotOf(sim)).toEqual(spot);
+    expect(airplaneOf(sim)!.state).toBe('carried');
+    expect(flyingHintOf(sim)).toBe('takeItToAnEdge');
   });
 
-  it('is a place it can be boarded from: put down exactly there it sits on the edge, and then there is nothing left to show', () => {
+  it('is no longer said once it sits on an edge, where the key boards it', () => {
     const sim = carryingTheAirplane();
-    const spot = boardingSpotOf(sim)!;
-    walkTo(sim, spot.at.x - AIRPLANE.putDownAhead);
+    walkTo(sim, EDGE - AIRPLANE.putDownAhead - AIRPLANE.length / 4);
     sim.step([INTERACT]);
     expect(airplaneOf(sim)).toMatchObject({ state: 'resting', onAnEdge: true });
-    expect(airplaneOf(sim)!.at.x).toBeCloseTo(spot.at.x, 1);
     expect(interactionOf(sim)).toBe('board');
-    expect(boardingSpotOf(sim)).toBeUndefined();
+    expect(flyingHintOf(sim)).toBeNull();
   });
 
-  it('is never shown again once he has boarded: not in flight, not after the level starts again, until the game is played again', () => {
+  it('is never said again once he has boarded: not in flight, not after the level starts again, until the game is played again', () => {
     const sim = carryingTheAirplane();
-    walkTo(sim, boardingSpotOf(sim)!.at.x - AIRPLANE.putDownAhead);
+    walkTo(sim, EDGE - AIRPLANE.putDownAhead - AIRPLANE.length / 4);
     sim.step([INTERACT]);
     sim.step([INTERACT]);
     expect(stickManOf(sim).action).toBe('seated');
-    expect(boardingSpotOf(sim)).toBeUndefined();
+    expect(flyingHintOf(sim)).toBeNull();
     for (let tick = 0; tick < 600 && !(stickManOf(sim).action === 'standing' && stickManOf(sim).feet.x === level3.start.x); tick += 1) sim.step();
     // The flight was lost: he is back at the start with an airplane in his hand, and knows where it goes.
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBe(AIRPLANE_ITEM_ID);
-    expect(boardingSpotOf(sim)).toBeUndefined();
+    expect(flyingHintOf(sim)).toBeNull();
     sim.startOver();
     giveItem(sim, AIRPLANE_ITEM_ID);
     sim.startLevel(3);
-    expect(boardingSpotOf(sim)).toBeDefined();
+    expect(flyingHintOf(sim)).toBe('takeItToAnEdge');
   });
 
-  it('is nowhere on a level with no gap to fly over', () => {
+  it('is not said on a level with no gap to fly over', () => {
     const sim = new Sim({ features, start: { seed: 1, level: 1 } });
     giveItem(sim, AIRPLANE_ITEM_ID);
-    expect(boardingSpotOf(sim)).toBeUndefined();
+    expect(flyingHintOf(sim)).toBeNull();
   });
 });
 
