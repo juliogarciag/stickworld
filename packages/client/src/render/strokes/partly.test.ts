@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { rubbedOutSoFar, writtenSoFar } from './partly';
+import { dotted, rubbedOutSoFar, writtenSoFar } from './partly';
 import type { Stroke } from './stroke';
 
 describe('writtenSoFar', () => {
@@ -51,6 +51,27 @@ describe('rubbedOutSoFar', () => {
       const lengths = [...writtenSoFar(TWO_LINES_AND_A_SQUARE, share), ...rubbedOutSoFar(TWO_LINES_AND_A_SQUARE, share)].map(lengthOf);
       expect(lengths.reduce((sum, length) => sum + length, 0)).toBeCloseTo(80, 9);
     }
+  });
+});
+
+describe('dotted', () => {
+  it('is the same paths as short dashes with gaps between them, every dash on the path', () => {
+    const dashes = dotted(TWO_LINES_AND_A_SQUARE, { dash: 4, gap: 6 });
+    // 10, 30 and 40 long: one dash every 10.
+    expect(dashes).toHaveLength(1 + 3 + 4);
+    for (const dash of dashes) expect(lengthOf(dash)).toBeCloseTo(4, 9);
+    expect(dashes[0]).toEqual({ points: [{ x: 0, y: 0 }, { x: 4, y: 0 }], thickness: 1 });
+    expect(dashes[1]).toEqual({ points: [{ x: 0, y: 10 }, { x: 4, y: 10 }], thickness: 2 });
+    expect(dashes[2]!.points[0]).toEqual({ x: 10, y: 10 });
+    // The square's dashes go round it, and none of them is a loop.
+    expect(dashes.slice(4).map((dash) => dash.points[0])).toEqual([{ x: 0, y: 20 }, { x: 10, y: 20 }, { x: 10, y: 30 }, { x: 0, y: 30 }]);
+    expect(dashes.some((dash) => dash.closed)).toBe(false);
+  });
+
+  it('covers less than the whole, and nothing for no strokes', () => {
+    const drawn = dotted(TWO_LINES_AND_A_SQUARE, { dash: 4, gap: 6 }).reduce((sum, dash) => sum + lengthOf(dash), 0);
+    expect(drawn).toBeCloseTo(32, 9);
+    expect(dotted([], { dash: 4, gap: 6 })).toEqual([]);
   });
 });
 

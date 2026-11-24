@@ -2,20 +2,28 @@ PASS  dev server up, started by this run
 
 --- wide window, 1600 x 900 ---
 PASS  wide: a letter he has read is gone once he puts it away, and what it taught stays: J would fold
+PASS  wide: nothing shows where an airplane goes until he has one
+PASS  wide: once he has one, its outline is drawn on the ground at the edge of the gap, nose out over it  (at 9.65 m, the edge is at 10 m; 212 pixels of pencil there)
+PASS  wide: put down in the outline it sits on the edge, K boards it, and the outline has nothing left to show  (the airplane's middle is at 9.43 m)
 PASS  wide: the first flight was flown from the edge and lost
 PASS  wide: the level starts again with the airplane in his hand at once  (slot 1 holds def 201, J would "place")
-PASS  wide: a retry is walk, set down, board: two presses  (3.17 s from the restart to the seat, 6.53 m of it walking)
+PASS  wide: he has boarded once: on the retry no outline is drawn, he knows where it goes  (0 pixels of pencil where it was)
+PASS  wide: a retry is walk, set down, board: two presses  (4.18 s from the restart to the seat, 6.53 m of it walking)
 PASS  wide: nothing fell, and no letter lies there: he has nothing to read again
 PASS  wide: an airplane set down past the edge is lost, and he is left with nothing
-PASS  wide: with neither paper nor airplane a sheet of paper falls from the sky, and no letter  (it started 0.6 s after the airplane was lost)
+PASS  wide: with neither paper nor airplane a sheet of paper falls from the sky, and no letter  (it started 0.62 s after the airplane was lost)
 PASS  wide: it comes down where he stands, in view, and can be picked up without a step  (at 9.81 m, he stands at 9.81 m; pixel 480 of 1600)
-PASS  wide: it lies there, drawn, and one press picks it up into his hand: nothing is read  (203 pixels of pencil where it lay; J would "craft")
+PASS  wide: it lies there, drawn, and one press picks it up into his hand: nothing is read  (185 pixels of pencil where it lay; J would "craft")
 
 --- narrow window, 820 x 760 ---
 PASS  narrow: a letter he has read is gone once he puts it away, and what it taught stays: J would fold
+PASS  narrow: nothing shows where an airplane goes until he has one
+PASS  narrow: once he has one, its outline is drawn on the ground at the edge of the gap, nose out over it  (at 9.65 m, the edge is at 10 m; 40 pixels of pencil there)
+PASS  narrow: put down in the outline it sits on the edge, K boards it, and the outline has nothing left to show  (the airplane's middle is at 9.43 m)
 PASS  narrow: the first flight was flown from the edge and lost
 PASS  narrow: the level starts again with the airplane in his hand at once  (slot 1 holds def 201, J would "place")
-PASS  narrow: a retry is walk, set down, board: two presses  (3.15 s from the restart to the seat, 6.53 m of it walking)
+PASS  narrow: he has boarded once: on the retry no outline is drawn, he knows where it goes  (0 pixels of pencil where it was)
+PASS  narrow: a retry is walk, set down, board: two presses  (4.18 s from the restart to the seat, 6.53 m of it walking)
 PASS  narrow: nothing fell, and no letter lies there: he has nothing to read again
 PASS  narrow: an airplane set down past the edge is lost, and he is left with nothing
 PASS  narrow: with neither paper nor airplane a sheet of paper falls from the sky, and no letter  (it started 0.63 s after the airplane was lost)
@@ -24,14 +32,18 @@ PASS  narrow: it lies there, drawn, and one press picks it up into his hand: not
 
 --- portrait window, 480 x 860 ---
 PASS  portrait: a letter he has read is gone once he puts it away, and what it taught stays: J would fold
+PASS  portrait: nothing shows where an airplane goes until he has one
+PASS  portrait: once he has one, its outline is drawn on the ground at the edge of the gap, nose out over it  (at 9.65 m, the edge is at 10 m; 11 pixels of pencil there)
+PASS  portrait: put down in the outline it sits on the edge, K boards it, and the outline has nothing left to show  (the airplane's middle is at 9.43 m)
 PASS  portrait: the first flight was flown from the edge and lost
 PASS  portrait: the level starts again with the airplane in his hand at once  (slot 1 holds def 201, J would "place")
-PASS  portrait: a retry is walk, set down, board: two presses  (3.15 s from the restart to the seat, 6.53 m of it walking)
+PASS  portrait: he has boarded once: on the retry no outline is drawn, he knows where it goes  (0 pixels of pencil where it was)
+PASS  portrait: a retry is walk, set down, board: two presses  (4.18 s from the restart to the seat, 6.53 m of it walking)
 PASS  portrait: nothing fell, and no letter lies there: he has nothing to read again
 PASS  portrait: an airplane set down past the edge is lost, and he is left with nothing
-PASS  portrait: with neither paper nor airplane a sheet of paper falls from the sky, and no letter  (it started 0.63 s after the airplane was lost)
+PASS  portrait: with neither paper nor airplane a sheet of paper falls from the sky, and no letter  (it started 0.6 s after the airplane was lost)
 PASS  portrait: it comes down where he stands, in view, and can be picked up without a step  (at 9.81 m, he stands at 9.81 m; pixel 144 of 480)
-PASS  portrait: it lies there, drawn, and one press picks it up into his hand: nothing is read  (38 pixels of pencil where it lay; J would "craft")
+PASS  portrait: it lies there, drawn, and one press picks it up into his hand: nothing is read  (26 pixels of pencil where it lay; J would "craft")
 PASS  no page errors
 
-ALL 29 CHECKS PASSED
+ALL 41 CHECKS PASSED

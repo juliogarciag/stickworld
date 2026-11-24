@@ -1,5 +1,6 @@
-import type { AirplaneView, Point } from '@stickworld/sim';
+import type { AirplaneView, BoardingSpotView, Point } from '@stickworld/sim';
 import type { Stroke } from './strokes';
+import { dotted } from './strokes/partly';
 import { PENCIL } from './strokes/pencil';
 import { toPixels } from './units';
 
@@ -73,7 +74,19 @@ export function airplaneStrokes({ at, facing, length, height, noseDown }: ShownA
   ];
 }
 
+/**
+ * Where the airplane is to be put, as pencil strokes: the outline of one sitting there, in dashes, without the fold
+ * a real one has. Where that is, and whether he still has to be shown, are the sim's (`boardingSpotOf`).
+ */
+export function boardingSpotStrokes({ at, facing, length, height }: BoardingSpotView): Stroke[] {
+  const [outline] = airplaneStrokes({ at, facing, length, height, noseDown: 0 });
+  return outline ? dotted([outline], OUTLINE) : [];
+}
+
 // ---- Helpers ----
+
+/** The dashes of the outline, in world pixels: long enough for the pencil to reach its full weight in each, or they are too faint to see from where the view is pulled back to. View detail only. */
+const OUTLINE = { dash: 20, gap: 11 } as const;
 
 /** Where its nose points for what it is doing, in radians down: where the sim points it while it flies, further down the faster it falls, level otherwise. */
 function noseDownOf(airplane: AirplaneView): number {

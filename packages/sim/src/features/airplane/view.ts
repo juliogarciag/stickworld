@@ -2,7 +2,7 @@ import type { Point } from '../../content/levels/types';
 import { Sim, type SimHandle } from '../../core/sim';
 import type { SteerDirection } from './commands';
 import { AIRPLANE, FLIGHT } from './defs';
-import { sitsOnAnEdge } from './index';
+import { sitsOnAnEdge, whereToPutItToBoard } from './index';
 import { airplaneSlice } from './state';
 
 /** The airplane in the world as a view needs it. How it is folded and how it gets from the floor to his hands are the view's business. */
@@ -55,4 +55,22 @@ export function airplaneOf(handle: SimHandle): AirplaneView | undefined {
 export function steeringAskedOf(handle: SimHandle): SteerDirection {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
   return handle.stateOf(airplaneSlice).steering;
+}
+
+/** Where an airplane is put to be boarded, for a view that shows him who has never flown one: the outline of one sitting there. */
+export interface BoardingSpotView {
+  /** The middle of the underside of an airplane sitting there, in metres. */
+  readonly at: Point;
+  /** Which way its nose points: out over the gap. */
+  readonly facing: 1 | -1;
+  /** From nose to tail, and from its underside to the top of its tail, in metres. */
+  readonly length: number;
+  readonly height: number;
+}
+
+/** Where he is to put the airplane he has, or undefined when there is nothing to show: he has none, it sits there already, it is in flight, or he has boarded one before. */
+export function boardingSpotOf(handle: SimHandle): BoardingSpotView | undefined {
+  if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
+  const at = whereToPutItToBoard(handle);
+  return at && { at, facing: 1, length: AIRPLANE.length, height: AIRPLANE.height };
 }

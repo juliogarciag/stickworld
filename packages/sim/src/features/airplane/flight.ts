@@ -3,7 +3,7 @@ import { PLAYER } from '../player/defs';
 import { floorHeightAt, lowestFloorHeight } from '../player/floor';
 import { playerSlice, type PlayerState } from '../player/state';
 import { AIRPLANE, FLIGHT } from './defs';
-import { airplaneSlice, type AirplaneState } from './state';
+import { airplaneSlice, type AirplaneState, hasBoardedSlice } from './state';
 
 /**
  * The airplane once it has left the edge: it glides with him seated in it,
@@ -16,6 +16,7 @@ import { airplaneSlice, type AirplaneState } from './state';
 export function boardAndLaunch(sim: Sim): void {
   const airplane = sim.stateOf(airplaneSlice);
   const player = sim.stateOf(playerSlice);
+  sim.setStateOf(hasBoardedSlice, true);
   airplane.flying = true;
   airplane.speed = FLIGHT.launchSpeed;
   airplane.pitch = FLIGHT.launchPitch;

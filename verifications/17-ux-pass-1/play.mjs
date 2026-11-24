@@ -79,6 +79,7 @@ export async function openGame({ browser, url, size, level, proofFolder }) {
           flag: api.flag() ?? null,
           letter: api.letter() ?? null,
           fallenItem: optional('fallenItem'),
+          boardingSpot: optional('boardingSpot'),
           airplane: api.airplane() ?? null,
           itemSlots: api.itemSlots(),
           itemUse: api.itemUse(),

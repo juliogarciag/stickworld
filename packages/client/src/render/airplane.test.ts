@@ -1,6 +1,6 @@
 import type { AirplaneView } from '@stickworld/sim';
 import { describe, expect, it } from 'vitest';
-import { airplanesEasedOverTime, airplaneStrokes, type ShownAirplane } from './airplane';
+import { airplanesEasedOverTime, airplaneStrokes, type ShownAirplane, boardingSpotStrokes } from './airplane';
 import { PIXELS_PER_METRE } from './units';
 
 describe('airplaneStrokes', () => {
@@ -98,6 +98,31 @@ describe('airplanesEasedOverTime', () => {
     shownFor(undefined, FRAME);
     const elsewhere = { ...RESTING, at: { x: 40, y: 0 } };
     expect(shownFor(elsewhere, FRAME)!.at).toEqual(elsewhere.at);
+  });
+});
+
+describe('boardingSpotStrokes', () => {
+  it('draws the outline of an airplane sitting there in dashes, without its fold', () => {
+    const spot = { at: { x: 9.65, y: 0 }, facing: 1 as const, length: 1.4, height: 0.34 };
+    const real = airplaneStrokes({ ...spot, noseDown: 0 });
+    const outline = boardingSpotStrokes(spot);
+    expect(outline.length).toBeGreaterThan(6);
+    const boundsOf = (strokes: readonly { points: readonly { x: number; y: number }[] }[]) => {
+      const points = strokes.flatMap((stroke) => stroke.points);
+      return { left: Math.min(...points.map((point) => point.x)), right: Math.max(...points.map((point) => point.x)), top: Math.min(...points.map((point) => point.y)), bottom: Math.max(...points.map((point) => point.y)) };
+    };
+    const [dottedBounds, realBounds] = [boundsOf(outline), boundsOf(real)];
+    // The same shape in the same place, to within a gap between two dashes.
+    for (const side of ['left', 'right', 'top', 'bottom'] as const) expect(Math.abs(dottedBounds[side] - realBounds[side])).toBeLessThan(10);
+    // Every dash lies on the outline of the real one, none on the fold through its middle.
+    const lengthOf = (points: readonly { x: number; y: number }[]): number => points.slice(1).reduce((sum, point, index) => sum + Math.hypot(point.x - points[index]!.x, point.y - points[index]!.y), 0);
+    const aroundIt = lengthOf([...real[0]!.points, real[0]!.points[0]!]);
+    expect(outline.reduce((sum, dash) => sum + lengthOf(dash.points), 0)).toBeLessThan(aroundIt);
+    expect(outline.reduce((sum, dash) => sum + lengthOf(dash.points), 0)).toBeGreaterThan(aroundIt / 2);
+    for (const dash of outline) {
+      expect(dash.thickness).toBe(real[0]!.thickness);
+      expect(dash.closed).toBeUndefined();
+    }
   });
 });
 

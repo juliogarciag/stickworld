@@ -7,23 +7,23 @@
     },
     "atTheEdge": {
       "view": {
-        "left": 2.7637875139106516,
-        "right": 21.973267363841163,
-        "top": -7.779839339221857,
-        "bottom": 3.025493076364056
+        "left": 2.7638768327197476,
+        "right": 21.973058953286614,
+        "top": -7.779718758829581,
+        "bottom": 3.0254461839892817
       },
       "farSideFrom": 19,
       "whereHeIs": 0.3,
       "metresAcross": 19.21,
       "inkOfTheItemSlot": {
-        "atRest": 343,
-        "atTheEdge": 356
+        "atRest": 381,
+        "atTheEdge": 328
       }
     },
     "watched": {
       "narrowest": 19.2,
       "widest": 20.99,
-      "biggestChangeInOneFrame": 0.448,
+      "biggestChangeInOneFrame": 0.233,
       "hudZooms": [
         0.833333
       ],
@@ -34,28 +34,28 @@
     "metresAcrossAtRest": 12,
     "carrying": {
       "whereHeIs": 0.3,
-      "metresAcross": 20.91
+      "metresAcross": 20.92
     },
     "atTheEdge": {
       "view": {
-        "left": 2.961348564155619,
-        "right": 21.512335577157383,
-        "top": -12.37939035794459,
-        "bottom": 4.814207361422898
+        "left": 2.9612355165332294,
+        "right": 21.512596362341863,
+        "top": -12.37963982295913,
+        "bottom": 4.814304375595216
       },
       "farSideFrom": 19,
       "whereHeIs": 0.3,
       "metresAcross": 18.55,
       "inkOfTheItemSlot": {
-        "atRest": 250,
-        "atTheEdge": 298
+        "atRest": 366,
+        "atTheEdge": 324
       }
     },
     "clip": "after/narrow/c-carry-board-fly-land.gif",
     "watched": {
       "narrowest": 12,
       "widest": 20.96,
-      "biggestChangeInOneFrame": 0.523,
+      "biggestChangeInOneFrame": 0.639,
       "hudZooms": [
         0.683333
       ],
@@ -66,27 +66,27 @@
     "metresAcrossAtRest": 12,
     "carrying": {
       "whereHeIs": 0.3,
-      "metresAcross": 20.92
+      "metresAcross": 20.91
     },
     "atTheEdge": {
       "view": {
-        "left": 2.961218358174267,
-        "right": 21.51263939111386,
-        "top": -23.93133313249208,
-        "bottom": 9.306629551524697
+        "left": 3.013586111379682,
+        "right": 21.512673064449647,
+        "top": -23.863822169460253,
+        "bottom": 9.280375288123432
       },
       "farSideFrom": 19,
       "whereHeIs": 0.3,
-      "metresAcross": 18.55,
+      "metresAcross": 18.5,
       "inkOfTheItemSlot": {
-        "atRest": 90,
-        "atTheEdge": 99
+        "atRest": 75,
+        "atTheEdge": 91
       }
     },
     "watched": {
       "narrowest": 12,
       "widest": 20.96,
-      "biggestChangeInOneFrame": 0.567,
+      "biggestChangeInOneFrame": 0.692,
       "hudZooms": [
         0.4
       ],
@@ -143,7 +143,7 @@
     {
       "name": "wide: the view eases: it never jumped from one frame to the next, not even when he sits down in the airplane",
       "pass": true,
-      "details": "the most its middle moved or its width changed in one frame is 0.448 m, of 19.2 m or more across"
+      "details": "the most its middle moved or its width changed in one frame is 0.233 m, of 19.2 m or more across"
     },
     {
       "name": "wide: the level's camera did pull back on the way",
@@ -153,7 +153,7 @@
     {
       "name": "wide: the HUD kept its own size all the while: one zoom, and the item slot drawn in the same place on the screen",
       "pass": true,
-      "details": "HUD zoom 0.833333; 343 pixels of pencil in the slot's box at rest and 356 at the edge: the same box, a little different as its line boils"
+      "details": "HUD zoom 0.833333; 381 pixels of pencil in the slot's box at rest and 328 at the edge: the same box, a little different as its line boils"
     },
     {
       "name": "narrow: the view shows at least 12 metres across at rest",
@@ -200,7 +200,7 @@
     {
       "name": "narrow: the view eases: it never jumped from one frame to the next, not even when he sits down in the airplane",
       "pass": true,
-      "details": "the most its middle moved or its width changed in one frame is 0.523 m, of 12 m or more across"
+      "details": "the most its middle moved or its width changed in one frame is 0.639 m, of 12 m or more across"
     },
     {
       "name": "narrow: the level's camera did pull back on the way",
@@ -210,7 +210,7 @@
     {
       "name": "narrow: the HUD kept its own size all the while: one zoom, and the item slot drawn in the same place on the screen",
       "pass": true,
-      "details": "HUD zoom 0.683333; 250 pixels of pencil in the slot's box at rest and 298 at the edge: the same box, a little different as its line boils"
+      "details": "HUD zoom 0.683333; 366 pixels of pencil in the slot's box at rest and 324 at the edge: the same box, a little different as its line boils"
     },
     {
       "name": "portrait: the view shows at least 12 metres across at rest",
@@ -238,7 +238,7 @@
     {
       "name": "portrait: from the edge, before he boards, the far side is in view",
       "pass": true,
-      "details": "the view is from 2.96 to 21.51 m and the far side begins at 19 m"
+      "details": "the view is from 3.01 to 21.51 m and the far side begins at 19 m"
     },
     {
       "name": "portrait: in flight the far side stays in view all the way across",
@@ -257,7 +257,7 @@
     {
       "name": "portrait: the view eases: it never jumped from one frame to the next, not even when he sits down in the airplane",
       "pass": true,
-      "details": "the most its middle moved or its width changed in one frame is 0.567 m, of 12 m or more across"
+      "details": "the most its middle moved or its width changed in one frame is 0.692 m, of 12 m or more across"
     },
     {
       "name": "portrait: the level's camera did pull back on the way",
@@ -267,7 +267,7 @@
     {
       "name": "portrait: the HUD kept its own size all the while: one zoom, and the item slot drawn in the same place on the screen",
       "pass": true,
-      "details": "HUD zoom 0.4; 90 pixels of pencil in the slot's box at rest and 99 at the edge: the same box, a little different as its line boils"
+      "details": "HUD zoom 0.4; 75 pixels of pencil in the slot's box at rest and 91 at the edge: the same box, a little different as its line boils"
     },
     {
       "name": "no page errors",

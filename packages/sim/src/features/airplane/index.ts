@@ -9,7 +9,7 @@ import { playerSlice } from '../player/state';
 import type { SteerDirection } from './commands';
 import { AIRPLANE } from './defs';
 import { boardAndLaunch, moveOneTick } from './flight';
-import { airplaneSlice, type AirplaneState } from './state';
+import { airplaneSlice, hasBoardedSlice, type AirplaneState } from './state';
 
 /**
  * The paper airplane in the world. Using the airplane item puts it on the
@@ -24,7 +24,7 @@ import { airplaneSlice, type AirplaneState } from './state';
  */
 export const airplaneFeature: Feature = {
   name: 'airplane',
-  slices: [airplaneSlice],
+  slices: [airplaneSlice, hasBoardedSlice],
 
   handleCommand(sim, command) {
     const { type, direction } = command as { type: string; direction?: unknown };
@@ -65,6 +65,23 @@ export function sitsOnAnEdge(sim: Sim): boolean {
   const nose = airplane.x + (airplane.facing * AIRPLANE.length) / 2;
   const floorFurtherOn = floor.some(({ from, to }) => (airplane.facing === 1 ? from.x > nose : to.x < nose));
   return floorHeightAt(floor, nose) === undefined && floorFurtherOn;
+}
+
+/**
+ * Where the middle of an airplane's underside is when it sits on the nearest edge it could be boarded from, nose to
+ * the right: the end of a floor line with floor further on, the airplane a quarter of its length out over the gap.
+ * Undefined unless he has an airplane he has still to put there, and has never boarded one: after that he knows.
+ */
+export function whereToPutItToBoard(sim: Sim): { x: number; y: number } | undefined {
+  const airplane = sim.stateOf(airplaneSlice);
+  const inFlight = airplane.inWorld && (airplane.flying || airplane.falling || airplane.sliding);
+  if (sim.stateOf(hasBoardedSlice) || !hasAirplane(sim) || inFlight || sitsOnAnEdge(sim)) return undefined;
+  const { floor } = sim.levelDef;
+  const { x } = sim.stateOf(playerSlice);
+  const edges = floor.filter((line) => floor.some((other) => other.from.x > line.to.x)).map((line) => line.to);
+  if (edges.length === 0) return undefined;
+  const nearest = edges.reduce((best, edge) => (Math.abs(edge.x - x) < Math.abs(best.x - x) ? edge : best));
+  return { x: nearest.x - AIRPLANE.length * AIRPLANE.shownBackFromTheEdge, y: nearest.y };
 }
 
 /** What using the held item does when it is the airplane, for `features/item`: it is put on the floor in front of him. */

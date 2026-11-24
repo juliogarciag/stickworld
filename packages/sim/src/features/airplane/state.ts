@@ -29,3 +29,6 @@ export interface AirplaneState {
 
 /** It starts each level out of the world: an airplane left on the floor is gone when the level starts again. */
 export const airplaneSlice = defineSlice<AirplaneState>('airplane', () => ({ inWorld: false, x: 0, y: 0, facing: 1, carried: false, falling: false, verticalSpeed: 0, flying: false, sliding: false, speed: 0, pitch: 0, steering: 0 }));
+
+/** True once he has boarded an airplane, on any level: from then on he knows where one is boarded from, and is not shown. It carries across levels and deaths. */
+export const hasBoardedSlice = defineSlice<boolean>('hasBoarded', () => false, { carriesAcrossLevels: true });
