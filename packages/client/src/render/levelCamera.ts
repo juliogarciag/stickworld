@@ -22,6 +22,8 @@ const FRAMING = {
   easeSeconds: 0.4,
   /** A stick man who is this far from where he was a frame ago did not walk there: a level started, and the view cuts to it. */
   cutBeyond: 3,
+  /** The fastest the view moves along the line to keep up with him, in metres a second: faster than anything he does, so only a hop in one tick (sitting down in the airplane) is taken over a few frames. */
+  fastestFollow: 14,
 } as const;
 
 /** What the camera needs to know about him. */
@@ -43,18 +45,17 @@ export interface Framing {
  */
 export function followStickManWith(camera: Phaser.Cameras.Scene2D.Camera): (now: { stickMan: Followed; floor: readonly FloorSegment[]; seconds: number }) => void {
   let floorHeight: number | undefined;
-  let shown: { framing: Framing; feetX: number } | undefined;
+  let shown: { framing: Framing; followedX: number } | undefined;
   return ({ stickMan, floor, seconds }) => {
     const { feet, action } = stickMan;
     if ((action !== 'jumping' && action !== 'seated') || floorHeight === undefined) floorHeight = feet.y;
     const wanted = framingWanted({ stickMan, floor, metresAcrossAtRest: metresAcrossAtRest(camera) });
-    const cut = shown === undefined || Math.abs(feet.x - shown.feetX) > FRAMING.cutBeyond;
-    const framing = cut || !shown ? wanted : easedTowards(shown.framing, wanted, seconds);
-    shown = { framing, feetX: feet.x };
+    const cut = shown === undefined || Math.abs(feet.x - shown.followedX) > FRAMING.cutBeyond;
+    shown = cut || !shown ? { framing: wanted, followedX: feet.x } : { framing: easedTowards(shown.framing, wanted, seconds), followedX: keptUpWith({ followedX: shown.followedX, feetX: feet.x, seconds }) };
 
-    const zoom = camera.width / toPixels(framing.metresAcross);
+    const zoom = camera.width / toPixels(shown.framing.metresAcross);
     camera.setZoom(zoom);
-    camera.centerOn(toPixels(feet.x + framing.ahead), toPixels(floorHeight) - ((FRAMING.floorFromTop - 0.5) * camera.height) / zoom);
+    camera.centerOn(toPixels(shown.followedX + shown.framing.ahead), toPixels(floorHeight) - ((FRAMING.floorFromTop - 0.5) * camera.height) / zoom);
   };
 }
 
@@ -85,6 +86,15 @@ export function framingWanted({ stickMan, floor, metresAcrossAtRest }: { stickMa
 export function easedTowards(from: Framing, to: Framing, seconds: number): Framing {
   const share = 1 - Math.exp(-Math.max(0, seconds) / FRAMING.easeSeconds);
   return { ahead: from.ahead + (to.ahead - from.ahead) * share, metresAcross: from.metresAcross + (to.metresAcross - from.metresAcross) * share };
+}
+
+/**
+ * Where along the line the view follows him to, a frame of `seconds` after it was at `followedX`: where his feet are,
+ * unless they got there faster than `FRAMING.fastestFollow`, which only a hop within one tick does.
+ */
+export function keptUpWith({ followedX, feetX, seconds }: { followedX: number; feetX: number; seconds: number }): number {
+  const furthest = FRAMING.fastestFollow * Math.max(0, seconds);
+  return followedX + Math.max(-furthest, Math.min(furthest, feetX - followedX));
 }
 
 // ---- Helpers ----

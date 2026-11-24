@@ -18,7 +18,7 @@ import { toPixels } from './units';
  * one being played.
  */
 export function levelNameStrokes(level: Level, secondsOnTheSheet: number): readonly Stroke[] {
-  if (secondsOnTheSheet >= LEVEL_NAME.rubbedOutAfter + LEVEL_NAME.rubbedOutIn) return NOTHING;
+  if (levelNameIs(secondsOnTheSheet) === 'notYet' || levelNameIs(secondsOnTheSheet) === 'gone') return NOTHING;
   const words = `${level.id}. ${level.name}`;
   const { width } = written(words, { at: { x: 0, y: 0 }, letterHeight: LEVEL_NAME.letterHeight });
   const { strokes } = written(words, { at: { x: toPixels(level.start.x) - width / 2, y: toPixels(level.start.y) - LEVEL_NAME.aboveTheFloor }, letterHeight: LEVEL_NAME.letterHeight });
@@ -26,10 +26,15 @@ export function levelNameStrokes(level: Level, secondsOnTheSheet: number): reado
   return rubbedOutSoFar(soFar, (secondsOnTheSheet - LEVEL_NAME.rubbedOutAfter) / LEVEL_NAME.rubbedOutIn);
 }
 
-/** True while the level's name is drawn the same from frame to frame: all of it written and none of it being rubbed out, or gone. */
-export function levelNameIsStill(secondsOnTheSheet: number): boolean {
-  const written = secondsOnTheSheet >= LEVEL_NAME.writtenAfter + LEVEL_NAME.writtenIn && secondsOnTheSheet < LEVEL_NAME.rubbedOutAfter;
-  return written || secondsOnTheSheet >= LEVEL_NAME.rubbedOutAfter + LEVEL_NAME.rubbedOutIn;
+/**
+ * How far along the level's name is on a sheet that has been on top for `secondsOnTheSheet`. While it is `'notYet'`,
+ * `'written'` or `'gone'` it is drawn the same from frame to frame; while it is being written or rubbed out it is not.
+ */
+export function levelNameIs(secondsOnTheSheet: number): 'notYet' | 'beingWritten' | 'written' | 'beingRubbedOut' | 'gone' {
+  if (secondsOnTheSheet < LEVEL_NAME.writtenAfter) return 'notYet';
+  if (secondsOnTheSheet < LEVEL_NAME.writtenAfter + LEVEL_NAME.writtenIn) return 'beingWritten';
+  if (secondsOnTheSheet < LEVEL_NAME.rubbedOutAfter) return 'written';
+  return secondsOnTheSheet < LEVEL_NAME.rubbedOutAfter + LEVEL_NAME.rubbedOutIn ? 'beingRubbedOut' : 'gone';
 }
 
 /**

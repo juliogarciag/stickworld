@@ -1,7 +1,7 @@
 import { levelById } from '@stickworld/sim';
 import { describe, expect, it } from 'vitest';
 import { written } from '../hud/handwriting';
-import { __testing__, levelNameIsStill, levelNameStrokes, pageNumberStrokes } from './sheetWords';
+import { __testing__, levelNameIs, levelNameStrokes, pageNumberStrokes } from './sheetWords';
 import { toPixels } from './units';
 
 describe('the name of a level', () => {
@@ -32,13 +32,15 @@ describe('the name of a level', () => {
     expect(pointsAt(Infinity)).toBe(0);
   });
 
-  it('is still, the very same strokes from frame to frame, while it is all there and once it is gone', () => {
-    expect(levelNameIsStill(0)).toBe(false);
-    expect(levelNameIsStill(LEVEL_NAME.writtenAfter + LEVEL_NAME.writtenIn / 2)).toBe(false);
-    expect(levelNameIsStill(WRITTEN_BY)).toBe(true);
-    expect(levelNameIsStill(LEVEL_NAME.rubbedOutAfter + LEVEL_NAME.rubbedOutIn / 2)).toBe(false);
-    expect(levelNameIsStill(Infinity)).toBe(true);
+  it('says how far along it is, and is the very same strokes from frame to frame once it is gone', () => {
+    expect(levelNameIs(0)).toBe('notYet');
+    expect(levelNameIs(LEVEL_NAME.writtenAfter + LEVEL_NAME.writtenIn / 2)).toBe('beingWritten');
+    expect(levelNameIs(WRITTEN_BY)).toBe('written');
+    expect(levelNameIs(LEVEL_NAME.rubbedOutAfter + LEVEL_NAME.rubbedOutIn / 2)).toBe('beingRubbedOut');
+    expect(levelNameIs(LEVEL_NAME.rubbedOutAfter + LEVEL_NAME.rubbedOutIn)).toBe('gone');
+    expect(levelNameIs(Infinity)).toBe('gone');
     expect(levelNameStrokes(LEVEL_2, Infinity)).toBe(levelNameStrokes(LEVEL_2, 100));
+    expect(levelNameStrokes(LEVEL_2, 0)).toBe(levelNameStrokes(LEVEL_2, 100));
   });
 });
 

@@ -10,7 +10,7 @@ import { letterStrokes } from '../render/letter';
 import { zoomAtRest } from '../render/levelCamera';
 import { notesAreStill, noteStrokes } from '../render/notes';
 import { layPaper, type Paper } from '../render/paper';
-import { levelNameIsStill, levelNameStrokes, pageNumberStrokes } from '../render/sheetWords';
+import { levelNameIs, levelNameStrokes, pageNumberStrokes } from '../render/sheetWords';
 import { posesEasedOverTime, seatedIn, stickManStrokes } from '../render/stickMan';
 import { createStrokeLayer, type Stroke, type StrokeLayer } from '../render/strokes';
 
@@ -68,9 +68,10 @@ export class Sheet {
 
     this.paper.cover(camera);
     // Writing that does not change is the same list every frame, which a layer does not draw anew; while some of it is being written or rubbed out it is made again each frame.
-    const writingIsStill = notesAreStill(notes) && levelNameIsStill(secondsOnTheSheet);
+    const levelName = levelNameIs(secondsOnTheSheet);
+    const writingIsStill = notesAreStill(notes) && levelName !== 'beingWritten' && levelName !== 'beingRubbedOut';
     const whatIsWritten = (): readonly Stroke[] => [...levelNameStrokes(level, secondsOnTheSheet), ...noteStrokes(notes, MOVE_KEY_NAMES)];
-    this.written.show(writingIsStill ? this.strokesOfWhatIsWritten(JSON.stringify([level.id, notes.map((note) => note.rubbedOutFor !== null), secondsOnTheSheet < 1]), whatIsWritten) : whatIsWritten());
+    this.written.show(writingIsStill ? this.strokesOfWhatIsWritten(JSON.stringify([level.id, notes.map((note) => note.rubbedOutFor !== null), levelName]), whatIsWritten) : whatIsWritten());
     const seen = worldSeenBy(camera);
     this.pageNumber.show(this.strokesOfThePageNumber(JSON.stringify([level.id, seen]), () => pageNumberStrokes({ page: level.id, seen, zoomAtRest: zoomAtRest(camera) })));
     this.floor.show(floorStrokes(level));

@@ -1,0 +1,79 @@
+{
+  "wide": {
+    "inkOfTheEndEveryFifthOfASecond": [
+      870,
+      1826,
+      2990,
+      4081,
+      4873,
+      5456,
+      5439
+    ],
+    "theEnd": {
+      "inkOfTheWords": 5439,
+      "inkAtTheSides": 56,
+      "promptInk": 2959,
+      "secondsAfterTheFlag": 3
+    }
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "wide: \"THE END\" is written a stroke at a time: more of it on every later frame, until it is all there",
+      "pass": true,
+      "details": "870, 1826, 2990, 4081, 4873, 5456, 5439"
+    },
+    {
+      "name": "wide: Enter does nothing before playing again is offered",
+      "pass": true
+    },
+    {
+      "name": "wide: nothing but the words is written until playing again is offered",
+      "pass": true,
+      "details": "5383 pixels of pencil against 5439 when the words were finished"
+    },
+    {
+      "name": "wide: the words fit the window, with room at both sides",
+      "pass": false,
+      "details": "5439 pixels of pencil, and the outer 8% of the window at each side changed by 56, which is the boil of what was there"
+    },
+    {
+      "name": "wide: a little later a key and \"PLAY AGAIN\" are written under them",
+      "pass": true,
+      "details": "2959 more pixels of pencil, 3 s after the flag"
+    },
+    {
+      "name": "wide: he is not frozen in a cheer: he stands",
+      "pass": true
+    },
+    {
+      "name": "wide: he walks about under the words",
+      "pass": true
+    },
+    {
+      "name": "wide: he cannot walk off the paper after the end",
+      "pass": true,
+      "details": "he stands at 26.68 m; the paper ends at 27 m"
+    },
+    {
+      "name": "wide: Enter turns the page back to the first sheet",
+      "pass": true
+    },
+    {
+      "name": "wide: nothing is kept from the game before",
+      "pass": true
+    },
+    {
+      "name": "wide: and it is played: he walks on level 1",
+      "pass": true
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

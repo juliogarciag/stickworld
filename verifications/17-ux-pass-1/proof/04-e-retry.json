@@ -1,0 +1,63 @@
+{
+  "narrow": {
+    "retry": {
+      "presses": 2,
+      "seconds": 3.15,
+      "walkedMetres": 6.53
+    }
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "narrow: a letter he has read stays on the floor, opened",
+      "pass": true
+    },
+    {
+      "name": "narrow: K next to it reads it again",
+      "pass": true
+    },
+    {
+      "name": "narrow: read again, it says the same and gives nothing more",
+      "pass": true
+    },
+    {
+      "name": "narrow: the first flight was flown from the edge and lost",
+      "pass": true
+    },
+    {
+      "name": "narrow: the level starts again with the airplane in his hand at once",
+      "pass": false,
+      "details": "slot 1 holds def 201, J would \"place\""
+    },
+    {
+      "name": "narrow: a retry is walk, set down, board: two presses",
+      "pass": true,
+      "details": "3.15 s from the restart to the seat, 6.53 m of it walking"
+    },
+    {
+      "name": "narrow: no new letter fell: the opened one lay there all the while",
+      "pass": true
+    },
+    {
+      "name": "narrow: an airplane set down past the edge is lost, and he is left with nothing",
+      "pass": true
+    },
+    {
+      "name": "narrow: with neither paper nor airplane a new letter still falls, not opened",
+      "pass": true,
+      "details": "it started 0.62 s after the airplane was lost"
+    },
+    {
+      "name": "narrow: reading it gives the paper again",
+      "pass": true
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

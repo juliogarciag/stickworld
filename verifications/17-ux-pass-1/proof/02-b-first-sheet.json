@@ -1,0 +1,100 @@
+{
+  "narrow": {
+    "level1": {
+      "notes": [
+        {
+          "at": {
+            "x": 2,
+            "y": -5.4
+          },
+          "words": "Stickworld",
+          "large": true,
+          "rubbedOutFor": null
+        },
+        {
+          "at": {
+            "x": 2.2,
+            "y": -2.5
+          },
+          "words": "walk",
+          "about": "walking",
+          "rubbedOutPast": 4.2,
+          "rubbedOutFor": null
+        }
+      ],
+      "nameInk": 2451,
+      "walkInk": 822
+    },
+    "level2": {
+      "note": {
+        "at": {
+          "x": 5,
+          "y": -2.5
+        },
+        "words": "jump",
+        "about": "jumping",
+        "rubbedOutPast": 6.8,
+        "rubbedOutFor": null
+      },
+      "jumpInk": 547
+    }
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "narrow: the game's name is written on level 1, in view from the first moment",
+      "pass": true,
+      "details": "\"Stickworld\", 2451 pixels of pencil"
+    },
+    {
+      "name": "narrow: a walk note is beside him, with its keys drawn in boxes",
+      "pass": true,
+      "details": "\"walk\", 822 pixels of pencil"
+    },
+    {
+      "name": "narrow: no note names a key: the words are the level's, the keys are drawn by the client",
+      "pass": true,
+      "details": "Stickworld, walk"
+    },
+    {
+      "name": "narrow: the walk note stays while he jumps on the spot and walks the wrong way",
+      "pass": true
+    },
+    {
+      "name": "narrow: once he has walked on, the walk note is rubbed out",
+      "pass": true,
+      "details": "0 pixels of pencil left where it was"
+    },
+    {
+      "name": "narrow: the notes are on the sheet and move with it",
+      "pass": true,
+      "details": "the place of the walk note moved 205 pixels left as he walked right"
+    },
+    {
+      "name": "narrow: the game's name stays",
+      "pass": true
+    },
+    {
+      "name": "narrow: level 2 has a jump note before its gap",
+      "pass": true,
+      "details": "at x 5, the gap is from 6 to 6.8; 547 pixels of pencil"
+    },
+    {
+      "name": "narrow: after a fall into the gap the jump note is still there",
+      "pass": true
+    },
+    {
+      "name": "narrow: the jump note is there while he is over the gap, and is rubbed out once he has landed past it",
+      "pass": true,
+      "details": "landed at x 6.91; 0 pixels of pencil left where it was"
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

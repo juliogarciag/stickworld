@@ -1,6 +1,6 @@
 import { levelById, type FloorSegment } from '@stickworld/sim';
 import { describe, expect, it } from 'vitest';
-import { __testing__, easedTowards, framingWanted, type Followed } from './levelCamera';
+import { __testing__, easedTowards, framingWanted, keptUpWith, type Followed } from './levelCamera';
 
 describe('framingWanted', () => {
   it('is centred on him and as wide as at rest while he walks along the line, away from any edge', () => {
@@ -78,6 +78,29 @@ describe('easedTowards', () => {
     expect(framing.metresAcross).toBeLessThan(to.metresAcross);
     // One long frame gets no further than many short ones.
     expect(easedTowards(from, to, 1000).ahead).toBeCloseTo(to.ahead, 9);
+  });
+});
+
+describe('keptUpWith', () => {
+  it('is where his feet are at anything he does: walking, falling, and the airplane at its fastest', () => {
+    for (const metresPerSecond of [2.2, 7.5, 11]) {
+      const feetX = 10 + metresPerSecond / 60;
+      expect(keptUpWith({ followedX: 10, feetX, seconds: 1 / 60 })).toBe(feetX);
+      expect(keptUpWith({ followedX: 10, feetX: 20 - feetX, seconds: 1 / 60 })).toBe(20 - feetX);
+    }
+  });
+
+  it('takes a hop of his within one tick over a few frames, and ends exactly on him', () => {
+    let followedX = 9;
+    const frames = [];
+    for (let frame = 0; frame < 10 && followedX !== 9.9; frame += 1) {
+      followedX = keptUpWith({ followedX, feetX: 9.9, seconds: 1 / 60 });
+      frames.push(followedX);
+    }
+    expect(frames.length).toBeGreaterThan(2);
+    expect(frames.length).toBeLessThan(6);
+    expect(frames[0]! - 9).toBeCloseTo(FRAMING.fastestFollow / 60, 9);
+    expect(followedX).toBe(9.9);
   });
 });
 
