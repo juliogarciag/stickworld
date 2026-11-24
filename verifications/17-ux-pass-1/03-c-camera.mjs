@@ -10,7 +10,7 @@
  * narrow window, where the view pulls back most.
  */
 import { ROOT } from './lib.mjs';
-import { CLIMB_THAT_CROSSES, carryTheAirplaneToTheEdge, fly, gapOf, readTheLetter, round, verify } from './play.mjs';
+import { CLIMB_THAT_CROSSES, carryTheAirplaneToTheEdge, gapOf, readTheLetter, round, verify } from './play.mjs';
 
 /** The least the view may show across, in metres: the ticket's "about twelve". */
 const LEAST_METRES_ACROSS = 12;
@@ -27,7 +27,7 @@ await verify({ name: '03-c-camera', port: 5917, cwd: ROOT }, async ({ size, open
   game.frames = async (count) => {
     for (let frame = 0; frame < count; frame += 1) {
       await framesOf(1);
-      const { levelInView: view, stickMan, hudCamera, itemSlots } = await game.state();
+      const { levelInView: view, hudCamera, itemSlots } = await game.state();
       const across = view.right - view.left;
       watched.narrowest = Math.min(watched.narrowest, across);
       watched.widest = Math.max(watched.widest, across);

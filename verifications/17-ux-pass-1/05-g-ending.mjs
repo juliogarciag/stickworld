@@ -1,3 +1,4 @@
+/* global window */
 /**
  * G. An ending you can leave.
  *
@@ -21,17 +22,16 @@ await verify({ name: '05-g-ending', port: 5917, cwd: ROOT }, async ({ size, open
 
   /**
    * The band of the window the end is written in, words and prompt: from under the item slot down to above his raised
-   * arms and the flag, at every window. And the outermost part of it at both sides.
+   * arms and the flag, at every window. And the outermost part of it at both sides, outside of where the item slot is.
    */
   const band = { y: size.height * 0.15, height: size.height * 0.33 };
   const written = () => game.inkIn({ x: 0, width: size.width, ...band });
-  const atTheSides = async () => (await game.inkIn({ x: 0, width: size.width * 0.08, ...band })) + (await game.inkIn({ x: size.width * 0.92, width: size.width * 0.08, ...band }));
+  const atTheSides = async () => (await game.inkIn({ x: 0, width: size.width * 0.02, ...band })) + (await game.inkIn({ x: size.width * 0.98, width: size.width * 0.02, ...band }));
 
   const play = async () => {
     await game.holdUntil('ArrowRight', (state) => state.flag.reached);
     await game.until((state) => state.flag.raised === 1);
     const inkBeforeTheWords = await written();
-    const atTheSidesBeforeTheWords = await atTheSides();
 
     // Written a stroke at a time: the pencil in the band of the words, every fifth of a second.
     const inkOverTime = [];
@@ -52,14 +52,13 @@ await verify({ name: '05-g-ending', port: 5917, cwd: ROOT }, async ({ size, open
     const justBefore = (await written()) - inkBeforeTheWords;
     await game.seconds(0.4);
     const offered = await game.state();
-    // The item slot is at one side of the band at some windows: what counts is what the end added there.
-    const sides = Math.abs((await atTheSides()) - atTheSidesBeforeTheWords);
+    const sides = await atTheSides();
     // What is written once playing again is offered, less the words: the key and "PLAY AGAIN". The lines boil, so the same words are a few pixels more or less from frame to frame.
     const promptInk = (await written()) - inkBeforeTheWords - inkOfTheWords;
     report.theEnd = { inkOfTheWords, inkAtTheSides: sides, promptInk, secondsAfterTheFlag: round((offered.tick - (await flagReachedTick(game))) / 60) };
     await game.shot('g-the-end-with-play-again');
     expect('nothing but the words is written until playing again is offered', Math.abs(justBefore - inkOfTheWords) < 80, `${justBefore} pixels of pencil against ${inkOfTheWords} when the words were finished`);
-    expect('the words fit the window, with room at both sides', sides < 40 && inkOfTheWords > 500, `${inkOfTheWords} pixels of pencil, and the outer 8% of the window at each side changed by ${sides}, which is the boil of what was there`);
+    expect('the words fit the window: nothing of them reaches its sides', sides === 0 && inkOfTheWords > 500, `${inkOfTheWords} pixels of pencil, ${sides} of them in the outermost 2% of the window at either side`);
     expect('a little later a key and "PLAY AGAIN" are written under them', offeredAfter >= 0 && promptInk > 150, `${promptInk} more pixels of pencil, ${report.theEnd.secondsAfterTheFlag} s after the flag`);
     expect('he is not frozen in a cheer: he stands', offered.stickMan.action === 'standing');
 

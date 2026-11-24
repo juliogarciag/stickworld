@@ -1,3 +1,4 @@
+/* global window */
 /**
  * E. Try again without the chores.
  *
