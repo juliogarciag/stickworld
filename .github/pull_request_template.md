@@ -1,6 +1,6 @@
 <!-- Keep the headings and their order. Fill in the placeholders, replace each section's comment with what it asks for, and delete this comment and the next. Delete a section that does not apply: never leave it empty or write "N/A". -->
 
-<!-- The ticket this PR closes, then the size with its one-line reason. Only when the base is not `main`, add a third line: "Stacked on #<parent PR number> (`<parent branch>`)". -->
+<!-- The ticket this PR closes, then the size with its one-line reason. The base is always `main`. Only when another ticket's unmerged branch was merged into this one, add a third line: "Includes the commits of #<other PR number> (`<other branch>`) until that one merges". -->
 Closes #<ticket number>
 
 Size: <Small | Medium | Large> (<one-line reason>)
