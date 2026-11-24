@@ -59,6 +59,7 @@ packages/
                           Drawn by scenes/HudScene.ts, a scene of its own over the level's, so it does not move with the paper.
                           Words are pencil strokes too: handwriting.ts turns text into strokes (ADR 0004).
 docs/decisions/   Architecture decision records (ADRs).
+docs/reviews/     Reviews of the game as it is played (UX), numbered. Each ends with proposed tickets; none is filed by the review.
 verifications/    One folder per ticket with its verification scripts and proof, frozen when the ticket's PR merges.
                   _template/ is the maintained starting point for a new one.
 ```
