@@ -1,8 +1,7 @@
 import type { InteractionMeaning, ItemUseMeaning } from '@stickworld/sim';
 import type { Stroke } from '../render/strokes';
-import { PENCIL } from '../render/strokes/pencil';
-import { written } from './handwriting';
 import type { Rectangle } from './itemSlots';
+import { keysAndWords } from './keysAndWords';
 
 /**
  * What the keys would do right now, written in a corner of the screen: the
@@ -46,15 +45,8 @@ export function promptsFor({ itemUse, wouldMake, useItemKey, interaction, intera
 export function promptStrokes(prompts: readonly Prompt[], seen: Rectangle): Stroke[] {
   return prompts.flatMap(({ key, words }, index) => {
     const fromTheBottom = prompts.length - 1 - index;
-    const keyName = written(key, { at: { x: 0, y: 0 }, letterHeight: PROMPTS.letterHeight });
-    // A key with a long name (the space bar) gets a box as wide as its name needs.
-    const box = { x: seen.x + PROMPTS.margin, y: seen.y + seen.height - PROMPTS.margin - PROMPTS.keySide - fromTheBottom * PROMPTS.rowHeight, width: Math.max(PROMPTS.keySide, keyName.width + 2 * PROMPTS.insideTheKey), height: PROMPTS.keySide };
-    const inset = { x: box.x + (box.width - keyName.width) / 2, y: box.y + (box.height - PROMPTS.letterHeight) / 2 };
-    return [
-      { points: [{ x: box.x, y: box.y }, { x: box.x + box.width, y: box.y }, { x: box.x + box.width, y: box.y + box.height }, { x: box.x, y: box.y + box.height }], thickness: PENCIL.thickness, closed: true },
-      ...written(key, { at: inset, letterHeight: PROMPTS.letterHeight }).strokes,
-      ...written(words, { at: { x: box.x + box.width + PROMPTS.besideTheKey, y: inset.y }, letterHeight: PROMPTS.letterHeight }).strokes,
-    ];
+    const at = { x: seen.x + PROMPTS.margin, y: seen.y + seen.height - PROMPTS.margin - PROMPTS.keySide - fromTheBottom * PROMPTS.rowHeight };
+    return keysAndWords({ keys: [key], words, at, sizes: PROMPTS }).strokes;
   });
 }
 
@@ -84,7 +76,6 @@ const PROMPTS = {
   /** From the corner of the screen, as far as the item slots are from theirs. */
   margin: 56,
   keySide: 58,
-  /** The least room between a key's name and the sides of its box. */
   insideTheKey: 14,
   letterHeight: 28,
   besideTheKey: 24,

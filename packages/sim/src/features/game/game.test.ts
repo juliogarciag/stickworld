@@ -7,7 +7,7 @@ import { craftingOf } from '../crafting/view';
 import { teachRecipe } from '../crafting';
 import { PAPER_AIRPLANE_RECIPE_ID } from '../crafting/defs';
 import { flagPlacedIn } from '../flag';
-import { LEVEL_END } from '../flag/defs';
+import { flagDef, LEVEL_END } from '../flag/defs';
 import { flagOf } from '../flag/view';
 import { PAPER_ITEM_ID } from '../inventory/defs';
 import { giveItem } from '../inventory/give';
@@ -32,7 +32,7 @@ describe('the game', () => {
     sim.step();
     expect(gameOf(sim)).toEqual({ over: true, playingAgainOffered: true });
     expect(flagOf(sim)).toMatchObject({ raised: 1 });
-    expect(flagOf(sim)!.reachedFor).toBeCloseTo(LEVEL_END.playAgainAfter, 1);
+    expect(flagOf(sim)!.upFor).toBeCloseTo(LEVEL_END.playAgainAfter - flagDef.raiseSeconds, 1);
   });
 });
 

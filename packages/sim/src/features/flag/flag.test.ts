@@ -13,7 +13,7 @@ describe('the flag', () => {
   it('stands where the level places it, not reached', () => {
     const placed = LEVEL.placements.find((placement) => placement.defId === FLAG_DEF_ID)!;
     expect(getDef(FLAG_DEF_ID)).toBe(flagDef);
-    expect(flagOf(createSim({ level: 1 }))).toEqual({ at: placed.at, height: flagDef.height, reached: false, reachedFor: 0, raised: 0, endsTheGame: false });
+    expect(flagOf(createSim({ level: 1 }))).toEqual({ at: placed.at, height: flagDef.height, reached: false, upFor: 0, raised: 0, endsTheGame: false });
   });
 
   it('ends the game on the last level only', () => {

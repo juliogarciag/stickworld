@@ -1,11 +1,13 @@
-import type { AirplaneView, Command, CraftingView, Def, FlagView, InteractionMeaning, ItemSlot, ItemUseMeaning, LetterView, Level, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
-import { airplaneOf, craftingOf, defs, flagOf, hashSnapshot, interactionOf, itemSlotsOf, itemUseOf, letterOf, levelOf, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf } from '@stickworld/sim';
+import type { AirplaneView, Command, CraftingView, Def, FlagView, GameView, InteractionMeaning, ItemSlot, ItemUseMeaning, LetterView, Level, NoteView, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
+import { airplaneOf, craftingOf, defs, flagOf, gameOf, hashSnapshot, interactionOf, itemSlotsOf, itemUseOf, letterOf, levelOf, notesOf, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf } from '@stickworld/sim';
 import type Phaser from 'phaser';
 import { itemSlotBox, type Rectangle } from './hud/itemSlots';
 import type { GameLoop } from './loop/GameLoop';
 import { worldSeenBy } from './render/cameraView';
+import type { PageTurn } from './render/pageTurn';
 import { PIXELS_PER_METRE } from './render/units';
 import { HUD_SCENE } from './scenes/HudScene';
+import { LEVEL_SCENE } from './scenes/LevelScene';
 
 /** What dev tooling and end-to-end checks can reach from the page. Dev builds only; listed in AGENTS.md. */
 export interface GameDebugApi {
@@ -24,6 +26,16 @@ export interface GameDebugApi {
   hash(): string;
   /** The level camera right now, or undefined until the level scene runs. */
   camera(): CameraView | undefined;
+  /** The part of the level the level camera shows right now, in metres, or undefined until the level scene runs. */
+  levelInView(): MetresInView | undefined;
+  /** The HUD camera right now, or undefined until the HUD scene runs: its zoom does not follow the level camera's. */
+  hudCamera(): CameraView | undefined;
+  /** Where the right edge of the sheet being turned away is, as a share of the view's width from its left side, or null when no page is being turned. */
+  pageTurn(): { edgeAt: number } | null;
+  /** The notes on the level's sheet as the sim has them right now. */
+  notes(): NoteView[];
+  /** How the game ends, as the sim has it right now: whether it is over, and whether playing again is offered. */
+  ending(): GameView;
   /** The stick man as the sim has him right now: where his feet are (metres) and what he is doing. */
   stickMan(): StickManView;
   /** The level's flag as the sim has it right now, or undefined when the level has none. */
@@ -55,6 +67,14 @@ export interface CameraView {
   readonly height: number;
 }
 
+/** A part of the level, in metres: y points down, as in the sim. */
+export interface MetresInView {
+  readonly left: number;
+  readonly right: number;
+  readonly top: number;
+  readonly bottom: number;
+}
+
 /** An item slot with the rectangle of the page its box is drawn in, in CSS pixels. */
 export interface ShownItemSlot extends ItemSlot {
   readonly onPage: Rectangle;
@@ -66,7 +86,12 @@ declare global {
   }
 }
 
-export function exposeDebugApi({ loop, game }: { loop: GameLoop; game: Phaser.Game }): void {
+export function exposeDebugApi({ loop, game, pageTurn }: { loop: GameLoop; game: Phaser.Game; pageTurn: PageTurn }): void {
+  const cameraOf = (scene: string): CameraView | undefined => {
+    if (!game.scene.isActive(scene)) return undefined;
+    const { zoom, scrollX, scrollY, width, height } = game.scene.getScene(scene).cameras.main;
+    return { zoom, scrollX, scrollY, width, height };
+  };
   window.__game = {
     get sim() {
       return loop.sim;
@@ -81,11 +106,19 @@ export function exposeDebugApi({ loop, game }: { loop: GameLoop; game: Phaser.Ga
     stickManWidth: STICK_MAN_WIDTH,
     snapshot: () => loop.sim.snapshot(),
     hash: () => hashSnapshot(loop.sim.snapshot()),
-    camera: () => {
-      if (!game.scene.isActive('level')) return undefined;
-      const { zoom, scrollX, scrollY, width, height } = game.scene.getScene('level').cameras.main;
-      return { zoom, scrollX, scrollY, width, height };
+    camera: () => cameraOf(LEVEL_SCENE),
+    levelInView: () => {
+      if (!game.scene.isActive(LEVEL_SCENE)) return undefined;
+      const seen = worldSeenBy(game.scene.getScene(LEVEL_SCENE).cameras.main);
+      return { left: seen.x / PIXELS_PER_METRE, right: (seen.x + seen.width) / PIXELS_PER_METRE, top: seen.y / PIXELS_PER_METRE, bottom: (seen.y + seen.height) / PIXELS_PER_METRE };
     },
+    hudCamera: () => cameraOf(HUD_SCENE),
+    pageTurn: () => {
+      const turning = pageTurn.now();
+      return turning ? { edgeAt: turning.edgeAt } : null;
+    },
+    notes: () => notesOf(loop.sim),
+    ending: () => gameOf(loop.sim),
     stickMan: () => stickManOf(loop.sim),
     flag: () => flagOf(loop.sim),
     itemSlots: () => {

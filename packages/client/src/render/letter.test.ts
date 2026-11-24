@@ -33,6 +33,15 @@ describe('letterStrokes', () => {
     expect(landing.right).toBeCloseTo(lying.right, 2);
   });
 
+  it('stands there opened once it has been read: the same envelope with its flap up and the sheet showing above it', () => {
+    const sealed = boundsOf(LYING);
+    const opened = boundsOf({ ...LYING, opened: true });
+    expect(opened.bottom).toBeCloseTo(sealed.bottom, 6);
+    expect(opened.top).toBeLessThan(sealed.top - 0.1);
+    expect(letterStrokes({ ...LYING, opened: true }).length).toBeGreaterThan(letterStrokes(LYING).length);
+    expect(letterStrokes({ ...LYING, opened: true })[0]).toEqual(letterStrokes(LYING)[0]);
+  });
+
   it('is not drawn on the floor while he reads it', () => {
     expect(letterStrokes({ ...LYING, beingRead: true })).toEqual([]);
   });
@@ -40,7 +49,7 @@ describe('letterStrokes', () => {
 
 // ---- Helpers ----
 
-const LYING: LetterView = { at: { x: 3.6, y: 0 }, height: 0, beingRead: false, text: 'A letter.', teaches: null };
+const LYING: LetterView = { at: { x: 3.6, y: 0 }, height: 0, opened: false, beingRead: false, text: 'A letter.', teaches: null };
 
 /** The rectangle the drawing of `letter` covers, in metres. */
 function boundsOf(letter: LetterView) {

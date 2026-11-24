@@ -12,8 +12,8 @@ export interface FlagView {
   readonly height: number;
   /** True once the stick man has reached it: the level is finished. */
   readonly reached: boolean;
-  /** How long ago he reached it, in seconds. 0 until he does. */
-  readonly reachedFor: number;
+  /** How long it has been all the way up its stick, in seconds. 0 until it is. */
+  readonly upFor: number;
   /** How far up the stick the flag has gone since he reached it, from 0 to 1. */
   readonly raised: number;
   /** True for the flag of the last level: reaching it finishes the game. */
@@ -26,5 +26,5 @@ export function flagOf(handle: SimHandle): FlagView | undefined {
   const placed = flagPlacedIn(handle.levelDef);
   if (!placed) return undefined;
   const reachedFor = secondsSinceFlagReached(handle) ?? 0;
-  return { at: placed.at, height: flagDef.height, reached: handle.stateOf(flagSlice).reachedAtTick !== null, reachedFor, raised: Math.min(1, reachedFor / flagDef.raiseSeconds), endsTheGame: isTheLastLevel(handle.levelDef) };
+  return { at: placed.at, height: flagDef.height, reached: handle.stateOf(flagSlice).reachedAtTick !== null, upFor: Math.max(0, reachedFor - flagDef.raiseSeconds), raised: Math.min(1, reachedFor / flagDef.raiseSeconds), endsTheGame: isTheLastLevel(handle.levelDef) };
 }

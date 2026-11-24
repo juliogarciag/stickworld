@@ -1,52 +1,45 @@
-import { airplaneOf, flagOf, letterOf, levelOf, stickManOf, type StickManView } from '@stickworld/sim';
+import { levelOf, stickManOf, type SimHandle } from '@stickworld/sim';
 import Phaser from 'phaser';
 import { sendActionCommands } from '../input/actionKeys';
+import { sendGameCommands } from '../input/gameKeys';
 import { sendItemSlotCommands } from '../input/itemSlotKeys';
 import { keysToCommands, type KeysNow } from '../input/playerCommands';
 import { watchPlayerKeys } from '../input/playerKeys';
 import type { GameLoop } from '../loop/GameLoop';
-import { airplanesEasedOverTime, airplaneStrokes, heightItTurnsAbout } from '../render/airplane';
-import { flagStrokes } from '../render/flag';
-import { floorStrokes } from '../render/floor';
-import { letterStrokes } from '../render/letter';
 import { followStickManWith } from '../render/levelCamera';
-import { layPaper, PAPER_COLOUR, type Paper } from '../render/paper';
-import { posesEasedOverTime, seatedIn, stickManStrokes } from '../render/stickMan';
-import { createStrokeLayer, type StrokeLayer } from '../render/strokes';
+import type { PageTurn } from '../render/pageTurn';
+import { PAPER_COLOUR } from '../render/paper';
+import { Sheet } from './Sheet';
 
 /**
- * The level being played, drawn on the sheet of paper: the paper, the floor
- * line, the flag, the letter, the airplane and the stick man, each as the sim says it is. The keys
- * become commands here and nothing else is decided.
+ * The level being played, drawn on its sheet of paper as the sim says it
+ * is. The keys become commands here, the sim is advanced, and when it has
+ * moved on to another level the sheet that was left is handed to the page
+ * turn. Nothing about the game is decided.
  */
 export class LevelScene extends Phaser.Scene {
-  private paper!: Paper;
-  private floor!: StrokeLayer;
-  private flag!: StrokeLayer;
-  private letter!: StrokeLayer;
-  private airplane!: StrokeLayer;
-  private stickMan!: StrokeLayer;
+  private sheet!: Sheet;
   private keysNow!: () => KeysNow;
-  private follow!: (stickMan: StickManView) => void;
+  private follow!: ReturnType<typeof followStickManWith>;
   private readonly commandsFor = keysToCommands();
-  private readonly poseFor = posesEasedOverTime();
-  private readonly airplaneShownFor = airplanesEasedOverTime();
+  /** The sheet on top and how long it has been: a new one when the sim is on another level, or is another sim. */
+  private onTop: { sim: SimHandle; level: number; seconds: number } | undefined;
 
-  constructor(private readonly loop: GameLoop) {
-    super('level');
+  constructor(
+    private readonly loop: GameLoop,
+    private readonly pageTurn: PageTurn,
+  ) {
+    super(LEVEL_SCENE);
   }
 
   create(): void {
     this.cameras.main.setBackgroundColor(PAPER_COLOUR);
-    this.paper = layPaper(this);
-    this.floor = createStrokeLayer(this);
-    this.flag = createStrokeLayer(this);
-    this.letter = createStrokeLayer(this);
-    this.airplane = createStrokeLayer(this);
-    this.stickMan = createStrokeLayer(this);
+    this.sheet = new Sheet(this);
     this.keysNow = watchPlayerKeys(this);
-    sendItemSlotCommands(this, (command) => this.loop.queueCommand(command));
-    sendActionCommands(this, (command) => this.loop.queueCommand(command));
+    const queue = this.loop.queueCommand.bind(this.loop);
+    sendItemSlotCommands(this, queue);
+    sendActionCommands(this, queue);
+    sendGameCommands(this, queue);
     this.follow = followStickManWith(this.cameras.main);
   }
 
@@ -55,20 +48,18 @@ export class LevelScene extends Phaser.Scene {
     const seconds = deltaMs / 1000;
     this.loop.advanceBy(seconds);
 
-    const { sim } = this.loop;
-    const stickMan = stickManOf(sim);
-    const flag = flagOf(sim);
-    const letter = letterOf(sim);
-    const airplane = this.airplaneShownFor(airplaneOf(sim), seconds);
+    const camera = this.cameras.main;
+    const finished = this.loop.takeFinishedLevel();
+    // The camera still looks at the level that was left: the sheet that is turned away is drawn as it was last seen.
+    if (finished) this.pageTurn.start({ sim: finished, camera: { scrollX: camera.scrollX, scrollY: camera.scrollY, zoom: camera.zoom } });
+    else this.pageTurn.advanceBy(seconds);
 
-    this.follow(stickMan);
-    this.paper.cover(this.cameras.main);
-    this.floor.show(floorStrokes(levelOf(sim)));
-    this.flag.show(flag ? flagStrokes(flag) : []);
-    this.letter.show(letter ? letterStrokes(letter) : []);
-    this.airplane.show(airplane ? airplaneStrokes(airplane) : []);
-    const pose = this.poseFor(stickMan, seconds, levelOf(sim).floor);
-    // Seated, he tips with the airplane as it is drawn, about the point it is drawn turning about: its middle.
-    this.stickMan.show(stickManStrokes(airplane ? seatedIn(pose, { noseDown: airplane.noseDown, tipsAboutAbove: heightItTurnsAbout(airplane) }) : pose));
+    const { sim } = this.loop;
+    const isTheSheetOnTop = this.onTop !== undefined && this.onTop.sim === sim && this.onTop.level === sim.level;
+    this.onTop = { sim, level: sim.level, seconds: isTheSheetOnTop && this.onTop ? this.onTop.seconds + seconds : 0 };
+    this.follow({ stickMan: stickManOf(sim), floor: levelOf(sim).floor, seconds });
+    this.sheet.draw({ sim, seconds, secondsOnTheSheet: this.onTop.seconds });
   }
 }
+
+export const LEVEL_SCENE = 'level';

@@ -5,19 +5,25 @@ import { toPixels } from './units';
 
 /**
  * The level's letter as pencil strokes: an envelope standing on the floor,
- * or swaying on its way down from the sky. Nothing while he reads it: then it
- * is in his hands, and the HUD shows what it says.
+ * or swaying on its way down from the sky. One he has read stands there
+ * opened: its flap up and a corner of the sheet showing. Nothing while he
+ * reads it: then it is in his hands, and the HUD shows what it says.
  */
-export function letterStrokes({ at, height, beingRead }: LetterView): Stroke[] {
+export function letterStrokes({ at, height, beingRead, opened }: LetterView): Stroke[] {
   if (beingRead) return [];
   // Paper comes down swinging from side to side, less and less as it nears the floor.
   const swing = Math.min(1, height / ENVELOPE.settlesBelow);
   const foot = { x: at.x + swing * ENVELOPE.sway * Math.sin(height * ENVELOPE.swaysPerMetre), y: at.y - height };
   const lean = ENVELOPE.lean + swing * ENVELOPE.rock * Math.cos(height * ENVELOPE.swaysPerMetre);
   const corner = (across: number, up: number): Point => turnedAbout(foot, { x: foot.x + (across - 0.5) * ENVELOPE.width, y: foot.y - up * ENVELOPE.height }, lean);
+  const body: Stroke = { points: [corner(0, 0), corner(0, 1), corner(1, 1), corner(1, 0)].map(inPixels), thickness: PENCIL.thickness, closed: true };
+  if (!opened) return [body, { points: [corner(0, 1), corner(0.5, 0.42), corner(1, 1)].map(inPixels), thickness: PENCIL.thickness }];
   return [
-    { points: [corner(0, 0), corner(0, 1), corner(1, 1), corner(1, 0)].map(inPixels), thickness: PENCIL.thickness, closed: true },
-    { points: [corner(0, 1), corner(0.5, 0.42), corner(1, 1)].map(inPixels), thickness: PENCIL.thickness },
+    body,
+    // The flap, up, and the sheet he put back, a corner of it out with a line of its writing.
+    { points: [corner(0, 1), corner(0.5, 1 + ENVELOPE.flapUp), corner(1, 1)].map(inPixels), thickness: PENCIL.thickness },
+    { points: [corner(0.16, 1), corner(0.2, 1 + ENVELOPE.sheetOut), corner(0.74, 1 + ENVELOPE.sheetOut * 1.12), corner(0.78, 1)].map(inPixels), thickness: PENCIL.thickness * 0.7 },
+    { points: [corner(0.3, 1 + ENVELOPE.sheetOut * 0.5), corner(0.64, 1 + ENVELOPE.sheetOut * 0.56)].map(inPixels), thickness: PENCIL.thickness * 0.5 },
   ];
 }
 
@@ -27,6 +33,9 @@ export function letterStrokes({ at, height, beingRead }: LetterView): Stroke[] {
 const ENVELOPE = {
   width: 0.52,
   height: 0.34,
+  /** Opened: how far above its top the tip of its flap is and how far the sheet sticks out, as shares of its height. */
+  flapUp: 0.62,
+  sheetOut: 0.36,
   /** How far it leans where it stands, in radians. */
   lean: 0.14,
   /** How far to each side it swings on the way down, in metres, and how far it rocks, in radians. */

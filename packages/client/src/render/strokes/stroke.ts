@@ -27,6 +27,7 @@ export interface Stroke {
  * animation.
  */
 export interface StrokeLayer {
+  /** A stroke with fewer than two points draws nothing, and still counts in the order of the list. */
   show(strokes: readonly Stroke[]): void;
   destroy(): void;
 }

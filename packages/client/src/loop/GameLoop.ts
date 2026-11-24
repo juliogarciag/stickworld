@@ -1,4 +1,4 @@
-import { createSim, type Command, type SimHandle } from '@stickworld/sim';
+import { createSim, restoreSim, type Command, type SimHandle } from '@stickworld/sim';
 import { takeWholeTicks } from './takeWholeTicks';
 
 /** Never simulate more than this much real time per frame (tab switches, hitches). */
@@ -12,6 +12,7 @@ const MAX_FRAME_SECONDS = 0.25;
 export class GameLoop {
   private leftover = 0;
   private pendingCommands: Command[] = [];
+  private finished: SimHandle | undefined;
 
   constructor(private current: SimHandle) {}
 
@@ -25,10 +26,24 @@ export class GameLoop {
     const { ticks, leftover } = takeWholeTicks({ leftover: this.leftover, deltaSeconds, dt: this.current.dt, maxFrameSeconds: MAX_FRAME_SECONDS });
     this.leftover = leftover;
     for (let tick = 0; tick < ticks; tick += 1) {
+      // The sim moves to the next level by itself, within one tick. The tick before is kept each time, so the sheet that was left can still be drawn: a snapshot is a few hundred bytes.
+      const level = this.current.level;
+      const before = this.current.snapshot();
       this.current.step(this.pendingCommands);
       this.pendingCommands = [];
+      if (this.current.level !== level) this.finished = restoreSim(before);
     }
     return ticks;
+  }
+
+  /**
+   * The level that gave way to another since this was last asked, as it was on its last tick, or undefined when none
+   * did. A sim of its own that is never stepped: it is for drawing the sheet that was left, once.
+   */
+  takeFinishedLevel(): SimHandle | undefined {
+    const finished = this.finished;
+    this.finished = undefined;
+    return finished;
   }
 
   /** Holds `command` for the next earned tick. */
@@ -41,5 +56,6 @@ export class GameLoop {
     this.current = createSim({ level, seed: this.current.seed });
     this.pendingCommands = [];
     this.leftover = 0;
+    this.finished = undefined;
   }
 }

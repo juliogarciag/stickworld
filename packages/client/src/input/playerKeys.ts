@@ -5,8 +5,8 @@ import type { KeysNow } from './playerCommands';
  * The keys the player uses: left and right arrows or A and D to walk; up
  * arrow, W or space to jump; seated in the airplane, up arrow or W and down
  * arrow or S to steer it, and space to jump out. This is the only file that
- * knows which keys those are; `FLIGHT_KEY_NAMES` is how the HUD names the
- * flying ones to the player. Returns a function to call once a frame.
+ * knows which keys those are; `MOVE_KEY_NAMES` and `FLIGHT_KEY_NAMES` are
+ * how they are named to the player. Returns a function to call once a frame.
  */
 export function watchPlayerKeys(scene: Phaser.Scene): () => KeysNow {
   const keyboard = scene.input.keyboard;
@@ -39,6 +39,9 @@ export function watchPlayerKeys(scene: Phaser.Scene): () => KeysNow {
     return now;
   };
 }
+
+/** The keys that move him on his feet, as the player knows them: what a note on the sheet draws beside its words. */
+export const MOVE_KEY_NAMES = { walking: ['←', '→'], jumping: ['↑'] } as const;
 
 /** The keys that fly the airplane, as the player knows them. */
 export const FLIGHT_KEY_NAMES = { climb: '↑', dive: '↓', jumpOut: 'SPACE' } as const;
