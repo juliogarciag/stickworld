@@ -1,7 +1,8 @@
 import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
-import { isTheLastLevel, secondsSinceFlagReached } from '../flag';
-import { LEVEL_END } from '../flag/defs';
+import { isTheLastLevel } from '../flag';
+import { flagSlice } from '../flag/state';
+import { GAME_END } from './defs';
 
 /**
  * The game as a whole: it is over once the last level's flag is reached, and
@@ -20,10 +21,11 @@ export const gameFeature: Feature = {
 
 /** True once the flag that ends the game has been reached. */
 export function gameIsOver(sim: Sim): boolean {
-  return isTheLastLevel(sim.levelDef) && secondsSinceFlagReached(sim) !== undefined;
+  return isTheLastLevel(sim.levelDef) && sim.stateOf(flagSlice).reachedAtTick !== null;
 }
 
-/** True once the game has been over for long enough: he is done cheering and walks about again, and `'game/playAgain'` is heard. */
+/** True once the game has been over for long enough: he is done cheering and walks about again, and `'game/playAgain'` is heard. Counted in whole ticks, as the pause after a flag is. */
 export function playingAgainIsOffered(sim: Sim): boolean {
-  return gameIsOver(sim) && (secondsSinceFlagReached(sim) ?? 0) >= LEVEL_END.playAgainAfter;
+  const { reachedAtTick } = sim.stateOf(flagSlice);
+  return gameIsOver(sim) && reachedAtTick !== null && sim.tick - reachedAtTick >= Math.round(GAME_END.playAgainAfter / sim.dt);
 }

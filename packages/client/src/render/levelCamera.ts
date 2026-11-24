@@ -30,7 +30,7 @@ const FRAMING = {
 export type Followed = Pick<StickManView, 'feet' | 'facing' | 'action' | 'carrying'>;
 
 /** How the view sits on the level: how far ahead of his feet its middle is, and how much of the level it shows across. Metres. */
-export interface Framing {
+interface Framing {
   readonly ahead: number;
   readonly metresAcross: number;
 }
@@ -72,7 +72,7 @@ export function zoomAtRest(camera: Phaser.Cameras.Scene2D.Camera): number {
  * Where the view wants to be for him as he is now. Centred on him and as wide as it is at rest, unless he is looking
  * where he is going: then he stands to one side, and it is as much wider as it takes to show the next floor line.
  */
-export function framingWanted({ stickMan, floor, metresAcrossAtRest }: { stickMan: Followed; floor: readonly FloorSegment[]; metresAcrossAtRest: number }): Framing {
+function framingWanted({ stickMan, floor, metresAcrossAtRest }: { stickMan: Followed; floor: readonly FloorSegment[]; metresAcrossAtRest: number }): Framing {
   const { feet, facing, action, carrying } = stickMan;
   const looksAhead = carrying || action === 'seated' || (action !== 'jumping' && isAtAnEdge({ x: feet.x, facing, floor }));
   if (!looksAhead) return { ahead: 0, metresAcross: metresAcrossAtRest };
@@ -83,7 +83,7 @@ export function framingWanted({ stickMan, floor, metresAcrossAtRest }: { stickMa
 }
 
 /** `from` a frame of `seconds` closer to `to`: most of the way there after `FRAMING.easeSeconds`, never past it. */
-export function easedTowards(from: Framing, to: Framing, seconds: number): Framing {
+function easedTowards(from: Framing, to: Framing, seconds: number): Framing {
   const share = 1 - Math.exp(-Math.max(0, seconds) / FRAMING.easeSeconds);
   return { ahead: from.ahead + (to.ahead - from.ahead) * share, metresAcross: from.metresAcross + (to.metresAcross - from.metresAcross) * share };
 }
@@ -92,7 +92,7 @@ export function easedTowards(from: Framing, to: Framing, seconds: number): Frami
  * Where along the line the view follows him to, a frame of `seconds` after it was at `followedX`: where his feet are,
  * unless they got there faster than `FRAMING.fastestFollow`, which only a hop within one tick does.
  */
-export function keptUpWith({ followedX, feetX, seconds }: { followedX: number; feetX: number; seconds: number }): number {
+function keptUpWith({ followedX, feetX, seconds }: { followedX: number; feetX: number; seconds: number }): number {
   const furthest = FRAMING.fastestFollow * Math.max(0, seconds);
   return followedX + Math.max(-furthest, Math.min(furthest, feetX - followedX));
 }
@@ -123,4 +123,4 @@ function distanceToTheNextLine({ x, facing, floor }: Looking): number | undefine
   return distances.length === 0 ? undefined : Math.min(...distances);
 }
 
-export const __testing__ = { FRAMING };
+export const __testing__ = { FRAMING, framingWanted, easedTowards, keptUpWith };

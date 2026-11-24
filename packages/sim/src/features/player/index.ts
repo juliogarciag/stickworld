@@ -53,9 +53,9 @@ export const playerFeature: Feature = {
     jumpIfAskedAndAble(sim, player);
 
     const { floor } = sim.levelDef;
-    const wanted = player.x + player.horizontalSpeed * sim.dt;
+    const wantedX = player.x + player.horizontalSpeed * sim.dt;
     // After the end there is nothing left to lose: the ends of his line stop him.
-    const x = playingAgainIsOffered(sim) ? keptOverTheLine(floor, { from: player.x, to: wanted }) : wanted;
+    const x = playingAgainIsOffered(sim) ? keptOverTheLine(floor, { from: player.x, to: wantedX }) : wantedX;
     if (player.onFloor) walkTo(player, { x, floorHeight: floorHeightAt(floor, x), walking: direction !== 0 });
     else fallTo(player, { x, floorHeight: floorHeightAt(floor, x), dt: sim.dt });
     if (!player.onFloor) slideOffFloorEnds(player, floor);

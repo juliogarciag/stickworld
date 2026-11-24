@@ -8,7 +8,7 @@ The first UX review (`docs/reviews/ux-review-1.md`) found that the three levels 
 
 ## Decision
 
-**1. What a level says to the player is level data, and the sim rubs it out.** A level may have `notes` (`content/levels/types.ts`): where a note is, its words, what it is `about` (`'walking'`, `'jumping'`) and the x he has to stand past for it to be rubbed out (`rubbedOutPast`). The `note` feature keeps, per note, the tick it was rubbed out on; `notesOf(sim)` gives a view the notes with how long ago that was.
+**1. What a level says to the player is level data, and the sim rubs it out.** A level may have `notes` (`content/levels/types.ts`): where a note is, its words, whether it is a `title`, what it is `about` (`'walking'`, `'jumping'`) and the x he has to stand past for it to be rubbed out (`rubbedOutPast`). The `note` feature keeps, per note, the tick it was rubbed out on; `notesOf(sim)` gives a view the notes with how long ago that was.
 
 - A note never names a key. The client draws the keys for what a note is about from `client/src/input/` (`MOVE_KEY_NAMES`), in the same boxes the HUD's prompts use (`hud/keysAndWords.ts`).
 - That he has done what a note says is the sim's, not the view's: it is a fact about the game, it has to be there again when the level starts again (he fell into the gap the jump note is about), and a view that remembered it would be state outside the snapshot. One rule covers both notes so far: he stands on the floor past an x.
@@ -41,6 +41,7 @@ The first UX review (`docs/reviews/ux-review-1.md`) found that the three levels 
 
 - A level can now say things: a new note is data, and a new thing to be `about` is one entry in `MOVE_KEY_NAMES` (or its like) and one union member. The first note that is rubbed out by something other than standing past an x needs a second rule in the `note` feature.
 - Anything drawn on a level must be drawn by `Sheet`, or it will be missing from the sheet that is turned away.
+- `render/` now uses `hud/handwriting.ts`, `hud/keysAndWords.ts` and `hud/unchanged.ts` for what is written on a sheet. They stay where they are; a third user is the moment to move them to a folder of their own.
 - The client now holds two sims for the length of a turn, one of them frozen. Only `GameLoop` steps, and only the one being played.
 - A view's width is no longer one number per window: code that lays something out against the level's camera has to read it each frame (`worldSeenBy`), and the HUD has to use its own.
 - Level data that places things in the upper part of the sheet shares it with the level's name, which is written above where he starts for its first seconds.

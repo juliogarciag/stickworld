@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { written } from './handwriting';
 import { keysAndWords } from './keysAndWords';
-import { __testing__, shareOfTheEndWritten, theEndIsWritten, theEndStrokes } from './theEnd';
+import { __testing__, shareOfTheEndWritten, theEndIsShown, theEndStrokes } from './theEnd';
 
 describe('the end', () => {
   it('is only once the flag that ends the game has been reached and is all the way up', () => {
-    expect(theEndIsWritten(undefined)).toBe(false);
-    expect(theEndIsWritten({ ...LAST_FLAG, reached: false, raised: 0 })).toBe(false);
-    expect(theEndIsWritten({ ...LAST_FLAG, raised: 0.5 })).toBe(false);
-    expect(theEndIsWritten({ ...LAST_FLAG, endsTheGame: false })).toBe(false);
-    expect(theEndIsWritten(LAST_FLAG)).toBe(true);
+    expect(theEndIsShown(undefined)).toBe(false);
+    expect(theEndIsShown({ ...LAST_FLAG, reached: false, raised: 0 })).toBe(false);
+    expect(theEndIsShown({ ...LAST_FLAG, raised: 0.5 })).toBe(false);
+    expect(theEndIsShown({ ...LAST_FLAG, endsTheGame: false })).toBe(false);
+    expect(theEndIsShown(LAST_FLAG)).toBe(true);
   });
 
   it('is written large across the upper half of what the camera sees, centred', () => {
@@ -23,12 +23,14 @@ describe('the end', () => {
     expect(Math.max(...ys) - Math.min(...ys)).toBeCloseTo(THE_END.letterHeight, 6);
   });
 
-  it.each(NARROW_VIEWS)('fits a view %i wide: the words are made smaller, and stay inside it with room on both sides', (width) => {
-    const seen = { ...CAMERA_SEES, width };
-    const { xs, ys } = extentOf(theEndStrokes(ALL_WRITTEN, seen));
-    expect(Math.min(...xs)).toBeGreaterThan(seen.x + width * 0.1);
-    expect(Math.max(...xs)).toBeLessThan(seen.x + width * 0.9);
-    expect(Math.max(...ys) - Math.min(...ys)).toBeLessThan(THE_END.letterHeight);
+  it('fits a narrow view: the words are made smaller, and stay inside it with room on both sides', () => {
+    for (const width of NARROW_VIEWS) {
+      const seen = { ...CAMERA_SEES, width };
+      const { xs, ys } = extentOf(theEndStrokes(ALL_WRITTEN, seen));
+      expect(Math.min(...xs), `${width} wide`).toBeGreaterThan(seen.x + width * 0.1);
+      expect(Math.max(...xs), `${width} wide`).toBeLessThan(seen.x + width * 0.9);
+      expect(Math.max(...ys) - Math.min(...ys), `${width} wide`).toBeLessThan(THE_END.letterHeight);
+    }
   });
 
   it('is written a stroke at a time: more of it at every later moment, all of it after its time', () => {

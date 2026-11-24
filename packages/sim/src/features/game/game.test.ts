@@ -7,12 +7,13 @@ import { craftingOf } from '../crafting/view';
 import { teachRecipe } from '../crafting';
 import { PAPER_AIRPLANE_RECIPE_ID } from '../crafting/defs';
 import { flagPlacedIn } from '../flag';
-import { flagDef, LEVEL_END } from '../flag/defs';
+import { flagDef } from '../flag/defs';
 import { flagOf } from '../flag/view';
 import { PAPER_ITEM_ID } from '../inventory/defs';
 import { giveItem } from '../inventory/give';
 import { itemSlotsOf } from '../inventory/view';
 import { stickManOf } from '../player/view';
+import { GAME_END } from './defs';
 import { gameOf } from './view';
 
 describe('the game', () => {
@@ -26,13 +27,13 @@ describe('the game', () => {
   it('is over the moment the last flag is reached, and offers playing again a little later, once the flag is long up', () => {
     const sim = atTheFlagOf(LAST_LEVEL.id);
     expect(gameOf(sim)).toEqual({ over: true, playingAgainOffered: false });
-    for (let tick = 0; tick < OFFERED_AFTER_TICKS - 2; tick += 1) sim.step();
+    // The flag was reached on the tick before this one: one tick of the wait has passed.
+    for (let tick = 1; tick < OFFERED_AFTER_TICKS - 1; tick += 1) sim.step();
     expect(gameOf(sim)).toEqual({ over: true, playingAgainOffered: false });
-    sim.step();
     sim.step();
     expect(gameOf(sim)).toEqual({ over: true, playingAgainOffered: true });
     expect(flagOf(sim)).toMatchObject({ raised: 1 });
-    expect(flagOf(sim)!.upFor).toBeCloseTo(LEVEL_END.playAgainAfter - flagDef.raiseSeconds, 1);
+    expect(flagOf(sim)!.upFor).toBeCloseTo(GAME_END.playAgainAfter - flagDef.raiseSeconds, 1);
   });
 });
 
@@ -62,6 +63,7 @@ describe("'game/playAgain'", () => {
     expect(stickManOf(sim)).toMatchObject({ feet: levels[0]!.start, action: 'standing' });
     expect(itemSlotsOf(sim)).toEqual([{ slot: 1, itemDefId: null, selected: false }]);
     expect(craftingOf(sim).knownRecipes).toEqual([]);
+    expect(sim.snapshot().slices.lettersRead).toEqual([]);
     expect(gameOf(sim)).toEqual({ over: false, playingAgainOffered: false });
     // A second one right after it is heard by a game that is not over.
     sim.step([{ type: 'game/playAgain' }]);
@@ -81,7 +83,7 @@ describe("'game/playAgain'", () => {
 // ---- Helpers ----
 
 const LAST_LEVEL = levels[levels.length - 1]!;
-const OFFERED_AFTER_TICKS = Math.round(LEVEL_END.playAgainAfter * TICK_RATE);
+const OFFERED_AFTER_TICKS = Math.round(GAME_END.playAgainAfter * TICK_RATE);
 
 /** A sim on `level` restored with him standing at its flag, stepped once so the flag is reached. */
 function atTheFlagOf(level: number): Sim {

@@ -14,8 +14,8 @@ import { keysAndWords } from './keysAndWords';
  * decided here.
  */
 
-/** True once the flag that ends the game has been reached and has gone all the way up its stick. */
-export function theEndIsWritten(flag: FlagView | undefined): boolean {
+/** True once the flag that ends the game has been reached and has gone all the way up its stick: from then on the end is on the sheet, as much of it as is written so far. */
+export function theEndIsShown(flag: FlagView | undefined): boolean {
   return flag !== undefined && flag.endsTheGame && flag.reached && flag.raised === 1;
 }
 

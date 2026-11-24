@@ -1,12 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import type { Command } from '../../core/commands';
 import { createSim } from '../../core/create';
-import type { SimHandle } from '../../core/sim';
+import type { Sim, SimHandle } from '../../core/sim';
 import { AIRPLANE } from '../../features/airplane/defs';
 import { airplaneOf } from '../../features/airplane/view';
 import { craftingOf } from '../../features/crafting/view';
 import { FLAG_DEF_ID, LEVEL_END } from '../../features/flag/defs';
 import { flagOf } from '../../features/flag/view';
+import { GAME_END } from '../../features/game/defs';
 import { gameOf } from '../../features/game/view';
 import { AIRPLANE_ITEM_ID, PAPER_ITEM_ID } from '../../features/inventory/defs';
 import { itemSlotsOf } from '../../features/inventory/view';
@@ -159,7 +160,7 @@ describe('level 3', () => {
     walkUntilTheFlagIsReached(sim);
     // No level follows: the game is over. He stays where he is, cheering, until playing again is offered.
     const stoodAt = stickManOf(sim).feet;
-    for (let tick = 0; tick < Math.round(LEVEL_END.playAgainAfter * TICK_RATE) - 5; tick += 1) sim.step([WALK_RIGHT_AT_0.command]);
+    for (let tick = 0; tick < Math.round(GAME_END.playAgainAfter * TICK_RATE) - 5; tick += 1) sim.step([WALK_RIGHT_AT_0.command]);
     expect(sim.level).toBe(3);
     expect(flagOf(sim)).toMatchObject({ reached: true, raised: 1, endsTheGame: true });
     expect(stickManOf(sim)).toMatchObject({ action: 'cheering', feet: stoodAt });
@@ -174,7 +175,7 @@ describe('level 3', () => {
     walkUntilTheFlagIsReached(sim);
     sim.step([{ type: 'game/playAgain' }]);
     expect(sim.level).toBe(3);
-    for (let tick = 0; tick < Math.round(LEVEL_END.playAgainAfter * TICK_RATE) + 1; tick += 1) sim.step();
+    for (let tick = 0; tick < Math.round(GAME_END.playAgainAfter * TICK_RATE) + 1; tick += 1) sim.step();
     expect(gameOf(sim)).toEqual({ over: true, playingAgainOffered: true });
     expect(stickManOf(sim).action).toBe('standing');
 
@@ -207,6 +208,10 @@ describe('level 3', () => {
     expect(itemSlotsOf(sim)).toEqual([{ slot: 1, itemDefId: null, selected: false }]);
     expect(craftingOf(sim).knownRecipes).toEqual([]);
     expect(airplaneOf(sim)).toBeUndefined();
+    // The letter he read in the game before is not remembered: on level 3 it lies there unopened again.
+    (sim as Sim).startLevel(3);
+    expect(letterOf(sim)).toMatchObject({ opened: false, height: 0 });
+    expect(itemSlotsOf(sim)[0]?.itemDefId).toBeNull();
   });
 
   it('is tried again without the chores: after a flight is lost the level starts again with the airplane in his hand, and a retry is walk, set down, board', () => {

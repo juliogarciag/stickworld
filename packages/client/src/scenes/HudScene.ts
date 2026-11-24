@@ -4,7 +4,7 @@ import { itemSlotStrokes } from '../hud/itemSlots';
 import { pageEdgeStrokes } from '../hud/pageEdge';
 import { letterSheetStrokes } from '../hud/panels';
 import { promptsFor, promptStrokes } from '../hud/prompts';
-import { shareOfTheEndWritten, theEndIsWritten, theEndStrokes } from '../hud/theEnd';
+import { shareOfTheEndWritten, theEndIsShown, theEndStrokes } from '../hud/theEnd';
 import { keptWhileUnchanged } from '../hud/unchanged';
 import { ACTION_KEY_NAMES } from '../input/actionKeys';
 import { GAME_KEY_NAMES } from '../input/gameKeys';
@@ -74,7 +74,7 @@ export class HudScene extends Phaser.Scene {
     this.prompts.show(this.strokesOfPrompts(JSON.stringify([prompts, seen]), () => promptStrokes(prompts, seen)));
 
     const flag = flagOf(sim);
-    const theEnd = theEndIsWritten(flag) && flag ? { shareWritten: shareOfTheEndWritten(flag.upFor), playAgainKey: gameOf(sim).playingAgainOffered ? GAME_KEY_NAMES.playAgain : null } : null;
+    const theEnd = theEndIsShown(flag) && flag ? { shareWritten: shareOfTheEndWritten(flag.upFor), playAgainKey: gameOf(sim).playingAgainOffered ? GAME_KEY_NAMES.playAgain : null } : null;
     this.theEnd.show(this.strokesOfTheEnd(JSON.stringify([theEnd, seen]), () => (theEnd ? theEndStrokes(theEnd, seen) : [])));
 
     const edgeAt = this.pageTurn.now()?.edgeAt ?? null;

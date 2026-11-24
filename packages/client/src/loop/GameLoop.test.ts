@@ -40,8 +40,15 @@ describe('GameLoop', () => {
   it('keeps nothing when he dies and the same level starts again', () => {
     const loop = new GameLoop(createSim({ level: 1 }));
     loop.queueCommand({ type: 'player/walk', direction: -1 });
-    for (let frame = 0; frame < 60 * 6; frame += 1) loop.advanceBy(FIXED_DT);
-    expect(stickManOf(loop.sim).feet.x).toBeLessThan(levelOf(loop.sim).start.x + 0.01);
+    let deepest = 0;
+    for (let frame = 0; frame < 60 * 6 && !(deepest > 1 && stickManOf(loop.sim).feet.y === 0); frame += 1) {
+      loop.advanceBy(FIXED_DT);
+      deepest = Math.max(deepest, stickManOf(loop.sim).feet.y);
+    }
+    // He fell off the paper and is back where the level starts.
+    expect(deepest).toBeGreaterThan(1);
+    expect(stickManOf(loop.sim).feet).toEqual(levelOf(loop.sim).start);
+    expect(loop.sim.level).toBe(1);
     expect(loop.takeFinishedLevel()).toBeUndefined();
   });
 

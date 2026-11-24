@@ -31,8 +31,8 @@ export interface Note {
   readonly words: string;
   /** What he does that the note is about, when it is about something he does. */
   readonly about?: 'walking' | 'jumping';
-  /** True for a note written large: a title. */
-  readonly large?: boolean;
+  /** True for a note that is a title, the name of something, and not something to do. */
+  readonly title?: boolean;
   /** It is rubbed out once he stands on the floor further right than this x: he has done what it says. Left out, it stays. */
   readonly rubbedOutPast?: number;
 }

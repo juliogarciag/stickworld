@@ -22,11 +22,11 @@ await verify({ name: '05-g-ending', port: 5917, cwd: ROOT }, async ({ size, open
 
   /**
    * The band of the window the end is written in, words and prompt: from under the item slot down to above his raised
-   * arms and the flag, at every window. And the outermost part of it at both sides, outside of where the item slot is.
+   * arms and the flag, at every window. And the outer part of it at both sides: a tenth of the window at the right, and at the left what the item slot leaves.
    */
   const band = { y: size.height * 0.15, height: size.height * 0.33 };
   const written = () => game.inkIn({ x: 0, width: size.width, ...band });
-  const atTheSides = async () => (await game.inkIn({ x: 0, width: size.width * 0.02, ...band })) + (await game.inkIn({ x: size.width * 0.98, width: size.width * 0.02, ...band }));
+  const atTheSides = async () => (await game.inkIn({ x: 0, width: size.width * 0.02, ...band })) + (await game.inkIn({ x: size.width * 0.9, width: size.width * 0.1, ...band }));
 
   const play = async () => {
     await game.holdUntil('ArrowRight', (state) => state.flag.reached);
@@ -58,7 +58,7 @@ await verify({ name: '05-g-ending', port: 5917, cwd: ROOT }, async ({ size, open
     report.theEnd = { inkOfTheWords, inkAtTheSides: sides, promptInk, secondsAfterTheFlag: round((offered.tick - (await flagReachedTick(game))) / 60) };
     await game.shot('g-the-end-with-play-again');
     expect('nothing but the words is written until playing again is offered', Math.abs(justBefore - inkOfTheWords) < 80, `${justBefore} pixels of pencil against ${inkOfTheWords} when the words were finished`);
-    expect('the words fit the window: nothing of them reaches its sides', sides === 0 && inkOfTheWords > 500, `${inkOfTheWords} pixels of pencil, ${sides} of them in the outermost 2% of the window at either side`);
+    expect('the words fit the window: nothing of them reaches its sides', sides === 0 && inkOfTheWords > 500, `${inkOfTheWords} pixels of pencil, ${sides} of them in the tenth of the window at its right side or the fiftieth at its left, where the item slot leaves room to look`);
     expect('a little later a key and "PLAY AGAIN" are written under them', offeredAfter >= 0 && promptInk > 150, `${promptInk} more pixels of pencil, ${report.theEnd.secondsAfterTheFlag} s after the flag`);
     expect('he is not frozen in a cheer: he stands', offered.stickMan.action === 'standing');
 

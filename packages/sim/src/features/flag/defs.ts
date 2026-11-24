@@ -23,6 +23,4 @@ export const LEVEL_END = {
    * cheers for a moment under it. The last level stays.
    */
   pauseBeforeNextLevel: 1.1,
-  /** How long after the last flag he stops cheering and playing again is offered, in seconds: the end has been written by then. */
-  playAgainAfter: 2.6,
 } as const;

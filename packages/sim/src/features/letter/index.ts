@@ -6,6 +6,7 @@ import { teachRecipe } from '../crafting';
 import { recipeDef } from '../crafting/defs';
 import { giveItem } from '../inventory/give';
 import { holdsItem, selectItem } from '../inventory/held';
+import { hasFinishedLevel } from '../player';
 import { playerSlice } from '../player/state';
 import { LETTER, letterDef, type LetterDef } from './defs';
 import { letterSlice, lettersReadSlice } from './state';
@@ -47,8 +48,8 @@ export const letterFeature: Feature = {
       letter.height = Math.max(0, letter.height - LETTER.fallSpeed * sim.dt);
       return;
     }
-    // A letter nobody has opened yet is all he needs, and so is the one in his hands.
-    if (hasWhatItIsFor(sim, def) || !letter.opened || letter.beingRead) {
+    // A letter nobody has opened yet is all he needs, and so is the one in his hands. Once the flag is reached he needs none.
+    if (hasWhatItIsFor(sim, def) || !letter.opened || letter.beingRead || hasFinishedLevel(sim)) {
       letter.ticksUntilNewOneFalls = null;
     } else if (letter.ticksUntilNewOneFalls === null) {
       letter.ticksUntilNewOneFalls = Math.round(LETTER.fallsAfter / sim.dt);

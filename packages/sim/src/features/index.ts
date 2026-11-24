@@ -18,7 +18,7 @@ import { worldFeature } from './world';
  * checked. `item` and `world` own the two commands whose meaning other
  * features answer for, and come before those features. The airplane follows
  * the stick man who carries it, so it comes after him. `game` only hears a
- * command and `note` only watches where he stands: where they come decides
- * nothing.
+ * command, so where it comes decides nothing; `note` watches where he
+ * stands, and comes after him so a note is rubbed out on the tick he gets there.
  */
 export const features: readonly Feature[] = [gameFeature, playerFeature, flagFeature, inventoryFeature, itemFeature, worldFeature, craftingFeature, letterFeature, airplaneFeature, noteFeature];

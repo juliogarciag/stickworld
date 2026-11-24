@@ -14,7 +14,7 @@ export const level1: Level = {
   start: { x: 2, y: 0 },
   placements: [{ defId: FLAG_DEF_ID, at: { x: 11, y: 0 } }],
   notes: [
-    { at: { x: 2, y: -5.4 }, words: 'Stickworld', large: true },
+    { at: { x: 2, y: -5.4 }, words: 'Stickworld', title: true },
     { at: { x: 2.2, y: -2.5 }, words: 'walk', about: 'walking', rubbedOutPast: 4.2 },
   ],
 };

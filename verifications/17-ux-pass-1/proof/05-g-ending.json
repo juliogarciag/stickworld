@@ -1,19 +1,19 @@
 {
   "wide": {
     "inkOfTheEndEveryFifthOfASecond": [
-      870,
-      1826,
-      2990,
-      4081,
-      4873,
-      5456,
-      5439
+      966,
+      1936,
+      2992,
+      3901,
+      5124,
+      5427,
+      5523
     ],
     "theEnd": {
-      "inkOfTheWords": 5439,
-      "inkAtTheSides": 56,
-      "promptInk": 2959,
-      "secondsAfterTheFlag": 3
+      "inkOfTheWords": 5523,
+      "inkAtTheSides": 0,
+      "promptInk": 2999,
+      "secondsAfterTheFlag": 3.02
     }
   },
   "results": [
@@ -24,7 +24,7 @@
     {
       "name": "wide: \"THE END\" is written a stroke at a time: more of it on every later frame, until it is all there",
       "pass": true,
-      "details": "870, 1826, 2990, 4081, 4873, 5456, 5439"
+      "details": "966, 1936, 2992, 3901, 5124, 5427, 5523"
     },
     {
       "name": "wide: Enter does nothing before playing again is offered",
@@ -32,18 +32,18 @@
     },
     {
       "name": "wide: nothing but the words is written until playing again is offered",
-      "pass": true,
-      "details": "5383 pixels of pencil against 5439 when the words were finished"
+      "pass": false,
+      "details": "5690 pixels of pencil against 5523 when the words were finished"
     },
     {
-      "name": "wide: the words fit the window, with room at both sides",
-      "pass": false,
-      "details": "5439 pixels of pencil, and the outer 8% of the window at each side changed by 56, which is the boil of what was there"
+      "name": "wide: the words fit the window: nothing of them reaches its sides",
+      "pass": true,
+      "details": "5523 pixels of pencil, 0 of them in the outermost 2% of the window at either side"
     },
     {
       "name": "wide: a little later a key and \"PLAY AGAIN\" are written under them",
       "pass": true,
-      "details": "2959 more pixels of pencil, 3 s after the flag"
+      "details": "2999 more pixels of pencil, 3.02 s after the flag"
     },
     {
       "name": "wide: he is not frozen in a cheer: he stands",
@@ -71,9 +71,9 @@
       "pass": true
     },
     {
-      "name": "no page errors",
-      "pass": true,
-      "details": ""
+      "name": "run completed (page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5917/\nCall log:\n  - navigating to \"http://localhost:5917/\", waiting until \"load\"\n)",
+      "pass": false,
+      "details": "Call log:   - navigating to \"http://localhost:5917/\", waiting until \"load\""
     }
   ]
 }

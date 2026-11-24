@@ -14,7 +14,7 @@ bash verifications/17-ux-pass-1/run.sh
 
 `play.mjs` holds the page's clock still (Playwright's `page.clock`) and lets it pass one frame of a sixtieth of a second at a time. Keys are real key presses held for a known number of frames, a screenshot is of a known frame, and a clip is assembled from every fifth frame, so it plays at the game's own speed. What the game is doing is read through `window.__game`. What is on the screen is measured: `inkIn(region)` counts the pixels of a screenshot that are pencil, which is how a script knows that words are written, rubbed out, or inside the window.
 
-Nothing about the levels is typed into a script: gaps, flags, notes and item ids come from `window.__game.level` and `.defs`. The two numbers that are typed in are the ticket's own ("about twelve metres") and how long the nose is held up for a flight that crosses, which is inside the window level 3's tests hold.
+Nothing about the levels is typed into a script: gaps, flags, notes and item ids come from `window.__game.level` and `.defs`. Typed in are: the ticket's own number ("about twelve metres"), how long the nose is held up for a flight that crosses, which is inside the window level 3's tests hold, and the regions of the screen a script looks in for what only the view knows (the band a level's name is written in, the band of the window the end is written in).
 
 ## What is verified
 

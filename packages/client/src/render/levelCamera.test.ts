@@ -1,6 +1,6 @@
 import { levelById, type FloorSegment } from '@stickworld/sim';
 import { describe, expect, it } from 'vitest';
-import { __testing__, easedTowards, framingWanted, keptUpWith, type Followed } from './levelCamera';
+import { __testing__, type Followed } from './levelCamera';
 
 describe('framingWanted', () => {
   it('is centred on him and as wide as at rest while he walks along the line, away from any edge', () => {
@@ -8,15 +8,17 @@ describe('framingWanted', () => {
     expect(framingWanted({ stickMan: standingAt(4), floor: LEVEL_3, metresAcrossAtRest: 12 })).toEqual({ ahead: 0, metresAcross: 12 });
   });
 
-  it.each(WINDOWS)('at the edge of level 3, facing the gap, shows the far side however wide the view is at rest (%s)', (_, metresAcrossAtRest) => {
-    const stickMan = standingAt(GAP.from - 1);
-    const { ahead, metresAcross } = framingWanted({ stickMan, floor: LEVEL_3, metresAcrossAtRest });
-    const right = stickMan.feet.x + ahead + metresAcross / 2;
-    const left = stickMan.feet.x + ahead - metresAcross / 2;
-    expect(right).toBeGreaterThanOrEqual(GAP.to + FRAMING.ofTheNextLine - 1e-9);
-    expect(left).toBeLessThan(stickMan.feet.x - 1);
-    expect(metresAcross).toBeGreaterThanOrEqual(metresAcrossAtRest);
-    expect(metresAcross).toBeLessThanOrEqual(Math.max(metresAcrossAtRest, FRAMING.mostMetresAcross));
+  it('at the edge of level 3, facing the gap, shows the far side however wide the view is at rest', () => {
+    for (const [window, metresAcrossAtRest] of WINDOWS) {
+      const stickMan = standingAt(GAP.from - 1);
+      const { ahead, metresAcross } = framingWanted({ stickMan, floor: LEVEL_3, metresAcrossAtRest });
+      const right = stickMan.feet.x + ahead + metresAcross / 2;
+      const left = stickMan.feet.x + ahead - metresAcross / 2;
+      expect(right, window).toBeGreaterThanOrEqual(GAP.to + FRAMING.ofTheNextLine - 1e-9);
+      expect(left, window).toBeLessThan(stickMan.feet.x - 1);
+      expect(metresAcross, window).toBeGreaterThanOrEqual(metresAcrossAtRest);
+      expect(metresAcross, window).toBeLessThanOrEqual(Math.max(metresAcrossAtRest, FRAMING.mostMetresAcross));
+    }
   });
 
   it('is at an edge only on the floor, near the end of his line, facing it, with floor further on', () => {
@@ -106,7 +108,7 @@ describe('keptUpWith', () => {
 
 // ---- Helpers ----
 
-const { FRAMING } = __testing__;
+const { FRAMING, framingWanted, easedTowards, keptUpWith } = __testing__;
 const LEVEL_3: readonly FloorSegment[] = levelById(3).floor;
 const GAP = { from: LEVEL_3[0]!.to.x, to: LEVEL_3[1]!.from.x };
 

@@ -19,13 +19,13 @@ describe('noteStrokes', () => {
     expect(noteStrokes([{ ...WALK, about: 'jumping' }], KEYS).filter((stroke) => stroke.closed)).toHaveLength(1);
   });
 
-  it('writes a large note as words alone, larger, centred, standing on its line', () => {
+  it('writes a title as words alone, larger, centred, standing on its line', () => {
     const strokes = noteStrokes([NAME], KEYS);
     expect(strokes.some((stroke) => stroke.closed)).toBe(false);
     const { xs, ys } = extentOf(strokes);
     expect((Math.min(...xs) + Math.max(...xs)) / 2).toBeCloseTo(toPixels(NAME.at.x), 6);
     expect(Math.max(...ys)).toBeCloseTo(toPixels(NAME.at.y), 6);
-    expect(Math.max(...ys) - Math.min(...ys)).toBeCloseTo(NOTES.largeLetterHeight, 6);
+    expect(Math.max(...ys) - Math.min(...ys)).toBeCloseTo(NOTES.titleLetterHeight, 6);
   });
 
   it('rubs a note out stroke by stroke over a moment, and leaves the others as they are', () => {
@@ -55,7 +55,7 @@ describe('notesAreStill', () => {
 const { NOTES } = __testing__;
 const KEYS = { walking: ['←', '→'], jumping: ['↑'] };
 const WALK: NoteView = { at: { x: 2.2, y: -2.5 }, words: 'walk', about: 'walking', rubbedOutPast: 4.2, rubbedOutFor: null };
-const NAME: NoteView = { at: { x: 2, y: -5.4 }, words: 'Stickworld', large: true, rubbedOutFor: null };
+const NAME: NoteView = { at: { x: 2, y: -5.4 }, words: 'Stickworld', title: true, rubbedOutFor: null };
 
 function extentOf(strokes: readonly { points: readonly { x: number; y: number }[] }[]): { xs: number[]; ys: number[] } {
   const points = strokes.flatMap((stroke) => stroke.points);

@@ -42,10 +42,10 @@ export function levelNameIs(secondsOnTheSheet: number): 'notYet' | 'beingWritten
  * screen however far the camera has pulled back: `seen.zoom` against `zoomAtRest` says how much bigger to write it.
  */
 export function pageNumberStrokes({ page, seen, zoomAtRest }: { page: number; seen: WorldRectangle; zoomAtRest: number }): Stroke[] {
-  const larger = zoomAtRest / seen.zoom;
-  const letterHeight = PAGE_NUMBER.letterHeight * larger;
+  const timesLarger = zoomAtRest / seen.zoom;
+  const letterHeight = PAGE_NUMBER.letterHeight * timesLarger;
   const { width } = written(String(page), { at: { x: 0, y: 0 }, letterHeight });
-  const at = { x: seen.x + seen.width - PAGE_NUMBER.margin * larger - width, y: seen.y + seen.height - PAGE_NUMBER.margin * larger - letterHeight };
+  const at = { x: seen.x + seen.width - PAGE_NUMBER.margin * timesLarger - width, y: seen.y + seen.height - PAGE_NUMBER.margin * timesLarger - letterHeight };
   return written(String(page), { at, letterHeight }).strokes;
 }
 
@@ -66,6 +66,6 @@ const LEVEL_NAME = {
 } as const;
 
 /** Sizes on the screen at rest, in the HUD's pixels: the page number is as far from its corner as the item slots are from theirs. */
-const PAGE_NUMBER = { letterHeight: 34, margin: 56 } as const;
+const PAGE_NUMBER = { letterHeight: 46, margin: 56 } as const;
 
 export const __testing__ = { LEVEL_NAME, PAGE_NUMBER };

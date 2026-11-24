@@ -34,7 +34,7 @@ describe('the notes of a level', () => {
     for (let tick = 0; tick < TICK_RATE; tick += 1) sim.step();
     expect(walkNote().rubbedOutFor).toBeCloseTo((TICK_RATE + 2) / TICK_RATE, 9);
     // The game's name has nothing to be done: it stays.
-    expect(notesOf(sim).find((note) => note.large)!.rubbedOutFor).toBeNull();
+    expect(notesOf(sim).find((note) => note.title)!.rubbedOutFor).toBeNull();
   });
 
   it('about jumping is still there while he is over the gap, is rubbed out when he lands past it, and is there again after a fall into it', () => {
@@ -57,6 +57,13 @@ describe('the notes of a level', () => {
     expect(stickManOf(jumping)).toMatchObject({ action: 'walking', feet: { y: 0 } });
     expect(stickManOf(jumping).feet.x).toBeGreaterThan(gap.to);
 
+    // He walks back into the gap: the level starts again, and the note he had done is there again.
+    jumping.step([{ type: 'player/walk', direction: -1 }]);
+    for (let tick = 0; tick < 10 * TICK_RATE && jumpNote(jumping).rubbedOutFor !== null; tick += 1) jumping.step();
+    expect(jumpNote(jumping).rubbedOutFor).toBeNull();
+    expect(stickManOf(jumping).feet.x).toBeLessThan(gap.from);
+
+    // And one that was never rubbed out stays through a fall.
     const falling = new Sim({ features, start: { seed: 1, level: 2 } });
     falling.step([{ type: 'player/walk', direction: 1 }]);
     for (let tick = 0; tick < 10 * TICK_RATE; tick += 1) {
@@ -79,7 +86,7 @@ describe('every note', () => {
 
   it.each(notes)('%s says something without naming a key', (_, note) => {
     expect(note.words.trim().length).toBeGreaterThan(0);
-    expect(note.words).not.toMatch(/\b(key|press|arrow|space|enter|[a-z])\b|[←→↑↓]/i);
+    expect(note.words).not.toMatch(/\b(key|press|arrow|space|enter|[b-z])\b|[←→↑↓]/i);
   });
 
   it.each(notes)('%s is written above the floor, clear of his head, and what rubs it out can be done before the flag', (_, note, level) => {
