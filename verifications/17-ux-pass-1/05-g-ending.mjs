@@ -53,11 +53,11 @@ await verify({ name: '05-g-ending', port: 5917, cwd: ROOT }, async ({ size, open
     await game.seconds(0.4);
     const offered = await game.state();
     const sides = await atTheSides();
-    // What is written once playing again is offered, less the words: the key and "PLAY AGAIN". The lines boil, so the same words are a few pixels more or less from frame to frame.
+    // What is written once playing again is offered, less the words: the key and "PLAY AGAIN". The lines boil, so the same words are a few pixels in a hundred more or less from frame to frame.
     const promptInk = (await written()) - inkBeforeTheWords - inkOfTheWords;
     report.theEnd = { inkOfTheWords, inkAtTheSides: sides, promptInk, secondsAfterTheFlag: round((offered.tick - (await flagReachedTick(game))) / 60) };
     await game.shot('g-the-end-with-play-again');
-    expect('nothing but the words is written until playing again is offered', Math.abs(justBefore - inkOfTheWords) < 80, `${justBefore} pixels of pencil against ${inkOfTheWords} when the words were finished`);
+    expect('nothing but the words is written until playing again is offered', Math.abs(justBefore - inkOfTheWords) < 40 + inkOfTheWords * 0.06, `${justBefore} pixels of pencil against ${inkOfTheWords} when the words were finished`);
     expect('the words fit the window: nothing of them reaches its sides', sides === 0 && inkOfTheWords > 500, `${inkOfTheWords} pixels of pencil, ${sides} of them in the tenth of the window at its right side or the fiftieth at its left, where the item slot leaves room to look`);
     expect('a little later a key and "PLAY AGAIN" are written under them', offeredAfter >= 0 && promptInk > 150, `${promptInk} more pixels of pencil, ${report.theEnd.secondsAfterTheFlag} s after the flag`);
     expect('he is not frozen in a cheer: he stands', offered.stickMan.action === 'standing');

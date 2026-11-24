@@ -1,0 +1,13 @@
+PASS  dev server up, started by this run
+
+--- wide window, 1600 x 900 ---
+PASS  wide: the game's name is written on level 1, in view from the first moment  ("Stickworld", 3569 pixels of pencil)
+PASS  wide: a walk note is beside him, with its keys drawn in boxes  ("walk", 1311 pixels of pencil)
+PASS  wide: no note names a key: the words are the level's, the keys are drawn by the client  (Stickworld, walk)
+PASS  wide: the walk note stays while he jumps on the spot and walks the wrong way
+PASS  wide: once he has walked on, the walk note is rubbed out  (0 pixels of pencil left where it was)
+PASS  wide: the game's name stays
+PASS  wide: level 2 has a jump note before its gap  (at x 5, the gap is from 6 to 6.8; 797 pixels of pencil)
+PASS  wide: the notes are on the sheet and move with it  (the view moved 529 pixels; 804 pixels of pencil where the note now is, 0 where it was on the screen)
+PASS  wide: a death is not a page turn: the level starts again on the same sheet
+PASS  wide: after a fall into the gap the jump note is still there

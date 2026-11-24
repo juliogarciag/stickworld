@@ -13,7 +13,7 @@ import { round, verify } from './play.mjs';
 const LEAST_INK_OF_A_PAGE_NUMBER = 12;
 
 /** Where a level's name is written, in metres above the floor he starts on: the band `render/sheetWords.ts` writes it in, which the debug API does not expose. */
-const NAME_BAND = { ...NAME_BAND };
+const NAME_BAND = { top: -4.6, bottom: -3.7 };
 
 await verify({ name: '01-a-page-turn', port: 5917, cwd: ROOT }, async ({ size, open, expect }) => {
   const report = {};

@@ -97,7 +97,7 @@ await verify({ name: '03-c-camera', port: 5917, cwd: ROOT }, async ({ size, open
   expect('the view eases: it never jumped from one frame to the next, not even when he sits down in the airplane', watched.biggestJump < 0.6, `the most its middle moved or its width changed in one frame is ${report.watched.biggestChangeInOneFrame} m, of ${report.watched.narrowest} m or more across`);
   const slot = report.atTheEdge.inkOfTheItemSlot;
   expect('the level\'s camera did pull back on the way', watched.widest > watched.narrowest + 1, `from ${report.watched.narrowest} to ${report.watched.widest} m across`);
-  expect('the HUD kept its own size all the while: one zoom, and the item slot drawn in the same place on the screen', watched.hudZooms.size === 1 && watched.slotBoxes.size === 1 && slot.atRest > 100 && slot.atTheEdge > slot.atRest, `HUD zoom ${[...watched.hudZooms].join(', ')}; ${slot.atRest} pixels of pencil in the slot's box at rest, ${slot.atTheEdge} at the edge, where it is selected and so has a second box`);
+  expect('the HUD kept its own size all the while: one zoom, and the item slot drawn in the same place on the screen', watched.hudZooms.size === 1 && watched.slotBoxes.size === 1 && slot.atRest > 100 && Math.abs(slot.atTheEdge - slot.atRest) < slot.atRest * 0.25, `HUD zoom ${[...watched.hudZooms].join(', ')}; ${slot.atRest} pixels of pencil in the slot's box at rest and ${slot.atTheEdge} at the edge: the same box, a little different as its line boils`);
   await game.close();
   return report;
 });

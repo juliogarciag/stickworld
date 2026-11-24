@@ -1,0 +1,11 @@
+file://<repo>/verifications/17-ux-pass-1/01-a-page-turn.mjs:16
+const NAME_BAND = { ...NAME_BAND };
+                  ^
+
+ReferenceError: Cannot access 'NAME_BAND' before initialization
+    at file://<repo>/verifications/17-ux-pass-1/01-a-page-turn.mjs:16:19
+    at ModuleJob.run (node:internal/modules/esm/module_job:303:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:663:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:99:5)
+
+Node.js v24.0.2
