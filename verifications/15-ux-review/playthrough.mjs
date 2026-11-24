@@ -61,7 +61,7 @@ try {
   await shot('l1-first-frame');
   await wait(6000);
   await shot('l1-after-six-idle-seconds');
-  for (const key of ['j', 'k', '1', 'Enter']) await page.keyboard.press(key);
+  for (const key of ['j', 'k', '1', 'Enter']) await pressAndLetTheGameSee(key);
   await wait(300);
   await shot('l1-after-trying-j-k-1-enter');
   await page.keyboard.press('Space');
@@ -224,7 +224,7 @@ try {
   await shot('l3-flight4-let-go-after-the-climb');
   await wait(600);
   await shot('l3-flight4-over-the-gap');
-  await until(() => window.__game.airplane()?.at.x > 17.5 || window.__game.stickMan().action !== 'seated', 20000);
+  await until(() => window.__game.airplane()?.at.x > 19 || window.__game.stickMan().action !== 'seated', 20000);
   await shot('l3-flight4-coming-in');
   await until(() => window.__game.airplane()?.state === 'landing' || window.__game.stickMan().action !== 'seated', 20000);
   await shot('l3-flight4-landing');
@@ -244,7 +244,7 @@ try {
   await shot('end-ten-seconds-later');
 
   // ---- After the end: can he still do things? ----
-  for (const key of ['j', 'k', 'Enter', 'Space']) await page.keyboard.press(key);
+  for (const key of ['j', 'k', 'Enter', 'Space']) await pressAndLetTheGameSee(key);
   await page.keyboard.down('ArrowRight');
   await wait(3000);
   await shot('end-after-trying-every-key');
@@ -303,6 +303,12 @@ async function backToTheStartOfLevel3(moment) {
     await page.keyboard.up('ArrowLeft');
   }
   await until(() => window.__game.letter()?.height === 0, 30000);
+}
+
+/** Presses `key` and lets a few frames pass before the next one: keys pressed while the clock stands still did not all reach the game. */
+async function pressAndLetTheGameSee(key) {
+  await page.keyboard.press(key);
+  await wait(100);
 }
 
 /** Lets `milliseconds` of game time pass. */
