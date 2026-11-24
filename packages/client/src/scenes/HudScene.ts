@@ -14,14 +14,15 @@ import { worldSeenBy } from '../render/cameraView';
 import { zoomAtRest } from '../render/levelCamera';
 import type { PageTurn } from '../render/pageTurn';
 import { createStrokeLayer, type Stroke, type StrokeLayer } from '../render/strokes';
+import { everyFrameAfterTheLevel } from './afterTheLevel';
 
 /**
  * What is shown over the sheet of paper and does not move with it: the item
  * slots, the letter he reads, what the keys would do right now, the words
  * that end the game with the key that plays it again, and the edge of a
- * sheet that is being turned away. It runs beside the level scene, after
- * it, so it is drawn above the paper's tooth and reads the sim the level
- * scene has just advanced. Its camera never scrolls and keeps the zoom the
+ * sheet that is being turned away. It runs beside the level scene and is
+ * drawn after it, above the paper's tooth, from the sim the level scene has
+ * just advanced (`everyFrameAfterTheLevel`). Its camera never scrolls and keeps the zoom the
  * level has at rest, so a HUD line is as heavy as a line of the level and
  * the HUD stays the size it is when the level's camera pulls back.
  */
@@ -49,9 +50,10 @@ export class HudScene extends Phaser.Scene {
     this.prompts = createStrokeLayer(this);
     this.theEnd = createStrokeLayer(this);
     this.pageEdge = createStrokeLayer(this);
+    everyFrameAfterTheLevel(this, () => this.draw());
   }
 
-  override update(): void {
+  private draw(): void {
     const camera = this.cameras.main;
     camera.setZoom(zoomAtRest(camera));
     const { sim } = this.loop;

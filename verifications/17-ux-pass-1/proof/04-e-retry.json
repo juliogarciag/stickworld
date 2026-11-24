@@ -2,22 +2,22 @@
   "wide": {
     "retry": {
       "presses": 2,
-      "seconds": 3.13,
-      "walkedMetres": 6.53
-    },
-    "fallenPaper": {
-      "fellAfterSeconds": 0.63,
-      "inkOnTheFloor": 227
-    }
-  },
-  "narrow": {
-    "retry": {
-      "presses": 2,
       "seconds": 3.17,
       "walkedMetres": 6.53
     },
     "fallenPaper": {
       "fellAfterSeconds": 0.6,
+      "inkOnTheFloor": 203
+    }
+  },
+  "narrow": {
+    "retry": {
+      "presses": 2,
+      "seconds": 3.15,
+      "walkedMetres": 6.53
+    },
+    "fallenPaper": {
+      "fellAfterSeconds": 0.63,
       "inkOnTheFloor": 106
     }
   },
@@ -53,7 +53,7 @@
     {
       "name": "wide: a retry is walk, set down, board: two presses",
       "pass": true,
-      "details": "3.13 s from the restart to the seat, 6.53 m of it walking"
+      "details": "3.17 s from the restart to the seat, 6.53 m of it walking"
     },
     {
       "name": "wide: nothing fell, and no letter lies there: he has nothing to read again",
@@ -66,7 +66,7 @@
     {
       "name": "wide: with neither paper nor airplane a sheet of paper falls from the sky, and no letter",
       "pass": true,
-      "details": "it started 0.63 s after the airplane was lost"
+      "details": "it started 0.6 s after the airplane was lost"
     },
     {
       "name": "wide: it comes down where he stands, in view, and can be picked up without a step",
@@ -76,7 +76,7 @@
     {
       "name": "wide: it lies there, drawn, and one press picks it up into his hand: nothing is read",
       "pass": true,
-      "details": "227 pixels of pencil where it lay; J would \"craft\""
+      "details": "203 pixels of pencil where it lay; J would \"craft\""
     },
     {
       "name": "narrow: a letter he has read is gone once he puts it away, and what it taught stays: J would fold",
@@ -94,7 +94,7 @@
     {
       "name": "narrow: a retry is walk, set down, board: two presses",
       "pass": true,
-      "details": "3.17 s from the restart to the seat, 6.53 m of it walking"
+      "details": "3.15 s from the restart to the seat, 6.53 m of it walking"
     },
     {
       "name": "narrow: nothing fell, and no letter lies there: he has nothing to read again",
@@ -107,7 +107,7 @@
     {
       "name": "narrow: with neither paper nor airplane a sheet of paper falls from the sky, and no letter",
       "pass": true,
-      "details": "it started 0.6 s after the airplane was lost"
+      "details": "it started 0.63 s after the airplane was lost"
     },
     {
       "name": "narrow: it comes down where he stands, in view, and can be picked up without a step",

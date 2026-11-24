@@ -7,17 +7,23 @@
       1,
       0.98,
       0.9,
-      0.74,
+      0.72,
       0.45,
       0.05
     ],
     "inkAtTheEdgeMidTurn": {
-      "atTheEdge": 2752,
-      "laterInTheSamePlace": 84
+      "atTheEdge": 4869,
+      "laterInTheSamePlace": 93
     },
+    "inkOfTheOldFlagInTheFirstFrames": [
+      332,
+      332,
+      331,
+      339
+    ],
     "clip": "after/wide/a-level-1-ends-the-page-turns.gif",
     "inkOfTheLevelName": {
-      "written": 1022,
+      "written": 956,
       "rubbedOut": 0
     }
   },
@@ -34,11 +40,17 @@
       0.05
     ],
     "inkAtTheEdgeMidTurn": {
-      "atTheEdge": 1939,
-      "laterInTheSamePlace": 57
+      "atTheEdge": 2800,
+      "laterInTheSamePlace": 69
     },
+    "inkOfTheOldFlagInTheFirstFrames": [
+      240,
+      240,
+      240,
+      238
+    ],
     "inkOfTheLevelName": {
-      "written": 637,
+      "written": 670,
       "rubbedOut": 0
     }
   },
@@ -55,9 +67,15 @@
       0
     ],
     "inkAtTheEdgeMidTurn": {
-      "atTheEdge": 1375,
-      "laterInTheSamePlace": 24
+      "atTheEdge": 1874,
+      "laterInTheSamePlace": 32
     },
+    "inkOfTheOldFlagInTheFirstFrames": [
+      76,
+      76,
+      76,
+      80
+    ],
     "inkOfTheLevelName": {
       "written": 187,
       "rubbedOut": 0
@@ -71,7 +89,7 @@
     {
       "name": "wide: level 1 has a page number in the bottom right corner",
       "pass": true,
-      "details": "114 pixels of pencil"
+      "details": "98 pixels of pencil"
     },
     {
       "name": "wide: the next level starts about a second after the flag: the dead part of the pause is gone",
@@ -89,6 +107,11 @@
       "details": "its edge is at 1 of the width"
     },
     {
+      "name": "wide: the new level never shows bare, not for one frame: the finished sheet with its raised flag is on the screen in each of the first frames of the next level",
+      "pass": true,
+      "details": "332, 332, 331, 339 pixels of pencil where the old flag's cloth is"
+    },
+    {
       "name": "wide: it only ever moves left, slowly at first, and ends out of view",
       "pass": true,
       "details": "edge after 5 frames 0.997, last -0.088"
@@ -96,7 +119,7 @@
     {
       "name": "wide: the sheet's edge is drawn where it is: a line down the whole window, which moves on with the sheet",
       "pass": true,
-      "details": "2752 pixels of pencil in a strip 38 wide and 900 tall at the edge; 84 in the same strip a quarter of a second later"
+      "details": "4869 pixels of pencil in a strip 38 wide and 900 tall at the edge; 93 in the same strip a quarter of a second later"
     },
     {
       "name": "wide: the next level is already being played under it: he walked on level 2 while the page turned",
@@ -106,12 +129,12 @@
     {
       "name": "wide: the new sheet has its number and name written above him",
       "pass": true,
-      "details": "1022 pixels of pencil where \"2. A GAP\" is"
+      "details": "956 pixels of pencil where \"2. A GAP\" is"
     },
     {
       "name": "wide: level 2 has its page number in the corner too",
       "pass": true,
-      "details": "246 pixels of pencil"
+      "details": "218 pixels of pencil"
     },
     {
       "name": "wide: the name is rubbed out a few seconds later, and the page number stays",
@@ -121,7 +144,7 @@
     {
       "name": "narrow: level 1 has a page number in the bottom right corner",
       "pass": true,
-      "details": "75 pixels of pencil"
+      "details": "79 pixels of pencil"
     },
     {
       "name": "narrow: the next level starts about a second after the flag: the dead part of the pause is gone",
@@ -139,6 +162,11 @@
       "details": "its edge is at 1 of the width"
     },
     {
+      "name": "narrow: the new level never shows bare, not for one frame: the finished sheet with its raised flag is on the screen in each of the first frames of the next level",
+      "pass": true,
+      "details": "240, 240, 240, 238 pixels of pencil where the old flag's cloth is"
+    },
+    {
       "name": "narrow: it only ever moves left, slowly at first, and ends out of view",
       "pass": true,
       "details": "edge after 5 frames 0.995, last -0.088"
@@ -146,7 +174,7 @@
     {
       "name": "narrow: the sheet's edge is drawn where it is: a line down the whole window, which moves on with the sheet",
       "pass": true,
-      "details": "1939 pixels of pencil in a strip 25 wide and 760 tall at the edge; 57 in the same strip a quarter of a second later"
+      "details": "2800 pixels of pencil in a strip 25 wide and 760 tall at the edge; 69 in the same strip a quarter of a second later"
     },
     {
       "name": "narrow: the next level is already being played under it: he walked on level 2 while the page turned",
@@ -156,12 +184,12 @@
     {
       "name": "narrow: the new sheet has its number and name written above him",
       "pass": true,
-      "details": "637 pixels of pencil where \"2. A GAP\" is"
+      "details": "670 pixels of pencil where \"2. A GAP\" is"
     },
     {
       "name": "narrow: level 2 has its page number in the corner too",
       "pass": true,
-      "details": "147 pixels of pencil"
+      "details": "150 pixels of pencil"
     },
     {
       "name": "narrow: the name is rubbed out a few seconds later, and the page number stays",
@@ -189,6 +217,11 @@
       "details": "its edge is at 1 of the width"
     },
     {
+      "name": "portrait: the new level never shows bare, not for one frame: the finished sheet with its raised flag is on the screen in each of the first frames of the next level",
+      "pass": true,
+      "details": "76, 76, 76, 80 pixels of pencil where the old flag's cloth is"
+    },
+    {
       "name": "portrait: it only ever moves left, slowly at first, and ends out of view",
       "pass": true,
       "details": "edge after 5 frames 0.995, last -0.088"
@@ -196,7 +229,7 @@
     {
       "name": "portrait: the sheet's edge is drawn where it is: a line down the whole window, which moves on with the sheet",
       "pass": true,
-      "details": "1375 pixels of pencil in a strip 19 wide and 860 tall at the edge; 24 in the same strip a quarter of a second later"
+      "details": "1874 pixels of pencil in a strip 19 wide and 860 tall at the edge; 32 in the same strip a quarter of a second later"
     },
     {
       "name": "portrait: the next level is already being played under it: he walked on level 2 while the page turned",

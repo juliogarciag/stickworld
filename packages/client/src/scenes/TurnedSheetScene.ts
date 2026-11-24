@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { PageTurn } from '../render/pageTurn';
+import { everyFrameAfterTheLevel } from './afterTheLevel';
 import { Sheet } from './Sheet';
 
 /**
@@ -18,9 +19,10 @@ export class TurnedSheetScene extends Phaser.Scene {
   create(): void {
     this.sheet = new Sheet(this);
     this.cameras.main.setVisible(false);
+    everyFrameAfterTheLevel(this, (seconds) => this.draw(seconds));
   }
 
-  override update(_time: number, deltaMs: number): void {
+  private draw(seconds: number): void {
     const camera = this.cameras.main;
     const turning = this.pageTurn.now();
     camera.setVisible(turning !== undefined);
@@ -36,7 +38,7 @@ export class TurnedSheetScene extends Phaser.Scene {
     camera.setZoom(turning.camera.zoom);
     camera.setScroll(turning.camera.scrollX, turning.camera.scrollY);
     // What was written on it as it arrived was rubbed out long ago, or would have been.
-    this.sheet.draw({ sim: turning.sim, seconds: deltaMs / 1000, secondsOnTheSheet: Infinity });
+    this.sheet.draw({ sim: turning.sim, seconds, secondsOnTheSheet: Infinity });
   }
 }
 

@@ -1,52 +1,52 @@
 {
   "wide": {
     "inkOfTheEndEveryFifthOfASecond": [
-      883,
-      1861,
-      2991,
-      4026,
-      5029,
-      5496,
-      5430
+      1057,
+      1947,
+      3172,
+      3926,
+      5207,
+      5570,
+      5421
     ],
     "theEnd": {
-      "inkOfTheWords": 5430,
+      "inkOfTheWords": 5421,
       "inkAtTheSides": 0,
-      "promptInk": 3258,
-      "secondsAfterTheFlag": 3
+      "promptInk": 3085,
+      "secondsAfterTheFlag": 3.02
     }
   },
   "narrow": {
     "inkOfTheEndEveryFifthOfASecond": [
-      619,
-      1260,
-      2044,
-      2743,
-      3332,
-      3807,
-      3764
+      596,
+      1292,
+      1984,
+      2548,
+      3440,
+      3809,
+      3827
     ],
     "theEnd": {
-      "inkOfTheWords": 3764,
+      "inkOfTheWords": 3827,
       "inkAtTheSides": 0,
-      "promptInk": 2097,
-      "secondsAfterTheFlag": 3.02
+      "promptInk": 2006,
+      "secondsAfterTheFlag": 3
     }
   },
   "portrait": {
     "inkOfTheEndEveryFifthOfASecond": [
-      168,
-      364,
-      618,
-      827,
-      985,
-      1132,
-      1131
+      185,
+      410,
+      609,
+      841,
+      1136,
+      1128,
+      1097
     ],
     "theEnd": {
-      "inkOfTheWords": 1131,
+      "inkOfTheWords": 1097,
       "inkAtTheSides": 0,
-      "promptInk": 615,
+      "promptInk": 729,
       "secondsAfterTheFlag": 3.02
     },
     "clip": "after/portrait/g-the-end-and-play-again.gif"
@@ -59,7 +59,7 @@
     {
       "name": "wide: \"THE END\" is written a stroke at a time: more of it on every later frame, until it is all there",
       "pass": true,
-      "details": "883, 1861, 2991, 4026, 5029, 5496, 5430"
+      "details": "1057, 1947, 3172, 3926, 5207, 5570, 5421"
     },
     {
       "name": "wide: Enter does nothing before playing again is offered",
@@ -68,17 +68,17 @@
     {
       "name": "wide: nothing but the words is written until playing again is offered",
       "pass": true,
-      "details": "5434 pixels of pencil against 5430 when the words were finished"
+      "details": "5444 pixels of pencil against 5421 when the words were finished"
     },
     {
       "name": "wide: the words fit the window: nothing of them reaches its sides",
       "pass": true,
-      "details": "5430 pixels of pencil, 0 of them in the tenth of the window at its right side or the fiftieth at its left, where the item slot leaves room to look"
+      "details": "5421 pixels of pencil, 0 of them in the outer tenth of the window at either side"
     },
     {
       "name": "wide: a little later a key and \"PLAY AGAIN\" are written under them",
       "pass": true,
-      "details": "3258 more pixels of pencil, 3 s after the flag"
+      "details": "3085 more pixels of pencil, 3.02 s after the flag"
     },
     {
       "name": "wide: he is not frozen in a cheer: he stands",
@@ -108,7 +108,7 @@
     {
       "name": "narrow: \"THE END\" is written a stroke at a time: more of it on every later frame, until it is all there",
       "pass": true,
-      "details": "619, 1260, 2044, 2743, 3332, 3807, 3764"
+      "details": "596, 1292, 1984, 2548, 3440, 3809, 3827"
     },
     {
       "name": "narrow: Enter does nothing before playing again is offered",
@@ -117,17 +117,17 @@
     {
       "name": "narrow: nothing but the words is written until playing again is offered",
       "pass": true,
-      "details": "3783 pixels of pencil against 3764 when the words were finished"
+      "details": "3758 pixels of pencil against 3827 when the words were finished"
     },
     {
       "name": "narrow: the words fit the window: nothing of them reaches its sides",
       "pass": true,
-      "details": "3764 pixels of pencil, 0 of them in the tenth of the window at its right side or the fiftieth at its left, where the item slot leaves room to look"
+      "details": "3827 pixels of pencil, 0 of them in the outer tenth of the window at either side"
     },
     {
       "name": "narrow: a little later a key and \"PLAY AGAIN\" are written under them",
       "pass": true,
-      "details": "2097 more pixels of pencil, 3.02 s after the flag"
+      "details": "2006 more pixels of pencil, 3 s after the flag"
     },
     {
       "name": "narrow: he is not frozen in a cheer: he stands",
@@ -157,7 +157,7 @@
     {
       "name": "portrait: \"THE END\" is written a stroke at a time: more of it on every later frame, until it is all there",
       "pass": true,
-      "details": "168, 364, 618, 827, 985, 1132, 1131"
+      "details": "185, 410, 609, 841, 1136, 1128, 1097"
     },
     {
       "name": "portrait: Enter does nothing before playing again is offered",
@@ -166,17 +166,17 @@
     {
       "name": "portrait: nothing but the words is written until playing again is offered",
       "pass": true,
-      "details": "1227 pixels of pencil against 1131 when the words were finished"
+      "details": "1112 pixels of pencil against 1097 when the words were finished"
     },
     {
       "name": "portrait: the words fit the window: nothing of them reaches its sides",
       "pass": true,
-      "details": "1131 pixels of pencil, 0 of them in the tenth of the window at its right side or the fiftieth at its left, where the item slot leaves room to look"
+      "details": "1097 pixels of pencil, 0 of them in the outer tenth of the window at either side"
     },
     {
       "name": "portrait: a little later a key and \"PLAY AGAIN\" are written under them",
       "pass": true,
-      "details": "615 more pixels of pencil, 3.02 s after the flag"
+      "details": "729 more pixels of pencil, 3.02 s after the flag"
     },
     {
       "name": "portrait: he is not frozen in a cheer: he stands",

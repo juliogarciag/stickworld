@@ -1,27 +1,29 @@
 PASS  dev server up, started by this run
 
 --- wide window, 1600 x 900 ---
-PASS  wide: level 1 has a page number in the bottom right corner  (114 pixels of pencil)
+PASS  wide: level 1 has a page number in the bottom right corner  (98 pixels of pencil)
 PASS  wide: the next level starts about a second after the flag: the dead part of the pause is gone  (1.05 s, where it was 2)
 PASS  wide: the finished sheet is turned away over most of a second, not cut  (54 frames)
 PASS  wide: it covers the whole view as the turn starts  (its edge is at 1 of the width)
+PASS  wide: the new level never shows bare, not for one frame: the finished sheet with its raised flag is on the screen in each of the first frames of the next level  (332, 332, 331, 339 pixels of pencil where the old flag's cloth is)
 PASS  wide: it only ever moves left, slowly at first, and ends out of view  (edge after 5 frames 0.997, last -0.088)
-PASS  wide: the sheet's edge is drawn where it is: a line down the whole window, which moves on with the sheet  (2752 pixels of pencil in a strip 38 wide and 900 tall at the edge; 84 in the same strip a quarter of a second later)
+PASS  wide: the sheet's edge is drawn where it is: a line down the whole window, which moves on with the sheet  (4869 pixels of pencil in a strip 38 wide and 900 tall at the edge; 93 in the same strip a quarter of a second later)
 PASS  wide: the next level is already being played under it: he walked on level 2 while the page turned  (from 2 to 3.98 m in 54 ticks)
-PASS  wide: the new sheet has its number and name written above him  (1022 pixels of pencil where "2. A GAP" is)
-PASS  wide: level 2 has its page number in the corner too  (246 pixels of pencil)
+PASS  wide: the new sheet has its number and name written above him  (956 pixels of pencil where "2. A GAP" is)
+PASS  wide: level 2 has its page number in the corner too  (218 pixels of pencil)
 PASS  wide: the name is rubbed out a few seconds later, and the page number stays  (0 pixels of pencil left of the name)
 
 --- narrow window, 820 x 760 ---
-PASS  narrow: level 1 has a page number in the bottom right corner  (75 pixels of pencil)
+PASS  narrow: level 1 has a page number in the bottom right corner  (79 pixels of pencil)
 PASS  narrow: the next level starts about a second after the flag: the dead part of the pause is gone  (1.07 s, where it was 2)
 PASS  narrow: the finished sheet is turned away over most of a second, not cut  (53 frames)
 PASS  narrow: it covers the whole view as the turn starts  (its edge is at 1 of the width)
+PASS  narrow: the new level never shows bare, not for one frame: the finished sheet with its raised flag is on the screen in each of the first frames of the next level  (240, 240, 240, 238 pixels of pencil where the old flag's cloth is)
 PASS  narrow: it only ever moves left, slowly at first, and ends out of view  (edge after 5 frames 0.995, last -0.088)
-PASS  narrow: the sheet's edge is drawn where it is: a line down the whole window, which moves on with the sheet  (1939 pixels of pencil in a strip 25 wide and 760 tall at the edge; 57 in the same strip a quarter of a second later)
+PASS  narrow: the sheet's edge is drawn where it is: a line down the whole window, which moves on with the sheet  (2800 pixels of pencil in a strip 25 wide and 760 tall at the edge; 69 in the same strip a quarter of a second later)
 PASS  narrow: the next level is already being played under it: he walked on level 2 while the page turned  (from 2 to 4.02 m in 55 ticks)
-PASS  narrow: the new sheet has its number and name written above him  (637 pixels of pencil where "2. A GAP" is)
-PASS  narrow: level 2 has its page number in the corner too  (147 pixels of pencil)
+PASS  narrow: the new sheet has its number and name written above him  (670 pixels of pencil where "2. A GAP" is)
+PASS  narrow: level 2 has its page number in the corner too  (150 pixels of pencil)
 PASS  narrow: the name is rubbed out a few seconds later, and the page number stays  (0 pixels of pencil left of the name)
 
 --- portrait window, 480 x 860 ---
@@ -29,12 +31,13 @@ PASS  portrait: level 1 has a page number in the bottom right corner  (22 pixels
 PASS  portrait: the next level starts about a second after the flag: the dead part of the pause is gone  (1.07 s, where it was 2)
 PASS  portrait: the finished sheet is turned away over most of a second, not cut  (53 frames)
 PASS  portrait: it covers the whole view as the turn starts  (its edge is at 1 of the width)
+PASS  portrait: the new level never shows bare, not for one frame: the finished sheet with its raised flag is on the screen in each of the first frames of the next level  (76, 76, 76, 80 pixels of pencil where the old flag's cloth is)
 PASS  portrait: it only ever moves left, slowly at first, and ends out of view  (edge after 5 frames 0.995, last -0.088)
-PASS  portrait: the sheet's edge is drawn where it is: a line down the whole window, which moves on with the sheet  (1375 pixels of pencil in a strip 19 wide and 860 tall at the edge; 24 in the same strip a quarter of a second later)
+PASS  portrait: the sheet's edge is drawn where it is: a line down the whole window, which moves on with the sheet  (1874 pixels of pencil in a strip 19 wide and 860 tall at the edge; 32 in the same strip a quarter of a second later)
 PASS  portrait: the next level is already being played under it: he walked on level 2 while the page turned  (from 2 to 4.02 m in 55 ticks)
 PASS  portrait: the new sheet has its number and name written above him  (187 pixels of pencil where "2. A GAP" is)
 PASS  portrait: level 2 has its page number in the corner too  (50 pixels of pencil)
 PASS  portrait: the name is rubbed out a few seconds later, and the page number stays  (0 pixels of pencil left of the name)
 PASS  no page errors
 
-ALL 32 CHECKS PASSED
+ALL 35 CHECKS PASSED

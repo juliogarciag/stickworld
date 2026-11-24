@@ -22,8 +22,8 @@
           "rubbedOutFor": null
         }
       ],
-      "nameInk": 3712,
-      "walkInk": 1397
+      "nameInk": 3568,
+      "walkInk": 1429
     },
     "level2": {
       "note": {
@@ -36,10 +36,10 @@
         "rubbedOutPast": 6.8,
         "rubbedOutFor": null
       },
-      "jumpInk": 782,
+      "jumpInk": 797,
       "noteMovedWithTheSheet": {
         "by": 529,
-        "inkWhereItIs": 811,
+        "inkWhereItIs": 783,
         "inkWhereItWas": 0
       }
     }
@@ -67,8 +67,8 @@
           "rubbedOutFor": null
         }
       ],
-      "nameInk": 2402,
-      "walkInk": 921
+      "nameInk": 2384,
+      "walkInk": 868
     },
     "level2": {
       "note": {
@@ -81,10 +81,10 @@
         "rubbedOutPast": 6.8,
         "rubbedOutFor": null
       },
-      "jumpInk": 577,
+      "jumpInk": 540,
       "noteMovedWithTheSheet": {
-        "by": 338,
-        "inkWhereItIs": 571,
+        "by": 336,
+        "inkWhereItIs": 501,
         "inkWhereItWas": 0
       }
     }
@@ -129,7 +129,7 @@
       "jumpInk": 177,
       "noteMovedWithTheSheet": {
         "by": 197,
-        "inkWhereItIs": 171,
+        "inkWhereItIs": 188,
         "inkWhereItWas": 0
       }
     }
@@ -142,12 +142,12 @@
     {
       "name": "wide: the game's name is written on level 1, in view from the first moment",
       "pass": true,
-      "details": "\"Stickworld\", 3712 pixels of pencil"
+      "details": "\"Stickworld\", 3568 pixels of pencil"
     },
     {
       "name": "wide: a walk note is beside him, with its keys drawn in boxes",
       "pass": true,
-      "details": "\"walk\", 1397 pixels of pencil"
+      "details": "\"walk\", 1429 pixels of pencil"
     },
     {
       "name": "wide: no note names a key: the words are the level's, the keys are drawn by the client",
@@ -170,12 +170,12 @@
     {
       "name": "wide: level 2 has a jump note before its gap",
       "pass": true,
-      "details": "at x 5, the gap is from 6 to 6.8; 782 pixels of pencil"
+      "details": "at x 5, the gap is from 6 to 6.8; 797 pixels of pencil"
     },
     {
       "name": "wide: the notes are on the sheet and move with it",
       "pass": true,
-      "details": "the view moved 529 pixels; 811 pixels of pencil where the note now is, 0 where it was on the screen"
+      "details": "the view moved 529 pixels; 783 pixels of pencil where the note now is, 0 where it was on the screen"
     },
     {
       "name": "wide: a death is not a page turn: the level starts again on the same sheet",
@@ -193,12 +193,12 @@
     {
       "name": "narrow: the game's name is written on level 1, in view from the first moment",
       "pass": true,
-      "details": "\"Stickworld\", 2402 pixels of pencil"
+      "details": "\"Stickworld\", 2384 pixels of pencil"
     },
     {
       "name": "narrow: a walk note is beside him, with its keys drawn in boxes",
       "pass": true,
-      "details": "\"walk\", 921 pixels of pencil"
+      "details": "\"walk\", 868 pixels of pencil"
     },
     {
       "name": "narrow: no note names a key: the words are the level's, the keys are drawn by the client",
@@ -221,12 +221,12 @@
     {
       "name": "narrow: level 2 has a jump note before its gap",
       "pass": true,
-      "details": "at x 5, the gap is from 6 to 6.8; 577 pixels of pencil"
+      "details": "at x 5, the gap is from 6 to 6.8; 540 pixels of pencil"
     },
     {
       "name": "narrow: the notes are on the sheet and move with it",
       "pass": true,
-      "details": "the view moved 338 pixels; 571 pixels of pencil where the note now is, 0 where it was on the screen"
+      "details": "the view moved 336 pixels; 501 pixels of pencil where the note now is, 0 where it was on the screen"
     },
     {
       "name": "narrow: a death is not a page turn: the level starts again on the same sheet",
@@ -277,7 +277,7 @@
     {
       "name": "portrait: the notes are on the sheet and move with it",
       "pass": true,
-      "details": "the view moved 197 pixels; 171 pixels of pencil where the note now is, 0 where it was on the screen"
+      "details": "the view moved 197 pixels; 188 pixels of pencil where the note now is, 0 where it was on the screen"
     },
     {
       "name": "portrait: a death is not a page turn: the level starts again on the same sheet",
@@ -290,7 +290,7 @@
     {
       "name": "portrait: the jump note is there while he is over the gap, and is rubbed out once he has landed past it",
       "pass": true,
-      "details": "landed at x 6.91; 0 pixels of pencil left where it was"
+      "details": "landed at x 6.99; 0 pixels of pencil left where it was"
     },
     {
       "name": "no page errors",

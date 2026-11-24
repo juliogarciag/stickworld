@@ -18,6 +18,7 @@ The first UX review (`docs/reviews/ux-review-1.md`) found that the three levels 
 
 - The sim still starts the next level in one tick, and it is played from that tick on under the leaving sheet. The sim was not made to wait for the turn: how long a sheet takes to slide is how a thing looks (rule 8), and a sim that paused for it would make every level test wait too.
 - To draw the level that was left, `GameLoop` keeps a snapshot of the tick before each step and, when the step changed the level, hands a sim restored from it to the view (`takeFinishedLevel`). That sim is never stepped. A snapshot is a few hundred bytes of JSON, so one a tick costs nothing that can be measured; the alternative, a fact in the sim that says "the level ends on the next tick", would be view timing leaking into it.
+- The scenes drawn over the level's do their work after every scene has updated (`scenes/afterTheLevel.ts`), because Phaser updates the top scene first: done in `update`, the leaving sheet was missing on the one frame the level changed, and the new level blinked through.
 - A screenshot of the last frame into a texture was not used: Phaser takes one a frame late, by which time the level has changed, and a picture of pencil lines is the one thing on screen that would not boil.
 - What the pause after a flag is for is the flag going up and a beat of cheering (`LEVEL_END.pauseBeforeNextLevel`, now 1.1 seconds). The turn itself is the rest of what used to be two seconds of nothing.
 

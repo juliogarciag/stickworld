@@ -7,17 +7,17 @@
     },
     "atTheEdge": {
       "view": {
-        "left": 2.763854088215661,
-        "right": 21.973112023796144,
-        "top": -7.779749463910096,
-        "bottom": 3.0254581248539263
+        "left": 2.7637875139106516,
+        "right": 21.973267363841163,
+        "top": -7.779839339221857,
+        "bottom": 3.025493076364056
       },
       "farSideFrom": 19,
       "whereHeIs": 0.3,
       "metresAcross": 19.21,
       "inkOfTheItemSlot": {
-        "atRest": 714,
-        "atTheEdge": 740
+        "atRest": 343,
+        "atTheEdge": 356
       }
     },
     "watched": {
@@ -38,24 +38,24 @@
     },
     "atTheEdge": {
       "view": {
-        "left": 2.9613457370508094,
-        "right": 21.512345048994785,
-        "top": -12.379398565238711,
-        "bottom": 4.8142105531483885
+        "left": 2.961348564155619,
+        "right": 21.512335577157383,
+        "top": -12.37939035794459,
+        "bottom": 4.814207361422898
       },
       "farSideFrom": 19,
       "whereHeIs": 0.3,
       "metresAcross": 18.55,
       "inkOfTheItemSlot": {
-        "atRest": 490,
-        "atTheEdge": 382
+        "atRest": 250,
+        "atTheEdge": 298
       }
     },
     "clip": "after/narrow/c-carry-board-fly-land.gif",
     "watched": {
       "narrowest": 12,
       "widest": 20.96,
-      "biggestChangeInOneFrame": 0.502,
+      "biggestChangeInOneFrame": 0.523,
       "hudZooms": [
         0.683333
       ],
@@ -66,27 +66,27 @@
     "metresAcrossAtRest": 12,
     "carrying": {
       "whereHeIs": 0.3,
-      "metresAcross": 20.91
+      "metresAcross": 20.92
     },
     "atTheEdge": {
       "view": {
-        "left": 2.9612416685380993,
-        "right": 21.512582007663827,
-        "top": -23.931229037472193,
-        "bottom": 9.306589070128071
+        "left": 2.961218358174267,
+        "right": 21.51263939111386,
+        "top": -23.93133313249208,
+        "bottom": 9.306629551524697
       },
       "farSideFrom": 19,
       "whereHeIs": 0.3,
       "metresAcross": 18.55,
       "inkOfTheItemSlot": {
-        "atRest": 229,
-        "atTheEdge": 195
+        "atRest": 90,
+        "atTheEdge": 99
       }
     },
     "watched": {
       "narrowest": 12,
       "widest": 20.96,
-      "biggestChangeInOneFrame": 0.446,
+      "biggestChangeInOneFrame": 0.567,
       "hudZooms": [
         0.4
       ],
@@ -153,7 +153,7 @@
     {
       "name": "wide: the HUD kept its own size all the while: one zoom, and the item slot drawn in the same place on the screen",
       "pass": true,
-      "details": "HUD zoom 0.833333; 714 pixels of pencil in the slot's box at rest and 740 at the edge: the same box, a little different as its line boils"
+      "details": "HUD zoom 0.833333; 343 pixels of pencil in the slot's box at rest and 356 at the edge: the same box, a little different as its line boils"
     },
     {
       "name": "narrow: the view shows at least 12 metres across at rest",
@@ -200,7 +200,7 @@
     {
       "name": "narrow: the view eases: it never jumped from one frame to the next, not even when he sits down in the airplane",
       "pass": true,
-      "details": "the most its middle moved or its width changed in one frame is 0.502 m, of 12 m or more across"
+      "details": "the most its middle moved or its width changed in one frame is 0.523 m, of 12 m or more across"
     },
     {
       "name": "narrow: the level's camera did pull back on the way",
@@ -210,7 +210,7 @@
     {
       "name": "narrow: the HUD kept its own size all the while: one zoom, and the item slot drawn in the same place on the screen",
       "pass": true,
-      "details": "HUD zoom 0.683333; 490 pixels of pencil in the slot's box at rest and 382 at the edge: the same box, a little different as its line boils"
+      "details": "HUD zoom 0.683333; 250 pixels of pencil in the slot's box at rest and 298 at the edge: the same box, a little different as its line boils"
     },
     {
       "name": "portrait: the view shows at least 12 metres across at rest",
@@ -257,7 +257,7 @@
     {
       "name": "portrait: the view eases: it never jumped from one frame to the next, not even when he sits down in the airplane",
       "pass": true,
-      "details": "the most its middle moved or its width changed in one frame is 0.446 m, of 12 m or more across"
+      "details": "the most its middle moved or its width changed in one frame is 0.567 m, of 12 m or more across"
     },
     {
       "name": "portrait: the level's camera did pull back on the way",
@@ -267,7 +267,7 @@
     {
       "name": "portrait: the HUD kept its own size all the while: one zoom, and the item slot drawn in the same place on the screen",
       "pass": true,
-      "details": "HUD zoom 0.4; 229 pixels of pencil in the slot's box at rest and 195 at the edge: the same box, a little different as its line boils"
+      "details": "HUD zoom 0.4; 90 pixels of pencil in the slot's box at rest and 99 at the edge: the same box, a little different as its line boils"
     },
     {
       "name": "no page errors",

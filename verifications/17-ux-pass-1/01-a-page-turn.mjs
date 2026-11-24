@@ -2,7 +2,7 @@
  * A. Turn the page between levels.
  *
  * Level 1 is played to its flag with real keys. Checked: the pause after the flag is about a second and no longer
- * two; the finished sheet then slides off to the left over most of a second, never back, with the next level
+ * two; the finished sheet is over the next level from the first frame, and then slides off to the left over most of a second, never back, with the next level
  * already under it; the new sheet has its number and name written above him, rubbed out a few seconds later; a
  * page number is in the bottom right corner on both levels. Screenshots of each moment, and a clip at the wide window.
  */
@@ -26,7 +26,11 @@ await verify({ name: '01-a-page-turn', port: 5917, cwd: ROOT }, async ({ size, o
 
   const play = async () => {
     await game.holdUntil('ArrowRight', (state) => state.flag.reached);
-    const cheered = await game.until((state) => state.level === 2);
+    const raising = await game.until((state) => state.flag.raised === 1);
+    // Where the raised flag's cloth is on the screen: beside his head, where the level under this sheet has nothing drawn.
+    const raised = await game.state();
+    const clothOfTheOldFlag = await game.regionOf({ left: raised.flag.at.x + 0.08, right: raised.flag.at.x + 0.9, top: raised.flag.at.y - raised.flag.height * 0.97, bottom: raised.flag.at.y - raised.flag.height * 0.72 });
+    const cheered = raising + (await game.until((state) => state.level === 2));
     report.secondsFromFlagToNextLevel = round(cheered / 60);
     expect('the next level starts about a second after the flag: the dead part of the pause is gone', cheered / 60 > 0.9 && cheered / 60 < 1.3, `${report.secondsFromFlagToNextLevel} s, where it was 2`);
 
@@ -36,11 +40,14 @@ await verify({ name: '01-a-page-turn', port: 5917, cwd: ROOT }, async ({ size, o
     let inkAtTheEdge;
     let edgeStrip;
     let inkWhereTheEdgeWas;
+    const inkOfTheOldFlag = [];
     await game.page.keyboard.down('ArrowRight');
     for (let frame = 0; frame < 120; frame += 1) {
       const state = await game.state();
       if (!state.pageTurn) break;
       edges.push(state.pageTurn.edgeAt);
+      // The first frames of the new level: the sheet that was left must be over it from the very first, or the new level shows bare for a frame.
+      if (frame < 4) inkOfTheOldFlag.push(await game.inkIn(clothOfTheOldFlag));
       if (edges.length === 28) {
         // The sheet's edge on the screen: a pencil line from the top of the window to the bottom, where the turn says it is.
         // A screenshot may still show the frame before the one the page has just drawn, so the strip reaches from where the edge is to where it was a frame ago.
@@ -63,6 +70,8 @@ await verify({ name: '01-a-page-turn', port: 5917, cwd: ROOT }, async ({ size, o
     report.inkAtTheEdgeMidTurn = { atTheEdge: inkAtTheEdge, laterInTheSamePlace: inkWhereTheEdgeWas };
     expect('the finished sheet is turned away over most of a second, not cut', edges.length >= 40 && edges.length <= 70, `${edges.length} frames`);
     expect('it covers the whole view as the turn starts', edges[0] > 0.99, `its edge is at ${round(edges[0], 3)} of the width`);
+    report.inkOfTheOldFlagInTheFirstFrames = inkOfTheOldFlag;
+    expect('the new level never shows bare, not for one frame: the finished sheet with its raised flag is on the screen in each of the first frames of the next level', inkOfTheOldFlag.length === 4 && inkOfTheOldFlag.every((ink) => ink > 15), `${inkOfTheOldFlag.join(', ')} pixels of pencil where the old flag's cloth is`);
     expect('it only ever moves left, slowly at first, and ends out of view', edges.every((edge, frame) => frame === 0 || edge < edges[frame - 1]) && edges[5] > 0.95 && edges[edges.length - 1] < 0.15, `edge after 5 frames ${round(edges[5], 3)}, last ${round(edges[edges.length - 1], 3)}`);
     expect("the sheet's edge is drawn where it is: a line down the whole window, which moves on with the sheet", inkAtTheEdge > size.height * 0.5 && inkWhereTheEdgeWas < inkAtTheEdge / 4, `${inkAtTheEdge} pixels of pencil in a strip ${Math.round(edgeStrip.width)} wide and ${size.height} tall at the edge; ${inkWhereTheEdgeWas} in the same strip a quarter of a second later`);
     expect('the next level is already being played under it: he walked on level 2 while the page turned', asTheTurnStarts.level === 2 && asTheTurnEnds.level === 2 && asTheTurnEnds.stickMan.feet.x > asTheTurnStarts.stickMan.feet.x + 1, `from ${round(asTheTurnStarts.stickMan.feet.x)} to ${round(asTheTurnEnds.stickMan.feet.x)} m in ${asTheTurnEnds.tick - asTheTurnStarts.tick} ticks`);

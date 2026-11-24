@@ -22,11 +22,11 @@ await verify({ name: '05-g-ending', port: 5917, cwd: ROOT }, async ({ size, open
 
   /**
    * The band of the window the end is written in, words and prompt: from under the item slot down to above his raised
-   * arms and the flag, at every window. And the outer part of it at both sides: a tenth of the window at the right, and at the left what the item slot leaves.
+   * arms and the flag, at every window. And the outer tenth of it at both sides.
    */
   const band = { y: size.height * 0.15, height: size.height * 0.33 };
   const written = () => game.inkIn({ x: 0, width: size.width, ...band });
-  const atTheSides = async () => (await game.inkIn({ x: 0, width: size.width * 0.02, ...band })) + (await game.inkIn({ x: size.width * 0.9, width: size.width * 0.1, ...band }));
+  const atTheSides = async () => (await game.inkIn({ x: 0, width: size.width * 0.1, ...band })) + (await game.inkIn({ x: size.width * 0.9, width: size.width * 0.1, ...band }));
 
   const play = async () => {
     await game.holdUntil('ArrowRight', (state) => state.flag.reached);
@@ -48,8 +48,14 @@ await verify({ name: '05-g-ending', port: 5917, cwd: ROOT }, async ({ size, open
     const tooEarly = await game.state();
     expect('Enter does nothing before playing again is offered', tooEarly.level === 3 && tooEarly.ending.over && !tooEarly.ending.playingAgainOffered && tooEarly.stickMan.action === 'cheering');
 
-    const offeredAfter = await game.until((state) => state.ending.playingAgainOffered, 300);
-    const justBefore = (await written()) - inkBeforeTheWords;
+    // Up to the frame playing again is offered, measured every few frames: the HUD writes the prompt on that very frame.
+    let offeredAfter = -1;
+    let justBefore = inkOfTheWords;
+    for (let frame = 0; frame < 300 && offeredAfter < 0; frame += 1) {
+      if ((await game.state()).ending.playingAgainOffered) offeredAfter = frame;
+      else if (frame % 6 === 0) justBefore = (await written()) - inkBeforeTheWords;
+      if (offeredAfter < 0) await game.frames(1);
+    }
     await game.seconds(0.4);
     const offered = await game.state();
     const sides = await atTheSides();
@@ -58,7 +64,7 @@ await verify({ name: '05-g-ending', port: 5917, cwd: ROOT }, async ({ size, open
     report.theEnd = { inkOfTheWords, inkAtTheSides: sides, promptInk, secondsAfterTheFlag: round((offered.tick - (await flagReachedTick(game))) / 60) };
     await game.shot('g-the-end-with-play-again');
     expect('nothing but the words is written until playing again is offered', Math.abs(justBefore - inkOfTheWords) < 40 + inkOfTheWords * 0.06, `${justBefore} pixels of pencil against ${inkOfTheWords} when the words were finished`);
-    expect('the words fit the window: nothing of them reaches its sides', sides === 0 && inkOfTheWords > 500, `${inkOfTheWords} pixels of pencil, ${sides} of them in the tenth of the window at its right side or the fiftieth at its left, where the item slot leaves room to look`);
+    expect('the words fit the window: nothing of them reaches its sides', sides === 0 && inkOfTheWords > 500, `${inkOfTheWords} pixels of pencil, ${sides} of them in the outer tenth of the window at either side`);
     expect('a little later a key and "PLAY AGAIN" are written under them', offeredAfter >= 0 && promptInk > 150, `${promptInk} more pixels of pencil, ${report.theEnd.secondsAfterTheFlag} s after the flag`);
     expect('he is not frozen in a cheer: he stands', offered.stickMan.action === 'standing');
 
