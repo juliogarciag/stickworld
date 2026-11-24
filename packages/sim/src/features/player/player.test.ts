@@ -6,6 +6,7 @@ import { createSim, restoreSim } from '../../core/create';
 import type { SimHandle } from '../../core/sim';
 import type { SimSnapshot } from '../../core/snapshot';
 import { PLAYER } from './defs';
+import { keptOverTheLine } from './floor';
 import type { PlayerState } from './state';
 import { stickManOf } from './view';
 
@@ -252,7 +253,28 @@ describe('the player state', () => {
   });
 });
 
+describe('keptOverTheLine', () => {
+  it('lets a step end where it was going while that is over his line, half his width from its ends at the nearest', () => {
+    expect(keptOverTheLine(TWO_LINES, { from: 22, to: 22.04 })).toBe(22.04);
+    expect(keptOverTheLine(TWO_LINES, { from: 26.9, to: 27.5 })).toBe(27 - STICK_MAN_WIDTH / 2);
+    expect(keptOverTheLine(TWO_LINES, { from: 19.1, to: 18 })).toBe(19 + STICK_MAN_WIDTH / 2);
+    // The line he is on is the one that counts, not the other.
+    expect(keptOverTheLine(TWO_LINES, { from: 9.9, to: 12 })).toBe(10 - STICK_MAN_WIDTH / 2);
+  });
+
+  it('changes nothing for him who has no line under him', () => {
+    expect(keptOverTheLine(TWO_LINES, { from: 14, to: 14.5 })).toBe(14.5);
+    expect(keptOverTheLine(TWO_LINES, { from: -1, to: -2 })).toBe(-2);
+  });
+});
+
 // ---- Helpers ----
+
+/** Two floor lines with a gap between them, as level 3 has. */
+const TWO_LINES = [
+  { from: { x: 0, y: 0 }, to: { x: 10, y: 0 } },
+  { from: { x: 19, y: 0 }, to: { x: 27, y: 0 } },
+];
 
 const LEVEL = levelById(1);
 const WALK_RIGHT: Command = { type: 'player/walk', direction: 1 };

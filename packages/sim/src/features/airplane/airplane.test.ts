@@ -14,7 +14,7 @@ import { stickManOf } from '../player/view';
 import { interactionOf } from '../world/view';
 import { AIRPLANE, FLIGHT } from './defs';
 import { __testing__, hasAirplane } from './index';
-import { airplaneOf } from './view';
+import { airplaneOf, flyingHintOf } from './view';
 
 describe('placing the airplane', () => {
   it('puts it on the floor in front of him, the way he faces, and empties the slot', () => {
@@ -45,11 +45,12 @@ describe('placing the airplane', () => {
 describe('lifting, carrying and putting down', () => {
   it('lifts it only from within reach', () => {
     const sim = airplaneOnTheFloor();
-    walkTo(sim, airplaneOf(sim)!.at.x - AIRPLANE.reach - 0.3);
+    // From the far side of it: on the near side lies the letter, which the same key reads.
+    walkTo(sim, airplaneOf(sim)!.at.x + AIRPLANE.reach + 0.3);
     expect(interactionOf(sim)).toBeNull();
     sim.step([INTERACT]);
     expect(airplaneOf(sim)!.state).toBe('resting');
-    walkTo(sim, airplaneOf(sim)!.at.x - AIRPLANE.reach + 0.2);
+    walkTo(sim, airplaneOf(sim)!.at.x + AIRPLANE.reach - 0.2);
     sim.step([INTERACT]);
     expect(airplaneOf(sim)!.state).toBe('carried');
   });
@@ -177,11 +178,11 @@ describe('losing the airplane', () => {
     expectItToFallAndBeLost(sim);
   });
 
-  it('falls out of his hands when he carries it off the edge, and is lost', () => {
+  it('falls out of his hands when he carries it off the edge: it is not carried down the gap with him', () => {
     const sim = carryingTheAirplane();
     sim.step([{ type: 'player/walk', direction: 1 }]);
     let letGoWhileHeFell = false;
-    for (let tick = 0; tick < 600 && hasAirplane(sim); tick += 1) {
+    for (let tick = 0; tick < 600 && airplaneOf(sim); tick += 1) {
       sim.step();
       const airplane = airplaneOf(sim);
       if (airplane?.state === 'falling') {
@@ -191,7 +192,7 @@ describe('losing the airplane', () => {
       }
     }
     expect(letGoWhileHeFell).toBe(true);
-    expect(hasAirplane(sim)).toBe(false);
+    expect(airplaneOf(sim)).toBeUndefined();
   });
 
   it('falls out of his hands when he jumps into the gap with it', () => {
@@ -199,18 +200,19 @@ describe('losing the airplane', () => {
     walkTo(sim, EDGE - 0.3);
     sim.step([{ type: 'player/walk', direction: 1 }, { type: 'player/jump' }]);
     const states = new Set<string>();
-    for (let tick = 0; tick < 600 && hasAirplane(sim); tick += 1) {
+    for (let tick = 0; tick < 600 && airplaneOf(sim); tick += 1) {
       sim.step();
       states.add(airplaneOf(sim)?.state ?? 'lost');
     }
     expect([...states]).toEqual(['carried', 'falling', 'lost']);
   });
 
-  it('is lost when he dies while it rests on the floor: the level starts again without it', () => {
+  it('is gone from the floor when he dies while it rests there: the level starts again with one in his hand instead', () => {
     const sim = airplaneOnTheFloor();
     sim.step([{ type: 'player/walk', direction: -1 }]);
-    for (let tick = 0; tick < 600 && hasAirplane(sim); tick += 1) sim.step();
-    expect(hasAirplane(sim)).toBe(false);
+    for (let tick = 0; tick < 600 && airplaneOf(sim); tick += 1) sim.step();
+    expect(airplaneOf(sim)).toBeUndefined();
+    expect(itemSlotsOf(sim)).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, selected: true }]);
     expect(stickManOf(sim).feet).toEqual(level3.start);
   });
 
@@ -220,6 +222,67 @@ describe('losing the airplane', () => {
     for (let tick = 0; tick < 300; tick += 1) sim.step();
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBe(AIRPLANE_ITEM_ID);
     expect(letterOf(sim)).toBeUndefined();
+  });
+});
+
+describe('that the airplane has to be taken to an edge', () => {
+  it('is not said to him who has no airplane: before the letter, and with only the paper', () => {
+    const sim = new Sim({ features, start: { seed: 1, level: 3 } });
+    expect(flyingHintOf(sim)).toBeNull();
+    giveItem(sim, PAPER_ITEM_ID);
+    expect(flyingHintOf(sim)).toBeNull();
+  });
+
+  it('is said from the moment he has one, in his slot, on the floor away from an edge or over his head', () => {
+    const sim = holdingTheAirplane();
+    expect(flyingHintOf(sim)).toBe('takeItToAnEdge');
+    sim.step([USE_ITEM]);
+    expect(airplaneOf(sim)).toMatchObject({ state: 'resting', onAnEdge: false });
+    expect(flyingHintOf(sim)).toBe('takeItToAnEdge');
+    sim.step([INTERACT]);
+    expect(airplaneOf(sim)!.state).toBe('carried');
+    expect(flyingHintOf(sim)).toBe('takeItToAnEdge');
+  });
+
+  it('is no longer said once it sits on an edge, where the key boards it', () => {
+    const sim = carryingTheAirplane();
+    walkTo(sim, EDGE - AIRPLANE.putDownAhead - AIRPLANE.length / 4);
+    sim.step([INTERACT]);
+    expect(airplaneOf(sim)).toMatchObject({ state: 'resting', onAnEdge: true });
+    expect(interactionOf(sim)).toBe('board');
+    expect(flyingHintOf(sim)).toBeNull();
+  });
+
+  it('is not said from his boarding on, and is said again when the level starts again after a lost flight', () => {
+    const sim = carryingTheAirplane();
+    walkTo(sim, EDGE - AIRPLANE.putDownAhead - AIRPLANE.length / 4);
+    sim.step([INTERACT]);
+    sim.step([INTERACT]);
+    expect(stickManOf(sim).action).toBe('seated');
+    expect(flyingHintOf(sim)).toBeNull();
+    for (let tick = 0; tick < 600 && !(stickManOf(sim).action === 'standing' && stickManOf(sim).feet.x === level3.start.x); tick += 1) sim.step();
+    // The flight was lost: he is back at the start with an airplane in his hand, and is told again where it goes.
+    expect(itemSlotsOf(sim)[0]?.itemDefId).toBe(AIRPLANE_ITEM_ID);
+    expect(flyingHintOf(sim)).toBe('takeItToAnEdge');
+  });
+
+  it('is not said after a flight that crossed: he stands on the far side with the airplane beside him', () => {
+    const sim = carryingTheAirplane();
+    walkTo(sim, EDGE - AIRPLANE.putDownAhead - AIRPLANE.length / 4);
+    sim.step([INTERACT]);
+    sim.step([INTERACT, { type: 'airplane/steer', direction: 1 }]);
+    for (let tick = 0; tick < CLIMB_TICKS_THAT_CROSS; tick += 1) sim.step();
+    sim.step([{ type: 'airplane/steer', direction: 0 }]);
+    for (let tick = 0; tick < 900 && stickManOf(sim).action === 'seated'; tick += 1) sim.step();
+    expect(stickManOf(sim).feet.x).toBeGreaterThan(FAR_SIDE);
+    expect(airplaneOf(sim)!.state).toBe('resting');
+    expect(flyingHintOf(sim)).toBeNull();
+  });
+
+  it('is not said on a level with no gap to fly over', () => {
+    const sim = new Sim({ features, start: { seed: 1, level: 1 } });
+    giveItem(sim, AIRPLANE_ITEM_ID);
+    expect(flyingHintOf(sim)).toBeNull();
   });
 });
 
@@ -239,6 +302,8 @@ describe('the airplane in a snapshot', () => {
 
 const EDGE = level3.floor[0]!.to.x;
 const FAR_SIDE = level3.floor[1]!.from.x;
+/** A climb of this many ticks from the boarding crosses level 3's gap: well inside the window `level3.test.ts` holds. */
+const CLIMB_TICKS_THAT_CROSS = 28;
 
 const SELECT_SLOT_1: Command = { type: 'inventory/select', slot: 1 };
 const USE_ITEM: Command = { type: 'item/use' };

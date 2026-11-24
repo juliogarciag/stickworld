@@ -1,7 +1,7 @@
 import type { Point } from '../../content/levels/types';
 import { Sim, type SimHandle } from '../../core/sim';
 import type { WalkDirection } from './commands';
-import { hasFinishedLevel, isFallingOffAnEdge, walkDirectionNow } from './index';
+import { isFallingOffAnEdge, standsCheering, walkDirectionNow } from './index';
 import { playerSlice } from './state';
 
 /** The stick man as a view needs him: where he is and what he is doing. Which way each limb points is the view's business. */
@@ -11,8 +11,8 @@ export interface StickManView {
   /** 1 when he looks right, -1 when he looks left. */
   readonly facing: 1 | -1;
   /**
-   * `jumping` is any time his feet are off the floor and he is not seated; `cheering` is standing on the floor with the
-   * level finished; `seated` is sitting in the airplane, and then `feet` is the middle of its underside.
+   * `jumping` is any time his feet are off the floor and he is not seated; `cheering` is standing on the floor under
+   * the flag he reached, which on the last level ends when playing again is offered; `seated` is sitting in the airplane, and then `feet` is the middle of its underside.
    */
   readonly action: 'standing' | 'walking' | 'jumping' | 'cheering' | 'seated';
   /** Metres walked on the floor since he last stood still or landed: how far along his walk he is. */
@@ -35,7 +35,7 @@ export function stickManOf(handle: SimHandle): StickManView {
   return {
     feet: { x: player.x, y: player.y },
     facing: player.facing,
-    action: player.seated ? 'seated' : !player.onFloor ? 'jumping' : hasFinishedLevel(sim) ? 'cheering' : walkDirectionNow(sim) !== 0 ? 'walking' : 'standing',
+    action: player.seated ? 'seated' : !player.onFloor ? 'jumping' : standsCheering(sim) ? 'cheering' : walkDirectionNow(sim) !== 0 ? 'walking' : 'standing',
     distanceWalked: player.distanceWalked,
     verticalSpeed: player.verticalSpeed,
     horizontalSpeed: player.horizontalSpeed,

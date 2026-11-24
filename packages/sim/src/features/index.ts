@@ -2,9 +2,11 @@ import type { Feature } from '../core/feature';
 import { airplaneFeature } from './airplane';
 import { craftingFeature } from './crafting';
 import { flagFeature } from './flag';
+import { gameFeature } from './game';
 import { inventoryFeature } from './inventory';
 import { itemFeature } from './item';
 import { letterFeature } from './letter';
+import { noteFeature } from './note';
 import { playerFeature } from './player';
 import { worldFeature } from './world';
 
@@ -15,6 +17,8 @@ import { worldFeature } from './world';
  * has moved, and the inventory is given what a flag gives after the flag is
  * checked. `item` and `world` own the two commands whose meaning other
  * features answer for, and come before those features. The airplane follows
- * the stick man who carries it, so it comes after him.
+ * the stick man who carries it, so it comes after him. `game` only hears a
+ * command, so where it comes decides nothing; `note` watches where he
+ * stands, and comes after him so a note is rubbed out on the tick he gets there.
  */
-export const features: readonly Feature[] = [playerFeature, flagFeature, inventoryFeature, itemFeature, worldFeature, craftingFeature, letterFeature, airplaneFeature];
+export const features: readonly Feature[] = [gameFeature, playerFeature, flagFeature, inventoryFeature, itemFeature, worldFeature, craftingFeature, letterFeature, airplaneFeature, noteFeature];

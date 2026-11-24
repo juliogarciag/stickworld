@@ -1,35 +1,46 @@
-import { craftingOf, flagOf, interactionOf, itemSlotsOf, itemUseOf, letterOf, stickManOf } from '@stickworld/sim';
+import { craftingOf, flagOf, flyingHintOf, gameOf, interactionOf, itemSlotsOf, itemUseOf, letterOf, stickManOf } from '@stickworld/sim';
 import Phaser from 'phaser';
 import { itemSlotStrokes } from '../hud/itemSlots';
+import { pageEdgeStrokes } from '../hud/pageEdge';
 import { letterSheetStrokes } from '../hud/panels';
 import { promptsFor, promptStrokes } from '../hud/prompts';
-import { theEndIsWritten, theEndStrokes } from '../hud/theEnd';
+import { shareOfTheEndWritten, theEndIsShown, theEndStrokes } from '../hud/theEnd';
 import { keptWhileUnchanged } from '../hud/unchanged';
 import { ACTION_KEY_NAMES } from '../input/actionKeys';
+import { GAME_KEY_NAMES } from '../input/gameKeys';
 import { FLIGHT_KEY_NAMES } from '../input/playerKeys';
 import type { GameLoop } from '../loop/GameLoop';
 import { worldSeenBy } from '../render/cameraView';
-import { levelZoom } from '../render/levelCamera';
+import { zoomAtRest } from '../render/levelCamera';
+import type { PageTurn } from '../render/pageTurn';
 import { createStrokeLayer, type Stroke, type StrokeLayer } from '../render/strokes';
+import { everyFrameAfterTheLevel } from './afterTheLevel';
 
 /**
  * What is shown over the sheet of paper and does not move with it: the item
- * slots, the letter he reads, what the
- * keys would do right now, and the words that end the game. It runs beside the level scene, after it, so it is drawn above the
- * paper's tooth and reads the sim the level scene has just advanced. Its
- * camera never scrolls and keeps the level's zoom, so a HUD line is as heavy
- * as a line of the level.
+ * slots, the letter he reads, what the keys would do right now, the words
+ * that end the game with the key that plays it again, and the edge of a
+ * sheet that is being turned away. It runs beside the level scene and is
+ * drawn after it, above the paper's tooth, from the sim the level scene has
+ * just advanced (`everyFrameAfterTheLevel`). Its camera never scrolls and keeps the zoom the
+ * level has at rest, so a HUD line is as heavy as a line of the level and
+ * the HUD stays the size it is when the level's camera pulls back.
  */
 export class HudScene extends Phaser.Scene {
   private itemSlots!: StrokeLayer;
   private heldUp!: StrokeLayer;
   private prompts!: StrokeLayer;
   private theEnd!: StrokeLayer;
+  private pageEdge!: StrokeLayer;
   private readonly strokesOfWhatIsHeldUp = keptWhileUnchanged<Stroke[]>();
   private readonly strokesOfPrompts = keptWhileUnchanged<Stroke[]>();
   private readonly strokesOfTheEnd = keptWhileUnchanged<Stroke[]>();
+  private readonly strokesOfThePageEdge = keptWhileUnchanged<Stroke[]>();
 
-  constructor(private readonly loop: GameLoop) {
+  constructor(
+    private readonly loop: GameLoop,
+    private readonly pageTurn: PageTurn,
+  ) {
     super({ key: HUD_SCENE, active: true });
   }
 
@@ -38,11 +49,13 @@ export class HudScene extends Phaser.Scene {
     this.heldUp = createStrokeLayer(this);
     this.prompts = createStrokeLayer(this);
     this.theEnd = createStrokeLayer(this);
+    this.pageEdge = createStrokeLayer(this);
+    everyFrameAfterTheLevel(this, () => this.draw());
   }
 
-  override update(): void {
+  private draw(): void {
     const camera = this.cameras.main;
-    camera.setZoom(levelZoom(camera));
+    camera.setZoom(zoomAtRest(camera));
     const { sim } = this.loop;
     const seen = worldSeenBy(camera);
     this.itemSlots.show(itemSlotStrokes(itemSlotsOf(sim), seen));
@@ -59,11 +72,16 @@ export class HudScene extends Phaser.Scene {
       interactKey: ACTION_KEY_NAMES.interact,
       seated: stickManOf(sim).action === 'seated',
       flightKeys: FLIGHT_KEY_NAMES,
+      flyingHint: flyingHintOf(sim),
     });
     this.prompts.show(this.strokesOfPrompts(JSON.stringify([prompts, seen]), () => promptStrokes(prompts, seen)));
 
-    const over = theEndIsWritten(flagOf(sim));
-    this.theEnd.show(this.strokesOfTheEnd(JSON.stringify([over, seen]), () => (over ? theEndStrokes(seen) : [])));
+    const flag = flagOf(sim);
+    const theEnd = theEndIsShown(flag) && flag ? { shareWritten: shareOfTheEndWritten(flag.upFor), playAgainKey: gameOf(sim).playingAgainOffered ? GAME_KEY_NAMES.playAgain : null } : null;
+    this.theEnd.show(this.strokesOfTheEnd(JSON.stringify([theEnd, seen]), () => (theEnd ? theEndStrokes(theEnd, seen) : [])));
+
+    const edgeAt = this.pageTurn.now()?.edgeAt ?? null;
+    this.pageEdge.show(this.strokesOfThePageEdge(JSON.stringify([edgeAt, seen]), () => (edgeAt === null ? [] : pageEdgeStrokes(edgeAt, seen))));
   }
 }
 

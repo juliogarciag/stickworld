@@ -3,10 +3,16 @@ import type { Stroke, StrokePoint } from '../render/strokes';
 import { PENCIL } from '../render/strokes/pencil';
 
 /**
- * The item slots, drawn in pencil in a corner of the screen: a box per slot
- * with its number under it, the item it holds inside, and a second, heavier
+ * The item slots, drawn in pencil in the top right corner of the screen, small,
+ * out of the way of what is written on the sheet and of the letter he holds
+ * up: a box per slot
+ * with the item it holds inside, and a second, heavier
  * box around the selected one. What a slot holds and whether it is selected
  * are the sim's (`itemSlotsOf`); only where and how it is drawn is decided here.
+ *
+ * A slot has no number written under it: with one slot the key that selects
+ * it is never needed, and a "1" under the box read as how many he has. When
+ * there are several slots, say which key is which some other way.
  */
 
 /** A rectangle of the HUD, in the HUD camera's world pixels. */
@@ -17,19 +23,19 @@ export interface Rectangle {
   readonly height: number;
 }
 
-/** Where slot number `slot` (counted from 1) is drawn when the HUD camera sees `seen`: a row from the top left corner. */
+/** Where slot number `slot` (counted from 1) is drawn when the HUD camera sees `seen`: a row from the top right corner, the first slot in the corner and each next one to its left. */
 export function itemSlotBox(slot: number, seen: Rectangle): Rectangle {
-  return { x: seen.x + SLOT_LAYOUT.margin + (slot - 1) * (SLOT_LAYOUT.side + SLOT_LAYOUT.spacing), y: seen.y + SLOT_LAYOUT.margin, width: SLOT_LAYOUT.side, height: SLOT_LAYOUT.side };
+  const fromTheRight = SLOT_LAYOUT.margin + SLOT_LAYOUT.side + (slot - 1) * (SLOT_LAYOUT.side + SLOT_LAYOUT.spacing);
+  return { x: seen.x + seen.width - fromTheRight, y: seen.y + SLOT_LAYOUT.margin, width: SLOT_LAYOUT.side, height: SLOT_LAYOUT.side };
 }
 
-/** The strokes that draw `slots` when the HUD camera sees `seen`. For each slot, in this order: its box, its number, the item it holds, and last the second box when it is selected. */
+/** The strokes that draw `slots` when the HUD camera sees `seen`. For each slot, in this order: its box, the item it holds, and last the second box when it is selected. */
 export function itemSlotStrokes(slots: readonly ItemSlot[], seen: Rectangle): Stroke[] {
   return slots.flatMap(({ slot, itemDefId, selected }) => {
     const box = itemSlotBox(slot, seen);
     const drawnIn = (shape: UnitPath): Stroke => ({ points: shape.map((point) => pointIn(box, point)), thickness: PENCIL.thickness });
     return [
       { points: cornersOf(box), thickness: PENCIL.thickness, closed: true },
-      ...(NUMERALS[slot] ?? []).map(drawnIn),
       ...(itemDefId === null ? [] : (ITEM_DRAWINGS[itemDefId] ?? UNKNOWN_ITEM)).map(drawnIn),
       ...(selected ? [{ points: cornersOf(grownBy(box, SLOT_LAYOUT.selectedOutset)), thickness: PENCIL.thickness * SLOT_LAYOUT.selectedWeight, closed: true }] : []),
     ];
@@ -41,29 +47,19 @@ export function itemSlotStrokes(slots: readonly ItemSlot[], seen: Rectangle): St
 /** Sizes in the HUD camera's world pixels, which are the level's: the HUD is drawn at the level's zoom, so its pencil is the same weight. */
 const SLOT_LAYOUT = {
   /** From the corner of the screen to the first slot. */
-  margin: 56,
-  side: 112,
+  margin: 48,
+  /** A little larger than the box of a key in a prompt: it is there to be glanced at, not looked at. */
+  side: 72,
   /** Between two slots. */
-  spacing: 36,
+  spacing: 24,
   /** How far outside a slot's box the selected slot's second box is. */
-  selectedOutset: 13,
+  selectedOutset: 9,
   /** How much heavier than a usual line the second box is. */
   selectedWeight: 1.5,
 } as const;
 
 /** A path in shares of a slot's box: (0, 0) is its top left corner and (1, 1) its bottom right. A point may lie outside. */
 type UnitPath = readonly StrokePoint[];
-
-/** The number under each slot, as a hand writes it. */
-const NUMERALS: Readonly<Record<number, readonly UnitPath[]>> = {
-  1: [
-    [
-      { x: 0.43, y: 1.2 },
-      { x: 0.51, y: 1.13 },
-      { x: 0.51, y: 1.4 },
-    ],
-  ],
-};
 
 /** How each item looks in a slot, by its def id. */
 const ITEM_DRAWINGS: Readonly<Record<number, readonly UnitPath[]>> = {

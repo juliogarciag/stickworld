@@ -2,7 +2,7 @@ import type { Point } from '../../content/levels/types';
 import { Sim, type SimHandle } from '../../core/sim';
 import type { SteerDirection } from './commands';
 import { AIRPLANE, FLIGHT } from './defs';
-import { sitsOnAnEdge } from './index';
+import { hasYetToTakeItToAnEdge, sitsOnAnEdge } from './index';
 import { airplaneSlice } from './state';
 
 /** The airplane in the world as a view needs it. How it is folded and how it gets from the floor to his hands are the view's business. */
@@ -55,4 +55,13 @@ export function airplaneOf(handle: SimHandle): AirplaneView | undefined {
 export function steeringAskedOf(handle: SimHandle): SteerDirection {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
   return handle.stateOf(airplaneSlice).steering;
+}
+
+/**
+ * What he has still to be told about flying the airplane he has, or null when there is nothing to tell: that it has
+ * to be taken to an edge, until he has boarded one since the level started. For a view that says so beside the keys.
+ */
+export function flyingHintOf(handle: SimHandle): 'takeItToAnEdge' | null {
+  if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
+  return hasYetToTakeItToAnEdge(handle) ? 'takeItToAnEdge' : null;
 }

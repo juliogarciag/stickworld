@@ -1,0 +1,62 @@
+01-l1-first-frame.jpg  {"level":1,"tick":5,"x":2,"y":0,"action":"standing","slots":["null"],"airplane":null,"letter":null,"J":null,"K":null}
+02-l1-after-six-idle-seconds.jpg  {"level":1,"tick":364,"x":2,"y":0,"action":"standing","slots":["null"],"airplane":null,"letter":null,"J":null,"K":null}
+03-l1-after-trying-j-k-1-enter.jpg  {"level":1,"tick":405,"x":2,"y":0,"action":"standing","slots":["null*"],"airplane":null,"letter":null,"J":null,"K":null}
+04-l1-a-jump.jpg  {"level":1,"tick":417,"x":2,"y":-0.67,"action":"jumping","slots":["null*"],"airplane":null,"letter":null,"J":null,"K":null}
+05-l1-walking.jpg  {"level":1,"tick":524,"x":4.64,"y":0,"action":"walking","slots":["null*"],"airplane":null,"letter":null,"J":null,"K":null}
+06-l1-flag-reached.jpg  {"level":1,"tick":686,"x":10.58,"y":0,"action":"cheering","slots":["null*"],"airplane":null,"letter":null,"J":null,"K":null}
+07-l1-flag-up-one-second-in.jpg  {"level":1,"tick":746,"x":10.58,"y":0,"action":"cheering","slots":["null*"],"airplane":null,"letter":null,"J":null,"K":null}
+08-l1-last-moment-of-level-1.jpg  {"level":1,"tick":797,"x":10.58,"y":0,"action":"cheering","slots":["null*"],"airplane":null,"letter":null,"J":null,"K":null}
+09-l2-first-frame-right-still-held.jpg  {"level":2,"tick":806,"x":2,"y":0,"action":"standing","slots":["null*"],"airplane":null,"letter":null,"J":null,"K":null}
+10-l2-where-he-is-after-the-key-was-let-go.jpg  {"level":2,"tick":896,"x":2,"y":0,"action":"standing","slots":["null*"],"airplane":null,"letter":null,"J":null,"K":null}
+11-l2-walked-off-the-edge.jpg  {"level":2,"tick":1011,"x":6.22,"y":0.08,"action":"jumping","slots":["null*"],"airplane":null,"letter":null,"J":null,"K":null}
+12-l2-falling-into-the-gap.jpg  {"level":2,"tick":1029,"x":6.47,"y":1.62,"action":"jumping","slots":["null*"],"airplane":null,"letter":null,"J":null,"K":null}
+13-l2-last-moment-before-the-restart.jpg  {"level":2,"tick":1049,"x":6.79,"y":5.65,"action":"jumping","slots":["null*"],"airplane":null,"letter":null,"J":null,"K":null}
+14-l2-first-frame-after-dying.jpg  {"level":2,"tick":1051,"x":2,"y":0,"action":"standing","slots":["null*"],"airplane":null,"letter":null,"J":null,"K":null}
+15-l2-jumping-the-gap.jpg  {"level":2,"tick":1170,"x":6.36,"y":-0.7,"action":"jumping","slots":["null*"],"airplane":null,"letter":null,"J":null,"K":null}
+16-l2-flag-reached.jpg  {"level":2,"tick":1285,"x":10.58,"y":0,"action":"cheering","slots":["200*"],"airplane":null,"letter":null,"J":null,"K":null}
+17-l2-flag-up-paper-in-slot.jpg  {"level":2,"tick":1345,"x":10.58,"y":0,"action":"cheering","slots":["200*"],"airplane":null,"letter":null,"J":null,"K":null}
+18-l2-last-moment-of-level-2.jpg  {"level":2,"tick":1396,"x":10.58,"y":0,"action":"cheering","slots":["200*"],"airplane":null,"letter":null,"J":null,"K":null}
+19-l3-first-frame.jpg  {"level":3,"tick":1405,"x":2,"y":0,"action":"standing","slots":["200*"],"airplane":null,"letter":"lying at 3.6,0.0 up","J":null,"K":null}
+20-l3-start.jpg  {"level":3,"tick":1494,"x":2,"y":0,"action":"standing","slots":["200*"],"airplane":null,"letter":"lying at 3.6,0.0 up","J":null,"K":null}
+21-l3-j-with-the-paper-before-the-letter.jpg  {"level":3,"tick":1512,"x":2,"y":0,"action":"standing","slots":["200*"],"airplane":null,"letter":"lying at 3.6,0.0 up","J":null,"K":null}
+22-l3-after-pressing-1.jpg  {"level":3,"tick":1530,"x":2,"y":0,"action":"standing","slots":["200"],"airplane":null,"letter":"lying at 3.6,0.0 up","J":null,"K":null}
+23-l3-after-pressing-1-again.jpg  {"level":3,"tick":1549,"x":2,"y":0,"action":"standing","slots":["200*"],"airplane":null,"letter":"lying at 3.6,0.0 up","J":null,"K":null}
+24-l3-at-the-letter.jpg  {"level":3,"tick":1595,"x":2.81,"y":0,"action":"standing","slots":["200*"],"airplane":null,"letter":"lying at 3.6,0.0 up","J":null,"K":"read"}
+25-l3-reading-the-letter.jpg  {"level":3,"tick":1630,"x":2.81,"y":0,"action":"standing","slots":["200*"],"airplane":null,"letter":"being read at 3.6,0.0 up","J":null,"K":"putLetterAway"}
+26-l3-letter-put-away.jpg  {"level":3,"tick":1661,"x":2.81,"y":0,"action":"standing","slots":["200*"],"airplane":null,"letter":null,"J":"craft","K":null}
+27-l3-a-moment-after-folding.jpg  {"level":3,"tick":1667,"x":2.81,"y":0,"action":"standing","slots":["201*"],"airplane":null,"letter":null,"J":"place","K":null}
+28-l3-folded.jpg  {"level":3,"tick":1697,"x":2.81,"y":0,"action":"standing","slots":["201*"],"airplane":null,"letter":null,"J":"place","K":null}
+29-l3-a-moment-after-setting-down.jpg  {"level":3,"tick":1702,"x":2.81,"y":0,"action":"standing","slots":["null*"],"airplane":"resting at 3.71,0.00 speed 0.0 pitch 0.00","letter":null,"J":null,"K":"lift"}
+30-l3-airplane-set-down-far-from-the-edge.jpg  {"level":3,"tick":1739,"x":2.81,"y":0,"action":"standing","slots":["null*"],"airplane":"resting at 3.71,0.00 speed 0.0 pitch 0.00","letter":null,"J":null,"K":"lift"}
+31-l3-a-moment-after-lifting.jpg  {"level":3,"tick":1745,"x":2.81,"y":0,"action":"standing","slots":["null*"],"airplane":"carried at 2.81,-1.82 speed 0.0 pitch 0.00","letter":null,"J":null,"K":"putDown"}
+32-l3-airplane-lifted.jpg  {"level":3,"tick":1781,"x":2.81,"y":0,"action":"standing","slots":["null*"],"airplane":"carried at 2.81,-1.82 speed 0.0 pitch 0.00","letter":null,"J":null,"K":"putDown"}
+33-l3-carrying.jpg  {"level":3,"tick":1835,"x":4.79,"y":0,"action":"walking","slots":["null*"],"airplane":"carried at 4.79,-1.82 speed 0.0 pitch 0.00","letter":null,"J":null,"K":"putDown"}
+34-l3-jumping-while-carrying.jpg  {"level":3,"tick":1845,"x":5.15,"y":-0.44,"action":"jumping","slots":["null*"],"airplane":"carried at 5.15,-2.26 speed 0.0 pitch 0.00","letter":null,"J":null,"K":null}
+35-l3-at-the-edge-carrying.jpg  {"level":3,"tick":1975,"x":9.26,"y":0,"action":"standing","slots":["null*"],"airplane":"carried at 9.26,-1.82 speed 0.0 pitch 0.00","letter":null,"J":null,"K":"putDown"}
+36-l3-airplane-on-the-edge.jpg  {"level":3,"tick":2016,"x":9.26,"y":0,"action":"standing","slots":["null*"],"airplane":"resting at 9.90,0.00 speed 0.0 pitch 0.00","letter":null,"J":null,"K":"board"}
+37-l3-flight1-a-tenth-of-a-second-in.jpg  {"level":3,"tick":2071,"x":10.76,"y":-0.1,"action":"seated","slots":["null*"],"airplane":"flying at 10.76,-0.10 speed 7.3 pitch 0.05","letter":null,"J":null,"K":null}
+38-l3-flight1-half-a-second-in.jpg  {"level":3,"tick":2095,"x":13.62,"y":0.51,"action":"seated","slots":["null*"],"airplane":"flying at 13.62,0.51 speed 7.6 pitch -0.36","letter":null,"J":null,"K":null}
+39-l3-flight1-nine-tenths-in.jpg  {"level":3,"tick":2119,"x":16.59,"y":1.63,"action":"seated","slots":["null*"],"airplane":"flying at 16.59,1.63 speed 8.3 pitch -0.36","letter":null,"J":null,"K":null}
+40-l3-flight1-below-the-far-side.jpg  {"level":3,"tick":2137,"x":19,"y":2.53,"action":"seated","slots":["null*"],"airplane":"flying at 19.00,2.53 speed 8.9 pitch -0.36","letter":null,"J":null,"K":null}
+41-l3-first-frame-after-losing-the-airplane.jpg  {"level":3,"tick":2146,"x":2,"y":0,"action":"standing","slots":["null*"],"airplane":null,"letter":null,"J":null,"K":null}
+42-l3-new-letter-falling.jpg  {"level":3,"tick":2256,"x":2,"y":0,"action":"standing","slots":["null*"],"airplane":null,"letter":"lying at 3.6,4.2 up","J":null,"K":null}
+43-l3-new-letter-landed.jpg  {"level":3,"tick":2345,"x":2,"y":0,"action":"standing","slots":["null*"],"airplane":null,"letter":"lying at 3.6,0.0 up","J":null,"K":null}
+44-l3-flight2-set-down-at-the-edge.jpg  {"level":3,"tick":2633,"x":9.26,"y":0,"action":"standing","slots":["null*"],"airplane":"resting at 9.90,0.00 speed 0.0 pitch 0.00","letter":null,"J":null,"K":"board"}
+45-l3-flight2-climbing.jpg  {"level":3,"tick":2683,"x":15.15,"y":-1.48,"action":"seated","slots":["null*"],"airplane":"flying at 15.15,-1.48 speed 5.3 pitch 0.75","letter":null,"J":null,"K":null}
+46-l3-flight2-stalled.jpg  {"level":3,"tick":2719,"x":16.94,"y":-3.15,"action":"seated","slots":["null*"],"airplane":"falling at 16.94,-3.15 speed 2.2 pitch 0.00","letter":null,"J":null,"K":null}
+47-l3-flight2-falling-after-the-stall.jpg  {"level":3,"tick":2746,"x":17.92,"y":-3.36,"action":"seated","slots":["null*"],"airplane":"falling at 17.92,-3.36 speed 2.2 pitch 0.00","letter":null,"J":null,"K":null}
+48-l3-flight2-where-holding-climb-ends.jpg  {"level":3,"tick":2825,"x":19.93,"y":0,"action":"standing","slots":["null*"],"airplane":"resting at 19.93,0.00 speed 0.0 pitch 0.00","letter":null,"J":null,"K":"lift"}
+49-l3-after-flight2-walking-back-into-the-gap.jpg  {"level":3,"tick":2874,"x":18.13,"y":1.62,"action":"jumping","slots":["null*"],"airplane":"resting at 19.93,0.00 speed 0.0 pitch 0.00","letter":null,"J":null,"K":null}
+50-l3-flight3-set-down-at-the-edge.jpg  {"level":3,"tick":3363,"x":9.26,"y":0,"action":"standing","slots":["null*"],"airplane":"resting at 9.90,0.00 speed 0.0 pitch 0.00","letter":null,"J":null,"K":"board"}
+51-l3-flight3-jumped-out.jpg  {"level":3,"tick":3436,"x":15.95,"y":-2.25,"action":"jumping","slots":["null*"],"airplane":"falling at 17.20,-1.64 speed 5.0 pitch 0.00","letter":null,"J":null,"K":null}
+52-l3-flight4-set-down-at-the-edge.jpg  {"level":3,"tick":3956,"x":9.26,"y":0,"action":"standing","slots":["null*"],"airplane":"resting at 9.90,0.00 speed 0.0 pitch 0.00","letter":null,"J":null,"K":"board"}
+53-l3-flight4-let-go-after-the-climb.jpg  {"level":3,"tick":4047,"x":14.82,"y":-0.76,"action":"seated","slots":["null*"],"airplane":"flying at 14.82,-0.76 speed 6.2 pitch 0.62","letter":null,"J":null,"K":null}
+54-l3-flight4-over-the-gap.jpg  {"level":3,"tick":4082,"x":17.79,"y":-1.49,"action":"seated","slots":["null*"],"airplane":"flying at 17.79,-1.49 speed 5.0 pitch -0.14","letter":null,"J":null,"K":null}
+55-l3-flight4-coming-in.jpg  {"level":3,"tick":4098,"x":19.08,"y":-1.1,"action":"seated","slots":["null*"],"airplane":"flying at 19.08,-1.10 speed 5.2 pitch -0.36","letter":null,"J":null,"K":null}
+56-l3-flight4-landing.jpg  {"level":3,"tick":4134,"x":22.15,"y":0,"action":"seated","slots":["null*"],"airplane":"landing at 22.15,0.00 speed 5.2 pitch 0.00","letter":null,"J":null,"K":null}
+57-l3-flight4-stood-up-on-the-far-side.jpg  {"level":3,"tick":4181,"x":23.15,"y":0,"action":"standing","slots":["null*"],"airplane":"resting at 23.15,0.00 speed 0.0 pitch 0.00","letter":null,"J":null,"K":"lift"}
+58-l3-last-flag-reached.jpg  {"level":3,"tick":4192,"x":23.56,"y":0,"action":"cheering","slots":["null*"],"airplane":"resting at 23.15,0.00 speed 0.0 pitch 0.00","letter":null,"J":null,"K":null}
+59-end-the-end-written.jpg  {"level":3,"tick":4233,"x":23.56,"y":0,"action":"cheering","slots":["null*"],"airplane":"resting at 23.15,0.00 speed 0.0 pitch 0.00","letter":null,"J":null,"K":null}
+60-end-ten-seconds-later.jpg  {"level":3,"tick":4833,"x":23.56,"y":0,"action":"cheering","slots":["null*"],"airplane":"resting at 23.15,0.00 speed 0.0 pitch 0.00","letter":null,"J":null,"K":null}
+61-end-after-trying-every-key.jpg  {"level":3,"tick":5037,"x":23.56,"y":0,"action":"cheering","slots":["null*"],"airplane":"resting at 23.15,0.00 speed 0.0 pitch 0.00","letter":null,"J":null,"K":null}
+page errors: none

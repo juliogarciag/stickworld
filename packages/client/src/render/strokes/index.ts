@@ -10,6 +10,7 @@ import { graphicsStrokeLayer } from './graphicsLayer';
  *   const floor = createStrokeLayer(scene);
  *   floor.show([{ points: [from, to], thickness: PENCIL.thickness }]);
  *
+ * Strokes that are being written or rubbed out are cut down by `./partly` before they are shown.
  * Points and thickness are in world pixels; `PENCIL` in `./pencil` has the thickness lines usually have. The technique behind a layer
  * lives in `graphicsLayer.ts` and can be swapped there without touching a caller.
  */

@@ -9,7 +9,7 @@ import { playerSlice } from '../player/state';
 import type { SteerDirection } from './commands';
 import { AIRPLANE } from './defs';
 import { boardAndLaunch, moveOneTick } from './flight';
-import { airplaneSlice, type AirplaneState } from './state';
+import { airplaneSlice, hasBoardedSlice, type AirplaneState } from './state';
 
 /**
  * The paper airplane in the world. Using the airplane item puts it on the
@@ -24,7 +24,7 @@ import { airplaneSlice, type AirplaneState } from './state';
  */
 export const airplaneFeature: Feature = {
   name: 'airplane',
-  slices: [airplaneSlice],
+  slices: [airplaneSlice, hasBoardedSlice],
 
   handleCommand(sim, command) {
     const { type, direction } = command as { type: string; direction?: unknown };
@@ -65,6 +65,19 @@ export function sitsOnAnEdge(sim: Sim): boolean {
   const nose = airplane.x + (airplane.facing * AIRPLANE.length) / 2;
   const floorFurtherOn = floor.some(({ from, to }) => (airplane.facing === 1 ? from.x > nose : to.x < nose));
   return floorHeightAt(floor, nose) === undefined && floorFurtherOn;
+}
+
+/**
+ * True while he has an airplane that he has still to take to an edge: it is in his slot, on the floor away from an
+ * edge or over his head, the level has an edge to fly from, and he has not boarded one since the level started. It is
+ * true again when the level starts again, a death included.
+ */
+export function hasYetToTakeItToAnEdge(sim: Sim): boolean {
+  const airplane = sim.stateOf(airplaneSlice);
+  const inFlight = airplane.inWorld && (airplane.flying || airplane.falling || airplane.sliding);
+  if (sim.stateOf(hasBoardedSlice) || !hasAirplane(sim) || inFlight || sitsOnAnEdge(sim)) return false;
+  const { floor } = sim.levelDef;
+  return floor.some((line) => floor.some((other) => other.from.x > line.to.x));
 }
 
 /** What using the held item does when it is the airplane, for `features/item`: it is put on the floor in front of him. */
