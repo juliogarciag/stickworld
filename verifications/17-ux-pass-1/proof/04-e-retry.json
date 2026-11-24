@@ -1,14 +1,71 @@
 {
+  "wide": {
+    "retry": {
+      "presses": 2,
+      "seconds": 3.13,
+      "walkedMetres": 6.53
+    }
+  },
   "narrow": {
     "retry": {
       "presses": 2,
-      "seconds": 3.15,
+      "seconds": 3.18,
+      "walkedMetres": 6.56
+    }
+  },
+  "portrait": {
+    "retry": {
+      "presses": 2,
+      "seconds": 3.17,
       "walkedMetres": 6.53
     }
   },
   "results": [
     {
       "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "wide: a letter he has read stays on the floor, opened",
+      "pass": true
+    },
+    {
+      "name": "wide: K next to it reads it again",
+      "pass": true
+    },
+    {
+      "name": "wide: read again, it says the same and gives nothing more",
+      "pass": true
+    },
+    {
+      "name": "wide: the first flight was flown from the edge and lost",
+      "pass": true
+    },
+    {
+      "name": "wide: the level starts again with the airplane in his hand at once",
+      "pass": true,
+      "details": "slot 1 holds def 201, J would \"place\""
+    },
+    {
+      "name": "wide: a retry is walk, set down, board: two presses",
+      "pass": true,
+      "details": "3.13 s from the restart to the seat, 6.53 m of it walking"
+    },
+    {
+      "name": "wide: no new letter fell: the opened one lay there all the while",
+      "pass": true
+    },
+    {
+      "name": "wide: an airplane set down past the edge is lost, and he is left with nothing",
+      "pass": true
+    },
+    {
+      "name": "wide: with neither paper nor airplane a new letter still falls, not opened",
+      "pass": true,
+      "details": "it started 0.63 s after the airplane was lost"
+    },
+    {
+      "name": "wide: reading it gives the paper again",
       "pass": true
     },
     {
@@ -29,13 +86,13 @@
     },
     {
       "name": "narrow: the level starts again with the airplane in his hand at once",
-      "pass": false,
+      "pass": true,
       "details": "slot 1 holds def 201, J would \"place\""
     },
     {
       "name": "narrow: a retry is walk, set down, board: two presses",
       "pass": true,
-      "details": "3.15 s from the restart to the seat, 6.53 m of it walking"
+      "details": "3.18 s from the restart to the seat, 6.56 m of it walking"
     },
     {
       "name": "narrow: no new letter fell: the opened one lay there all the while",
@@ -48,10 +105,53 @@
     {
       "name": "narrow: with neither paper nor airplane a new letter still falls, not opened",
       "pass": true,
-      "details": "it started 0.62 s after the airplane was lost"
+      "details": "it started 0.6 s after the airplane was lost"
     },
     {
       "name": "narrow: reading it gives the paper again",
+      "pass": true
+    },
+    {
+      "name": "portrait: a letter he has read stays on the floor, opened",
+      "pass": true
+    },
+    {
+      "name": "portrait: K next to it reads it again",
+      "pass": true
+    },
+    {
+      "name": "portrait: read again, it says the same and gives nothing more",
+      "pass": true
+    },
+    {
+      "name": "portrait: the first flight was flown from the edge and lost",
+      "pass": true
+    },
+    {
+      "name": "portrait: the level starts again with the airplane in his hand at once",
+      "pass": true,
+      "details": "slot 1 holds def 201, J would \"place\""
+    },
+    {
+      "name": "portrait: a retry is walk, set down, board: two presses",
+      "pass": true,
+      "details": "3.17 s from the restart to the seat, 6.53 m of it walking"
+    },
+    {
+      "name": "portrait: no new letter fell: the opened one lay there all the while",
+      "pass": true
+    },
+    {
+      "name": "portrait: an airplane set down past the edge is lost, and he is left with nothing",
+      "pass": true
+    },
+    {
+      "name": "portrait: with neither paper nor airplane a new letter still falls, not opened",
+      "pass": true,
+      "details": "it started 0.62 s after the airplane was lost"
+    },
+    {
+      "name": "portrait: reading it gives the paper again",
       "pass": true
     },
     {

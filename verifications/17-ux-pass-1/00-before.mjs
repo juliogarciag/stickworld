@@ -111,9 +111,10 @@ await verify({ name: '00-before', port: 5916, cwd: BEFORE_CHECKOUT }, async ({ s
   const afterKeys = await game.state();
   await game.shot('g-the-end-ten-seconds-later');
   expect('before: ten seconds after the end he still cheers, and no key does anything', longAfter.stickMan.action === 'cheering' && afterKeys.stickMan.action === 'cheering' && afterKeys.stickMan.feet.x === stoodAt && afterKeys.level === 3);
-  const margins = (await game.inkIn({ x: 0, y: size.height * 0.15, width: 6, height: size.height * 0.25 })) + (await game.inkIn({ x: size.width - 6, y: size.height * 0.15, width: 6, height: size.height * 0.25 }));
+  // The right side only: the item slot is at the left. Wide enough a strip that a letter cut off there is in it however its lines boil.
+  const margins = await game.inkIn({ x: size.width * 0.94, y: size.height * 0.15, width: size.width * 0.06, height: size.height * 0.25 });
   report.inkOfTheEndAtTheSidesOfTheWindow = margins;
-  if (size.name === 'portrait') expect('before: on the portrait window the end is cut off at the sides', margins > 0, `${margins} pixels of pencil in the outermost 6 pixels`);
+  if (size.name === 'portrait') expect('before: on the portrait window the end runs off the side of the window', margins > 0, `${margins} pixels of pencil in the outermost 6% of the window at its right side`);
   await game.close();
   return report;
 });

@@ -1,0 +1,40 @@
+PASS  dev server up, started by this run
+
+--- wide window, 1600 x 900 ---
+PASS  wide: a letter he has read stays on the floor, opened
+PASS  wide: K next to it reads it again
+PASS  wide: read again, it says the same and gives nothing more
+PASS  wide: the first flight was flown from the edge and lost
+PASS  wide: the level starts again with the airplane in his hand at once  (slot 1 holds def 201, J would "place")
+PASS  wide: a retry is walk, set down, board: two presses  (3.13 s from the restart to the seat, 6.53 m of it walking)
+PASS  wide: no new letter fell: the opened one lay there all the while
+PASS  wide: an airplane set down past the edge is lost, and he is left with nothing
+PASS  wide: with neither paper nor airplane a new letter still falls, not opened  (it started 0.63 s after the airplane was lost)
+PASS  wide: reading it gives the paper again
+
+--- narrow window, 820 x 760 ---
+PASS  narrow: a letter he has read stays on the floor, opened
+PASS  narrow: K next to it reads it again
+PASS  narrow: read again, it says the same and gives nothing more
+PASS  narrow: the first flight was flown from the edge and lost
+PASS  narrow: the level starts again with the airplane in his hand at once  (slot 1 holds def 201, J would "place")
+PASS  narrow: a retry is walk, set down, board: two presses  (3.18 s from the restart to the seat, 6.56 m of it walking)
+PASS  narrow: no new letter fell: the opened one lay there all the while
+PASS  narrow: an airplane set down past the edge is lost, and he is left with nothing
+PASS  narrow: with neither paper nor airplane a new letter still falls, not opened  (it started 0.6 s after the airplane was lost)
+PASS  narrow: reading it gives the paper again
+
+--- portrait window, 480 x 860 ---
+PASS  portrait: a letter he has read stays on the floor, opened
+PASS  portrait: K next to it reads it again
+PASS  portrait: read again, it says the same and gives nothing more
+PASS  portrait: the first flight was flown from the edge and lost
+PASS  portrait: the level starts again with the airplane in his hand at once  (slot 1 holds def 201, J would "place")
+PASS  portrait: a retry is walk, set down, board: two presses  (3.17 s from the restart to the seat, 6.53 m of it walking)
+PASS  portrait: no new letter fell: the opened one lay there all the while
+PASS  portrait: an airplane set down past the edge is lost, and he is left with nothing
+PASS  portrait: with neither paper nor airplane a new letter still falls, not opened  (it started 0.62 s after the airplane was lost)
+PASS  portrait: reading it gives the paper again
+PASS  no page errors
+
+ALL 32 CHECKS PASSED

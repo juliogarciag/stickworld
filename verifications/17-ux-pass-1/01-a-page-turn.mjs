@@ -34,6 +34,8 @@ await verify({ name: '01-a-page-turn', port: 5917, cwd: ROOT }, async ({ size, o
     const edges = [];
     const asTheTurnStarts = await game.state();
     let inkAtTheEdge;
+    let edgeStrip;
+    let inkWhereTheEdgeWas;
     await game.page.keyboard.down('ArrowRight');
     for (let frame = 0; frame < 120; frame += 1) {
       const state = await game.state();
@@ -41,21 +43,28 @@ await verify({ name: '01-a-page-turn', port: 5917, cwd: ROOT }, async ({ size, o
       edges.push(state.pageTurn.edgeAt);
       if (edges.length === 28) {
         // The sheet's edge on the screen: a pencil line from the top of the window to the bottom, where the turn says it is.
-        inkAtTheEdge = await game.inkIn({ x: state.pageTurn.edgeAt * size.width - 5, y: 0, width: 10, height: size.height });
+        // A screenshot may still show the frame before the one the page has just drawn, so the strip reaches from where the edge is to where it was a frame ago.
+        const [edgeNow, edgeAFrameAgo] = [edges[edges.length - 1], edges[edges.length - 2]];
+        edgeStrip = { x: edgeNow * size.width - 5, y: 0, width: (edgeAFrameAgo - edgeNow) * size.width + 10, height: size.height };
+        inkAtTheEdge = await game.inkIn(edgeStrip);
+        // And the same strip a moment later is bare but for the floor line: the edge has moved on.
         report.midTurnShot = await game.shot('a-the-page-being-turned');
       }
-      if (edges.length === 42) await game.shot('a-the-page-almost-gone');
+      if (edges.length === 42) {
+        inkWhereTheEdgeWas = await game.inkIn(edgeStrip);
+        await game.shot('a-the-page-almost-gone');
+      }
       await game.frames(1);
     }
     await game.page.keyboard.up('ArrowRight');
     const asTheTurnEnds = await game.state();
     report.turnSeconds = round(edges.length / 60);
     report.edgeAtEveryTenthFrame = edges.filter((_, frame) => frame % 10 === 0).map((edge) => round(edge));
-    report.inkAtTheEdgeMidTurn = inkAtTheEdge;
+    report.inkAtTheEdgeMidTurn = { atTheEdge: inkAtTheEdge, laterInTheSamePlace: inkWhereTheEdgeWas };
     expect('the finished sheet is turned away over most of a second, not cut', edges.length >= 40 && edges.length <= 70, `${edges.length} frames`);
     expect('it covers the whole view as the turn starts', edges[0] > 0.99, `its edge is at ${round(edges[0], 3)} of the width`);
     expect('it only ever moves left, slowly at first, and ends out of view', edges.every((edge, frame) => frame === 0 || edge < edges[frame - 1]) && edges[5] > 0.95 && edges[edges.length - 1] < 0.15, `edge after 5 frames ${round(edges[5], 3)}, last ${round(edges[edges.length - 1], 3)}`);
-    expect("the sheet's edge is drawn where it is: a line down the whole window", inkAtTheEdge > size.height * 0.5, `${inkAtTheEdge} pixels of pencil in a strip 10 wide and ${size.height} tall`);
+    expect("the sheet's edge is drawn where it is: a line down the whole window, which moves on with the sheet", inkAtTheEdge > size.height * 0.5 && inkWhereTheEdgeWas < inkAtTheEdge / 4, `${inkAtTheEdge} pixels of pencil in a strip ${Math.round(edgeStrip.width)} wide and ${size.height} tall at the edge; ${inkWhereTheEdgeWas} in the same strip a quarter of a second later`);
     expect('the next level is already being played under it: he walked on level 2 while the page turned', asTheTurnStarts.level === 2 && asTheTurnEnds.level === 2 && asTheTurnEnds.stickMan.feet.x > asTheTurnStarts.stickMan.feet.x + 1, `from ${round(asTheTurnStarts.stickMan.feet.x)} to ${round(asTheTurnEnds.stickMan.feet.x)} m in ${asTheTurnEnds.tick - asTheTurnStarts.tick} ticks`);
     await game.seconds(1.2);
   };

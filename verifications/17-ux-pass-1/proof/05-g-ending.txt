@@ -1,0 +1,43 @@
+PASS  dev server up, started by this run
+
+--- wide window, 1600 x 900 ---
+PASS  wide: "THE END" is written a stroke at a time: more of it on every later frame, until it is all there  (883, 1861, 2991, 4026, 5029, 5496, 5430)
+PASS  wide: Enter does nothing before playing again is offered
+PASS  wide: nothing but the words is written until playing again is offered  (5434 pixels of pencil against 5430 when the words were finished)
+PASS  wide: the words fit the window: nothing of them reaches its sides  (5430 pixels of pencil, 0 of them in the tenth of the window at its right side or the fiftieth at its left, where the item slot leaves room to look)
+PASS  wide: a little later a key and "PLAY AGAIN" are written under them  (3258 more pixels of pencil, 3 s after the flag)
+PASS  wide: he is not frozen in a cheer: he stands
+PASS  wide: he walks about under the words
+PASS  wide: he cannot walk off the paper after the end  (he stands at 26.68 m; the paper ends at 27 m)
+PASS  wide: Enter turns the page back to the first sheet
+PASS  wide: nothing is kept from the game before
+PASS  wide: and it is played: he walks on level 1
+
+--- narrow window, 820 x 760 ---
+PASS  narrow: "THE END" is written a stroke at a time: more of it on every later frame, until it is all there  (619, 1260, 2044, 2743, 3332, 3807, 3764)
+PASS  narrow: Enter does nothing before playing again is offered
+PASS  narrow: nothing but the words is written until playing again is offered  (3783 pixels of pencil against 3764 when the words were finished)
+PASS  narrow: the words fit the window: nothing of them reaches its sides  (3764 pixels of pencil, 0 of them in the tenth of the window at its right side or the fiftieth at its left, where the item slot leaves room to look)
+PASS  narrow: a little later a key and "PLAY AGAIN" are written under them  (2097 more pixels of pencil, 3.02 s after the flag)
+PASS  narrow: he is not frozen in a cheer: he stands
+PASS  narrow: he walks about under the words
+PASS  narrow: he cannot walk off the paper after the end  (he stands at 26.68 m; the paper ends at 27 m)
+PASS  narrow: Enter turns the page back to the first sheet
+PASS  narrow: nothing is kept from the game before
+PASS  narrow: and it is played: he walks on level 1
+
+--- portrait window, 480 x 860 ---
+PASS  portrait: "THE END" is written a stroke at a time: more of it on every later frame, until it is all there  (168, 364, 618, 827, 985, 1132, 1131)
+PASS  portrait: Enter does nothing before playing again is offered
+PASS  portrait: nothing but the words is written until playing again is offered  (1227 pixels of pencil against 1131 when the words were finished)
+PASS  portrait: the words fit the window: nothing of them reaches its sides  (1131 pixels of pencil, 0 of them in the tenth of the window at its right side or the fiftieth at its left, where the item slot leaves room to look)
+PASS  portrait: a little later a key and "PLAY AGAIN" are written under them  (615 more pixels of pencil, 3.02 s after the flag)
+PASS  portrait: he is not frozen in a cheer: he stands
+PASS  portrait: he walks about under the words
+PASS  portrait: he cannot walk off the paper after the end  (he stands at 26.68 m; the paper ends at 27 m)
+PASS  portrait: Enter turns the page back to the first sheet
+PASS  portrait: nothing is kept from the game before
+PASS  portrait: and it is played: he walks on level 1
+PASS  no page errors
+
+ALL 35 CHECKS PASSED

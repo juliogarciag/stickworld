@@ -1,6 +1,6 @@
 {
   "wide": {
-    "secondsFromFlagToNextLevel": 1.93,
+    "secondsFromFlagToNextLevel": 1.95,
     "farSideAtTheEdge": {
       "atPixel": 1673,
       "windowWidth": 1600
@@ -27,7 +27,7 @@
     },
     "metresAcross": 6.03,
     "secondsWaitingForANewLetter": 2.9,
-    "inkOfTheEndAtTheSidesOfTheWindow": 60
+    "inkOfTheEndAtTheSidesOfTheWindow": 445
   },
   "results": [
     {
@@ -37,7 +37,7 @@
     {
       "name": "wide: before: the next level starts two seconds after the flag, in one frame",
       "pass": true,
-      "details": "1.93 s"
+      "details": "1.95 s"
     },
     {
       "name": "wide: before: a letter he has read is gone from the floor",
@@ -140,9 +140,9 @@
       "pass": true
     },
     {
-      "name": "portrait: before: on the portrait window the end is cut off at the sides",
+      "name": "portrait: before: on the portrait window the end runs off the side of the window",
       "pass": true,
-      "details": "60 pixels of pencil in the outermost 6 pixels"
+      "details": "445 pixels of pencil in the outermost 6% of the window at its right side"
     },
     {
       "name": "no page errors",

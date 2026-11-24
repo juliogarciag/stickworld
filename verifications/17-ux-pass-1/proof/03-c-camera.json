@@ -1,25 +1,92 @@
 {
+  "wide": {
+    "metresAcrossAtRest": 19.2,
+    "carrying": {
+      "whereHeIs": 0.3,
+      "metresAcross": 20.94
+    },
+    "atTheEdge": {
+      "view": {
+        "left": 2.763854088215661,
+        "right": 21.973112023796144,
+        "top": -7.779749463910096,
+        "bottom": 3.0254581248539263
+      },
+      "farSideFrom": 19,
+      "whereHeIs": 0.3,
+      "metresAcross": 19.21,
+      "inkOfTheItemSlot": {
+        "atRest": 714,
+        "atTheEdge": 740
+      }
+    },
+    "watched": {
+      "narrowest": 19.2,
+      "widest": 20.99,
+      "biggestChangeInOneFrame": 0.448,
+      "hudZooms": [
+        0.833333
+      ],
+      "slotBoxes": 1
+    }
+  },
+  "narrow": {
+    "metresAcrossAtRest": 12,
+    "carrying": {
+      "whereHeIs": 0.3,
+      "metresAcross": 20.91
+    },
+    "atTheEdge": {
+      "view": {
+        "left": 2.9613457370508094,
+        "right": 21.512345048994785,
+        "top": -12.379398565238711,
+        "bottom": 4.8142105531483885
+      },
+      "farSideFrom": 19,
+      "whereHeIs": 0.3,
+      "metresAcross": 18.55,
+      "inkOfTheItemSlot": {
+        "atRest": 490,
+        "atTheEdge": 382
+      }
+    },
+    "clip": "after/narrow/c-carry-board-fly-land.gif",
+    "watched": {
+      "narrowest": 12,
+      "widest": 20.96,
+      "biggestChangeInOneFrame": 0.502,
+      "hudZooms": [
+        0.683333
+      ],
+      "slotBoxes": 1
+    }
+  },
   "portrait": {
     "metresAcrossAtRest": 12,
     "carrying": {
       "whereHeIs": 0.3,
-      "metresAcross": 20.92
+      "metresAcross": 20.91
     },
     "atTheEdge": {
       "view": {
-        "left": 2.9612239267356597,
-        "right": 21.512623405202863,
-        "top": -23.931305327222688,
-        "bottom": 9.306618738364381
+        "left": 2.9612416685380993,
+        "right": 21.512582007663827,
+        "top": -23.931229037472193,
+        "bottom": 9.306589070128071
       },
       "farSideFrom": 19,
       "whereHeIs": 0.3,
-      "metresAcross": 18.55
+      "metresAcross": 18.55,
+      "inkOfTheItemSlot": {
+        "atRest": 229,
+        "atTheEdge": 195
+      }
     },
     "watched": {
       "narrowest": 12,
       "widest": 20.96,
-      "biggestChangeInOneFrame": 0.38,
+      "biggestChangeInOneFrame": 0.446,
       "hudZooms": [
         0.4
       ],
@@ -30,6 +97,120 @@
     {
       "name": "dev server up, started by this run",
       "pass": true
+    },
+    {
+      "name": "wide: the view shows at least 12 metres across at rest",
+      "pass": true,
+      "details": "19.2 m"
+    },
+    {
+      "name": "wide: walking along the line, away from an edge, he is in the middle of the view",
+      "pass": true
+    },
+    {
+      "name": "wide: carrying the airplane, more of the view is ahead of him than behind",
+      "pass": true,
+      "details": "he is 0.3 of the way across it"
+    },
+    {
+      "name": "wide: the airplane sits on the edge and K would board it",
+      "pass": true
+    },
+    {
+      "name": "wide: at the edge he stands to one side of the view, with the gap ahead of him",
+      "pass": true,
+      "details": "he is 0.3 of the way across it"
+    },
+    {
+      "name": "wide: from the edge, before he boards, the far side is in view",
+      "pass": true,
+      "details": "the view is from 2.76 to 21.97 m and the far side begins at 19 m"
+    },
+    {
+      "name": "wide: in flight the far side stays in view all the way across",
+      "pass": true
+    },
+    {
+      "name": "wide: he landed on the far side, and the view has eased back to him in its middle, as wide as at rest",
+      "pass": true,
+      "details": "he is 0.5 of the way across a view of 19.2 m"
+    },
+    {
+      "name": "wide: on no frame did the view show less than 12 metres across",
+      "pass": true,
+      "details": "narrowest 19.2 m, widest 20.99 m"
+    },
+    {
+      "name": "wide: the view eases: it never jumped from one frame to the next, not even when he sits down in the airplane",
+      "pass": true,
+      "details": "the most its middle moved or its width changed in one frame is 0.448 m, of 19.2 m or more across"
+    },
+    {
+      "name": "wide: the level's camera did pull back on the way",
+      "pass": true,
+      "details": "from 19.2 to 20.99 m across"
+    },
+    {
+      "name": "wide: the HUD kept its own size all the while: one zoom, and the item slot drawn in the same place on the screen",
+      "pass": true,
+      "details": "HUD zoom 0.833333; 714 pixels of pencil in the slot's box at rest and 740 at the edge: the same box, a little different as its line boils"
+    },
+    {
+      "name": "narrow: the view shows at least 12 metres across at rest",
+      "pass": true,
+      "details": "12 m"
+    },
+    {
+      "name": "narrow: walking along the line, away from an edge, he is in the middle of the view",
+      "pass": true
+    },
+    {
+      "name": "narrow: carrying the airplane, more of the view is ahead of him than behind",
+      "pass": true,
+      "details": "he is 0.3 of the way across it"
+    },
+    {
+      "name": "narrow: the airplane sits on the edge and K would board it",
+      "pass": true
+    },
+    {
+      "name": "narrow: at the edge he stands to one side of the view, with the gap ahead of him",
+      "pass": true,
+      "details": "he is 0.3 of the way across it"
+    },
+    {
+      "name": "narrow: from the edge, before he boards, the far side is in view",
+      "pass": true,
+      "details": "the view is from 2.96 to 21.51 m and the far side begins at 19 m"
+    },
+    {
+      "name": "narrow: in flight the far side stays in view all the way across",
+      "pass": true
+    },
+    {
+      "name": "narrow: he landed on the far side, and the view has eased back to him in its middle, as wide as at rest",
+      "pass": true,
+      "details": "he is 0.5 of the way across a view of 12 m"
+    },
+    {
+      "name": "narrow: on no frame did the view show less than 12 metres across",
+      "pass": true,
+      "details": "narrowest 12 m, widest 20.96 m"
+    },
+    {
+      "name": "narrow: the view eases: it never jumped from one frame to the next, not even when he sits down in the airplane",
+      "pass": true,
+      "details": "the most its middle moved or its width changed in one frame is 0.502 m, of 12 m or more across"
+    },
+    {
+      "name": "narrow: the level's camera did pull back on the way",
+      "pass": true,
+      "details": "from 12 to 20.96 m across"
+    },
+    {
+      "name": "narrow: the HUD kept its own size all the while: one zoom, and the item slot drawn in the same place on the screen",
+      "pass": true,
+      "details": "HUD zoom 0.683333; 490 pixels of pencil in the slot's box at rest and 382 at the edge: the same box, a little different as its line boils"
     },
     {
       "name": "portrait: the view shows at least 12 metres across at rest",
@@ -48,6 +229,11 @@
     {
       "name": "portrait: the airplane sits on the edge and K would board it",
       "pass": true
+    },
+    {
+      "name": "portrait: at the edge he stands to one side of the view, with the gap ahead of him",
+      "pass": true,
+      "details": "he is 0.3 of the way across it"
     },
     {
       "name": "portrait: from the edge, before he boards, the far side is in view",
@@ -71,12 +257,17 @@
     {
       "name": "portrait: the view eases: it never jumped from one frame to the next, not even when he sits down in the airplane",
       "pass": true,
-      "details": "the most its middle moved or its width changed in one frame is 0.38 m, of 12 m or more across"
+      "details": "the most its middle moved or its width changed in one frame is 0.446 m, of 12 m or more across"
     },
     {
-      "name": "portrait: the HUD kept its own size while the level's camera pulled back",
+      "name": "portrait: the level's camera did pull back on the way",
       "pass": true,
-      "details": "HUD zoom 0.4; the item slot's box was in 1 place(s); level view from 12 to 20.96 m"
+      "details": "from 12 to 20.96 m across"
+    },
+    {
+      "name": "portrait: the HUD kept its own size all the while: one zoom, and the item slot drawn in the same place on the screen",
+      "pass": true,
+      "details": "HUD zoom 0.4; 229 pixels of pencil in the slot's box at rest and 195 at the edge: the same box, a little different as its line boils"
     },
     {
       "name": "no page errors",

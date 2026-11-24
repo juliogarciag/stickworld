@@ -1,0 +1,35 @@
+PASS  dev server up, started by this run
+
+--- wide window, 1600 x 900 ---
+PASS  wide: before: the next level starts two seconds after the flag, in one frame  (1.95 s)
+PASS  wide: before: a letter he has read is gone from the floor
+PASS  wide: before: the first press after putting it away reads nothing
+PASS  wide: before: from the edge of level 3 the far side is not in view  (the far side begins at pixel 1673 of 1600)
+PASS  wide: before: he is in the middle of the view
+PASS  wide: before: after a lost flight the level starts again with an empty slot
+PASS  wide: before: he waits for a new letter to fall before he can do anything  (2.9 s)
+PASS  wide: before: ten seconds after the end he still cheers, and no key does anything
+
+--- narrow window, 820 x 760 ---
+PASS  narrow: before: the next level starts two seconds after the flag, in one frame  (1.93 s)
+PASS  narrow: before: a letter he has read is gone from the floor
+PASS  narrow: before: the first press after putting it away reads nothing
+PASS  narrow: before: from the edge of level 3 the far side is not in view  (the far side begins at pixel 1147 of 820)
+PASS  narrow: before: he is in the middle of the view
+PASS  narrow: before: after a lost flight the level starts again with an empty slot
+PASS  narrow: before: he waits for a new letter to fall before he can do anything  (2.9 s)
+PASS  narrow: before: ten seconds after the end he still cheers, and no key does anything
+
+--- portrait window, 480 x 860 ---
+PASS  portrait: before: the next level starts two seconds after the flag, in one frame  (1.95 s)
+PASS  portrait: before: a letter he has read is gone from the floor
+PASS  portrait: before: the first press after putting it away reads nothing
+PASS  portrait: before: from the edge of level 3 the far side is not in view  (the far side begins at pixel 1074 of 480)
+PASS  portrait: before: he is in the middle of the view
+PASS  portrait: before: after a lost flight the level starts again with an empty slot
+PASS  portrait: before: he waits for a new letter to fall before he can do anything  (2.9 s)
+PASS  portrait: before: ten seconds after the end he still cheers, and no key does anything
+PASS  portrait: before: on the portrait window the end runs off the side of the window  (445 pixels of pencil in the outermost 6% of the window at its right side)
+PASS  no page errors
+
+ALL 27 CHECKS PASSED

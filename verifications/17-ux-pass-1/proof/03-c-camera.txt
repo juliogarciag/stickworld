@@ -1,0 +1,46 @@
+PASS  dev server up, started by this run
+
+--- wide window, 1600 x 900 ---
+PASS  wide: the view shows at least 12 metres across at rest  (19.2 m)
+PASS  wide: walking along the line, away from an edge, he is in the middle of the view
+PASS  wide: carrying the airplane, more of the view is ahead of him than behind  (he is 0.3 of the way across it)
+PASS  wide: the airplane sits on the edge and K would board it
+PASS  wide: at the edge he stands to one side of the view, with the gap ahead of him  (he is 0.3 of the way across it)
+PASS  wide: from the edge, before he boards, the far side is in view  (the view is from 2.76 to 21.97 m and the far side begins at 19 m)
+PASS  wide: in flight the far side stays in view all the way across
+PASS  wide: he landed on the far side, and the view has eased back to him in its middle, as wide as at rest  (he is 0.5 of the way across a view of 19.2 m)
+PASS  wide: on no frame did the view show less than 12 metres across  (narrowest 19.2 m, widest 20.99 m)
+PASS  wide: the view eases: it never jumped from one frame to the next, not even when he sits down in the airplane  (the most its middle moved or its width changed in one frame is 0.448 m, of 19.2 m or more across)
+PASS  wide: the level's camera did pull back on the way  (from 19.2 to 20.99 m across)
+PASS  wide: the HUD kept its own size all the while: one zoom, and the item slot drawn in the same place on the screen  (HUD zoom 0.833333; 714 pixels of pencil in the slot's box at rest and 740 at the edge: the same box, a little different as its line boils)
+
+--- narrow window, 820 x 760 ---
+PASS  narrow: the view shows at least 12 metres across at rest  (12 m)
+PASS  narrow: walking along the line, away from an edge, he is in the middle of the view
+PASS  narrow: carrying the airplane, more of the view is ahead of him than behind  (he is 0.3 of the way across it)
+PASS  narrow: the airplane sits on the edge and K would board it
+PASS  narrow: at the edge he stands to one side of the view, with the gap ahead of him  (he is 0.3 of the way across it)
+PASS  narrow: from the edge, before he boards, the far side is in view  (the view is from 2.96 to 21.51 m and the far side begins at 19 m)
+PASS  narrow: in flight the far side stays in view all the way across
+PASS  narrow: he landed on the far side, and the view has eased back to him in its middle, as wide as at rest  (he is 0.5 of the way across a view of 12 m)
+PASS  narrow: on no frame did the view show less than 12 metres across  (narrowest 12 m, widest 20.96 m)
+PASS  narrow: the view eases: it never jumped from one frame to the next, not even when he sits down in the airplane  (the most its middle moved or its width changed in one frame is 0.502 m, of 12 m or more across)
+PASS  narrow: the level's camera did pull back on the way  (from 12 to 20.96 m across)
+PASS  narrow: the HUD kept its own size all the while: one zoom, and the item slot drawn in the same place on the screen  (HUD zoom 0.683333; 490 pixels of pencil in the slot's box at rest and 382 at the edge: the same box, a little different as its line boils)
+
+--- portrait window, 480 x 860 ---
+PASS  portrait: the view shows at least 12 metres across at rest  (12 m)
+PASS  portrait: walking along the line, away from an edge, he is in the middle of the view
+PASS  portrait: carrying the airplane, more of the view is ahead of him than behind  (he is 0.3 of the way across it)
+PASS  portrait: the airplane sits on the edge and K would board it
+PASS  portrait: at the edge he stands to one side of the view, with the gap ahead of him  (he is 0.3 of the way across it)
+PASS  portrait: from the edge, before he boards, the far side is in view  (the view is from 2.96 to 21.51 m and the far side begins at 19 m)
+PASS  portrait: in flight the far side stays in view all the way across
+PASS  portrait: he landed on the far side, and the view has eased back to him in its middle, as wide as at rest  (he is 0.5 of the way across a view of 12 m)
+PASS  portrait: on no frame did the view show less than 12 metres across  (narrowest 12 m, widest 20.96 m)
+PASS  portrait: the view eases: it never jumped from one frame to the next, not even when he sits down in the airplane  (the most its middle moved or its width changed in one frame is 0.446 m, of 12 m or more across)
+PASS  portrait: the level's camera did pull back on the way  (from 12 to 20.96 m across)
+PASS  portrait: the HUD kept its own size all the while: one zoom, and the item slot drawn in the same place on the screen  (HUD zoom 0.4; 229 pixels of pencil in the slot's box at rest and 195 at the edge: the same box, a little different as its line boils)
+PASS  no page errors
+
+ALL 38 CHECKS PASSED
