@@ -221,7 +221,7 @@ describe('losing the airplane', () => {
     sim.step([{ type: 'player/walk', direction: -1 }]);
     for (let tick = 0; tick < 300; tick += 1) sim.step();
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBe(AIRPLANE_ITEM_ID);
-    expect(letterOf(sim)).toMatchObject({ height: 0, opened: true });
+    expect(letterOf(sim)).toBeUndefined();
   });
 });
 

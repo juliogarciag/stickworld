@@ -12,7 +12,7 @@ import { gameOf } from '../../features/game/view';
 import { AIRPLANE_ITEM_ID, PAPER_ITEM_ID } from '../../features/inventory/defs';
 import { itemSlotsOf } from '../../features/inventory/view';
 import { itemUseOf } from '../../features/item/view';
-import { letterOf } from '../../features/letter/view';
+import { fallenItemOf, letterOf } from '../../features/letter/view';
 import { PLAYER } from '../../features/player/defs';
 import { stickManOf } from '../../features/player/view';
 import { interactionOf } from '../../features/world/view';
@@ -77,7 +77,7 @@ describe('level 3', () => {
     finishLevel2(sim);
     expect(sim.level).toBe(3);
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBe(PAPER_ITEM_ID);
-    expect(letterOf(sim)).toMatchObject({ at: LETTER_AT, height: 0, beingRead: false });
+    expect(letterOf(sim)).toMatchObject({ at: LETTER_AT, beingRead: false });
 
     // The paper alone has no use, in his hand or not: he has not learned what to make of it.
     expect(itemSlotsOf(sim)[0]?.selected).toBe(false);
@@ -98,9 +98,7 @@ describe('level 3', () => {
     expect(itemUseOf(sim)).toBeNull();
     expect(interactionOf(sim)).toBe('putLetterAway');
     sim.step([INTERACT]);
-    // It lies where it lay, opened, to be read again.
-    expect(letterOf(sim)).toMatchObject({ beingRead: false, opened: true, height: 0 });
-    expect(interactionOf(sim)).toBe('read');
+    expect(letterOf(sim)).toBeUndefined();
 
     // One press folds it.
     expect(itemUseOf(sim)).toBe('craft');
@@ -134,7 +132,7 @@ describe('level 3', () => {
     for (let tick = 0; tick < 120; tick += 1) sim.step();
     expect(airplaneOf(sim)).toEqual(airplane);
     expect(stickManOf(sim).action).toBe('standing');
-    expect(letterOf(sim)).toMatchObject({ opened: true, height: 0 });
+    expect(letterOf(sim)).toBeUndefined();
   });
 
   it('is finished the intended way: he boards the airplane on the edge, climbs for a moment, glides across, lands and walks to the flag, which ends the game', () => {
@@ -146,7 +144,7 @@ describe('level 3', () => {
     let highest = 0;
     const seatedTicks = playFlight(sim, climbingFor(CLIMB_THAT_CROSSES.from + 8), ({ airplane, stickMan }) => {
       expect(stickMan.action).toBe('seated');
-      expect(letterOf(sim)).toMatchObject({ opened: true, height: 0 });
+      expect(letterOf(sim)).toBeUndefined();
       highest = Math.max(highest, -airplane.at.y);
     });
     expect(seatedTicks).toBeGreaterThan(TICK_RATE);
@@ -208,9 +206,9 @@ describe('level 3', () => {
     expect(itemSlotsOf(sim)).toEqual([{ slot: 1, itemDefId: null, selected: false }]);
     expect(craftingOf(sim).knownRecipes).toEqual([]);
     expect(airplaneOf(sim)).toBeUndefined();
-    // The letter he read in the game before is not remembered: on level 3 it lies there unopened again.
+    // The letter he read in the game before is not remembered: on level 3 it lies there again.
     (sim as Sim).startLevel(3);
-    expect(letterOf(sim)).toMatchObject({ opened: false, height: 0 });
+    expect(letterOf(sim)).toMatchObject({ beingRead: false });
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBeNull();
   });
 
@@ -396,7 +394,7 @@ function putTheAirplaneOnTheEdge(sim: SimHandle): void {
   expect(airplaneOf(sim)).toMatchObject({ state: 'resting', onAnEdge: true });
 }
 
-/** He is back at the start with the airplane as the item in his hand, none in the world, the flag not reached, the letter opened where it lay, and no new letter on its way. */
+/** He is back at the start with the airplane as the item in his hand, none in the world, the flag not reached, and neither a letter there nor a sheet of paper on its way. */
 function expectTheLevelToHaveStartedAgainWithTheAirplaneInHisHand(sim: SimHandle): void {
   expect(sim.level).toBe(3);
   expect(stickManOf(sim)).toMatchObject({ action: 'standing', feet: level3.start });
@@ -405,7 +403,8 @@ function expectTheLevelToHaveStartedAgainWithTheAirplaneInHisHand(sim: SimHandle
   expect(flagOf(sim)!.reached).toBe(false);
   for (let tick = 0; tick < 3 * TICK_RATE; tick += 1) {
     sim.step();
-    expect(letterOf(sim)).toMatchObject({ opened: true, height: 0 });
+    expect(letterOf(sim)).toBeUndefined();
+    expect(fallenItemOf(sim)).toBeUndefined();
   }
 }
 

@@ -41,7 +41,7 @@ describe("'world/interact' and 'item/use'", () => {
     expect(letterOf(sim)).toMatchObject({ beingRead: true });
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBe(PAPER_ITEM_ID);
     sim.step([INTERACT]);
-    expect(letterOf(sim)).toMatchObject({ beingRead: false });
+    expect(letterOf(sim)).toBeUndefined();
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBe(PAPER_ITEM_ID);
     expect(itemUseOf(sim)).toBe('craft');
   });

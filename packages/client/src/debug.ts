@@ -1,5 +1,5 @@
-import type { AirplaneView, Command, CraftingView, Def, FlagView, GameView, InteractionMeaning, ItemSlot, ItemUseMeaning, LetterView, Level, NoteView, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
-import { airplaneOf, craftingOf, defs, flagOf, gameOf, hashSnapshot, interactionOf, itemSlotsOf, itemUseOf, letterOf, levelOf, notesOf, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf } from '@stickworld/sim';
+import type { AirplaneView, Command, CraftingView, Def, FallenItemView, FlagView, GameView, InteractionMeaning, ItemSlot, ItemUseMeaning, LetterView, Level, NoteView, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
+import { airplaneOf, craftingOf, defs, fallenItemOf, flagOf, gameOf, hashSnapshot, interactionOf, itemSlotsOf, itemUseOf, letterOf, levelOf, notesOf, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf } from '@stickworld/sim';
 import type Phaser from 'phaser';
 import { itemSlotBox, type Rectangle } from './hud/itemSlots';
 import type { GameLoop } from './loop/GameLoop';
@@ -44,6 +44,8 @@ export interface GameDebugApi {
   itemSlots(): ShownItemSlot[];
   /** The level's letter as the sim has it right now, or undefined when there is none to read. */
   letter(): LetterView | undefined;
+  /** The item that fell from the sky for him who lost his, as the sim has it right now, or undefined when there is none. */
+  fallenItem(): FallenItemView | undefined;
   /** What he knows how to make as the sim has it right now: the recipes he knows, and the one using the held item would make. */
   crafting(): CraftingView;
   /** The airplane in the world as the sim has it right now, or undefined while there is none. */
@@ -132,6 +134,7 @@ export function exposeDebugApi({ loop, game, pageTurn }: { loop: GameLoop; game:
       });
     },
     letter: () => letterOf(loop.sim),
+    fallenItem: () => fallenItemOf(loop.sim),
     crafting: () => craftingOf(loop.sim),
     airplane: () => airplaneOf(loop.sim),
     itemUse: () => itemUseOf(loop.sim),

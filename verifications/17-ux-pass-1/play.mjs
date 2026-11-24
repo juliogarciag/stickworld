@@ -78,6 +78,7 @@ export async function openGame({ browser, url, size, level, proofFolder }) {
           stickMan: api.stickMan(),
           flag: api.flag() ?? null,
           letter: api.letter() ?? null,
+          fallenItem: optional('fallenItem'),
           airplane: api.airplane() ?? null,
           itemSlots: api.itemSlots(),
           itemUse: api.itemUse(),
@@ -251,10 +252,15 @@ export async function readTheLetter(game) {
  * not, so nothing about how far in front of him it lands is typed in here. `onTheWay` is called once he carries it.
  */
 export async function carryTheAirplaneToTheEdge(game, onTheWay = async () => undefined) {
-  const gap = gapOf(await game.levelData());
   for (const key of ['k', 'j', 'j', 'k']) await game.tap(key);
   await game.seconds(0.3);
   await onTheWay();
+  return putTheCarriedAirplaneOnTheEdge(game);
+}
+
+/** Carrying the airplane: walks towards the gap and puts it down where it sits on the edge, a little further on each time it does not. */
+export async function putTheCarriedAirplaneOnTheEdge(game) {
+  const gap = gapOf(await game.levelData());
   for (let short = 1.5; short > 0.6; short -= 0.1) {
     await game.walkRightTo(gap.from - short);
     await game.tap('k');

@@ -1,4 +1,4 @@
-import { airplaneOf, flagOf, letterOf, levelOf, notesOf, stickManOf, type SimHandle } from '@stickworld/sim';
+import { airplaneOf, fallenItemOf, flagOf, letterOf, levelOf, notesOf, stickManOf, type SimHandle } from '@stickworld/sim';
 import type Phaser from 'phaser';
 import { keptWhileUnchanged } from '../hud/unchanged';
 import { MOVE_KEY_NAMES } from '../input/playerKeys';
@@ -6,7 +6,7 @@ import { airplanesEasedOverTime, airplaneStrokes, heightItTurnsAbout } from '../
 import { worldSeenBy } from '../render/cameraView';
 import { flagStrokes } from '../render/flag';
 import { floorStrokes } from '../render/floor';
-import { letterStrokes } from '../render/letter';
+import { fallenPaperStrokes, letterStrokes } from '../render/letter';
 import { zoomAtRest } from '../render/levelCamera';
 import { notesAreStill, noteStrokes } from '../render/notes';
 import { layPaper, type Paper } from '../render/paper';
@@ -30,7 +30,8 @@ export interface SheetNow {
 /**
  * One sheet of paper with a level drawn on it, in a scene of its own camera:
  * the paper, what is written on it (the level's name, its notes, the page
- * number), the floor line, the flag, the letter, the airplane and the stick
+ * number), the floor line, the flag, the letter or the sheet of paper that
+ * fell in its place, the airplane and the stick
  * man, each as the sim it is shown says it is. The level being played is one
  * of these, and so is the sheet that is turned away when a level is finished.
  */
@@ -85,7 +86,9 @@ export class Sheet {
     this.pageNumber.show(this.strokesOfThePageNumber(JSON.stringify([level.id, seen]), () => pageNumberStrokes({ page: level.id, seen, zoomAtRest: zoomAtRest(camera) })));
     this.floor.show(floorStrokes(level));
     this.flag.show(flag ? flagStrokes(flag) : []);
-    this.letter.show(letter ? letterStrokes(letter) : []);
+    // One layer for both: the sheet only ever falls where a letter no longer lies.
+    const fallenItem = fallenItemOf(sim);
+    this.letter.show(letter ? letterStrokes(letter) : fallenItem ? fallenPaperStrokes(fallenItem) : []);
     this.airplane.show(airplane ? airplaneStrokes(airplane) : []);
     const pose = this.poseFor(stickMan, seconds, level.floor);
     // Seated, he tips with the airplane as it is drawn, about the point it is drawn turning about: its middle.

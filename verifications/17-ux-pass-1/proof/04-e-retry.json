@@ -2,22 +2,34 @@
   "wide": {
     "retry": {
       "presses": 2,
-      "seconds": 3.13,
+      "seconds": 3.15,
       "walkedMetres": 6.53
+    },
+    "fallenPaper": {
+      "fellAfterSeconds": 0.62,
+      "inkOnTheFloor": 212
     }
   },
   "narrow": {
     "retry": {
       "presses": 2,
-      "seconds": 3.18,
-      "walkedMetres": 6.56
+      "seconds": 3.13,
+      "walkedMetres": 6.53
+    },
+    "fallenPaper": {
+      "fellAfterSeconds": 0.63,
+      "inkOnTheFloor": 132
     }
   },
   "portrait": {
     "retry": {
       "presses": 2,
-      "seconds": 3.17,
+      "seconds": 3.15,
       "walkedMetres": 6.53
+    },
+    "fallenPaper": {
+      "fellAfterSeconds": 0.63,
+      "inkOnTheFloor": 42
     }
   },
   "results": [
@@ -26,15 +38,7 @@
       "pass": true
     },
     {
-      "name": "wide: a letter he has read stays on the floor, opened",
-      "pass": true
-    },
-    {
-      "name": "wide: K next to it reads it again",
-      "pass": true
-    },
-    {
-      "name": "wide: read again, it says the same and gives nothing more",
+      "name": "wide: a letter he has read is gone once he puts it away, and what it taught stays: J would fold",
       "pass": true
     },
     {
@@ -49,10 +53,10 @@
     {
       "name": "wide: a retry is walk, set down, board: two presses",
       "pass": true,
-      "details": "3.13 s from the restart to the seat, 6.53 m of it walking"
+      "details": "3.15 s from the restart to the seat, 6.53 m of it walking"
     },
     {
-      "name": "wide: no new letter fell: the opened one lay there all the while",
+      "name": "wide: nothing fell, and no letter lies there: he has nothing to read again",
       "pass": true
     },
     {
@@ -60,24 +64,17 @@
       "pass": true
     },
     {
-      "name": "wide: with neither paper nor airplane a new letter still falls, not opened",
+      "name": "wide: with neither paper nor airplane a sheet of paper falls from the sky, and no letter",
       "pass": true,
-      "details": "it started 0.63 s after the airplane was lost"
+      "details": "it started 0.62 s after the airplane was lost"
     },
     {
-      "name": "wide: reading it gives the paper again",
-      "pass": true
+      "name": "wide: it lies where the letter lay, and one press picks it up into his hand: nothing is read",
+      "pass": true,
+      "details": "212 pixels of pencil where it lay; J would \"craft\""
     },
     {
-      "name": "narrow: a letter he has read stays on the floor, opened",
-      "pass": true
-    },
-    {
-      "name": "narrow: K next to it reads it again",
-      "pass": true
-    },
-    {
-      "name": "narrow: read again, it says the same and gives nothing more",
+      "name": "narrow: a letter he has read is gone once he puts it away, and what it taught stays: J would fold",
       "pass": true
     },
     {
@@ -92,10 +89,10 @@
     {
       "name": "narrow: a retry is walk, set down, board: two presses",
       "pass": true,
-      "details": "3.18 s from the restart to the seat, 6.56 m of it walking"
+      "details": "3.13 s from the restart to the seat, 6.53 m of it walking"
     },
     {
-      "name": "narrow: no new letter fell: the opened one lay there all the while",
+      "name": "narrow: nothing fell, and no letter lies there: he has nothing to read again",
       "pass": true
     },
     {
@@ -103,24 +100,17 @@
       "pass": true
     },
     {
-      "name": "narrow: with neither paper nor airplane a new letter still falls, not opened",
+      "name": "narrow: with neither paper nor airplane a sheet of paper falls from the sky, and no letter",
       "pass": true,
-      "details": "it started 0.6 s after the airplane was lost"
+      "details": "it started 0.63 s after the airplane was lost"
     },
     {
-      "name": "narrow: reading it gives the paper again",
-      "pass": true
+      "name": "narrow: it lies where the letter lay, and one press picks it up into his hand: nothing is read",
+      "pass": true,
+      "details": "132 pixels of pencil where it lay; J would \"craft\""
     },
     {
-      "name": "portrait: a letter he has read stays on the floor, opened",
-      "pass": true
-    },
-    {
-      "name": "portrait: K next to it reads it again",
-      "pass": true
-    },
-    {
-      "name": "portrait: read again, it says the same and gives nothing more",
+      "name": "portrait: a letter he has read is gone once he puts it away, and what it taught stays: J would fold",
       "pass": true
     },
     {
@@ -135,10 +125,10 @@
     {
       "name": "portrait: a retry is walk, set down, board: two presses",
       "pass": true,
-      "details": "3.17 s from the restart to the seat, 6.53 m of it walking"
+      "details": "3.15 s from the restart to the seat, 6.53 m of it walking"
     },
     {
-      "name": "portrait: no new letter fell: the opened one lay there all the while",
+      "name": "portrait: nothing fell, and no letter lies there: he has nothing to read again",
       "pass": true
     },
     {
@@ -146,13 +136,14 @@
       "pass": true
     },
     {
-      "name": "portrait: with neither paper nor airplane a new letter still falls, not opened",
+      "name": "portrait: with neither paper nor airplane a sheet of paper falls from the sky, and no letter",
       "pass": true,
-      "details": "it started 0.62 s after the airplane was lost"
+      "details": "it started 0.63 s after the airplane was lost"
     },
     {
-      "name": "portrait: reading it gives the paper again",
-      "pass": true
+      "name": "portrait: it lies where the letter lay, and one press picks it up into his hand: nothing is read",
+      "pass": true,
+      "details": "42 pixels of pencil where it lay; J would \"craft\""
     },
     {
       "name": "no page errors",

@@ -31,9 +31,9 @@ describe('promptsFor', () => {
   it('has words for everything a key can mean, and each names what it is done to', () => {
     const words = [
       ...(['craft', 'place'] as const).map((itemUse) => promptsFor({ ...KEYS, itemUse, wouldMake: 'paper airplane', interaction: null })[0]?.words),
-      ...(['read', 'putLetterAway', 'lift', 'putDown', 'board'] as const).map((interaction) => promptsFor({ ...KEYS, itemUse: null, interaction })[0]?.words),
+      ...(['read', 'putLetterAway', 'lift', 'putDown', 'board', 'pickUp'] as const).map((interaction) => promptsFor({ ...KEYS, itemUse: null, interaction })[0]?.words),
     ];
-    for (const prompt of words) expect(prompt).toMatch(/letter|airplane/);
+    for (const prompt of words) expect(prompt).toMatch(/letter|airplane|paper/);
   });
 });
 

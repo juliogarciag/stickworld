@@ -33,8 +33,10 @@ The first UX review (`docs/reviews/ux-review-1.md`) found that the three levels 
 - `startOver` is new in `core/sim.ts` because `startLevel` is defined to keep what carries. The seed, the rng and the tick count go on: a recorded game that ends and is played again still replays.
 - After the end he is not held in a cheer. When playing again is offered he walks and jumps again, and the ends of the floor line he is on stop him (`keptOverTheLine`): the game is over, so nothing he does may start the level again and take the end back.
 
-**5. A level that starts again gives back what he had made.** The `letter` feature's `init`: when he has read the level's letter and has nothing left of what it was for, he is given what its recipe makes, in his hand. The letter itself is no longer taken away when he puts it down: it lies there opened and can be read again. The falling letter stays for the one case left, losing everything without dying, where nothing else would tell him how to go on.
+**5. What a letter teaches is kept; what he can lose is given back as what it is.** The `letter` feature: a letter he has read is gone once he puts it away. When a level starts again for him who has read its letter and has nothing left of what it was for, `init` gives him what its recipe makes, in his hand. When he loses everything without dying, the item the letter gave falls from the sky to where the letter lay, and `'world/interact'` next to it picks it up (`fallenItemInteraction`, `'pickUp'`).
 
+- Before this, a new letter fell and had to be read again to get the paper. The fold is learned once and cannot be lost, so what falls is the material and not the lesson.
+- Leaving the read letter on the floor, opened, to be read again was built and taken out again for the same reason: it had nothing left to do, and it put a prompt in his way on every retry.
 - Giving the airplane, and not the paper, is what makes a retry "walk, set down, board". He has not lost what he learned, and folding again is a press that teaches nothing.
 
 ## Consequences

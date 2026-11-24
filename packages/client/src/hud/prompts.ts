@@ -67,6 +67,7 @@ const INTERACTION_WORDS: Readonly<Record<InteractionMeaning, string>> = {
   lift: 'lift the airplane',
   putDown: 'put the airplane down',
   board: 'board the airplane',
+  pickUp: 'pick up the paper',
 };
 
 const FLIGHT_WORDS = { climb: 'climb', dive: 'dive', jumpOut: 'jump out' } as const;

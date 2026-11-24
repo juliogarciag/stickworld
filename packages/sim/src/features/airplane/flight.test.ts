@@ -12,7 +12,7 @@ import { AIRPLANE_ITEM_ID } from '../inventory/defs';
 import { giveItem } from '../inventory/give';
 import { itemSlotsOf } from '../inventory/view';
 import { LETTER } from '../letter/defs';
-import { letterOf } from '../letter/view';
+import { fallenItemOf, letterOf } from '../letter/view';
 import { PLAYER } from '../player/defs';
 import { stickManOf } from '../player/view';
 import { interactionOf } from '../world/view';
@@ -309,15 +309,14 @@ describe('jumping out', () => {
     expect(airplaneOf(sim)).toBeUndefined();
   });
 
-  it('early, walking back to the near side, saves him and loses the airplane: he is not left with one he cannot reach, and a new letter falls', () => {
+  it('early, walking back to the near side, saves him and loses the airplane: he is not left with one he cannot reach, and a new sheet of paper falls', () => {
     const sim = readyToBoard();
     sim.step([INTERACT]);
     sim.step([{ type: 'player/walk', direction: -1 }, { type: 'player/jump' }]);
-    for (let tick = 0; tick < 12 * TICK_RATE && letterOf(sim)!.height === 0; tick += 1) sim.step();
+    for (let tick = 0; tick < 12 * TICK_RATE && !fallenItemOf(sim); tick += 1) sim.step();
     expect(stickManOf(sim).feet.x).toBeLessThanOrEqual(EDGE);
     expect(hasAirplane(sim)).toBe(false);
-    expect(letterOf(sim)).toMatchObject({ opened: false });
-    expect(letterOf(sim)!.height).toBeGreaterThan(0);
+    expect(fallenItemOf(sim)!.height).toBeGreaterThan(0);
   });
 
   it('leaves an airplane that comes down over the floor lying there, to be lifted again', () => {
@@ -344,7 +343,7 @@ describe('falling while flying', () => {
     let ticks = 0;
     for (; ticks < 10 * TICK_RATE && stickManOf(sim).action === 'seated'; ticks += 1) {
       deepest = Math.max(deepest, airplaneOf(sim)!.at.y);
-      expect(letterOf(sim)).toMatchObject({ height: 0, opened: true });
+      expect(letterOf(sim)).toBeUndefined();
       sim.step();
     }
     expect(deepest).toBeGreaterThan(FLIGHT.lostBelowFloor - 0.2);
@@ -355,7 +354,7 @@ describe('falling while flying', () => {
     // He has read the letter, so he starts again with a new airplane in his hand and no letter has to fall.
     expect(itemSlotsOf(sim)).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, selected: true }]);
     for (let tick = 0; tick < Math.round(LETTER.fallsAfter * TICK_RATE) + 2; tick += 1) sim.step();
-    expect(letterOf(sim)).toMatchObject({ height: 0, opened: true });
+    expect(fallenItemOf(sim)).toBeUndefined();
   });
 });
 
@@ -399,11 +398,11 @@ function readyToBoard(): Sim {
   // In play he folds it from the paper the letter gives; here it is handed to him.
   giveItem(sim, AIRPLANE_ITEM_ID);
   sim.step([{ type: 'inventory/select', slot: 1 }]);
-  // He reads the level's letter and puts it away, as he has by the time he flies: from here on a letter that is not opened is a new one.
+  // He reads the level's letter and puts it away, as he has by the time he flies: from here on a letter in the level is a new one.
   walkTo(sim, letterOf(sim)!.at.x);
   sim.step([INTERACT]);
   sim.step([INTERACT]);
-  expect(letterOf(sim)).toMatchObject({ opened: true, beingRead: false });
+  expect(letterOf(sim)).toBeUndefined();
   walkTo(sim, EDGE - AIRPLANE.putDownAhead - AIRPLANE.length / 4);
   sim.step([{ type: 'item/use' }]);
   expect(airplaneOf(sim)).toMatchObject({ state: 'resting', onAnEdge: true });

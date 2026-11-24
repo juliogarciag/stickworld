@@ -4,7 +4,6 @@ import { level3 } from '../../content/levels/level3';
 import { TICK_RATE } from '../../content/tuning';
 import type { Command } from '../../core/commands';
 import { Sim } from '../../core/sim';
-import type { SimSnapshot } from '../../core/snapshot';
 import { features } from '..';
 import { hasAirplane } from '../airplane';
 import { AIRPLANE } from '../airplane/defs';
@@ -19,12 +18,12 @@ import { stickManOf } from '../player/view';
 import { interactionOf } from '../world/view';
 import { LETTER, letterDefs } from './defs';
 import { letterPlacedIn } from './index';
-import { letterOf } from './view';
+import { fallenItemOf, letterOf } from './view';
 
 describe('reading the letter', () => {
   it('lies on the floor where the level places it, and is read only from within reach', () => {
     const sim = onLevel3WithThePaper();
-    expect(letterOf(sim)).toEqual({ at: LETTER_AT, height: 0, opened: false, beingRead: false, text: letterDefs[0]!.text, teaches: 'paper airplane' });
+    expect(letterOf(sim)).toEqual({ at: LETTER_AT, beingRead: false, text: letterDefs[0]!.text, teaches: 'paper airplane' });
     walkTo(sim, LETTER_AT.x + LETTER.reach + 0.3);
     expect(interactionOf(sim)).toBeNull();
     sim.step([INTERACT]);
@@ -51,17 +50,12 @@ describe('reading the letter', () => {
     expect(itemSlotsOf(sim)[0]).toMatchObject({ itemDefId: PAPER_ITEM_ID, selected: true });
   });
 
-  it('is put away by interacting again, and lies where it lay, opened, to be read again', () => {
+  it('is put away by interacting again, and then it is gone: what it taught he knows for good', () => {
     const sim = onLevel3WithThePaper();
     readTheLetter(sim);
-    expect(letterOf(sim)).toMatchObject({ beingRead: true, opened: true });
     sim.step([INTERACT]);
-    expect(letterOf(sim)).toMatchObject({ at: LETTER_AT, height: 0, beingRead: false, opened: true });
-    expect(interactionOf(sim)).toBe('read');
-    sim.step([INTERACT]);
-    expect(letterOf(sim)).toMatchObject({ beingRead: true, text: letterDefs[0]!.text });
-    // Reading it again gives nothing more: he has the paper.
-    expect(itemSlotsOf(sim)).toEqual([{ slot: 1, itemDefId: PAPER_ITEM_ID, selected: true }]);
+    expect(letterOf(sim)).toBeUndefined();
+    expect(interactionOf(sim)).toBeNull();
     expect(craftingOf(sim).knownRecipes).toHaveLength(1);
   });
 
@@ -71,12 +65,12 @@ describe('reading the letter', () => {
     walking.step([{ type: 'player/walk', direction: 1 }]);
     expect(letterOf(walking)!.beingRead).toBe(true);
     for (let tick = 0; tick < TICK_RATE; tick += 1) walking.step();
-    expect(letterOf(walking)).toMatchObject({ beingRead: false, opened: true });
+    expect(letterOf(walking)).toBeUndefined();
 
     const jumping = onLevel3WithThePaper();
     readTheLetter(jumping);
     jumping.step([{ type: 'player/jump' }]);
-    expect(letterOf(jumping)).toMatchObject({ beingRead: false, opened: true });
+    expect(letterOf(jumping)).toBeUndefined();
 
     const using = onLevel3WithThePaper();
     readTheLetter(using);
@@ -85,14 +79,14 @@ describe('reading the letter', () => {
     expect(itemSlotsOf(using)[0]?.itemDefId).toBe(PAPER_ITEM_ID);
   });
 
-  it('lies there opened when the level starts again, and no new one comes as long as he has what it was for', () => {
+  it('does not lie there again when the level starts again, and no new one comes as long as he has what it was for', () => {
     const sim = onLevel3WithThePaper();
     readTheLetter(sim);
     sim.step([INTERACT]);
     sim.startLevel(sim.level);
     for (let tick = 0; tick < 10 * TICK_RATE; tick += 1) {
       sim.step();
-      expect(letterOf(sim)).toMatchObject({ height: 0, opened: true, beingRead: false });
+      expect(letterOf(sim)).toBeUndefined();
     }
     expect(craftingOf(sim).knownRecipes).toHaveLength(1);
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBe(PAPER_ITEM_ID);
@@ -110,25 +104,27 @@ describe('a level that starts again', () => {
       expect(itemSlotsOf(sim), way).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, selected: true }]);
       for (let tick = 0; tick < 5 * TICK_RATE; tick += 1) {
         sim.step();
-        expect(letterOf(sim), way).toMatchObject({ height: 0, opened: true });
+        expect(letterOf(sim), way).toBeUndefined();
+        expect(fallenItemOf(sim), way).toBeUndefined();
       }
     }
   });
 
-  it('puts the letter he was reading back on the floor, and gives him the airplane when he dies while a new letter is on its way down', () => {
+  it('takes the letter he was reading with it, and gives him the airplane when he dies while a new sheet of paper is on its way down', () => {
     const reading = onLevel3WithThePaper();
     readTheLetter(reading);
     reading.startLevel(reading.level);
-    expect(letterOf(reading)).toMatchObject({ beingRead: false, opened: true, height: 0 });
+    expect(letterOf(reading)).toBeUndefined();
 
     const sim = holdingTheAirplane();
     WAYS_TO_LOSE_THE_AIRPLANE_AND_LIVE[0]![1](sim);
-    for (let tick = 0; tick < 20 * TICK_RATE && letterOf(sim)!.height === 0; tick += 1) sim.step();
-    expect(letterOf(sim)).toMatchObject({ opened: false });
+    for (let tick = 0; tick < 20 * TICK_RATE && !fallenItemOf(sim); tick += 1) sim.step();
+    expect(fallenItemOf(sim)!.height).toBeGreaterThan(0);
     sim.step([{ type: 'player/walk', direction: 1 }]);
     for (let tick = 0; tick < 5 * TICK_RATE && !sameSpot(stickManOf(sim).feet, level3.start); tick += 1) sim.step();
     expect(stickManOf(sim).feet).toEqual(level3.start);
-    expect(letterOf(sim)).toMatchObject({ opened: true, height: 0 });
+    expect(letterOf(sim)).toBeUndefined();
+    expect(fallenItemOf(sim)).toBeUndefined();
     expect(itemSlotsOf(sim)).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, selected: true }]);
   });
 
@@ -136,7 +132,8 @@ describe('a level that starts again', () => {
     const sim = new Sim({ features, start: { seed: 1, level: 3 } });
     sim.startLevel(sim.level);
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBeNull();
-    expect(letterOf(sim)).toMatchObject({ opened: false, height: 0 });
+    expect(letterOf(sim)).toMatchObject({ beingRead: false });
+    expect(fallenItemOf(sim)).toBeUndefined();
   });
 
   it('gives nothing more to him who still has the paper or the airplane in his slot', () => {
@@ -151,59 +148,68 @@ describe('a level that starts again', () => {
   });
 });
 
-describe('a new letter', () => {
-  it('falls from the sky on to the old one however the airplane is lost by him who lives, and reading it gives a new paper', () => {
+describe('a new sheet of paper', () => {
+  it('falls from the sky to where the letter lay however the airplane is lost by him who lives, and is picked up into his hand', () => {
     for (const [, lose] of WAYS_TO_LOSE_THE_AIRPLANE_AND_LIVE) {
       const sim = holdingTheAirplane();
       lose(sim);
       for (let tick = 0; tick < 20 * TICK_RATE && hasAirplane(sim); tick += 1) sim.step();
       expect(hasAirplane(sim)).toBe(false);
       expect(itemSlotsOf(sim)[0]?.itemDefId).toBeNull();
-      expect(letterOf(sim)).toMatchObject({ height: 0, opened: true });
+      expect(fallenItemOf(sim)).toBeUndefined();
 
-      // The opened one lies there a moment longer, then a new one is high above the place, coming down, and at last lying there, not opened.
-      for (let tick = 0; tick < TICK_RATE && letterOf(sim)!.height === 0; tick += 1) sim.step();
+      // Nothing at first, then a sheet high above the place, coming down, and at last lying there. It is the paper, and no letter.
+      for (let tick = 0; tick < TICK_RATE && !fallenItemOf(sim); tick += 1) sim.step();
       const heights: number[] = [];
-      for (let tick = 0; tick < 20 * TICK_RATE && (heights.length === 0 || letterOf(sim)!.height !== 0); tick += 1) {
-        const letter = letterOf(sim)!;
-        heights.push(letter.height);
-        expect(letter).toMatchObject({ at: LETTER_AT, opened: false });
+      for (let tick = 0; tick < 20 * TICK_RATE && (heights.length === 0 || fallenItemOf(sim)!.height !== 0); tick += 1) {
+        const fallen = fallenItemOf(sim)!;
+        heights.push(fallen.height);
+        expect(fallen).toMatchObject({ at: LETTER_AT, itemDefId: PAPER_ITEM_ID });
+        expect(letterOf(sim)).toBeUndefined();
         sim.step();
       }
       expect(heights[0]).toBeGreaterThan(LETTER.fallsFromHeight - 1);
       expect(heights).toEqual([...heights].sort((one, other) => other - one));
-      expect(letterOf(sim)).toMatchObject({ height: 0, opened: false });
+      expect(fallenItemOf(sim)!.height).toBe(0);
 
+      // One press picks it up: nothing is read, and it is in his hand, where the next press folds it.
       walkTo(sim, LETTER_AT.x);
+      expect(interactionOf(sim)).toBe('pickUp');
       sim.step([INTERACT]);
-      expect(letterOf(sim)!.beingRead).toBe(true);
-      expect(itemSlotsOf(sim)[0]?.itemDefId).toBe(PAPER_ITEM_ID);
-      sim.step([INTERACT]);
-
-      // The new paper is in his hand and folds into a new airplane, and no further letter comes while he has it.
+      expect(fallenItemOf(sim)).toBeUndefined();
+      expect(letterOf(sim)).toBeUndefined();
+      expect(itemSlotsOf(sim)).toEqual([{ slot: 1, itemDefId: PAPER_ITEM_ID, selected: true }]);
+      expect(interactionOf(sim)).toBeNull();
       sim.step([USE_ITEM]);
       expect(itemSlotsOf(sim)[0]?.itemDefId).toBe(AIRPLANE_ITEM_ID);
+
+      // No further sheet comes while he has it.
       for (let tick = 0; tick < 10 * TICK_RATE; tick += 1) {
         sim.step();
-        expect(letterOf(sim)).toMatchObject({ height: 0, opened: true });
+        expect(fallenItemOf(sim)).toBeUndefined();
       }
     }
   });
 
-  it('is not waited for by him who reads the opened one again first: that gives the paper too, and then none falls', () => {
-    const sim = holdingTheAirplane();
-    WAYS_TO_LOSE_THE_AIRPLANE_AND_LIVE[1]![1](sim);
-    for (let tick = 0; tick < 20 * TICK_RATE && hasAirplane(sim); tick += 1) sim.step();
-    // Lost from the edge, far from the letter: by the time he is back the new one has landed. Here he is put next to it at once.
-    const beside = new Sim({ features, snapshot: besideTheLetter(sim.snapshot()) });
-    expect(letterOf(beside)).toMatchObject({ height: 0, opened: true });
-    beside.step([INTERACT]);
-    expect(itemSlotsOf(beside)[0]).toMatchObject({ itemDefId: PAPER_ITEM_ID, selected: true });
-    beside.step([INTERACT]);
-    for (let tick = 0; tick < 5 * TICK_RATE; tick += 1) {
-      beside.step();
-      expect(letterOf(beside)).toMatchObject({ height: 0, opened: true });
+  it('does not fall for him who has not read the letter: the letter lies there and gives the paper', () => {
+    const sim = new Sim({ features, start: { seed: 1, level: 3 } });
+    for (let tick = 0; tick < 10 * TICK_RATE; tick += 1) {
+      sim.step();
+      expect(fallenItemOf(sim)).toBeUndefined();
     }
+    expect(letterOf(sim)).toBeDefined();
+  });
+
+  it('is in the snapshot: restored on its way down, it lands and is picked up the same', () => {
+    const sim = holdingTheAirplane();
+    WAYS_TO_LOSE_THE_AIRPLANE_AND_LIVE[0]![1](sim);
+    for (let tick = 0; tick < 20 * TICK_RATE && !fallenItemOf(sim); tick += 1) sim.step();
+    for (let tick = 0; tick < 20; tick += 1) sim.step();
+    const restored = new Sim({ features, snapshot: sim.snapshot() });
+    expect(fallenItemOf(restored)).toEqual(fallenItemOf(sim));
+    for (const each of [sim, restored]) for (let tick = 0; tick < 5 * TICK_RATE; tick += 1) each.step();
+    expect(restored.snapshot()).toEqual(sim.snapshot());
+    expect(fallenItemOf(restored)!.height).toBe(0);
   });
 
   it('does not fall once the flag is reached: he who jumped out near the far side and lost the airplane needs none', () => {
@@ -214,22 +220,22 @@ describe('a new letter', () => {
     const atTheFlag = new Sim({ features, snapshot: { ...snapshot, slices: { ...snapshot.slices, inventory: { slots: [null], selectedSlot: 1 }, player: { ...(snapshot.slices.player as PlayerState), x: flagAt.x, y: flagAt.y } } } });
     for (let tick = 0; tick < 10 * TICK_RATE; tick += 1) {
       atTheFlag.step();
-      expect(letterOf(atTheFlag)).toMatchObject({ height: 0, opened: true });
+      expect(fallenItemOf(atTheFlag)).toBeUndefined();
     }
     expect(hasAirplane(atTheFlag)).toBe(false);
   });
 
-  it('cannot be read while it is still coming down', () => {
+  it('cannot be picked up while it is still coming down', () => {
     const sim = holdingTheAirplane();
     WAYS_TO_LOSE_THE_AIRPLANE_AND_LIVE[0]![1](sim);
-    for (let tick = 0; tick < 20 * TICK_RATE && letterOf(sim)!.height === 0; tick += 1) sim.step();
+    for (let tick = 0; tick < 20 * TICK_RATE && !fallenItemOf(sim); tick += 1) sim.step();
     walkTo(sim, LETTER_AT.x);
-    for (let tick = 0; tick < 20 * TICK_RATE && letterOf(sim)!.height > 0; tick += 1) {
+    for (let tick = 0; tick < 20 * TICK_RATE && fallenItemOf(sim)!.height > 0; tick += 1) {
       expect(interactionOf(sim)).toBeNull();
       sim.step([INTERACT]);
-      expect(letterOf(sim)!.beingRead).toBe(false);
+      expect(itemSlotsOf(sim)[0]?.itemDefId).toBeNull();
     }
-    expect(interactionOf(sim)).toBe('read');
+    expect(interactionOf(sim)).toBe('pickUp');
   });
 
   it('does not fall while the airplane is anywhere: in his slot, on the floor or over his head', () => {
@@ -237,7 +243,7 @@ describe('a new letter', () => {
     const untouched = (): void => {
       for (let tick = 0; tick < 5 * TICK_RATE; tick += 1) {
         sim.step();
-        expect(letterOf(sim)).toMatchObject({ height: 0, opened: true });
+        expect(fallenItemOf(sim)).toBeUndefined();
       }
     };
     untouched();
@@ -337,12 +343,6 @@ const WAYS_TO_DIE_WITHOUT_THE_AIRPLANE: readonly (readonly [string, (sim: Sim) =
 
 function sameSpot(one: { x: number; y: number }, other: { x: number; y: number }): boolean {
   return one.x === other.x && one.y === other.y;
-}
-
-/** The same game with him standing still on the floor next to the letter. */
-function besideTheLetter(snapshot: SimSnapshot): SimSnapshot {
-  const player = snapshot.slices.player as PlayerState;
-  return { ...snapshot, slices: { ...snapshot.slices, player: { ...player, x: LETTER_AT.x, y: 0, onFloor: true, walkDirection: 0, horizontalSpeed: 0 } } };
 }
 
 function onLevel3WithThePaper(): Sim {
