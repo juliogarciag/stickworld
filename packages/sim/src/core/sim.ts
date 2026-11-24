@@ -1,4 +1,4 @@
-import { levelById } from '../content/levels';
+import { levelById, levels } from '../content/levels';
 import type { Level } from '../content/levels/types';
 import { FIXED_DT } from '../content/tuning';
 import { isCommandShaped, type Command } from './commands';
@@ -106,6 +106,15 @@ export class Sim implements SimHandle {
       }
     }
     for (const feature of this.features) feature.init?.(this);
+  }
+
+  /**
+   * Starts the game again from its first level with nothing kept: the slices that carry across levels go back to
+   * their initial values too. The seed, the rng and the tick count go on, so a recorded game still replays.
+   */
+  startOver(): void {
+    this.slices = {};
+    this.startLevel(levels[0]!.id);
   }
 
   step(commands: readonly Command[] = []): void {

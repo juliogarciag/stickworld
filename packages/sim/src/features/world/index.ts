@@ -1,7 +1,7 @@
 import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
 import { airplaneInteraction } from '../airplane';
-import { letterBeingRead, letterInteraction } from '../letter';
+import { fallenItemInteraction, letterBeingRead, letterInteraction } from '../letter';
 import { hasFinishedLevel } from '../player';
 
 /**
@@ -32,9 +32,9 @@ export function interactionNow(sim: Sim): Interaction | undefined {
 }
 
 /** Every interaction there is, most pressing first: the letter he reads is put away, then what he has in his hands comes before what lies next to him. */
-const ANSWERS = [letterBeingRead, airplaneInteraction, letterInteraction] as const;
+const ANSWERS = [letterBeingRead, airplaneInteraction, letterInteraction, fallenItemInteraction] as const;
 
 export type Interaction = NonNullable<ReturnType<(typeof ANSWERS)[number]>>;
 
-/** What interacting means: read a letter, put away the one being read, lift the airplane, put it down, or board it. */
+/** What interacting means: read a letter, put away the one being read, lift the airplane, put it down, board it, or pick up the item that fell from the sky. */
 export type InteractionMeaning = Interaction['means'];

@@ -24,6 +24,14 @@ describe('promptsFor', () => {
     ]);
   });
 
+  it('says first, in words with no key, that the airplane goes to the edge while he has still to be told', () => {
+    expect(promptsFor({ ...KEYS, itemUse: null, interaction: 'putDown', flyingHint: 'takeItToAnEdge' })).toEqual([
+      { key: null, words: 'take the airplane to the edge' },
+      { key: 'K', words: 'put the airplane down' },
+    ]);
+    expect(promptsFor({ ...KEYS, itemUse: null, interaction: null, flyingHint: 'takeItToAnEdge' })).toEqual([{ key: null, words: 'take the airplane to the edge' }]);
+  });
+
   it('says what would be made, by the name the sim gives it', () => {
     expect(promptsFor({ ...KEYS, itemUse: 'craft', wouldMake: 'paper airplane', interaction: null })).toEqual([{ key: 'J', words: 'fold a paper airplane' }]);
   });
@@ -31,9 +39,9 @@ describe('promptsFor', () => {
   it('has words for everything a key can mean, and each names what it is done to', () => {
     const words = [
       ...(['craft', 'place'] as const).map((itemUse) => promptsFor({ ...KEYS, itemUse, wouldMake: 'paper airplane', interaction: null })[0]?.words),
-      ...(['read', 'putLetterAway', 'lift', 'putDown', 'board'] as const).map((interaction) => promptsFor({ ...KEYS, itemUse: null, interaction })[0]?.words),
+      ...(['read', 'putLetterAway', 'lift', 'putDown', 'board', 'pickUp'] as const).map((interaction) => promptsFor({ ...KEYS, itemUse: null, interaction })[0]?.words),
     ];
-    for (const prompt of words) expect(prompt).toMatch(/letter|airplane/);
+    for (const prompt of words) expect(prompt).toMatch(/letter|airplane|paper/);
   });
 });
 
@@ -51,6 +59,18 @@ describe('promptStrokes', () => {
     const topOfFirst = Math.min(...two[0]!.points.map((point) => point.y));
     expect(topOfFirst).toBeLessThan(Math.min(...one[0]!.points.map((point) => point.y)));
     expect(Math.max(...two.flatMap((stroke) => stroke.points).map((point) => point.y))).toBe(Math.max(...points.map((point) => point.y)));
+  });
+
+  it('writes words with no key as words alone, in a row of their own above the keys, starting where a key\'s box would', () => {
+    const hint = { key: null, words: 'take the airplane to the edge' };
+    const alone = promptStrokes([hint], CAMERA_SEES);
+    expect(alone.some((stroke) => stroke.closed)).toBe(false);
+    expect(alone).toHaveLength(written(hint.words, WRITING).strokes.length);
+    const withAKey = promptStrokes([hint, { key: 'K', words: 'lift' }], CAMERA_SEES);
+    const [box] = promptStrokes([{ key: 'K', words: 'lift' }], CAMERA_SEES);
+    const hintPoints = withAKey.slice(0, alone.length).flatMap((stroke) => stroke.points);
+    expect(Math.max(...hintPoints.map((point) => point.y))).toBeLessThan(Math.min(...box!.points.map((point) => point.y)));
+    expect(Math.min(...hintPoints.map((point) => point.x))).toBeCloseTo(Math.min(...box!.points.map((point) => point.x)), 0);
   });
 
   it('gives a key with a long name a box as wide as the name needs, and puts the words after it', () => {
@@ -90,6 +110,6 @@ describe('keptWhileUnchanged', () => {
 
 // ---- Helpers ----
 
-const KEYS = { useItemKey: 'J', interactKey: 'K', wouldMake: null, seated: false, flightKeys: { climb: '↑', dive: '↓', jumpOut: 'SPACE' } } as const;
+const KEYS = { useItemKey: 'J', interactKey: 'K', wouldMake: null, seated: false, flightKeys: { climb: '↑', dive: '↓', jumpOut: 'SPACE' }, flyingHint: null } as const;
 const CAMERA_SEES = { x: 40, y: -20, width: 1920, height: 1080 };
 const WRITING = { at: { x: 0, y: 0 }, letterHeight: 28 };

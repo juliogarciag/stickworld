@@ -1,40 +1,61 @@
-import type { LetterView, Point } from '@stickworld/sim';
+import type { FallenItemView, LetterView, Point } from '@stickworld/sim';
 import type { Stroke } from './strokes';
 import { PENCIL } from './strokes/pencil';
 import { toPixels } from './units';
 
 /**
- * The level's letter as pencil strokes: an envelope standing on the floor,
- * or swaying on its way down from the sky. Nothing while he reads it: then it
- * is in his hands, and the HUD shows what it says.
+ * The level's letter as pencil strokes: an envelope standing on the floor.
+ * Nothing while he reads it: then it is in his hands, and the HUD shows what
+ * it says.
  */
-export function letterStrokes({ at, height, beingRead }: LetterView): Stroke[] {
+export function letterStrokes({ at, beingRead }: LetterView): Stroke[] {
   if (beingRead) return [];
-  // Paper comes down swinging from side to side, less and less as it nears the floor.
-  const swing = Math.min(1, height / ENVELOPE.settlesBelow);
-  const foot = { x: at.x + swing * ENVELOPE.sway * Math.sin(height * ENVELOPE.swaysPerMetre), y: at.y - height };
-  const lean = ENVELOPE.lean + swing * ENVELOPE.rock * Math.cos(height * ENVELOPE.swaysPerMetre);
-  const corner = (across: number, up: number): Point => turnedAbout(foot, { x: foot.x + (across - 0.5) * ENVELOPE.width, y: foot.y - up * ENVELOPE.height }, lean);
+  const corner = (across: number, up: number): Point => turnedAbout(at, { x: at.x + (across - 0.5) * ENVELOPE.width, y: at.y - up * ENVELOPE.height }, ENVELOPE.lean);
   return [
     { points: [corner(0, 0), corner(0, 1), corner(1, 1), corner(1, 0)].map(inPixels), thickness: PENCIL.thickness, closed: true },
     { points: [corner(0, 1), corner(0.5, 0.42), corner(1, 1)].map(inPixels), thickness: PENCIL.thickness },
   ];
 }
 
+/**
+ * The sheet of paper that falls from the sky for him who has lost his, as pencil strokes: swaying on its way down,
+ * and lying on the floor once it is there, a corner of it turned up.
+ */
+export function fallenPaperStrokes({ at, height }: FallenItemView): Stroke[] {
+  // Paper comes down swinging from side to side, less and less as it nears the floor.
+  const swing = Math.min(1, height / SHEET.settlesBelow);
+  const foot = { x: at.x + swing * SHEET.sway * Math.sin(height * SHEET.swaysPerMetre), y: at.y - height };
+  const lean = SHEET.lean + swing * SHEET.rock * Math.cos(height * SHEET.swaysPerMetre);
+  // Seen almost edge on as it lies: a sheet is wide and not tall.
+  const corner = (across: number, up: number): Point => turnedAbout(foot, { x: foot.x + (across - 0.5) * SHEET.width, y: foot.y - up * SHEET.height }, lean);
+  return [
+    { points: [corner(0, 0), corner(0.12, 1), corner(0.8, 1), corner(1, 0.55), corner(0.92, 0)].map(inPixels), thickness: PENCIL.thickness, closed: true },
+    { points: [corner(0.8, 1), corner(0.82, 0.5), corner(1, 0.55)].map(inPixels), thickness: PENCIL.thickness * 0.7 },
+  ];
+}
+
 // ---- Helpers ----
 
-/** The envelope's shape in metres and how it comes down. View detail only. */
+/** The envelope's shape in metres. View detail only. */
 const ENVELOPE = {
   width: 0.52,
   height: 0.34,
   /** How far it leans where it stands, in radians. */
   lean: 0.14,
+} as const;
+
+/** The fallen sheet's shape in metres and how it comes down. View detail only. */
+const SHEET = {
+  width: 0.6,
+  height: 0.2,
+  /** How far it is tipped where it lies, in radians. */
+  lean: -0.05,
   /** How far to each side it swings on the way down, in metres, and how far it rocks, in radians. */
   sway: 0.45,
   rock: 0.5,
   /** How many radians of swing it goes through for each metre it comes down. */
   swaysPerMetre: 1.9,
-  /** Below this height the swinging dies away, so it stands still the moment it lands. */
+  /** Below this height the swinging dies away, so it lies still the moment it lands. */
   settlesBelow: 1.5,
 } as const;
 

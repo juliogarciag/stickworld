@@ -1,0 +1,212 @@
+{
+  "wide": {
+    "inkOfTheEndEveryFifthOfASecond": [
+      1057,
+      1947,
+      3172,
+      3926,
+      5207,
+      5570,
+      5421
+    ],
+    "theEnd": {
+      "inkOfTheWords": 5421,
+      "inkAtTheSides": 0,
+      "promptInk": 3085,
+      "secondsAfterTheFlag": 3.02
+    }
+  },
+  "narrow": {
+    "inkOfTheEndEveryFifthOfASecond": [
+      596,
+      1292,
+      1984,
+      2548,
+      3440,
+      3809,
+      3827
+    ],
+    "theEnd": {
+      "inkOfTheWords": 3827,
+      "inkAtTheSides": 0,
+      "promptInk": 2006,
+      "secondsAfterTheFlag": 3
+    }
+  },
+  "portrait": {
+    "inkOfTheEndEveryFifthOfASecond": [
+      185,
+      410,
+      609,
+      841,
+      1136,
+      1128,
+      1097
+    ],
+    "theEnd": {
+      "inkOfTheWords": 1097,
+      "inkAtTheSides": 0,
+      "promptInk": 729,
+      "secondsAfterTheFlag": 3.02
+    },
+    "clip": "after/portrait/g-the-end-and-play-again.gif"
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "wide: \"THE END\" is written a stroke at a time: more of it on every later frame, until it is all there",
+      "pass": true,
+      "details": "1057, 1947, 3172, 3926, 5207, 5570, 5421"
+    },
+    {
+      "name": "wide: Enter does nothing before playing again is offered",
+      "pass": true
+    },
+    {
+      "name": "wide: nothing but the words is written until playing again is offered",
+      "pass": true,
+      "details": "5444 pixels of pencil against 5421 when the words were finished"
+    },
+    {
+      "name": "wide: the words fit the window: nothing of them reaches its sides",
+      "pass": true,
+      "details": "5421 pixels of pencil, 0 of them in the outer tenth of the window at either side"
+    },
+    {
+      "name": "wide: a little later a key and \"PLAY AGAIN\" are written under them",
+      "pass": true,
+      "details": "3085 more pixels of pencil, 3.02 s after the flag"
+    },
+    {
+      "name": "wide: he is not frozen in a cheer: he stands",
+      "pass": true
+    },
+    {
+      "name": "wide: he walks about under the words",
+      "pass": true
+    },
+    {
+      "name": "wide: he cannot walk off the paper after the end",
+      "pass": true,
+      "details": "he stands at 26.68 m; the paper ends at 27 m"
+    },
+    {
+      "name": "wide: Enter turns the page back to the first sheet",
+      "pass": true
+    },
+    {
+      "name": "wide: nothing is kept from the game before",
+      "pass": true
+    },
+    {
+      "name": "wide: and it is played: he walks on level 1",
+      "pass": true
+    },
+    {
+      "name": "narrow: \"THE END\" is written a stroke at a time: more of it on every later frame, until it is all there",
+      "pass": true,
+      "details": "596, 1292, 1984, 2548, 3440, 3809, 3827"
+    },
+    {
+      "name": "narrow: Enter does nothing before playing again is offered",
+      "pass": true
+    },
+    {
+      "name": "narrow: nothing but the words is written until playing again is offered",
+      "pass": true,
+      "details": "3758 pixels of pencil against 3827 when the words were finished"
+    },
+    {
+      "name": "narrow: the words fit the window: nothing of them reaches its sides",
+      "pass": true,
+      "details": "3827 pixels of pencil, 0 of them in the outer tenth of the window at either side"
+    },
+    {
+      "name": "narrow: a little later a key and \"PLAY AGAIN\" are written under them",
+      "pass": true,
+      "details": "2006 more pixels of pencil, 3 s after the flag"
+    },
+    {
+      "name": "narrow: he is not frozen in a cheer: he stands",
+      "pass": true
+    },
+    {
+      "name": "narrow: he walks about under the words",
+      "pass": true
+    },
+    {
+      "name": "narrow: he cannot walk off the paper after the end",
+      "pass": true,
+      "details": "he stands at 26.68 m; the paper ends at 27 m"
+    },
+    {
+      "name": "narrow: Enter turns the page back to the first sheet",
+      "pass": true
+    },
+    {
+      "name": "narrow: nothing is kept from the game before",
+      "pass": true
+    },
+    {
+      "name": "narrow: and it is played: he walks on level 1",
+      "pass": true
+    },
+    {
+      "name": "portrait: \"THE END\" is written a stroke at a time: more of it on every later frame, until it is all there",
+      "pass": true,
+      "details": "185, 410, 609, 841, 1136, 1128, 1097"
+    },
+    {
+      "name": "portrait: Enter does nothing before playing again is offered",
+      "pass": true
+    },
+    {
+      "name": "portrait: nothing but the words is written until playing again is offered",
+      "pass": true,
+      "details": "1112 pixels of pencil against 1097 when the words were finished"
+    },
+    {
+      "name": "portrait: the words fit the window: nothing of them reaches its sides",
+      "pass": true,
+      "details": "1097 pixels of pencil, 0 of them in the outer tenth of the window at either side"
+    },
+    {
+      "name": "portrait: a little later a key and \"PLAY AGAIN\" are written under them",
+      "pass": true,
+      "details": "729 more pixels of pencil, 3.02 s after the flag"
+    },
+    {
+      "name": "portrait: he is not frozen in a cheer: he stands",
+      "pass": true
+    },
+    {
+      "name": "portrait: he walks about under the words",
+      "pass": true
+    },
+    {
+      "name": "portrait: he cannot walk off the paper after the end",
+      "pass": true,
+      "details": "he stands at 26.68 m; the paper ends at 27 m"
+    },
+    {
+      "name": "portrait: Enter turns the page back to the first sheet",
+      "pass": true
+    },
+    {
+      "name": "portrait: nothing is kept from the game before",
+      "pass": true
+    },
+    {
+      "name": "portrait: and it is played: he walks on level 1",
+      "pass": true
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

@@ -1,0 +1,232 @@
+{
+  "wide": {
+    "hint": {
+      "inkOfThePromptsWithIt": 4645,
+      "inkOfThePromptsOnTheEdge": 2377
+    },
+    "retry": {
+      "presses": 2,
+      "seconds": 3.17,
+      "walkedMetres": 6.56
+    },
+    "fallenPaper": {
+      "fellAfterSeconds": 0.62,
+      "inkOnTheFloor": 182
+    }
+  },
+  "narrow": {
+    "hint": {
+      "inkOfThePromptsWithIt": 3114,
+      "inkOfThePromptsOnTheEdge": 1549
+    },
+    "retry": {
+      "presses": 2,
+      "seconds": 3.17,
+      "walkedMetres": 6.53
+    },
+    "fallenPaper": {
+      "fellAfterSeconds": 0.6,
+      "inkOnTheFloor": 103
+    }
+  },
+  "portrait": {
+    "hint": {
+      "inkOfThePromptsWithIt": 915,
+      "inkOfThePromptsOnTheEdge": 466
+    },
+    "retry": {
+      "presses": 2,
+      "seconds": 3.15,
+      "walkedMetres": 6.53
+    },
+    "fallenPaper": {
+      "fellAfterSeconds": 0.62,
+      "inkOnTheFloor": 28
+    }
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "wide: a letter he has read is gone once he puts it away, and what it taught stays: J would fold",
+      "pass": true
+    },
+    {
+      "name": "wide: nothing is said about the edge until he has an airplane",
+      "pass": true
+    },
+    {
+      "name": "wide: carrying it, he is told in the prompts to take the airplane to the edge: a line of words above the key",
+      "pass": true,
+      "details": "4645 pixels of pencil in the prompts' corner with it, 2377 once it sits on the edge and only \"board the airplane\" is left"
+    },
+    {
+      "name": "wide: once it sits on the edge the line is gone and K boards it",
+      "pass": true
+    },
+    {
+      "name": "wide: the first flight was flown from the edge and lost",
+      "pass": true
+    },
+    {
+      "name": "wide: the level starts again with the airplane in his hand at once",
+      "pass": true,
+      "details": "slot 1 holds def 201, J would \"place\""
+    },
+    {
+      "name": "wide: he has boarded once: on the retry he is not told again",
+      "pass": true
+    },
+    {
+      "name": "wide: a retry is walk, set down, board: two presses",
+      "pass": true,
+      "details": "3.17 s from the restart to the seat, 6.56 m of it walking"
+    },
+    {
+      "name": "wide: nothing fell, and no letter lies there: he has nothing to read again",
+      "pass": true
+    },
+    {
+      "name": "wide: an airplane set down past the edge is lost, and he is left with nothing",
+      "pass": true
+    },
+    {
+      "name": "wide: with neither paper nor airplane a sheet of paper falls from the sky, and no letter",
+      "pass": true,
+      "details": "it started 0.62 s after the airplane was lost"
+    },
+    {
+      "name": "wide: it comes down where he stands, in view, and can be picked up without a step",
+      "pass": true,
+      "details": "at 9.81 m, he stands at 9.81 m; pixel 480 of 1600"
+    },
+    {
+      "name": "wide: it lies there, drawn, and one press picks it up into his hand: nothing is read",
+      "pass": true,
+      "details": "182 pixels of pencil where it lay; J would \"craft\""
+    },
+    {
+      "name": "narrow: a letter he has read is gone once he puts it away, and what it taught stays: J would fold",
+      "pass": true
+    },
+    {
+      "name": "narrow: nothing is said about the edge until he has an airplane",
+      "pass": true
+    },
+    {
+      "name": "narrow: carrying it, he is told in the prompts to take the airplane to the edge: a line of words above the key",
+      "pass": true,
+      "details": "3114 pixels of pencil in the prompts' corner with it, 1549 once it sits on the edge and only \"board the airplane\" is left"
+    },
+    {
+      "name": "narrow: once it sits on the edge the line is gone and K boards it",
+      "pass": true
+    },
+    {
+      "name": "narrow: the first flight was flown from the edge and lost",
+      "pass": true
+    },
+    {
+      "name": "narrow: the level starts again with the airplane in his hand at once",
+      "pass": true,
+      "details": "slot 1 holds def 201, J would \"place\""
+    },
+    {
+      "name": "narrow: he has boarded once: on the retry he is not told again",
+      "pass": true
+    },
+    {
+      "name": "narrow: a retry is walk, set down, board: two presses",
+      "pass": true,
+      "details": "3.17 s from the restart to the seat, 6.53 m of it walking"
+    },
+    {
+      "name": "narrow: nothing fell, and no letter lies there: he has nothing to read again",
+      "pass": true
+    },
+    {
+      "name": "narrow: an airplane set down past the edge is lost, and he is left with nothing",
+      "pass": true
+    },
+    {
+      "name": "narrow: with neither paper nor airplane a sheet of paper falls from the sky, and no letter",
+      "pass": true,
+      "details": "it started 0.6 s after the airplane was lost"
+    },
+    {
+      "name": "narrow: it comes down where he stands, in view, and can be picked up without a step",
+      "pass": true,
+      "details": "at 9.81 m, he stands at 9.81 m; pixel 246 of 820"
+    },
+    {
+      "name": "narrow: it lies there, drawn, and one press picks it up into his hand: nothing is read",
+      "pass": true,
+      "details": "103 pixels of pencil where it lay; J would \"craft\""
+    },
+    {
+      "name": "portrait: a letter he has read is gone once he puts it away, and what it taught stays: J would fold",
+      "pass": true
+    },
+    {
+      "name": "portrait: nothing is said about the edge until he has an airplane",
+      "pass": true
+    },
+    {
+      "name": "portrait: carrying it, he is told in the prompts to take the airplane to the edge: a line of words above the key",
+      "pass": true,
+      "details": "915 pixels of pencil in the prompts' corner with it, 466 once it sits on the edge and only \"board the airplane\" is left"
+    },
+    {
+      "name": "portrait: once it sits on the edge the line is gone and K boards it",
+      "pass": true
+    },
+    {
+      "name": "portrait: the first flight was flown from the edge and lost",
+      "pass": true
+    },
+    {
+      "name": "portrait: the level starts again with the airplane in his hand at once",
+      "pass": true,
+      "details": "slot 1 holds def 201, J would \"place\""
+    },
+    {
+      "name": "portrait: he has boarded once: on the retry he is not told again",
+      "pass": true
+    },
+    {
+      "name": "portrait: a retry is walk, set down, board: two presses",
+      "pass": true,
+      "details": "3.15 s from the restart to the seat, 6.53 m of it walking"
+    },
+    {
+      "name": "portrait: nothing fell, and no letter lies there: he has nothing to read again",
+      "pass": true
+    },
+    {
+      "name": "portrait: an airplane set down past the edge is lost, and he is left with nothing",
+      "pass": true
+    },
+    {
+      "name": "portrait: with neither paper nor airplane a sheet of paper falls from the sky, and no letter",
+      "pass": true,
+      "details": "it started 0.62 s after the airplane was lost"
+    },
+    {
+      "name": "portrait: it comes down where he stands, in view, and can be picked up without a step",
+      "pass": true,
+      "details": "at 9.81 m, he stands at 9.81 m; pixel 144 of 480"
+    },
+    {
+      "name": "portrait: it lies there, drawn, and one press picks it up into his hand: nothing is read",
+      "pass": true,
+      "details": "28 pixels of pencil where it lay; J would \"craft\""
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

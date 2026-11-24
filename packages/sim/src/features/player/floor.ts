@@ -10,6 +10,16 @@ export function floorHeightAt(floor: readonly FloorSegment[], x: number): number
   return from.y + ((x - from.x) / (to.x - from.x)) * (to.y - from.y);
 }
 
+/**
+ * Where a step from `from` towards `to` ends when the ends of the floor line under `from` stop it: `to`, or the end of
+ * the line less half his width. `to` itself when there is no line under `from`.
+ */
+export function keptOverTheLine(floor: readonly FloorSegment[], { from, to }: { readonly from: number; readonly to: number }): number {
+  const line = floor.find((segment) => segment.from.x <= from && from <= segment.to.x);
+  if (!line) return to;
+  return Math.max(line.from.x + STICK_MAN_WIDTH / 2, Math.min(line.to.x - STICK_MAN_WIDTH / 2, to));
+}
+
 /** The y of the floor's lowest point (y points down, so the largest). */
 export function lowestFloorHeight(floor: readonly FloorSegment[]): number {
   return Math.max(...floor.flatMap(({ from, to }) => [from.y, to.y]));

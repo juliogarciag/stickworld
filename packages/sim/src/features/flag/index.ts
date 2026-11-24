@@ -2,6 +2,7 @@ import { levels } from '../../content/levels';
 import type { Level, Placement } from '../../content/levels/types';
 import { STICK_MAN_HEIGHT } from '../../content/tuning';
 import type { Feature } from '../../core/feature';
+import type { Sim } from '../../core/sim';
 import { playerSlice } from '../player/state';
 import { FLAG_DEF_ID, flagDef, LEVEL_END } from './defs';
 import { flagSlice } from './state';
@@ -31,6 +32,12 @@ export const flagFeature: Feature = {
 /** True for the last level there is: its flag finishes the game, and no level follows it. */
 export function isTheLastLevel(level: Level): boolean {
   return levels[levels.length - 1]?.id === level.id;
+}
+
+/** How long ago he reached the level's flag, in seconds, or undefined until he does. */
+export function secondsSinceFlagReached(sim: Sim): number | undefined {
+  const { reachedAtTick } = sim.stateOf(flagSlice);
+  return reachedAtTick === null ? undefined : (sim.tick - reachedAtTick) * sim.dt;
 }
 
 /** Where the level's flag stands, or undefined for a level without one. */

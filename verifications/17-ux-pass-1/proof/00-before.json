@@ -1,0 +1,153 @@
+{
+  "wide": {
+    "secondsFromFlagToNextLevel": 1.95,
+    "farSideAtTheEdge": {
+      "atPixel": 1673,
+      "windowWidth": 1600
+    },
+    "metresAcross": 19.2,
+    "secondsWaitingForANewLetter": 2.9,
+    "inkOfTheEndAtTheSidesOfTheWindow": 0
+  },
+  "narrow": {
+    "secondsFromFlagToNextLevel": 1.93,
+    "farSideAtTheEdge": {
+      "atPixel": 1147,
+      "windowWidth": 820
+    },
+    "metresAcross": 11.65,
+    "secondsWaitingForANewLetter": 2.9,
+    "inkOfTheEndAtTheSidesOfTheWindow": 0
+  },
+  "portrait": {
+    "secondsFromFlagToNextLevel": 1.95,
+    "farSideAtTheEdge": {
+      "atPixel": 1074,
+      "windowWidth": 480
+    },
+    "metresAcross": 6.03,
+    "secondsWaitingForANewLetter": 2.9,
+    "inkOfTheEndAtTheSidesOfTheWindow": 445
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "wide: before: the next level starts two seconds after the flag, in one frame",
+      "pass": true,
+      "details": "1.95 s"
+    },
+    {
+      "name": "wide: before: a letter he has read is gone from the floor",
+      "pass": true
+    },
+    {
+      "name": "wide: before: the first press after putting it away reads nothing",
+      "pass": true
+    },
+    {
+      "name": "wide: before: from the edge of level 3 the far side is not in view",
+      "pass": true,
+      "details": "the far side begins at pixel 1673 of 1600"
+    },
+    {
+      "name": "wide: before: he is in the middle of the view",
+      "pass": true
+    },
+    {
+      "name": "wide: before: after a lost flight the level starts again with an empty slot",
+      "pass": true
+    },
+    {
+      "name": "wide: before: he waits for a new letter to fall before he can do anything",
+      "pass": true,
+      "details": "2.9 s"
+    },
+    {
+      "name": "wide: before: ten seconds after the end he still cheers, and no key does anything",
+      "pass": true
+    },
+    {
+      "name": "narrow: before: the next level starts two seconds after the flag, in one frame",
+      "pass": true,
+      "details": "1.93 s"
+    },
+    {
+      "name": "narrow: before: a letter he has read is gone from the floor",
+      "pass": true
+    },
+    {
+      "name": "narrow: before: the first press after putting it away reads nothing",
+      "pass": true
+    },
+    {
+      "name": "narrow: before: from the edge of level 3 the far side is not in view",
+      "pass": true,
+      "details": "the far side begins at pixel 1147 of 820"
+    },
+    {
+      "name": "narrow: before: he is in the middle of the view",
+      "pass": true
+    },
+    {
+      "name": "narrow: before: after a lost flight the level starts again with an empty slot",
+      "pass": true
+    },
+    {
+      "name": "narrow: before: he waits for a new letter to fall before he can do anything",
+      "pass": true,
+      "details": "2.9 s"
+    },
+    {
+      "name": "narrow: before: ten seconds after the end he still cheers, and no key does anything",
+      "pass": true
+    },
+    {
+      "name": "portrait: before: the next level starts two seconds after the flag, in one frame",
+      "pass": true,
+      "details": "1.95 s"
+    },
+    {
+      "name": "portrait: before: a letter he has read is gone from the floor",
+      "pass": true
+    },
+    {
+      "name": "portrait: before: the first press after putting it away reads nothing",
+      "pass": true
+    },
+    {
+      "name": "portrait: before: from the edge of level 3 the far side is not in view",
+      "pass": true,
+      "details": "the far side begins at pixel 1074 of 480"
+    },
+    {
+      "name": "portrait: before: he is in the middle of the view",
+      "pass": true
+    },
+    {
+      "name": "portrait: before: after a lost flight the level starts again with an empty slot",
+      "pass": true
+    },
+    {
+      "name": "portrait: before: he waits for a new letter to fall before he can do anything",
+      "pass": true,
+      "details": "2.9 s"
+    },
+    {
+      "name": "portrait: before: ten seconds after the end he still cheers, and no key does anything",
+      "pass": true
+    },
+    {
+      "name": "portrait: before: on the portrait window the end runs off the side of the window",
+      "pass": true,
+      "details": "445 pixels of pencil in the outermost 6% of the window at its right side"
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

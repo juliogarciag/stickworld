@@ -32,4 +32,4 @@ describe('the flag', () => {
 
 // ---- Helpers ----
 
-const WAITING: FlagView = { at: { x: 4, y: 0.5 }, height: 1.5, reached: false, raised: 0, endsTheGame: false };
+const WAITING: FlagView = { at: { x: 4, y: 0.5 }, height: 1.5, reached: false, upFor: 0, raised: 0, endsTheGame: false };

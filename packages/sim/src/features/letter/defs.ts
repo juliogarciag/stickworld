@@ -12,7 +12,7 @@ export interface LetterDef extends Def {
   readonly text: string;
   /** The def id of the recipe that reading it teaches. */
   readonly teachesRecipe: number;
-  /** The def id of the item that reading it gives him when he has neither that item nor what the recipe makes of it. */
+  /** The def id of the item that reading it gives him when he has neither that item nor what the recipe makes of it. It is also what falls from the sky, where he stands, for him who has read it and lost both; a level that starts again for him gives what the recipe makes instead. */
   readonly gives: number;
 }
 
@@ -34,13 +34,13 @@ export function letterDef(id: number): LetterDef | undefined {
   return letterDefs.find((def) => def.id === id);
 }
 
-/** How letters behave. Metres and seconds. */
+/** How letters behave, and the item that falls from the sky in place of one he has read. Metres and seconds. */
 export const LETTER = {
-  /** How close to it his feet have to be to read it, and to go on reading. */
+  /** How close to it his feet have to be to read it, to go on reading, and to pick up the item that fell there. */
   reach: 0.8,
-  /** How long after he has lost everything it was for a new one starts to fall. */
+  /** How long after he has lost everything it was for, and is still alive, the item starts to fall. */
   fallsAfter: 0.6,
-  /** How high above the floor a new one starts: above the top of the screen. */
+  /** How high above the floor it starts: above the top of the screen. */
   fallsFromHeight: 8.5,
   /** How fast it comes down. Paper: slow and steady. */
   fallSpeed: 3.6,
