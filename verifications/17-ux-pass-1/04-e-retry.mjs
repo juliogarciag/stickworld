@@ -66,9 +66,9 @@ await verify({ name: '04-e-retry', port: 5917, cwd: ROOT }, async ({ size, open,
   const retryStartedAt = restarted.tick;
   await game.walkRightTo(edgeSpot);
   const noLetterFell = await game.state();
-  expect('he has boarded once: on the retry he is not told again', noLetterFell.flyingHint === null && restarted.flyingHint === null);
   await game.tap('j');
   const setDown = await game.state();
+  expect('after the lost flight he is told again to take the airplane to the edge, until it sits on one', restarted.flyingHint === 'takeItToAnEdge' && noLetterFell.flyingHint === 'takeItToAnEdge' && setDown.flyingHint === null);
   await game.shot('e-retry-airplane-set-down-on-the-edge');
   await game.tap('k');
   const seated = await game.state();

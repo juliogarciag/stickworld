@@ -3,47 +3,47 @@ PASS  dev server up, started by this run
 --- wide window, 1600 x 900 ---
 PASS  wide: a letter he has read is gone once he puts it away, and what it taught stays: J would fold
 PASS  wide: nothing is said about the edge until he has an airplane
-PASS  wide: carrying it, he is told in the prompts to take the airplane to the edge: a line of words above the key  (4645 pixels of pencil in the prompts' corner with it, 2377 once it sits on the edge and only "board the airplane" is left)
+PASS  wide: carrying it, he is told in the prompts to take the airplane to the edge: a line of words above the key  (4605 pixels of pencil in the prompts' corner with it, 2293 once it sits on the edge and only "board the airplane" is left)
 PASS  wide: once it sits on the edge the line is gone and K boards it
 PASS  wide: the first flight was flown from the edge and lost
 PASS  wide: the level starts again with the airplane in his hand at once  (slot 1 holds def 201, J would "place")
-PASS  wide: he has boarded once: on the retry he is not told again
-PASS  wide: a retry is walk, set down, board: two presses  (3.17 s from the restart to the seat, 6.56 m of it walking)
+PASS  wide: after the lost flight he is told again to take the airplane to the edge, until it sits on one
+PASS  wide: a retry is walk, set down, board: two presses  (3.15 s from the restart to the seat, 6.53 m of it walking)
 PASS  wide: nothing fell, and no letter lies there: he has nothing to read again
 PASS  wide: an airplane set down past the edge is lost, and he is left with nothing
-PASS  wide: with neither paper nor airplane a sheet of paper falls from the sky, and no letter  (it started 0.62 s after the airplane was lost)
+PASS  wide: with neither paper nor airplane a sheet of paper falls from the sky, and no letter  (it started 0.63 s after the airplane was lost)
 PASS  wide: it comes down where he stands, in view, and can be picked up without a step  (at 9.81 m, he stands at 9.81 m; pixel 480 of 1600)
-PASS  wide: it lies there, drawn, and one press picks it up into his hand: nothing is read  (182 pixels of pencil where it lay; J would "craft")
+PASS  wide: it lies there, drawn, and one press picks it up into his hand: nothing is read  (241 pixels of pencil where it lay; J would "craft")
 
 --- narrow window, 820 x 760 ---
 PASS  narrow: a letter he has read is gone once he puts it away, and what it taught stays: J would fold
 PASS  narrow: nothing is said about the edge until he has an airplane
-PASS  narrow: carrying it, he is told in the prompts to take the airplane to the edge: a line of words above the key  (3114 pixels of pencil in the prompts' corner with it, 1549 once it sits on the edge and only "board the airplane" is left)
+PASS  narrow: carrying it, he is told in the prompts to take the airplane to the edge: a line of words above the key  (3116 pixels of pencil in the prompts' corner with it, 1586 once it sits on the edge and only "board the airplane" is left)
 PASS  narrow: once it sits on the edge the line is gone and K boards it
 PASS  narrow: the first flight was flown from the edge and lost
 PASS  narrow: the level starts again with the airplane in his hand at once  (slot 1 holds def 201, J would "place")
-PASS  narrow: he has boarded once: on the retry he is not told again
+PASS  narrow: after the lost flight he is told again to take the airplane to the edge, until it sits on one
 PASS  narrow: a retry is walk, set down, board: two presses  (3.17 s from the restart to the seat, 6.53 m of it walking)
 PASS  narrow: nothing fell, and no letter lies there: he has nothing to read again
 PASS  narrow: an airplane set down past the edge is lost, and he is left with nothing
 PASS  narrow: with neither paper nor airplane a sheet of paper falls from the sky, and no letter  (it started 0.6 s after the airplane was lost)
 PASS  narrow: it comes down where he stands, in view, and can be picked up without a step  (at 9.81 m, he stands at 9.81 m; pixel 246 of 820)
-PASS  narrow: it lies there, drawn, and one press picks it up into his hand: nothing is read  (103 pixels of pencil where it lay; J would "craft")
+PASS  narrow: it lies there, drawn, and one press picks it up into his hand: nothing is read  (88 pixels of pencil where it lay; J would "craft")
 
 --- portrait window, 480 x 860 ---
 PASS  portrait: a letter he has read is gone once he puts it away, and what it taught stays: J would fold
 PASS  portrait: nothing is said about the edge until he has an airplane
-PASS  portrait: carrying it, he is told in the prompts to take the airplane to the edge: a line of words above the key  (915 pixels of pencil in the prompts' corner with it, 466 once it sits on the edge and only "board the airplane" is left)
+PASS  portrait: carrying it, he is told in the prompts to take the airplane to the edge: a line of words above the key  (910 pixels of pencil in the prompts' corner with it, 466 once it sits on the edge and only "board the airplane" is left)
 PASS  portrait: once it sits on the edge the line is gone and K boards it
 PASS  portrait: the first flight was flown from the edge and lost
 PASS  portrait: the level starts again with the airplane in his hand at once  (slot 1 holds def 201, J would "place")
-PASS  portrait: he has boarded once: on the retry he is not told again
+PASS  portrait: after the lost flight he is told again to take the airplane to the edge, until it sits on one
 PASS  portrait: a retry is walk, set down, board: two presses  (3.15 s from the restart to the seat, 6.53 m of it walking)
 PASS  portrait: nothing fell, and no letter lies there: he has nothing to read again
 PASS  portrait: an airplane set down past the edge is lost, and he is left with nothing
 PASS  portrait: with neither paper nor airplane a sheet of paper falls from the sky, and no letter  (it started 0.62 s after the airplane was lost)
 PASS  portrait: it comes down where he stands, in view, and can be picked up without a step  (at 9.81 m, he stands at 9.81 m; pixel 144 of 480)
-PASS  portrait: it lies there, drawn, and one press picks it up into his hand: nothing is read  (28 pixels of pencil where it lay; J would "craft")
+PASS  portrait: it lies there, drawn, and one press picks it up into his hand: nothing is read  (33 pixels of pencil where it lay; J would "craft")
 PASS  no page errors
 
 ALL 41 CHECKS PASSED

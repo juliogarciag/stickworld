@@ -69,8 +69,8 @@ export function sitsOnAnEdge(sim: Sim): boolean {
 
 /**
  * True while he has an airplane that he has still to take to an edge: it is in his slot, on the floor away from an
- * edge or over his head, the level has an edge to fly from, and he has never boarded one. After his first boarding
- * he knows, and it is never true again in that game.
+ * edge or over his head, the level has an edge to fly from, and he has not boarded one since the level started. It is
+ * true again when the level starts again, a death included.
  */
 export function hasYetToTakeItToAnEdge(sim: Sim): boolean {
   const airplane = sim.stateOf(airplaneSlice);

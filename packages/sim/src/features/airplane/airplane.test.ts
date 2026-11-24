@@ -253,7 +253,7 @@ describe('that the airplane has to be taken to an edge', () => {
     expect(flyingHintOf(sim)).toBeNull();
   });
 
-  it('is never said again once he has boarded: not in flight, not after the level starts again, until the game is played again', () => {
+  it('is not said from his boarding on, and is said again when the level starts again after a lost flight', () => {
     const sim = carryingTheAirplane();
     walkTo(sim, EDGE - AIRPLANE.putDownAhead - AIRPLANE.length / 4);
     sim.step([INTERACT]);
@@ -261,13 +261,22 @@ describe('that the airplane has to be taken to an edge', () => {
     expect(stickManOf(sim).action).toBe('seated');
     expect(flyingHintOf(sim)).toBeNull();
     for (let tick = 0; tick < 600 && !(stickManOf(sim).action === 'standing' && stickManOf(sim).feet.x === level3.start.x); tick += 1) sim.step();
-    // The flight was lost: he is back at the start with an airplane in his hand, and knows where it goes.
+    // The flight was lost: he is back at the start with an airplane in his hand, and is told again where it goes.
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBe(AIRPLANE_ITEM_ID);
-    expect(flyingHintOf(sim)).toBeNull();
-    sim.startOver();
-    giveItem(sim, AIRPLANE_ITEM_ID);
-    sim.startLevel(3);
     expect(flyingHintOf(sim)).toBe('takeItToAnEdge');
+  });
+
+  it('is not said after a flight that crossed: he stands on the far side with the airplane beside him', () => {
+    const sim = carryingTheAirplane();
+    walkTo(sim, EDGE - AIRPLANE.putDownAhead - AIRPLANE.length / 4);
+    sim.step([INTERACT]);
+    sim.step([INTERACT, { type: 'airplane/steer', direction: 1 }]);
+    for (let tick = 0; tick < CLIMB_TICKS_THAT_CROSS; tick += 1) sim.step();
+    sim.step([{ type: 'airplane/steer', direction: 0 }]);
+    for (let tick = 0; tick < 900 && stickManOf(sim).action === 'seated'; tick += 1) sim.step();
+    expect(stickManOf(sim).feet.x).toBeGreaterThan(FAR_SIDE);
+    expect(airplaneOf(sim)!.state).toBe('resting');
+    expect(flyingHintOf(sim)).toBeNull();
   });
 
   it('is not said on a level with no gap to fly over', () => {
@@ -293,6 +302,8 @@ describe('the airplane in a snapshot', () => {
 
 const EDGE = level3.floor[0]!.to.x;
 const FAR_SIDE = level3.floor[1]!.from.x;
+/** A climb of this many ticks from the boarding crosses level 3's gap: the middle of the window `level3.test.ts` holds. */
+const CLIMB_TICKS_THAT_CROSS = 28;
 
 const SELECT_SLOT_1: Command = { type: 'inventory/select', slot: 1 };
 const USE_ITEM: Command = { type: 'item/use' };
