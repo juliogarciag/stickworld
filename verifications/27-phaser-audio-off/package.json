@@ -1,11 +1,8 @@
 {
-  "name": "verification-template",
+  "name": "verification-27-phaser-audio-off",
   "private": true,
   "type": "module",
-  "description": "Starting point for a ticket's verification scripts. Not part of the workspace; install with: pnpm install --ignore-workspace",
-  "scripts": {
-    "verify": "bash run.sh"
-  },
+  "description": "Ticket 27's measurement of the boot. Not part of the workspace; install with: pnpm install --ignore-workspace",
   "devDependencies": {
     "playwright": "^1.50.0"
   }
