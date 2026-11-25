@@ -29,20 +29,20 @@ import { PROOF, check, lastLinesOf, start, summarize, waitFor, waitForPort, writ
 const PORT = 5925;
 const PROOF_NAME = process.env.PROOF_NAME ?? 'after';
 const VIEWPORT = { width: 960, height: 540 };
-/** How long Phaser's cap on a frame's time lasted after a start, a show or a focus: the frames each measurement covers. */
-const FRAMES_MEASURED = 120;
-/** Full speed, within what one tick at either end of 120 frames can add or take. */
+/** Full speed, within a little more than what one tick at either end of 120 frames at 60 Hz can add or take (1.7%). */
 const FULL_SPEED = { atLeast: 0.97, atMost: 1.03 };
 const SECONDS_HIDDEN = 2;
 const WAYS_A_FRAME_GETS_LONG = [
-  { name: 'cpu-1x-60hz', cpuSlowedBy: 1, oneFrameIn: 1, mustBeFullSpeed: true },
-  { name: 'cpu-4x', cpuSlowedBy: 4, oneFrameIn: 1, mustBeFullSpeed: true },
-  { name: 'cpu-6x', cpuSlowedBy: 6, oneFrameIn: 1, mustBeFullSpeed: true },
-  { name: 'frames-at-30hz', cpuSlowedBy: 1, oneFrameIn: 2, mustBeFullSpeed: true },
+  { name: 'cpu-1x-60hz', cpuSlowedBy: 1, oneFrameIn: 1 },
+  { name: 'cpu-4x', cpuSlowedBy: 4, oneFrameIn: 1 },
+  { name: 'cpu-6x', cpuSlowedBy: 6, oneFrameIn: 1 },
+  { name: 'frames-at-30hz', cpuSlowedBy: 1, oneFrameIn: 2 },
 ];
 
 const results = [];
-const report = { proofName: PROOF_NAME, framesMeasured: FRAMES_MEASURED, measurements: [] };
+const report = { proofName: PROOF_NAME, measurements: [] };
+/** How long Phaser's cap on a frame's time lasted after a start, a show or a focus, as Phaser has it: the frames each measurement covers. */
+let framesMeasured;
 const pageErrors = [];
 
 const devServer = start('pnpm', ['dev'], { env: { PORT: String(PORT), VITE_LEVEL: '1' } });
@@ -68,10 +68,17 @@ try {
 
     // 1. From the first frame.
     await page.waitForFunction(() => window.__game && window.__game.game.loop.frame >= 1, null, { timeout: 90000, polling: 'raf' });
+    framesMeasured = await page.evaluate(() => window.__game.game.loop.panicMax);
+    report.framesMeasured = framesMeasured;
     await page.keyboard.down('ArrowRight');
     // The frame the paper is made in is seconds long here. What is written on the sheet over its first seconds, the
     // level's name, must still be there to see: the view's clocks take no more of a frame than the sim does.
-    if (way.name === 'cpu-6x') await page.screenshot({ path: path.join(PROOF, `${PROOF_NAME}-cpu-6x-the-sheet-in-its-first-frames.png`) });
+    if (way.name === 'cpu-6x') {
+      const before = await page.evaluate(() => ({ frame: window.__game.game.loop.frame, tick: window.__game.sim.tick }));
+      await page.screenshot({ path: path.join(PROOF, `${PROOF_NAME}-cpu-6x-the-sheet-in-its-first-frames.png`) });
+      const after = await page.evaluate(() => ({ frame: window.__game.game.loop.frame, tick: window.__game.sim.tick }));
+      report.screenshotOfTheFirstFrames = { takenBetween: [before, after] };
+    }
     record(way, 'the first 120 frames', await walkMeasuredOver(page, { fromFrame: 1 }));
     await page.keyboard.up('ArrowRight');
 
@@ -86,13 +93,14 @@ try {
       const frameWhenShown = window.__game.game.loop.frame;
       window.__frames.tabIs('visible');
       await new Promise((resolve) => window.__frames.afterNextFrame(resolve));
-      return { tickWhenHidden, tickBeforeShown, tickAfterFirstFrameBack: tickOf(), frameWhenShown, dt: window.__game.sim.dt };
+      return { tickWhenHidden, tickBeforeShown, tickAfterFirstFrameBack: tickOf(), frameWhenShown, dt: window.__game.sim.dt, maxFrameSeconds: window.__game.maxFrameSeconds };
     }, SECONDS_HIDDEN);
     await page.keyboard.down('ArrowRight');
     record(way, 'the 120 frames after the tab is shown again', await walkMeasuredOver(page, { fromFrame: hidden.frameWhenShown + 1 }));
     await page.keyboard.up('ArrowRight');
     const ticksForTheTimeHidden = hidden.tickAfterFirstFrameBack - hidden.tickWhenHidden;
-    results.push(check(`${way.name}: the ${SECONDS_HIDDEN} s the tab was hidden are not played on its return`, hidden.tickBeforeShown === hidden.tickWhenHidden && ticksForTheTimeHidden * hidden.dt < SECONDS_HIDDEN / 4, `${ticksForTheTimeHidden} ticks, ${(ticksForTheTimeHidden * hidden.dt).toFixed(3)} s of game time`));
+    // One frame's worth at most, the loop's cap. Phaser also starts counting again when the tab is shown, so it is less.
+    results.push(check(`${way.name}: the ${SECONDS_HIDDEN} s the tab was hidden are not played on its return`, hidden.tickBeforeShown === hidden.tickWhenHidden && ticksForTheTimeHidden * hidden.dt <= hidden.maxFrameSeconds + hidden.dt, `${ticksForTheTimeHidden} ticks, ${(ticksForTheTimeHidden * hidden.dt).toFixed(3)} s of game time`));
     report.measurements.push({ way: way.name, when: 'hidden and shown', ...hidden });
 
     // 3. While the window is not focused.
@@ -129,6 +137,8 @@ function record(way, when, measured) {
     results.push(check(`${way.name}, ${when}: measured on one level`, false, 'the level changed while measuring'));
     return;
   }
+  // Real time is capped with the game's own cap: were more than the one frame the paper is made in over it, full speed here would say little.
+  results.push(check(`${way.name}, ${when}: at most one frame took longer than the loop's cap`, measured.framesOverTheCap <= 1, `${measured.framesOverTheCap} over ${measured.maxFrameSeconds} s, the longest ${measured.longestFrameMs.toFixed(0)} ms`));
   const isFullSpeed = (share) => share >= FULL_SPEED.atLeast && share <= FULL_SPEED.atMost;
   results.push(check(`${way.name}, ${when}: game time keeps up with real time`, isFullSpeed(measured.gameSecondsPerRealSecond), `${measured.gameSeconds.toFixed(3)} s of game time in ${measured.realSeconds.toFixed(3)} s: ${percent(measured.gameSecondsPerRealSecond)}`));
   results.push(
@@ -143,10 +153,11 @@ function record(way, when, measured) {
 /**
  * What the 120 frames from Phaser's frame `fromFrame` gave the game, read from what the page noted after each frame:
  * game time (ticks of `dt`) against real time, and how far he walked against how long he was walking. His walk speed is
- * the sim's own, metres per second of game time, so nothing here is typed in from the tuning.
+ * the sim's own, metres per second of game time over the same frames, so nothing here is typed in from the tuning: his
+ * share of it is game time against real time once more, over the frames he was walking.
  */
 async function walkMeasuredOver(page, { fromFrame }) {
-  const toFrame = fromFrame + FRAMES_MEASURED;
+  const toFrame = fromFrame + framesMeasured;
   await page.waitForFunction((frame) => window.__game.game.loop.frame >= frame, toFrame, { timeout: 90000, polling: 'raf' });
   return page.evaluate(
     ({ fromFrame, toFrame }) => {
@@ -194,7 +205,10 @@ async function walkMeasuredOver(page, { fromFrame }) {
   );
 }
 
-/** Level 1 again from its start, standing still: every measurement has the whole floor to the flag ahead of him. */
+/**
+ * Level 1 again from its start, standing still, with the whole floor to the flag ahead of him. It is not always enough:
+ * at 30 Hz and at 6x he reaches the flag just before the 120th frame, and his walk is then measured up to the flag.
+ */
 async function backAtTheStartOfTheLevel(page) {
   await page.evaluate(() => window.__game.loadLevel(1));
   await page.waitForFunction(() => window.__game.sim.tick > 5 && window.__game.stickMan().feet.x === window.__game.level.start.x, null, { timeout: 30000, polling: 'raf' });
@@ -205,7 +219,7 @@ function percent(share) {
 }
 
 function printTable(measurements) {
-  console.log(`\n${PROOF_NAME}: game time and walking against real time, over ${FRAMES_MEASURED} frames`);
+  console.log(`\n${PROOF_NAME}: game time and walking against real time, over ${framesMeasured} frames`);
   console.log('frames long because | when | real s | game s | game time | walked m | walk speed | longest frame ms | frames over the cap');
   for (const measurement of measurements) {
     console.log([measurement.way, measurement.when, measurement.realSeconds.toFixed(3), measurement.gameSeconds.toFixed(3), `${(measurement.gameSecondsPerRealSecond * 100).toFixed(1)}%`, measurement.metresWalked.toFixed(2), `${(measurement.shareOfWalkSpeed * 100).toFixed(1)}%`, measurement.longestFrameMs.toFixed(1), measurement.framesOverTheCap].join(' | '));
