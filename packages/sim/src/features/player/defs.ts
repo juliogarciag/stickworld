@@ -2,23 +2,32 @@
  * How the stick man moves. Game feel lives here: change a number, never the
  * logic. Metres and seconds, y pointing down. The numbers a dev build can
  * change while the game runs are read through `MOVEMENT_PRESETS.current`
- * below, which is made from these.
+ * below, which is made from these: the 2 m jump the owner tuned in the
+ * movement panel (#35).
  */
 export const PLAYER = {
   /** How fast he walks, on the floor and in a jump. Falling off an edge it is the fastest the keys can make him go sideways. */
   walkSpeed: 2.2,
   /**
-   * How much the keys steer him once he has walked off an edge: the most his sideways speed changes, in metres per
-   * second squared. On the floor and in a jump he is at walk speed at once; falling off an edge he keeps the speed
-   * he walked off with, and a held key only changes it this fast. With no key held he drifts on as he was.
+   * How fast a held key changes his sideways speed once he has walked off an edge, in metres per second squared. On the
+   * floor and in a jump he is at walk speed at once; falling off an edge he starts with the speed he walked off with,
+   * and this is high enough that a key turns him almost at once: from walking one way to the other in a tenth of a second.
    */
-  airSteering: 6,
-  /** How high his feet get in a jump. A small jump: well under his own height. */
-  jumpHeight: 0.7,
+  airSteering: 100,
+  /** How fast he slows down sideways with no key held once he has walked off an edge, in metres per second squared: he stops almost at once. */
+  airBraking: 100,
+  /** How high his feet get in a jump with the key held: a little over his own height. */
+  jumpHeight: 2,
   /** How high his feet get in a jump with something held over his head: his hands are full, so it is a shorter one. The same as `jumpHeight` for a jump that carrying does not change. */
-  jumpHeightCarrying: 0.45,
-  /** How fast he falls faster, in metres per second squared. */
-  gravity: 22,
+  jumpHeightCarrying: 0.7,
+  /** How fast his rise slows, in metres per second squared: with `jumpHeight` it says how soon he is at the top. */
+  riseGravity: 20,
+  /** How fast he falls faster once he is going down, in metres per second squared. */
+  fallGravity: 20,
+  /** The fastest he falls, in metres per second. */
+  fastestFall: 10,
+  /** The share of his upward speed he loses when the jump key is let go while he rises: all of it, so a jump is as high as the key is held and a tap is a hop. */
+  letGoCut: 1,
   /** Forgiveness: a jump asked for this long before he lands still happens when he does. */
   jumpAskedEarlyWindow: 0.1,
   /** Forgiveness: a jump asked for this long after he walked off an edge still happens. */
@@ -52,7 +61,7 @@ export interface MovementTuning {
   readonly fastestFall: number;
   /** The share of his upward speed he loses when the jump key is let go while he rises: 0 keeps it all, 1 ends the rise there and then. */
   readonly letGoCut: number;
-  /** In a fall off an edge, how fast a held key changes his sideways speed, in metres per second squared (`PLAYER.airSteering`). */
+  /** In a fall off an edge, how fast a held key changes his sideways speed, in metres per second squared. */
   readonly airSteering: number;
   /** In a fall off an edge, how fast he slows down sideways with no key held, in metres per second squared: 0 drifts on. */
   readonly airBraking: number;
@@ -72,25 +81,36 @@ export const MOVEMENT_TUNING_LIMITS: { readonly [Name in keyof MovementTuning]: 
 };
 
 /**
- * Ways to move that can be tried whole. `current` is the game as it is played. `ninetiesPlatformer` is a jump like
- * the platformers of the nineties: about twice his height, its height chosen by how long the key is held, a fast rise
- * and a faster fall, and steering in the air that turns and stops him at once. It is only tried, not played: its jump
- * crosses the gaps of levels 2 and 3 on foot. `twoMetreJump` is the one the owner tuned in the panel and liked: a jump
- * a little over his height, as high as the key is held, an even rise and fall to a fastest fall of 10 m/s, and steering
- * in the air that turns and stops him almost at once, at his walking speed. Level 2's gap was a jump already, and
- * level 3's is still too wide for one.
+ * Ways to move that can be tried whole. `current` is the game as it is played: `PLAYER`, a jump a little over his
+ * height, as high as the key is held, an even rise and fall to a fastest fall of 10 m/s, and steering in the air that
+ * turns and stops him almost at once (the owner tuned it in the panel as `twoMetreJump`, #35). `smallJump` is the jump
+ * the game had before it: well under his height, the same whether the key is held or tapped, and a fall off an edge
+ * that keeps the speed he walked off with. `ninetiesPlatformer` is a jump like the platformers of the nineties: about
+ * twice his height, a fast rise and a faster fall, and steering in the air that turns and stops him at once. It is
+ * only tried, not played: its jump crosses the gaps of levels 2 and 3 on foot.
  */
 export const MOVEMENT_PRESETS = {
   current: {
     walkSpeed: PLAYER.walkSpeed,
     jumpHeight: PLAYER.jumpHeight,
     jumpHeightCarrying: PLAYER.jumpHeightCarrying,
-    riseGravity: PLAYER.gravity,
-    fallGravity: PLAYER.gravity,
-    // Far faster than he ever falls before the level starts again: the current game has no fastest fall.
+    riseGravity: PLAYER.riseGravity,
+    fallGravity: PLAYER.fallGravity,
+    fastestFall: PLAYER.fastestFall,
+    letGoCut: PLAYER.letGoCut,
+    airSteering: PLAYER.airSteering,
+    airBraking: PLAYER.airBraking,
+  },
+  smallJump: {
+    walkSpeed: 2.2,
+    jumpHeight: 0.7,
+    jumpHeightCarrying: 0.45,
+    riseGravity: 22,
+    fallGravity: 22,
+    // Far faster than he ever falls before the level starts again: the small jump had no fastest fall.
     fastestFall: 1000,
     letGoCut: 0,
-    airSteering: PLAYER.airSteering,
+    airSteering: 6,
     airBraking: 0,
   },
   ninetiesPlatformer: {
@@ -103,17 +123,6 @@ export const MOVEMENT_PRESETS = {
     letGoCut: 1,
     airSteering: 1000,
     airBraking: 1000,
-  },
-  twoMetreJump: {
-    walkSpeed: 2.2,
-    jumpHeight: 2,
-    jumpHeightCarrying: 0.7,
-    riseGravity: 20,
-    fallGravity: 20,
-    fastestFall: 10,
-    letGoCut: 1,
-    airSteering: 100,
-    airBraking: 100,
   },
 } as const satisfies Record<string, MovementTuning>;
 

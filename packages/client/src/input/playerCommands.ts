@@ -31,7 +31,7 @@ export interface KeysNow {
  * that arrives on the tick he sits down.
  *
  * Letting go of the jump is a command too: the sim cuts a rising jump short
- * by how much its tuning says, which in the game as it is is not at all. It is
+ * by how much its tuning says, which in the game as it is ends the rise. It is
  * sent when the keys that were jumping are all up, and on the frame of a tap
  * that went down and up between two frames. An up key held since he was
  * seated steered the airplane and holds no jump after he jumps out of it.

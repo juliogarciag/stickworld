@@ -5,7 +5,7 @@ import type { Command } from '../../core/commands';
 import { createSim, restoreSim } from '../../core/create';
 import type { SimHandle } from '../../core/sim';
 import type { SimSnapshot } from '../../core/snapshot';
-import { PLAYER } from './defs';
+import { MOVEMENT_PRESETS, PLAYER, type MovementTuning } from './defs';
 import { keptOverTheLine } from './floor';
 import type { PlayerState } from './state';
 import { stickManOf } from './view';
@@ -107,22 +107,24 @@ describe('jumping', () => {
 });
 
 describe('momentum falling off an edge', () => {
-  it('carries him forward after he walks off an edge and the key is let go', () => {
+  it('keeps the speed he walked off with, and with the key let go slows him to a stop almost at once', () => {
     const sim = justWalkedOffTheEdge();
+    expect(stickManOf(sim).horizontalSpeed).toBe(-PLAYER.walkSpeed);
     sim.step([STOP]);
-    const from = stickManOf(sim).feet.x;
-    stepFor(sim, 20);
-    expect(stickManOf(sim)).toMatchObject({ action: 'jumping', fallingOffAnEdge: true, horizontalSpeed: -PLAYER.walkSpeed, walkDirectionAsked: 0 });
-    expect(stickManOf(sim).feet.x - from).toBeCloseTo(-20 * PLAYER.walkSpeed * sim.dt, 6);
+    expect(stickManOf(sim).horizontalSpeed).toBeCloseTo(-PLAYER.walkSpeed + PLAYER.airBraking * sim.dt, 9);
+    stepFor(sim, Math.ceil(PLAYER.walkSpeed / (PLAYER.airBraking * sim.dt)));
+    expect(stickManOf(sim)).toMatchObject({ action: 'jumping', fallingOffAnEdge: true, horizontalSpeed: 0, walkDirectionAsked: 0 });
   });
 
   it('lets the keys steer him only as fast as the air steering allows: the other way slows him, then turns him round', () => {
-    const sim = justWalkedOffTheEdge();
+    // The small jump's air steering is slow enough to watch it a tick at a time.
+    const sim = justWalkedOffTheEdge(MOVEMENT_PRESETS.smallJump);
+    const { airSteering, walkSpeed } = MOVEMENT_PRESETS.smallJump;
     sim.step([WALK_RIGHT]);
-    expect(stickManOf(sim).horizontalSpeed).toBeCloseTo(-PLAYER.walkSpeed + PLAYER.airSteering * sim.dt, 9);
+    expect(stickManOf(sim).horizontalSpeed).toBeCloseTo(-walkSpeed + airSteering * sim.dt, 9);
     stepFor(sim, 9);
-    expect(stickManOf(sim).horizontalSpeed).toBeCloseTo(-PLAYER.walkSpeed + 10 * PLAYER.airSteering * sim.dt, 9);
-    stepFor(sim, Math.ceil(PLAYER.walkSpeed / (PLAYER.airSteering * sim.dt)));
+    expect(stickManOf(sim).horizontalSpeed).toBeCloseTo(-walkSpeed + 10 * airSteering * sim.dt, 9);
+    stepFor(sim, Math.ceil(walkSpeed / (airSteering * sim.dt)));
     expect(stickManOf(sim).action).toBe('jumping');
     expect(stickManOf(sim).horizontalSpeed).toBeGreaterThanOrEqual(0);
   });
@@ -179,7 +181,7 @@ describe('dropping past the end of a floor line', () => {
     const sim = standingAtTheEdge();
     const end = LEVEL.floor[0]!.from.x;
     // A hop with a touch outward, three ticks long: he comes down just past the end, straight.
-    sim.step([JUMP]);
+    sim.step([JUMP, LET_GO]);
     stepFor(sim, 3, [WALK_LEFT]);
     sim.step([STOP]);
     const pastTheEnd = end - stickManOf(sim).feet.x;
@@ -203,7 +205,8 @@ describe('dropping past the end of a floor line', () => {
     const sim = createSim({ level: 2 });
     const farEnd = levelById(2).floor[1]!.from.x;
     sim.step([WALK_RIGHT]);
-    while (stickManOf(sim).feet.y <= 0 || stickManOf(sim).feet.x < farEnd - STICK_MAN_WIDTH / 2 - 1e-9) sim.step();
+    // Narrow at his feet, the end pushes him back a little at a time; from his full width up it holds him where it is.
+    while (stickManOf(sim).feet.y < PLAYER.fullWidthAbove) sim.step();
     expect(stickManOf(sim).feet.y).toBeLessThan(STICK_MAN_HEIGHT);
     expect(stickManOf(sim)).toMatchObject({ feet: { x: farEnd - STICK_MAN_WIDTH / 2 }, horizontalSpeed: 0 });
     while (stickManOf(sim).feet.y < STICK_MAN_HEIGHT) {
@@ -281,6 +284,7 @@ const WALK_RIGHT: Command = { type: 'player/walk', direction: 1 };
 const WALK_LEFT: Command = { type: 'player/walk', direction: -1 };
 const STOP: Command = { type: 'player/walk', direction: 0 };
 const JUMP: Command = { type: 'player/jump' };
+const LET_GO: Command = { type: 'player/letGoOfJump' };
 const DT = createSim({ level: 1 }).dt;
 const EARLY_TICKS = Math.round(PLAYER.jumpAskedEarlyWindow / DT);
 const LATE_TICKS = Math.round(PLAYER.jumpAskedLateWindow / DT);
@@ -338,10 +342,10 @@ function jumpsAgainWithin(sim: SimHandle, ticks: number): boolean {
   return landed && stickManOf(sim).action === 'jumping';
 }
 
-/** A sim in which he has walked left off the start of the floor, this very tick. */
-function justWalkedOffTheEdge(): SimHandle {
+/** A sim in which he has walked left off the start of the floor, this very tick, moving as `tuning` says. */
+function justWalkedOffTheEdge(tuning: MovementTuning = MOVEMENT_PRESETS.current): SimHandle {
   const sim = createSim({ level: 1 });
-  sim.step([WALK_LEFT]);
+  sim.step([{ type: 'player/tuneMovement', tuning }, WALK_LEFT]);
   for (let tick = 0; tick < 600 && playerIn(sim).onFloor; tick += 1) sim.step();
   expect(playerIn(sim)).toMatchObject({ onFloor: false, ticksSinceWalkedOff: 0 });
   return sim;

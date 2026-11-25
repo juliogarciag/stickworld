@@ -81,6 +81,22 @@ describe('keys to commands', () => {
     expect(keysToCommands()({ keys: UP, sim })).toEqual([]);
     expect(keysToCommands()({ keys: DOWN, sim })).toEqual([]);
   });
+
+  it('lets go of a jump made with an up key when that key goes up, and of a tap of it on the same frame', () => {
+    const sim = createSim({ level: 1 });
+    const commandsFor = keysToCommands();
+    expect(commandsFor({ keys: { ...UP, upPressed: true }, sim })).toEqual([{ type: 'player/jump' }]);
+    expect(commandsFor({ keys: UP, sim })).toEqual([]);
+    expect(commandsFor({ keys: NOTHING, sim })).toEqual([{ type: 'player/letGoOfJump' }]);
+    expect(keysToCommands()({ keys: { ...NOTHING, upPressed: true }, sim })).toEqual([{ type: 'player/jump' }, { type: 'player/letGoOfJump' }]);
+  });
+
+  it('lets go of a held jump when every key reads up at once, as when the window loses focus and Phaser forgets held keys', () => {
+    const sim = createSim({ level: 1 });
+    const commandsFor = keysToCommands();
+    commandsFor({ keys: { ...RIGHT, upPressed: true, upHeld: true, jumpHeld: true, jumpPressed: true }, sim });
+    expect(commandsFor({ keys: NOTHING, sim })).toEqual([{ type: 'player/walk', direction: 0 }, { type: 'player/letGoOfJump' }]);
+  });
 });
 
 describe('keys to commands, seated in the airplane', () => {
