@@ -1,0 +1,12 @@
+PASS  dev server up, started by this run
+PASS  with the airplane folded, the hint says to take it to the edge  ({"tick":190,"feet":{"x":2.8433333333333324,"y":0},"action":"standing","airplane":null,"flyingHint":"takeItToAnEdge","interaction":null,"itemUse":"place"})
+PASS  carried to the edge, still told to take it to the edge, and K puts it down  ({"tick":454,"feet":{"x":8.856666666666717,"y":0},"action":"standing","airplane":{"at":{"x":8.856666666666717,"y":-1.82},"facing":1,"length":1.4,"height":0.34,"state":"carried","verticalSpeed":0,"speed":0,"pitch":0,"stallSpeed":3,"onAnEdge":false},"flyingHint":"takeItToAnEdge","interaction":"putDown","itemUse":null})
+PASS  before: nothing green in the prompts  (0 green pixels)
+PASS  put down, it sits on the edge and K boards it  ({"tick":495,"feet":{"x":8.856666666666717,"y":0},"action":"standing","airplane":{"at":{"x":9.756666666666717,"y":0},"facing":1,"length":1.4,"height":0.34,"state":"resting","verticalSpeed":0,"speed":0,"pitch":0,"stallSpeed":3,"onAnEdge":true},"flyingHint":"readyToBoard","interaction":"board","itemUse":null})
+PASS  the hint is "ready" on the same read that it sits on the edge  (flyingHint readyToBoard)
+PASS  after: the ready words are written in green in the prompts  (795 green pixels)
+PASS  K boards it: he is seated and nothing is said about the edge any more  ({"tick":544,"feet":{"x":10.980554372715366,"y":-0.09980054617826921},"action":"seated","airplane":{"at":{"x":10.980554372715366,"y":-0.09980054617826921},"facing":1,"length":1.4,"height":0.34,"state":"flying","verticalSpeed":0,"speed":7.296094626019324,"pitch":-0.016666666666666663,"stallSpeed":3,"onAnEdge":false},"flyingHint":null,"interaction":null,"itemUse":null})
+PASS  boarded: nothing green in the prompts  (0 green pixels)
+PASS  no page errors
+
+ALL 10 CHECKS PASSED

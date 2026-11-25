@@ -1,0 +1,9 @@
+# pnpm install && pnpm check, run in the worktree of #30: exit 0
+> stickworld@0.0.0 check /Users/julio/dev/projects/stickworld/.worktrees/30-collapse-verifications-and-tests-in-diffs
+> stickworld@0.0.0 test /Users/julio/dev/projects/stickworld/.worktrees/30-collapse-verifications-and-tests-in-diffs
+ Test Files  40 passed (40)
+      Tests  393 passed (393)
+> stickworld@0.0.0 typecheck /Users/julio/dev/projects/stickworld/.worktrees/30-collapse-verifications-and-tests-in-diffs
+> tsc -p tsconfig.json && pnpm -r typecheck
+> stickworld@0.0.0 lint /Users/julio/dev/projects/stickworld/.worktrees/30-collapse-verifications-and-tests-in-diffs
+> eslint .
