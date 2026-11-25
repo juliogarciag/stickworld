@@ -1,0 +1,409 @@
+{
+  "proofName": "before",
+  "framesMeasured": 120,
+  "measurements": [
+    {
+      "way": "cpu-1x-60hz",
+      "when": "the first 120 frames",
+      "fromFrame": 1,
+      "toFrame": 121,
+      "realSeconds": 2.2499000000000007,
+      "gameSeconds": 1.9833333333333334,
+      "gameSecondsPerRealSecond": 0.8815206601774891,
+      "longestFrameMs": 2083.2,
+      "framesOverTheCap": 1,
+      "maxFrameSeconds": 0.25,
+      "metresWalked": 4.253333333333356,
+      "secondsWalking": 1.9499000000000006,
+      "metresPerRealSecond": 2.1813084431680365,
+      "walkSpeedInTheSim": 2.2000000000000117,
+      "shareOfWalkSpeed": 0.9915038378036477,
+      "levelChanged": false
+    },
+    {
+      "way": "cpu-1x-60hz",
+      "when": "the 120 frames after the tab is shown again",
+      "fromFrame": 129,
+      "toFrame": 249,
+      "realSeconds": 1.999900000000002,
+      "gameSeconds": 2,
+      "gameSecondsPerRealSecond": 1.000050002500124,
+      "longestFrameMs": 16.80000000000109,
+      "framesOverTheCap": 0,
+      "maxFrameSeconds": 0.25,
+      "metresWalked": 4.400000000000024,
+      "secondsWalking": 1.999900000000002,
+      "metresPerRealSecond": 2.200110005500285,
+      "walkSpeedInTheSim": 2.200000000000012,
+      "shareOfWalkSpeed": 1.000050002500124,
+      "levelChanged": false
+    },
+    {
+      "way": "cpu-1x-60hz",
+      "when": "hidden and shown",
+      "tickWhenHidden": 6,
+      "tickBeforeShown": 6,
+      "tickAfterFirstFrameBack": 7,
+      "frameWhenShown": 128,
+      "dt": 0.016666666666666666
+    },
+    {
+      "way": "cpu-1x-60hz",
+      "when": "120 frames while the window is not focused",
+      "fromFrame": 257,
+      "toFrame": 377,
+      "realSeconds": 1.9999000000000033,
+      "gameSeconds": 2,
+      "gameSecondsPerRealSecond": 1.0000500025001233,
+      "longestFrameMs": 16.80000000000109,
+      "framesOverTheCap": 0,
+      "maxFrameSeconds": 0.25,
+      "metresWalked": 4.400000000000025,
+      "secondsWalking": 1.9999000000000033,
+      "metresPerRealSecond": 2.200110005500284,
+      "walkSpeedInTheSim": 2.2000000000000126,
+      "shareOfWalkSpeed": 1.0000500025001233,
+      "levelChanged": false
+    },
+    {
+      "way": "cpu-4x",
+      "when": "the first 120 frames",
+      "fromFrame": 1,
+      "toFrame": 121,
+      "realSeconds": 3.116599999999997,
+      "gameSeconds": 1.9833333333333334,
+      "gameSecondsPerRealSecond": 0.636377248711203,
+      "longestFrameMs": 8666.300000000001,
+      "framesOverTheCap": 1,
+      "maxFrameSeconds": 0.25,
+      "metresWalked": 4.180000000000022,
+      "secondsWalking": 2.6832999999999987,
+      "metresPerRealSecond": 1.5577833265009593,
+      "walkSpeedInTheSim": 2.2000000000000117,
+      "shareOfWalkSpeed": 0.708083330227705,
+      "levelChanged": false
+    },
+    {
+      "way": "cpu-4x",
+      "when": "the 120 frames after the tab is shown again",
+      "fromFrame": 131,
+      "toFrame": 251,
+      "realSeconds": 2.4665999999999992,
+      "gameSeconds": 2,
+      "gameSecondsPerRealSecond": 0.8108327252087897,
+      "longestFrameMs": 33.400000000001455,
+      "framesOverTheCap": 0,
+      "maxFrameSeconds": 0.25,
+      "metresWalked": 4.363333333333357,
+      "secondsWalking": 2.4499000000000004,
+      "metresPerRealSecond": 1.7810250758534456,
+      "walkSpeedInTheSim": 2.200000000000012,
+      "shareOfWalkSpeed": 0.8095568526606526,
+      "levelChanged": false
+    },
+    {
+      "way": "cpu-4x",
+      "when": "hidden and shown",
+      "tickWhenHidden": 6,
+      "tickBeforeShown": 6,
+      "tickAfterFirstFrameBack": 7,
+      "frameWhenShown": 130,
+      "dt": 0.016666666666666666
+    },
+    {
+      "way": "cpu-4x",
+      "when": "120 frames while the window is not focused",
+      "fromFrame": 262,
+      "toFrame": 382,
+      "realSeconds": 2.2499000000000042,
+      "gameSeconds": 2.0166666666666666,
+      "gameSecondsPerRealSecond": 0.8963361334577816,
+      "longestFrameMs": 33.400000000001455,
+      "framesOverTheCap": 0,
+      "maxFrameSeconds": 0.25,
+      "metresWalked": 4.436666666666691,
+      "secondsWalking": 2.2499000000000042,
+      "metresPerRealSecond": 1.9719394936071306,
+      "walkSpeedInTheSim": 2.200000000000012,
+      "shareOfWalkSpeed": 0.8963361334577817,
+      "levelChanged": false
+    },
+    {
+      "way": "cpu-6x",
+      "when": "the first 120 frames",
+      "fromFrame": 1,
+      "toFrame": 121,
+      "realSeconds": 4.233099999999997,
+      "gameSeconds": 1.9833333333333334,
+      "gameSecondsPerRealSecond": 0.46852976148291675,
+      "longestFrameMs": 11099.6,
+      "framesOverTheCap": 1,
+      "maxFrameSeconds": 0.25,
+      "metresWalked": 4.180000000000022,
+      "secondsWalking": 3.683199999999996,
+      "metresPerRealSecond": 1.134882710686367,
+      "walkSpeedInTheSim": 2.2000000000000117,
+      "shareOfWalkSpeed": 0.5158557775847096,
+      "levelChanged": false
+    },
+    {
+      "way": "cpu-6x",
+      "when": "the 120 frames after the tab is shown again",
+      "fromFrame": 130,
+      "toFrame": 250,
+      "realSeconds": 4.066600000000002,
+      "gameSeconds": 1.9833333333333334,
+      "gameSecondsPerRealSecond": 0.48771291332644773,
+      "longestFrameMs": 50.099999999998545,
+      "framesOverTheCap": 0,
+      "maxFrameSeconds": 0.25,
+      "metresWalked": 4.290000000000023,
+      "secondsWalking": 3.9999000000000016,
+      "metresPerRealSecond": 1.0725268131703347,
+      "walkSpeedInTheSim": 2.2000000000000117,
+      "shareOfWalkSpeed": 0.487512187804695,
+      "levelChanged": false
+    },
+    {
+      "way": "cpu-6x",
+      "when": "hidden and shown",
+      "tickWhenHidden": 8,
+      "tickBeforeShown": 8,
+      "tickAfterFirstFrameBack": 9,
+      "frameWhenShown": 129,
+      "dt": 0.016666666666666666
+    },
+    {
+      "way": "cpu-6x",
+      "when": "120 frames while the window is not focused",
+      "fromFrame": 258,
+      "toFrame": 378,
+      "realSeconds": 3.6830999999999996,
+      "gameSeconds": 2.0666666666666664,
+      "gameSecondsPerRealSecond": 0.5611215190102541,
+      "longestFrameMs": 50.099999999998545,
+      "framesOverTheCap": 0,
+      "maxFrameSeconds": 0.25,
+      "metresWalked": 4.546666666666693,
+      "secondsWalking": 3.6830999999999996,
+      "metresPerRealSecond": 1.234467341822566,
+      "walkSpeedInTheSim": 2.2000000000000126,
+      "shareOfWalkSpeed": 0.5611215190102541,
+      "levelChanged": false
+    },
+    {
+      "way": "frames-at-30hz",
+      "when": "the first 120 frames",
+      "fromFrame": 1,
+      "toFrame": 121,
+      "realSeconds": 3.9997999999999942,
+      "gameSeconds": 2,
+      "gameSecondsPerRealSecond": 0.5000250012500632,
+      "longestFrameMs": 33.5,
+      "framesOverTheCap": 0,
+      "maxFrameSeconds": 0.25,
+      "metresWalked": 4.363333333333357,
+      "secondsWalking": 3.9663999999999944,
+      "metresPerRealSecond": 1.100073954551574,
+      "walkSpeedInTheSim": 2.200000000000012,
+      "shareOfWalkSpeed": 0.5000336157052582,
+      "levelChanged": false
+    },
+    {
+      "way": "frames-at-30hz",
+      "when": "the 120 frames after the tab is shown again",
+      "fromFrame": 127,
+      "toFrame": 247,
+      "realSeconds": 3.9997999999999942,
+      "gameSeconds": 2,
+      "gameSecondsPerRealSecond": 0.5000250012500632,
+      "longestFrameMs": 33.400000000001455,
+      "framesOverTheCap": 0,
+      "maxFrameSeconds": 0.25,
+      "metresWalked": 4.400000000000024,
+      "secondsWalking": 3.9997999999999942,
+      "metresPerRealSecond": 1.1000550027501452,
+      "walkSpeedInTheSim": 2.200000000000012,
+      "shareOfWalkSpeed": 0.5000250012500632,
+      "levelChanged": false
+    },
+    {
+      "way": "frames-at-30hz",
+      "when": "hidden and shown",
+      "tickWhenHidden": 7,
+      "tickBeforeShown": 7,
+      "tickAfterFirstFrameBack": 8,
+      "frameWhenShown": 126,
+      "dt": 0.016666666666666666
+    },
+    {
+      "way": "frames-at-30hz",
+      "when": "120 frames while the window is not focused",
+      "fromFrame": 253,
+      "toFrame": 373,
+      "realSeconds": 3.9998999999999905,
+      "gameSeconds": 2.05,
+      "gameSecondsPerRealSecond": 0.5125128128203217,
+      "longestFrameMs": 33.400000000001455,
+      "framesOverTheCap": 0,
+      "maxFrameSeconds": 0.25,
+      "metresWalked": 4.510000000000026,
+      "secondsWalking": 3.9998999999999905,
+      "metresPerRealSecond": 1.1275281882047143,
+      "walkSpeedInTheSim": 2.200000000000013,
+      "shareOfWalkSpeed": 0.5125128128203217,
+      "levelChanged": false
+    }
+  ],
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "cpu-1x-60hz, the first 120 frames: game time keeps up with real time",
+      "pass": false,
+      "details": "1.983 s of game time in 2.250 s: 88.2% of full speed"
+    },
+    {
+      "name": "cpu-1x-60hz, the first 120 frames: he walks at full speed",
+      "pass": true,
+      "details": "4.25 m in 1.950 s: 2.18 m/s of the sim's 2.20 m/s, 99.2% of full speed"
+    },
+    {
+      "name": "cpu-1x-60hz, the 120 frames after the tab is shown again: game time keeps up with real time",
+      "pass": true,
+      "details": "2.000 s of game time in 2.000 s: 100.0% of full speed"
+    },
+    {
+      "name": "cpu-1x-60hz, the 120 frames after the tab is shown again: he walks at full speed",
+      "pass": true,
+      "details": "4.40 m in 2.000 s: 2.20 m/s of the sim's 2.20 m/s, 100.0% of full speed"
+    },
+    {
+      "name": "cpu-1x-60hz: the 2 s the tab was hidden are not played on its return",
+      "pass": true,
+      "details": "1 ticks, 0.017 s of game time"
+    },
+    {
+      "name": "cpu-1x-60hz, 120 frames while the window is not focused: game time keeps up with real time",
+      "pass": true,
+      "details": "2.000 s of game time in 2.000 s: 100.0% of full speed"
+    },
+    {
+      "name": "cpu-1x-60hz, 120 frames while the window is not focused: he walks at full speed",
+      "pass": true,
+      "details": "4.40 m in 2.000 s: 2.20 m/s of the sim's 2.20 m/s, 100.0% of full speed"
+    },
+    {
+      "name": "cpu-4x, the first 120 frames: game time keeps up with real time",
+      "pass": false,
+      "details": "1.983 s of game time in 3.117 s: 63.6% of full speed"
+    },
+    {
+      "name": "cpu-4x, the first 120 frames: he walks at full speed",
+      "pass": false,
+      "details": "4.18 m in 2.683 s: 1.56 m/s of the sim's 2.20 m/s, 70.8% of full speed"
+    },
+    {
+      "name": "cpu-4x, the 120 frames after the tab is shown again: game time keeps up with real time",
+      "pass": false,
+      "details": "2.000 s of game time in 2.467 s: 81.1% of full speed"
+    },
+    {
+      "name": "cpu-4x, the 120 frames after the tab is shown again: he walks at full speed",
+      "pass": false,
+      "details": "4.36 m in 2.450 s: 1.78 m/s of the sim's 2.20 m/s, 81.0% of full speed"
+    },
+    {
+      "name": "cpu-4x: the 2 s the tab was hidden are not played on its return",
+      "pass": true,
+      "details": "1 ticks, 0.017 s of game time"
+    },
+    {
+      "name": "cpu-4x, 120 frames while the window is not focused: game time keeps up with real time",
+      "pass": false,
+      "details": "2.017 s of game time in 2.250 s: 89.6% of full speed"
+    },
+    {
+      "name": "cpu-4x, 120 frames while the window is not focused: he walks at full speed",
+      "pass": false,
+      "details": "4.44 m in 2.250 s: 1.97 m/s of the sim's 2.20 m/s, 89.6% of full speed"
+    },
+    {
+      "name": "cpu-6x, the first 120 frames: game time keeps up with real time",
+      "pass": false,
+      "details": "1.983 s of game time in 4.233 s: 46.9% of full speed"
+    },
+    {
+      "name": "cpu-6x, the first 120 frames: he walks at full speed",
+      "pass": false,
+      "details": "4.18 m in 3.683 s: 1.13 m/s of the sim's 2.20 m/s, 51.6% of full speed"
+    },
+    {
+      "name": "cpu-6x, the 120 frames after the tab is shown again: game time keeps up with real time",
+      "pass": false,
+      "details": "1.983 s of game time in 4.067 s: 48.8% of full speed"
+    },
+    {
+      "name": "cpu-6x, the 120 frames after the tab is shown again: he walks at full speed",
+      "pass": false,
+      "details": "4.29 m in 4.000 s: 1.07 m/s of the sim's 2.20 m/s, 48.8% of full speed"
+    },
+    {
+      "name": "cpu-6x: the 2 s the tab was hidden are not played on its return",
+      "pass": true,
+      "details": "1 ticks, 0.017 s of game time"
+    },
+    {
+      "name": "cpu-6x, 120 frames while the window is not focused: game time keeps up with real time",
+      "pass": false,
+      "details": "2.067 s of game time in 3.683 s: 56.1% of full speed"
+    },
+    {
+      "name": "cpu-6x, 120 frames while the window is not focused: he walks at full speed",
+      "pass": false,
+      "details": "4.55 m in 3.683 s: 1.23 m/s of the sim's 2.20 m/s, 56.1% of full speed"
+    },
+    {
+      "name": "frames-at-30hz, the first 120 frames: game time keeps up with real time",
+      "pass": false,
+      "details": "2.000 s of game time in 4.000 s: 50.0% of full speed"
+    },
+    {
+      "name": "frames-at-30hz, the first 120 frames: he walks at full speed",
+      "pass": false,
+      "details": "4.36 m in 3.966 s: 1.10 m/s of the sim's 2.20 m/s, 50.0% of full speed"
+    },
+    {
+      "name": "frames-at-30hz, the 120 frames after the tab is shown again: game time keeps up with real time",
+      "pass": false,
+      "details": "2.000 s of game time in 4.000 s: 50.0% of full speed"
+    },
+    {
+      "name": "frames-at-30hz, the 120 frames after the tab is shown again: he walks at full speed",
+      "pass": false,
+      "details": "4.40 m in 4.000 s: 1.10 m/s of the sim's 2.20 m/s, 50.0% of full speed"
+    },
+    {
+      "name": "frames-at-30hz: the 2 s the tab was hidden are not played on its return",
+      "pass": true,
+      "details": "1 ticks, 0.017 s of game time"
+    },
+    {
+      "name": "frames-at-30hz, 120 frames while the window is not focused: game time keeps up with real time",
+      "pass": false,
+      "details": "2.050 s of game time in 4.000 s: 51.3% of full speed"
+    },
+    {
+      "name": "frames-at-30hz, 120 frames while the window is not focused: he walks at full speed",
+      "pass": false,
+      "details": "4.51 m in 4.000 s: 1.13 m/s of the sim's 2.20 m/s, 51.3% of full speed"
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

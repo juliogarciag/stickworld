@@ -1,0 +1,48 @@
+PASS  dev server up, started by this run
+PASS  cpu-1x-60hz, the first 120 frames: game time keeps up with real time  (2.217 s of game time in 2.233 s: 99.3% of full speed)
+PASS  cpu-1x-60hz, the first 120 frames: he walks at full speed  (4.25 m in 1.950 s: 2.18 m/s of the sim's 2.20 m/s, 99.2% of full speed)
+PASS  cpu-1x-60hz, the 120 frames after the tab is shown again: game time keeps up with real time  (2.000 s of game time in 2.000 s: 100.0% of full speed)
+PASS  cpu-1x-60hz, the 120 frames after the tab is shown again: he walks at full speed  (4.40 m in 2.000 s: 2.20 m/s of the sim's 2.20 m/s, 100.0% of full speed)
+PASS  cpu-1x-60hz: the 2 s the tab was hidden are not played on its return  (0 ticks, 0.000 s of game time)
+PASS  cpu-1x-60hz, 120 frames while the window is not focused: game time keeps up with real time  (1.983 s of game time in 2.000 s: 99.2% of full speed)
+PASS  cpu-1x-60hz, 120 frames while the window is not focused: he walks at full speed  (4.36 m in 1.983 s: 2.20 m/s of the sim's 2.20 m/s, 100.0% of full speed)
+PASS  cpu-4x, the first 120 frames: game time keeps up with real time  (2.900 s of game time in 2.917 s: 99.4% of full speed)
+PASS  cpu-4x, the first 120 frames: he walks at full speed  (5.46 m in 2.483 s: 2.20 m/s of the sim's 2.20 m/s, 100.0% of full speed)
+PASS  cpu-4x, the 120 frames after the tab is shown again: game time keeps up with real time  (2.400 s of game time in 2.400 s: 100.0% of full speed)
+PASS  cpu-4x, the 120 frames after the tab is shown again: he walks at full speed  (5.24 m in 2.383 s: 2.20 m/s of the sim's 2.20 m/s, 100.0% of full speed)
+PASS  cpu-4x: the 2 s the tab was hidden are not played on its return  (0 ticks, 0.000 s of game time)
+PASS  cpu-4x, 120 frames while the window is not focused: game time keeps up with real time  (2.450 s of game time in 2.467 s: 99.3% of full speed)
+PASS  cpu-4x, 120 frames while the window is not focused: he walks at full speed  (5.39 m in 2.467 s: 2.19 m/s of the sim's 2.20 m/s, 99.3% of full speed)
+PASS  cpu-6x, the first 120 frames: game time keeps up with real time  (4.417 s of game time in 4.433 s: 99.6% of full speed)
+PASS  cpu-6x, the first 120 frames: he walks at full speed  (8.47 m in 3.850 s: 2.20 m/s of the sim's 2.20 m/s, 100.0% of full speed)
+PASS  cpu-6x, the 120 frames after the tab is shown again: game time keeps up with real time  (3.683 s of game time in 3.683 s: 100.0% of full speed)
+PASS  cpu-6x, the 120 frames after the tab is shown again: he walks at full speed  (8.07 m in 3.666 s: 2.20 m/s of the sim's 2.20 m/s, 100.0% of full speed)
+PASS  cpu-6x: the 2 s the tab was hidden are not played on its return  (1 ticks, 0.017 s of game time)
+PASS  cpu-6x, 120 frames while the window is not focused: game time keeps up with real time  (4.167 s of game time in 4.183 s: 99.6% of full speed)
+PASS  cpu-6x, 120 frames while the window is not focused: he walks at full speed  (8.54 m in 3.900 s: 2.19 m/s of the sim's 2.20 m/s, 99.6% of full speed)
+PASS  frames-at-30hz, the first 120 frames: game time keeps up with real time  (4.000 s of game time in 4.016 s: 99.6% of full speed)
+PASS  frames-at-30hz, the first 120 frames: he walks at full speed  (8.51 m in 3.883 s: 2.19 m/s of the sim's 2.20 m/s, 99.6% of full speed)
+PASS  frames-at-30hz, the 120 frames after the tab is shown again: game time keeps up with real time  (4.000 s of game time in 4.000 s: 100.0% of full speed)
+PASS  frames-at-30hz, the 120 frames after the tab is shown again: he walks at full speed  (8.51 m in 3.867 s: 2.20 m/s of the sim's 2.20 m/s, 100.0% of full speed)
+PASS  frames-at-30hz: the 2 s the tab was hidden are not played on its return  (2 ticks, 0.033 s of game time)
+PASS  frames-at-30hz, 120 frames while the window is not focused: game time keeps up with real time  (4.000 s of game time in 4.000 s: 100.0% of full speed)
+PASS  frames-at-30hz, 120 frames while the window is not focused: he walks at full speed  (8.51 m in 3.867 s: 2.20 m/s of the sim's 2.20 m/s, 100.0% of full speed)
+PASS  no page errors
+
+after: game time and walking against real time, over 120 frames
+frames long because | when | real s | game s | game time | walked m | walk speed | longest frame ms | frames over the cap
+cpu-1x-60hz | the first 120 frames | 2.233 | 2.217 | 99.3% | 4.25 | 99.2% | 1766.6 | 1
+cpu-1x-60hz | the 120 frames after the tab is shown again | 2.000 | 2.000 | 100.0% | 4.40 | 100.0% | 16.8 | 0
+cpu-1x-60hz | 120 frames while the window is not focused | 2.000 | 1.983 | 99.2% | 4.36 | 100.0% | 16.8 | 0
+cpu-4x | the first 120 frames | 2.917 | 2.900 | 99.4% | 5.46 | 100.0% | 7633.0 | 1
+cpu-4x | the 120 frames after the tab is shown again | 2.400 | 2.400 | 100.0% | 5.24 | 100.0% | 33.4 | 0
+cpu-4x | 120 frames while the window is not focused | 2.467 | 2.450 | 99.3% | 5.39 | 99.3% | 33.5 | 0
+cpu-6x | the first 120 frames | 4.433 | 4.417 | 99.6% | 8.47 | 100.0% | 11132.9 | 1
+cpu-6x | the 120 frames after the tab is shown again | 3.683 | 3.683 | 100.0% | 8.07 | 100.0% | 50.1 | 0
+cpu-6x | 120 frames while the window is not focused | 4.183 | 4.167 | 99.6% | 8.54 | 99.6% | 50.1 | 0
+frames-at-30hz | the first 120 frames | 4.016 | 4.000 | 99.6% | 8.51 | 99.6% | 50.0 | 0
+frames-at-30hz | the 120 frames after the tab is shown again | 4.000 | 4.000 | 100.0% | 8.51 | 100.0% | 33.4 | 0
+frames-at-30hz | 120 frames while the window is not focused | 4.000 | 4.000 | 100.0% | 8.51 | 100.0% | 33.5 | 0
+
+
+ALL 30 CHECKS PASSED

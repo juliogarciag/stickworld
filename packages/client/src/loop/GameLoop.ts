@@ -1,8 +1,6 @@
 import { createSim, restoreSim, type Command, type SimHandle } from '@stickworld/sim';
+import { MAX_FRAME_SECONDS } from './frameSeconds';
 import { takeWholeTicks } from './takeWholeTicks';
-
-/** Never simulate more than this much real time per frame (tab switches, hitches). */
-const MAX_FRAME_SECONDS = 0.25;
 
 /**
  * The one place the sim advances. Real time comes in from the scene, whole
