@@ -23,8 +23,9 @@ import { level3 } from './level3';
 
 describe('level 3', () => {
   it('has a gap several jumps long, with the flag on the far side and the letter just in front of the start', () => {
-    const longestJump = PLAYER.walkSpeed * (2 * Math.sqrt((2 * PLAYER.jumpHeight) / PLAYER.gravity) + PLAYER.jumpAskedLateWindow);
-    expect(GAP.to - GAP.from).toBeGreaterThan(5 * longestJump);
+    const jumpSeconds = Math.sqrt((2 * PLAYER.jumpHeight) / PLAYER.riseGravity) + Math.sqrt((2 * PLAYER.jumpHeight) / PLAYER.fallGravity);
+    const longestJump = PLAYER.walkSpeed * (jumpSeconds + PLAYER.jumpAskedLateWindow);
+    expect(GAP.to - GAP.from).toBeGreaterThan(4 * longestJump);
     expect(level3.placements.find((placement) => placement.defId === FLAG_DEF_ID)!.at.x).toBeGreaterThan(GAP.to);
     expect(LETTER_AT.x).toBeGreaterThan(level3.start.x);
     expect(LETTER_AT.x - level3.start.x).toBeLessThan(STICK_MAN_HEIGHT);

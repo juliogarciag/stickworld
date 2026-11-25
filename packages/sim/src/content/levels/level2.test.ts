@@ -46,10 +46,21 @@ describe('level 2', () => {
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBeNull();
   });
 
-  it('cannot be finished by letting his momentum carry him: the far end of the gap stops him and he drops beside it', () => {
+  it('cannot be finished by steering across the gap in a fall: the far end of the gap stops him and he drops beside it', () => {
+    const sim = createSim({ level: 2 });
+    const { overTheGap, restartedAtTick } = play(sim, WALK_INTO_THE_GAP);
+    // Stopped beside the far end until his head has dropped below it; then the held key takes him on under the floor.
+    const besideTheFarEnd = overTheGap.filter((feet) => Math.abs(feet.x - (GAP.to - STICK_MAN_WIDTH / 2)) < 1e-6);
+    expect(besideTheFarEnd.length).toBeGreaterThan(5);
+    expect(Math.min(...besideTheFarEnd.map((feet) => feet.y))).toBeGreaterThan(FLOOR_Y);
+    expect(restartedAtTick).not.toBeNull();
+    expect(flagOf(sim)!.reached).toBe(false);
+  });
+
+  it('cannot be finished by letting go of the key at the edge: he stops in the air and drops into the gap', () => {
     const sim = createSim({ level: 2 });
     const { overTheGap, restartedAtTick } = play(sim, { commands: [WALK_RIGHT_AT_0, { atTick: TICK_PAST_THE_EDGE, command: { type: 'player/walk', direction: 0 } }], ticks: 400 });
-    expect(Math.max(...overTheGap.map((feet) => feet.x))).toBeCloseTo(GAP.to - STICK_MAN_WIDTH / 2, 6);
+    expect(Math.max(...overTheGap.map((feet) => feet.x))).toBeLessThan(GAP.from + (GAP.to - GAP.from) / 2);
     expect(restartedAtTick).not.toBeNull();
     expect(flagOf(sim)!.reached).toBe(false);
   });
@@ -62,7 +73,7 @@ describe('level 2', () => {
   });
 
   it('has a gap a jump clears with room to spare: he need not take off at the very edge', () => {
-    const jumpSeconds = 2 * Math.sqrt((2 * PLAYER.jumpHeight) / PLAYER.gravity);
+    const jumpSeconds = Math.sqrt((2 * PLAYER.jumpHeight) / PLAYER.riseGravity) + Math.sqrt((2 * PLAYER.jumpHeight) / PLAYER.fallGravity);
     const jumpLength = PLAYER.walkSpeed * jumpSeconds;
     expect(GAP.to - GAP.from).toBeLessThan(LARGEST_SHARE_OF_A_JUMP * jumpLength);
   });
@@ -139,9 +150,9 @@ const LARGEST_SHARE_OF_A_JUMP = 0.8;
 /**
  * He is sent back to the start on the tick he passes the depth that kills,
  * so the deepest he is ever seen is up to one tick of falling short of it.
- * At that depth he has fallen `fallBelowFloor`, which gives his speed.
+ * At that depth he has fallen `fallBelowFloor`, which gives his speed, unless he got to his fastest fall before.
  */
-const ONE_TICK_OF_FALL = Math.sqrt(2 * PLAYER.gravity * PLAYER.fallBelowFloor) / TICK_RATE;
+const ONE_TICK_OF_FALL = Math.min(Math.sqrt(2 * PLAYER.fallGravity * PLAYER.fallBelowFloor), PLAYER.fastestFall) / TICK_RATE;
 
 /** The tick on which he is a quarter of the gap's width before its edge, walking right from the start: where a player would jump. */
 const TICK_NEAR_THE_EDGE = Math.round(((GAP.from - 0.25 * (GAP.to - GAP.from) - level2.start.x) / PLAYER.walkSpeed) * TICK_RATE);

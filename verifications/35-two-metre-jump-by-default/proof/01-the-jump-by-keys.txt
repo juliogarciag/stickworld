@@ -1,0 +1,15 @@
+PASS  dev server up, started by this run
+PASS  a fresh game plays the owner's numbers  ({"walkSpeed":2.2,"jumpHeight":2,"jumpHeightCarrying":0.7,"riseGravity":20,"fallGravity":20,"fastestFall":10,"letGoCut":1,"airSteering":100,"airBraking":100})
+PASS  Space held: his feet get 2 m up  (2.000 m)
+PASS  Space tapped: a short hop  (0.144 m)
+PASS  Space held a fifth of a second: between the hop and the full jump  (1.468 m)
+PASS  ArrowUp held jumps 2 m, tapped hops  (2.000 m held, 0.146 m tapped)
+PASS  w held jumps 2 m, tapped hops  (2.000 m held, 0.146 m tapped)
+PASS  a window that loses focus mid-jump lets go of it: the rise stops short  (1.213 m)
+PASS  the key still down and repeating when focus comes back does not jump him again  (standing)
+PASS  let go over the edge, he stops sideways within a tenth of a second  (3 ticks)
+PASS  he never falls faster than 10 m/s, and gets there  (10 m/s)
+PASS  jumping out of the airplane: a tap hops, held it is a full jump  (0.146 m tapped, 2.000 m held)
+PASS  no page errors
+
+ALL 13 CHECKS PASSED

@@ -295,7 +295,7 @@ describe('jumping out', () => {
     const flying = airplaneOf(sim)!;
     sim.step([{ type: 'player/jump' }]);
     expect(stickManOf(sim)).toMatchObject({ action: 'jumping', fallingOffAnEdge: false });
-    expect(stickManOf(sim).verticalSpeed).toBeCloseTo(-Math.sqrt(2 * PLAYER.gravity * PLAYER.jumpHeight) + PLAYER.gravity / TICK_RATE, 9);
+    expect(stickManOf(sim).verticalSpeed).toBeCloseTo(-Math.sqrt(2 * PLAYER.riseGravity * PLAYER.jumpHeight) + PLAYER.riseGravity / TICK_RATE, 9);
     expect(stickManOf(sim).feet.y).toBeLessThan(seatedAt.y);
     const unmanned = airplaneOf(sim)!;
     expect(unmanned.state).toBe('falling');

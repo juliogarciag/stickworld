@@ -1,0 +1,52 @@
+{
+  "level2": {
+    "gap": {
+      "from": 6,
+      "to": 6.8,
+      "start": 2
+    },
+    "highestOverTheGap": 1.9999223594996218
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "a fresh game starts on level 1",
+      "pass": true
+    },
+    {
+      "name": "level 1 finished: level 2 starts",
+      "pass": true
+    },
+    {
+      "name": "level 2: walking into the gap is refused, he falls and starts again",
+      "pass": true
+    },
+    {
+      "name": "level 2: a held jump crosses the gap and reaches the flag",
+      "pass": true,
+      "details": "feet 2.00 m up over the gap"
+    },
+    {
+      "name": "level 3: a full running jump at the edge falls into the gap and the level starts again",
+      "pass": true,
+      "details": "feet 2.00 m up, furthest x 12.38, back at x 2.00"
+    },
+    {
+      "name": "level 3: the airplane, boarded and climbed, crosses the gap",
+      "pass": true,
+      "details": "stood up at x 23.98 (gap ends at 19)"
+    },
+    {
+      "name": "level 3: the flag is reached and the game ends",
+      "pass": true
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

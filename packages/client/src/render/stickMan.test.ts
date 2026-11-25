@@ -1,4 +1,4 @@
-import { createSim, levels, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf, type Command, type FloorSegment } from '@stickworld/sim';
+import { createSim, levels, MOVEMENT_PRESETS, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf, type Command, type FloorSegment } from '@stickworld/sim';
 import { describe, expect, it } from 'vitest';
 import { distanceBetweenLines } from './geometry';
 import { __testing__, keptOffTheFloor, poseOf, posesEasedOverTime, seatedIn, stickManStrokes, walkCycleLength, type StickManPose } from './stickMan';
@@ -198,6 +198,14 @@ describe('the stick man in a long fall', () => {
     const { arms, neck } = skeletonOf(poseOf({ ...FALLING, verticalSpeed: BODY.speedOfALongFall.to }));
     expect(arms[0]![2]!.x).toBeLessThan(neck.x - 0.3);
     expect(arms[1]![2]!.x).toBeGreaterThan(neck.x + 0.3);
+  });
+
+  it('starts just above the speed the game\'s held jump lands at, and is all the way in before his fastest fall', () => {
+    const { fallGravity, jumpHeight, fastestFall } = MOVEMENT_PRESETS.current;
+    const landsAt = Math.sqrt(2 * fallGravity * jumpHeight);
+    expect(BODY.speedOfALongFall.from).toBeGreaterThan(landsAt);
+    expect(BODY.speedOfALongFall.from).toBeLessThan(landsAt * 1.05);
+    expect(BODY.speedOfALongFall.to).toBeLessThanOrEqual(fastestFall);
   });
 
   it('is not what he does on the floor, however the sim has his speed', () => {

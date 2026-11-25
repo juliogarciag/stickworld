@@ -160,8 +160,11 @@ const BODY = {
   elbowBend: 0.35,
   restingArm: 0.12,
   lean: 0.07,
-  /** The vertical speed, in metres per second, at which a jump looks fully on its way up or down. */
-  speedOfFullRise: 3,
+  /**
+   * The vertical speed, in metres per second, at which a jump looks fully on its way up or down: a little over half the
+   * speed a held jump takes off at (8.9 m/s for the 2 m jump), so he is in the pose of the top for the middle of it.
+   */
+  speedOfFullRise: 4.8,
   /**
    * Limbs in a jump. On the way up he has pushed off and his arms swing up; at the top his knees are tucked
    * and his arms are highest; on the way down his legs reach for the floor and his arms come down. Between
@@ -173,10 +176,11 @@ const BODY = {
   /**
    * A fall that goes on past where a jump would have landed: his arms are thrown up and out and his legs hang apart.
    * He gets into it between these two falling speeds, in metres per second. The lower one is just above the speed a
-   * jump on level floor lands at, so no such jump ever shows it.
+   * held jump on level floor lands at (8.9 m/s for the 2 m jump), so no such jump ever shows it, and the higher one is
+   * his fastest fall (10 m/s), so a long fall gets all the way into it.
    */
   longFall: { legs: [{ swing: 0.3, bend: 0.35 }, { swing: -0.3, bend: 0.3 }], arms: [{ swing: -2.0, bend: -0.15 }, { swing: 2.05, bend: 0.2 }], lean: 0 },
-  speedOfALongFall: { from: 5.7, to: 7.5 },
+  speedOfALongFall: { from: 9, to: 10 },
   /** Knees bent under him, feet where they were: how a landing is taken. `landingDepth` is how far into it the hardest landing goes. */
   landed: { legs: [{ swing: 0.5, bend: 1.0 }, { swing: 0.5, bend: 1.0 }], arms: [{ swing: -0.35, bend: 0.3 }, { swing: 0.5, bend: 0.5 }], lean: 0.12 },
   landingDepth: 0.55,
