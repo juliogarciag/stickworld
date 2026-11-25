@@ -1,0 +1,164 @@
+{
+  "nineties": {
+    "walkSpeed": 5,
+    "jumpHeight": 3.6,
+    "jumpHeightCarrying": 2.4,
+    "riseGravity": 68,
+    "fallGravity": 80,
+    "mostFallSpeed": 25,
+    "letGoCut": 1,
+    "airSteering": 1000,
+    "airBraking": 1000
+  },
+  "jumps": {
+    "held": {
+      "highest": 3.597857788056532,
+      "ticksToTop": 21,
+      "ticksInTheAir": 39,
+      "dt": 0.016666666666666666,
+      "landed": true
+    },
+    "middle": {
+      "highest": 1.6077977803474668,
+      "ticksToTop": 6,
+      "ticksInTheAir": 19,
+      "dt": 0.016666666666666666,
+      "landed": true
+    },
+    "tapped": {
+      "highest": 0.6997857788056533,
+      "ticksToTop": 3,
+      "ticksInTheAir": 11,
+      "dt": 0.016666666666666666,
+      "landed": true
+    }
+  },
+  "afterKnob": {
+    "tuning": {
+      "walkSpeed": 5,
+      "jumpHeight": 2,
+      "jumpHeightCarrying": 2.4,
+      "riseGravity": 68,
+      "fallGravity": 80,
+      "mostFallSpeed": 25,
+      "letGoCut": 1,
+      "airSteering": 1000,
+      "airBraking": 1000
+    },
+    "jump": {
+      "highest": 1.9981056256176621,
+      "ticksToTop": 17,
+      "ticksInTheAir": 31,
+      "dt": 0.016666666666666666,
+      "landed": true
+    }
+  },
+  "airControl": {
+    "turned": {
+      "tick": 309,
+      "commands": [
+        {
+          "type": "player/walk",
+          "direction": -1
+        }
+      ],
+      "stickMan": {
+        "feet": {
+          "x": 2.7500000000000013,
+          "y": -1.8808330143418408
+        },
+        "facing": -1,
+        "action": "jumping",
+        "distanceWalked": 0.16666666666666696,
+        "verticalSpeed": -4.025755835803981,
+        "horizontalSpeed": -5,
+        "fallingOffAnEdge": false,
+        "walkDirectionAsked": -1,
+        "carrying": false
+      }
+    },
+    "stopped": {
+      "tick": 316,
+      "commands": [
+        {
+          "type": "player/walk",
+          "direction": 0
+        }
+      ],
+      "stickMan": {
+        "feet": {
+          "x": 2.2500000000000004,
+          "y": -1.8727267507411947
+        },
+        "facing": -1,
+        "action": "jumping",
+        "distanceWalked": 0.16666666666666696,
+        "verticalSpeed": 4.507577497529352,
+        "horizontalSpeed": 0,
+        "fallingOffAnEdge": false,
+        "walkDirectionAsked": 0,
+        "carrying": false
+      }
+    }
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "choosing the 90s preset reaches the sim: a jump about twice his height, cut whole by letting go",
+      "pass": true,
+      "details": "{\"walkSpeed\":5,\"jumpHeight\":3.6,\"jumpHeightCarrying\":2.4,\"riseGravity\":68,\"fallGravity\":80,\"mostFallSpeed\":25,\"letGoCut\":1,\"airSteering\":1000,\"airBraking\":1000}"
+    },
+    {
+      "name": "held, the jump lifts his feet to the preset height",
+      "pass": true,
+      "details": "3.60 m, 2.00 of his height"
+    },
+    {
+      "name": "it rises fast: at the top in less than 0.4 s",
+      "pass": true,
+      "details": "0.350 s"
+    },
+    {
+      "name": "a tap is a short hop, a short hold is in between",
+      "pass": true,
+      "details": "tap 0.70 m, 120 ms 1.61 m, held 3.60 m"
+    },
+    {
+      "name": "moving the jump height knob to 2 m changes the next jump at once",
+      "pass": true,
+      "details": "1.998 m"
+    },
+    {
+      "name": "in the air he turns at once and stops at once",
+      "pass": true,
+      "details": "on the tick of the turn -5 m/s, on the tick of the stop jumping 0 m/s"
+    },
+    {
+      "name": "an arrow key pressed in a knob does not walk him",
+      "pass": true,
+      "details": "x 2.2500000000000004 then 2.2500000000000004"
+    },
+    {
+      "name": "a reload keeps what was chosen",
+      "pass": true,
+      "details": "{\"walkSpeed\":5,\"jumpHeight\":2,\"jumpHeightCarrying\":2.4,\"riseGravity\":68,\"fallGravity\":80,\"mostFallSpeed\":25,\"letGoCut\":1,\"airSteering\":1000,\"airBraking\":1000}"
+    },
+    {
+      "name": "a new sim (loadLevel) starts with the current preset and is given the chosen tuning again",
+      "pass": true,
+      "details": "0.7 m, then 2 m"
+    },
+    {
+      "name": "choosing \"current\" again gives back the game as it is",
+      "pass": true
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

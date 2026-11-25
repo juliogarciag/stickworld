@@ -6,6 +6,8 @@ export interface KeysNow {
   readonly rightHeld: boolean;
   readonly upHeld: boolean;
   readonly downHeld: boolean;
+  /** True while a key that only ever jumps is down. */
+  readonly jumpHeld: boolean;
   /** True on the one frame a key that only ever jumps went down. */
   readonly jumpPressed: boolean;
   /** True on the one frame an up key went down: on his feet that is a jump too; seated, up steers and is not one. */
@@ -27,10 +29,16 @@ export interface KeysNow {
  * What is read here is one tick old while a command waits: an up key pressed
  * in the moment he boards is still sent as a jump, and the sim drops a jump
  * that arrives on the tick he sits down.
+ *
+ * Letting go of the jump is a command too: the sim cuts a rising jump short
+ * by how much its tuning says, which in the game as it is is not at all. It is
+ * sent when the keys that were jumping are all up, and on the frame of a tap
+ * that went down and up between two frames.
  */
 export function keysToCommands(): (now: { keys: KeysNow; sim: SimHandle }) => Command[] {
   const walkIsNews = newsToTheSim<WalkDirection>();
   const steeringIsNews = newsToTheSim<SteerDirection>();
+  let jumpWasHeld = false;
   return ({ keys, sim }) => {
     const commands: Command[] = [];
     const seated = stickManOf(sim).action === 'seated';
@@ -38,7 +46,11 @@ export function keysToCommands(): (now: { keys: KeysNow; sim: SimHandle }) => Co
     if (walkIsNews({ wanted: walkDirection, believed: stickManOf(sim).walkDirectionAsked, sim })) commands.push({ type: 'player/walk', direction: walkDirection });
     const steerDirection = seated ? steerDirectionHeld(keys) : 0;
     if (steeringIsNews({ wanted: steerDirection, believed: steeringAskedOf(sim), sim })) commands.push({ type: 'airplane/steer', direction: steerDirection });
-    if (keys.jumpPressed || (keys.upPressed && !seated)) commands.push({ type: 'player/jump' });
+    const jumpAsked = keys.jumpPressed || (keys.upPressed && !seated);
+    if (jumpAsked) commands.push({ type: 'player/jump' });
+    const jumpHeld = keys.jumpHeld || (keys.upHeld && !seated);
+    if (!jumpHeld && (jumpWasHeld || jumpAsked)) commands.push({ type: 'player/letGoOfJump' });
+    jumpWasHeld = jumpHeld;
     return commands;
   };
 }

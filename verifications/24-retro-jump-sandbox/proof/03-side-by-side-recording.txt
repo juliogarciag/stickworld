@@ -1,0 +1,6 @@
+PASS  dev server up, started by this run
+PASS  left plays the current jump, right the 90s preset  (0.7 m and 3.6 m)
+PASS  the 90s jump went far higher than the current one on the same moves  (0.70 m and 3.60 m)
+PASS  the recording was written  (proof/03-side-by-side.webm)
+
+ALL 4 CHECKS PASSED

@@ -14,8 +14,9 @@ export { FIXED_DT, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, TICK_RATE } from './conten
 export { defs, getDef, type Def } from './content/defs';
 export { levelById, levels } from './content/levels';
 export type { FloorSegment, Level, Note, Placement, Point } from './content/levels/types';
-export type { JumpCommand, PlayerCommand, WalkCommand, WalkDirection } from './features/player/commands';
-export { stickManOf, type StickManView } from './features/player/view';
+export type { JumpCommand, LetGoOfJumpCommand, PlayerCommand, TuneMovementCommand, WalkCommand, WalkDirection } from './features/player/commands';
+export { movementTuningOf, stickManOf, type StickManView } from './features/player/view';
+export { MOVEMENT_PRESETS, MOVEMENT_TUNING_LIMITS, type MovementPresetName, type MovementTuning } from './features/player/defs';
 export { flagOf, type FlagView } from './features/flag/view';
 export type { InventoryCommand, InventorySelectCommand } from './features/inventory/commands';
 export { AIRPLANE_ITEM_ID, PAPER_ITEM_ID } from './features/inventory/defs';

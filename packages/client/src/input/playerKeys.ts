@@ -10,7 +10,7 @@ import type { KeysNow } from './playerCommands';
  */
 export function watchPlayerKeys(scene: Phaser.Scene): () => KeysNow {
   const keyboard = scene.input.keyboard;
-  if (!keyboard) return () => ({ leftHeld: false, rightHeld: false, upHeld: false, downHeld: false, jumpPressed: false, upPressed: false });
+  if (!keyboard) return () => ({ leftHeld: false, rightHeld: false, upHeld: false, downHeld: false, jumpHeld: false, jumpPressed: false, upPressed: false });
   const { KeyCodes } = Phaser.Input.Keyboard;
   const left = [keyboard.addKey(KeyCodes.LEFT), keyboard.addKey(KeyCodes.A)];
   const right = [keyboard.addKey(KeyCodes.RIGHT), keyboard.addKey(KeyCodes.D)];
@@ -33,7 +33,7 @@ export function watchPlayerKeys(scene: Phaser.Scene): () => KeysNow {
   notePresses(up, 'up');
   const anyIsDown = (keys: Phaser.Input.Keyboard.Key[]): boolean => keys.some((key) => key.isDown);
   return () => {
-    const now = { leftHeld: anyIsDown(left), rightHeld: anyIsDown(right), upHeld: anyIsDown(up), downHeld: anyIsDown(down), jumpPressed: pressed.jump, upPressed: pressed.up };
+    const now = { leftHeld: anyIsDown(left), rightHeld: anyIsDown(right), upHeld: anyIsDown(up), downHeld: anyIsDown(down), jumpHeld: anyIsDown(jump), jumpPressed: pressed.jump, upPressed: pressed.up };
     pressed.jump = false;
     pressed.up = false;
     return now;
