@@ -11,9 +11,9 @@
       "airSteering": 100,
       "airBraking": 100
     },
-    "highest": 1.998073383221858,
-    "fastest": 8.38906142333417,
-    "frames": 14,
+    "highest": 1.9999223594996218,
+    "fastest": 8.722394756667503,
+    "frames": 58,
     "sheet": "pose-held-current.png"
   },
   "held-smallJump": {
@@ -28,9 +28,9 @@
       "airSteering": 6,
       "airBraking": 0
     },
-    "highest": 0.6960585574921944,
-    "fastest": 5.083558563128689,
-    "frames": 10,
+    "highest": 0.6999436925511606,
+    "fastest": 5.450225229795355,
+    "frames": 39,
     "sheet": "pose-held-smallJump.png"
   },
   "tap-current": {
@@ -45,9 +45,9 @@
       "airSteering": 100,
       "airBraking": 100
     },
-    "highest": 1.01479181022211,
-    "fastest": 4.666666666666666,
-    "frames": 5,
+    "highest": 0.28703128588886084,
+    "fastest": 3.3333333333333335,
+    "frames": 13,
     "sheet": "pose-tap-current.png"
   },
   "long-fall": {
@@ -64,7 +64,7 @@
     },
     "highest": 0,
     "fastest": 10,
-    "frames": 25,
+    "frames": 121,
     "sheet": "pose-long-fall.png"
   },
   "results": [
@@ -75,17 +75,17 @@
     {
       "name": "held-current: played under the current tuning from start to end, recorded into pose-held-current.png",
       "pass": true,
-      "details": "jump height 2 m, highest 2.00 m, fastest fall 8.4 m/s"
+      "details": "jump height 2 m, highest 2.00 m, fastest fall 8.7 m/s"
     },
     {
       "name": "held-smallJump: played under the smallJump tuning from start to end, recorded into pose-held-smallJump.png",
       "pass": true,
-      "details": "jump height 0.7 m, highest 0.70 m, fastest fall 5.1 m/s"
+      "details": "jump height 0.7 m, highest 0.70 m, fastest fall 5.5 m/s"
     },
     {
       "name": "tap-current: played under the current tuning from start to end, recorded into pose-tap-current.png",
       "pass": true,
-      "details": "jump height 2 m, highest 1.01 m, fastest fall 4.7 m/s"
+      "details": "jump height 2 m, highest 0.29 m, fastest fall 3.3 m/s"
     },
     {
       "name": "long-fall: played under the current tuning from start to end, recorded into pose-long-fall.png",
