@@ -32,6 +32,13 @@ describe('promptsFor', () => {
     expect(promptsFor({ ...KEYS, itemUse: null, interaction: null, flyingHint: 'takeItToAnEdge' })).toEqual([{ key: null, words: 'take the airplane to the edge' }]);
   });
 
+  it('says in green, in words with no key, that the airplane is ready once it sits on the edge, above the key that boards it', () => {
+    expect(promptsFor({ ...KEYS, itemUse: null, interaction: 'board', flyingHint: 'readyToBoard' })).toEqual([
+      { key: null, words: 'the airplane is ready', colour: 'green' },
+      { key: 'K', words: 'board the airplane' },
+    ]);
+  });
+
   it('says what would be made, by the name the sim gives it', () => {
     expect(promptsFor({ ...KEYS, itemUse: 'craft', wouldMake: 'paper airplane', interaction: null })).toEqual([{ key: 'J', words: 'fold a paper airplane' }]);
   });
@@ -71,6 +78,13 @@ describe('promptStrokes', () => {
     const hintPoints = withAKey.slice(0, alone.length).flatMap((stroke) => stroke.points);
     expect(Math.max(...hintPoints.map((point) => point.y))).toBeLessThan(Math.min(...box!.points.map((point) => point.y)));
     expect(Math.min(...hintPoints.map((point) => point.x))).toBeCloseTo(Math.min(...box!.points.map((point) => point.x)), 0);
+  });
+
+  it('writes a prompt in its coloured pencil, and only that prompt', () => {
+    const strokes = promptStrokes([{ key: null, words: 'the airplane is ready', colour: 'green' }, { key: 'K', words: 'board the airplane' }], CAMERA_SEES);
+    const ready = written('the airplane is ready', WRITING).strokes.length;
+    expect(strokes.slice(0, ready).every((stroke) => stroke.colour === 'green')).toBe(true);
+    expect(strokes.slice(ready).every((stroke) => stroke.colour === undefined)).toBe(true);
   });
 
   it('gives a key with a long name a box as wide as the name needs, and puts the words after it', () => {

@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
 import { worldSeenBy } from '../cameraView';
 import { boilFrameAt, handDrawnPath, type PencilPoint } from './handDrawn';
-import { PENCIL } from './pencil';
-import type { Stroke, StrokeLayer } from './stroke';
+import { COLOURED_PENCILS, PENCIL } from './pencil';
+import type { ColouredPencil, Stroke, StrokeLayer } from './stroke';
 
 /**
  * The technique (ADR 0002): a Phaser Graphics object per layer. A stroke is
@@ -18,7 +18,8 @@ export function graphicsStrokeLayer(scene: Phaser.Scene): StrokeLayer {
   const layerNumber = layersMade;
   layersMade += 1;
   const graphics = scene.add.graphics();
-  const colour = Phaser.Display.Color.HexStringToColor(PENCIL.colour).color;
+  const graphite = Phaser.Display.Color.HexStringToColor(PENCIL.colour).color;
+  const colouredPencils = { green: Phaser.Display.Color.HexStringToColor(COLOURED_PENCILS.green).color } satisfies Record<ColouredPencil, number>;
   let strokes: readonly Stroke[] = [];
   /** What the last drawing was made from. Nothing is redrawn while all of it is the same. */
   let drawn: { strokes: readonly Stroke[]; boilFrame: number; seenX: number; seenY: number; seenWidth: number; seenHeight: number } | undefined;
@@ -35,8 +36,9 @@ export function graphicsStrokeLayer(scene: Phaser.Scene): StrokeLayer {
       point.x > seen.x - OFF_SCREEN_MARGIN && point.x < seen.x + seen.width + OFF_SCREEN_MARGIN && point.y > seen.y - OFF_SCREEN_MARGIN && point.y < seen.y + seen.height + OFF_SCREEN_MARGIN;
 
     graphics.clear();
-    graphics.fillStyle(colour, 1);
     strokes.forEach((stroke, index) => {
+      const colour = stroke.colour === undefined ? graphite : colouredPencils[stroke.colour];
+      graphics.fillStyle(colour, 1);
       // Numbered by layer, so two layers' lines do not wobble alike.
       const path = handDrawnPath(stroke, { strokeIndex: layerNumber * STROKES_PER_LAYER + index, boilFrame });
       path.forEach((point, pointIndex) => {

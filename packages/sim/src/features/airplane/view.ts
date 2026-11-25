@@ -2,7 +2,7 @@ import type { Point } from '../../content/levels/types';
 import { Sim, type SimHandle } from '../../core/sim';
 import type { SteerDirection } from './commands';
 import { AIRPLANE, FLIGHT } from './defs';
-import { hasYetToTakeItToAnEdge, sitsOnAnEdge } from './index';
+import { hasYetToTakeItToAnEdge, isReadyToBoard, sitsOnAnEdge } from './index';
 import { airplaneSlice } from './state';
 
 /** The airplane in the world as a view needs it. How it is folded and how it gets from the floor to his hands are the view's business. */
@@ -58,10 +58,18 @@ export function steeringAskedOf(handle: SimHandle): SteerDirection {
 }
 
 /**
- * What he has still to be told about flying the airplane he has, or null when there is nothing to tell: that it has
- * to be taken to an edge, until he has boarded one since the level started. For a view that says so beside the keys.
+ * What he is told about the airplane he has before he has flown it, for a view that says so beside the keys:
+ * `takeItToAnEdge` until it sits on an edge, then `readyToBoard` while it sits there, where the key boards it.
  */
-export function flyingHintOf(handle: SimHandle): 'takeItToAnEdge' | null {
+export type FlyingHint = 'takeItToAnEdge' | 'readyToBoard';
+
+/**
+ * What he has still to be told about flying the airplane he has, or null when there is nothing to tell: that it has
+ * to be taken to an edge, and once it sits on one that it is ready, until he has boarded one since the level started.
+ */
+export function flyingHintOf(handle: SimHandle): FlyingHint | null {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
-  return hasYetToTakeItToAnEdge(handle) ? 'takeItToAnEdge' : null;
+  if (hasYetToTakeItToAnEdge(handle)) return 'takeItToAnEdge';
+  if (isReadyToBoard(handle)) return 'readyToBoard';
+  return null;
 }

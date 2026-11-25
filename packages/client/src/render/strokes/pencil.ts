@@ -26,3 +26,11 @@ export const PENCIL = {
   /** How far past its start a closed loop goes on. */
   loopOverlap: 9,
 } as const;
+
+/**
+ * The coloured pencils, for the few lines that must stand out from the graphite: green for what he got right. Muted
+ * like a pencil, not a marker, so they still read as drawn on the paper.
+ */
+export const COLOURED_PENCILS = {
+  green: '#3f8a3a',
+} as const;

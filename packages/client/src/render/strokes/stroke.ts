@@ -1,3 +1,5 @@
+import type { COLOURED_PENCILS } from './pencil';
+
 /**
  * What a caller asks the pencil for. Everything on screen that is a pencil
  * line is a `Stroke`: the path the pencil follows and how thick the line is.
@@ -18,7 +20,12 @@ export interface Stroke {
   readonly thickness: number;
   /** True for a loop (a head): the pencil comes back past where it started. */
   readonly closed?: boolean;
+  /** A coloured pencil for the few lines that must stand out from the graphite (`COLOURED_PENCILS`); graphite when absent. */
+  readonly colour?: ColouredPencil;
 }
+
+/** The coloured pencils there are, by name. What each looks like is `COLOURED_PENCILS` in `./pencil`. */
+export type ColouredPencil = keyof typeof COLOURED_PENCILS;
 
 /**
  * A set of strokes that is drawn every frame. `show` replaces what the layer
