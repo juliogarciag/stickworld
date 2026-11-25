@@ -1,4 +1,4 @@
-import type { AirplaneView, Command, CraftingView, Def, FallenItemView, FlagView, GameView, InteractionMeaning, ItemSlot, ItemUseMeaning, LetterView, Level, NoteView, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
+import type { AirplaneView, Command, CraftingView, Def, FallenItemView, FlagView, FlyingHint, GameView, InteractionMeaning, ItemSlot, ItemUseMeaning, LetterView, Level, NoteView, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
 import { airplaneOf, craftingOf, defs, fallenItemOf, flagOf, flyingHintOf, gameOf, hashSnapshot, interactionOf, itemSlotsOf, itemUseOf, letterOf, levelOf, notesOf, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf } from '@stickworld/sim';
 import type Phaser from 'phaser';
 import { itemSlotBox, type Rectangle } from './hud/itemSlots';
@@ -51,7 +51,7 @@ export interface GameDebugApi {
   /** The airplane in the world as the sim has it right now, or undefined while there is none. */
   airplane(): AirplaneView | undefined;
   /** What he has still to be told about flying the airplane he has, as the sim has it right now, or null. */
-  flyingHint(): 'takeItToAnEdge' | null;
+  flyingHint(): FlyingHint | null;
   /** What using the held item would do right now, or null. */
   itemUse(): ItemUseMeaning | null;
   /** What interacting with the world would do right now, or null. */

@@ -244,12 +244,35 @@ describe('that the airplane has to be taken to an edge', () => {
     expect(flyingHintOf(sim)).toBe('takeItToAnEdge');
   });
 
-  it('is no longer said once it sits on an edge, where the key boards it', () => {
+  it('turns into its being ready the moment it sits on an edge, where the key boards it', () => {
     const sim = carryingTheAirplane();
     walkTo(sim, EDGE - AIRPLANE.putDownAhead - AIRPLANE.length / 4);
+    expect(flyingHintOf(sim)).toBe('takeItToAnEdge');
     sim.step([INTERACT]);
     expect(airplaneOf(sim)).toMatchObject({ state: 'resting', onAnEdge: true });
     expect(interactionOf(sim)).toBe('board');
+    expect(flyingHintOf(sim)).toBe('readyToBoard');
+  });
+
+  it('says it is ready for as long as it sits on the edge, him away from it included', () => {
+    const sim = carryingTheAirplane();
+    walkTo(sim, EDGE - AIRPLANE.putDownAhead - AIRPLANE.length / 4);
+    sim.step([INTERACT]);
+    walkTo(sim, EDGE - AIRPLANE.putDownAhead - AIRPLANE.reach - 1);
+    expect(interactionOf(sim)).toBeNull();
+    expect(flyingHintOf(sim)).toBe('readyToBoard');
+    walkTo(sim, EDGE - AIRPLANE.putDownAhead - AIRPLANE.length / 4);
+    expect(interactionOf(sim)).toBe('board');
+    expect(flyingHintOf(sim)).toBe('readyToBoard');
+  });
+
+  it('is not said to be ready once he has boarded it', () => {
+    const sim = carryingTheAirplane();
+    walkTo(sim, EDGE - AIRPLANE.putDownAhead - AIRPLANE.length / 4);
+    sim.step([INTERACT]);
+    expect(flyingHintOf(sim)).toBe('readyToBoard');
+    sim.step([INTERACT]);
+    expect(stickManOf(sim).action).toBe('seated');
     expect(flyingHintOf(sim)).toBeNull();
   });
 

@@ -18,7 +18,12 @@ export interface Stroke {
   readonly thickness: number;
   /** True for a loop (a head): the pencil comes back past where it started. */
   readonly closed?: boolean;
+  /** A coloured pencil for the few lines that must stand out from the graphite (`COLOURED_PENCILS`); graphite when absent. */
+  readonly colour?: ColouredPencil;
 }
+
+/** The coloured pencils there are, by name. What each looks like is `COLOURED_PENCILS` in `./pencil`. */
+export type ColouredPencil = 'green';
 
 /**
  * A set of strokes that is drawn every frame. `show` replaces what the layer
