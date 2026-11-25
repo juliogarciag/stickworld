@@ -14,13 +14,13 @@ import { movementTuningSlice, playerSlice, type PlayerState } from './state';
  * Walking off an edge he starts with the sideways speed he had, and the keys
  * steer it, or with none held he slows down (`airSteering`, `airBraking`):
  * almost at once in the game as it is. In a jump they move him as they do on
- * the floor. The end of a floor line pushes
- * him aside as he drops past it. Seated in the airplane he does none of
- * that until a jump takes him out of it. Under a flag he has reached he
- * stands and cheers; once the game is over and he is done cheering he walks
- * and jumps again, but not off the line he is on. Letting go of the jump
- * while he rises cuts the rise short by `letGoCut`, which in the game as it is
- * ends the rise there and then: a jump is as high as the key is held. How fast he walks, how he jumps and falls is
+ * the floor. The end of a floor line pushes him aside as he drops past it.
+ * Seated in the airplane he does none of that until a jump takes him out of
+ * it. Under a flag he has reached he stands and cheers; once the game is over
+ * and he is done cheering he walks and jumps again, but not off the line he is
+ * on. Letting go of the jump while he rises cuts the rise short by `letGoCut`,
+ * which in the game as it is ends the rise there and then: a jump is as high
+ * as the key is held. How fast he walks, how he jumps and falls is
  * `movementTuningSlice`, which only a dev build changes (ADR 0006). Plain
  * arithmetic on the level's floor segments; no physics library.
  */

@@ -204,8 +204,8 @@ describe('the stick man in a long fall', () => {
     const { fallGravity, jumpHeight, fastestFall } = MOVEMENT_PRESETS.current;
     const landsAt = Math.sqrt(2 * fallGravity * jumpHeight);
     expect(BODY.speedOfALongFall.from).toBeGreaterThan(landsAt);
-    expect(BODY.speedOfALongFall.from).toBeLessThan(landsAt * 1.1);
-    expect(BODY.speedOfALongFall.to).toBeLessThan(fastestFall);
+    expect(BODY.speedOfALongFall.from).toBeLessThan(landsAt * 1.05);
+    expect(BODY.speedOfALongFall.to).toBeLessThanOrEqual(fastestFall);
   });
 
   it('is not what he does on the floor, however the sim has his speed', () => {

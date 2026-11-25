@@ -201,7 +201,7 @@ describe('dropping past the end of a floor line', () => {
     for (let tick = 1; tick < besideTheEnd.length; tick += 1) expect(Math.abs(besideTheEnd[tick]! - besideTheEnd[tick - 1]!)).toBeLessThan(STICK_MAN_WIDTH / 4);
   });
 
-  it('is stopped by the end of a line he drifts into, and goes under it once his head has dropped below it', () => {
+  it('is stopped by the end of a line he walks into in a fall, and goes under it once his head has dropped below it', () => {
     const sim = createSim({ level: 2 });
     const farEnd = levelById(2).floor[1]!.from.x;
     sim.step([WALK_RIGHT]);

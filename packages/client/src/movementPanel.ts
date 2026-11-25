@@ -85,7 +85,9 @@ interface Knob {
   readonly step: number;
 }
 
-const STORAGE_KEY = 'stickworld.movementPanel';
+// A new name when what `current` plays changes (#35, the 2 m jump): a choice kept under the old name could hold the old
+// jump's numbers under `current`, and would keep playing them as if they were the game's own.
+const STORAGE_KEY = 'stickworld.movementPanel.2';
 const RESEND_EVERY_MS = 250;
 
 const PRESET_LABELS: Record<MovementPresetName, string> = { current: 'current (2 m jump)', smallJump: 'small jump (the old one)', ninetiesPlatformer: '90s platformer' };

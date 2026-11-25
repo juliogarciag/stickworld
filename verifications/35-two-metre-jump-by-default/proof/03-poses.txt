@@ -1,0 +1,10 @@
+PASS  dev server up, started by this run
+PASS  held-current: played under the current tuning from start to end, recorded into pose-held-current.png  (jump height 2 m, highest 2.00 m, fastest fall 8.4 m/s)
+PASS  held-smallJump: played under the smallJump tuning from start to end, recorded into pose-held-smallJump.png  (jump height 0.7 m, highest 0.70 m, fastest fall 5.1 m/s)
+PASS  tap-current: played under the current tuning from start to end, recorded into pose-tap-current.png  (jump height 2 m, highest 1.01 m, fastest fall 4.7 m/s)
+PASS  long-fall: played under the current tuning from start to end, recorded into pose-long-fall.png  (jump height 2 m, highest 0.00 m, fastest fall 10.0 m/s)
+PASS  the held jumps are the 2 m one and the old 0.7 m one
+PASS  the long fall reaches his fastest fall, where the long-fall pose is  (10 m/s)
+PASS  no page errors
+
+ALL 8 CHECKS PASSED

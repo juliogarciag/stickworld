@@ -1,0 +1,11 @@
+PASS  dev server up, started by this run
+PASS  a fresh game starts on level 1
+PASS  level 1 finished: level 2 starts
+PASS  level 2: walking into the gap is refused, he falls and starts again
+PASS  level 2: a held jump crosses the gap and reaches the flag  (feet 2.00 m up over the gap)
+PASS  level 3: a full running jump at the edge falls into the gap and the level starts again  (feet 1.99 m up, furthest x 12.71, back at x 2.00)
+PASS  level 3: the airplane, boarded and climbed, crosses the gap  (stood up at x 23.17 (gap ends at 19))
+PASS  level 3: the flag is reached and the game ends
+PASS  no page errors
+
+ALL 9 CHECKS PASSED

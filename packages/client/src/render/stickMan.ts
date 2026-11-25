@@ -177,10 +177,10 @@ const BODY = {
    * A fall that goes on past where a jump would have landed: his arms are thrown up and out and his legs hang apart.
    * He gets into it between these two falling speeds, in metres per second. The lower one is just above the speed a
    * held jump on level floor lands at (8.9 m/s for the 2 m jump), so no such jump ever shows it, and the higher one is
-   * under his fastest fall (10 m/s), so a long fall gets all the way into it.
+   * his fastest fall (10 m/s), so a long fall gets all the way into it.
    */
   longFall: { legs: [{ swing: 0.3, bend: 0.35 }, { swing: -0.3, bend: 0.3 }], arms: [{ swing: -2.0, bend: -0.15 }, { swing: 2.05, bend: 0.2 }], lean: 0 },
-  speedOfALongFall: { from: 9.2, to: 9.9 },
+  speedOfALongFall: { from: 9, to: 10 },
   /** Knees bent under him, feet where they were: how a landing is taken. `landingDepth` is how far into it the hardest landing goes. */
   landed: { legs: [{ swing: 0.5, bend: 1.0 }, { swing: 0.5, bend: 1.0 }], arms: [{ swing: -0.35, bend: 0.3 }, { swing: 0.5, bend: 0.5 }], lean: 0.12 },
   landingDepth: 0.55,

@@ -1,0 +1,110 @@
+{
+  "held-current": {
+    "tuning": {
+      "walkSpeed": 2.2,
+      "jumpHeight": 2,
+      "jumpHeightCarrying": 0.7,
+      "riseGravity": 20,
+      "fallGravity": 20,
+      "fastestFall": 10,
+      "letGoCut": 1,
+      "airSteering": 100,
+      "airBraking": 100
+    },
+    "highest": 1.998073383221858,
+    "fastest": 8.38906142333417,
+    "frames": 14,
+    "sheet": "pose-held-current.png"
+  },
+  "held-smallJump": {
+    "tuning": {
+      "walkSpeed": 2.2,
+      "jumpHeight": 0.7,
+      "jumpHeightCarrying": 0.45,
+      "riseGravity": 22,
+      "fallGravity": 22,
+      "fastestFall": 1000,
+      "letGoCut": 0,
+      "airSteering": 6,
+      "airBraking": 0
+    },
+    "highest": 0.6960585574921944,
+    "fastest": 5.083558563128689,
+    "frames": 10,
+    "sheet": "pose-held-smallJump.png"
+  },
+  "tap-current": {
+    "tuning": {
+      "walkSpeed": 2.2,
+      "jumpHeight": 2,
+      "jumpHeightCarrying": 0.7,
+      "riseGravity": 20,
+      "fallGravity": 20,
+      "fastestFall": 10,
+      "letGoCut": 1,
+      "airSteering": 100,
+      "airBraking": 100
+    },
+    "highest": 1.01479181022211,
+    "fastest": 4.666666666666666,
+    "frames": 5,
+    "sheet": "pose-tap-current.png"
+  },
+  "long-fall": {
+    "tuning": {
+      "walkSpeed": 2.2,
+      "jumpHeight": 2,
+      "jumpHeightCarrying": 0.7,
+      "riseGravity": 20,
+      "fallGravity": 20,
+      "fastestFall": 10,
+      "letGoCut": 1,
+      "airSteering": 100,
+      "airBraking": 100
+    },
+    "highest": 0,
+    "fastest": 10,
+    "frames": 25,
+    "sheet": "pose-long-fall.png"
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "held-current: played under the current tuning from start to end, recorded into pose-held-current.png",
+      "pass": true,
+      "details": "jump height 2 m, highest 2.00 m, fastest fall 8.4 m/s"
+    },
+    {
+      "name": "held-smallJump: played under the smallJump tuning from start to end, recorded into pose-held-smallJump.png",
+      "pass": true,
+      "details": "jump height 0.7 m, highest 0.70 m, fastest fall 5.1 m/s"
+    },
+    {
+      "name": "tap-current: played under the current tuning from start to end, recorded into pose-tap-current.png",
+      "pass": true,
+      "details": "jump height 2 m, highest 1.01 m, fastest fall 4.7 m/s"
+    },
+    {
+      "name": "long-fall: played under the current tuning from start to end, recorded into pose-long-fall.png",
+      "pass": true,
+      "details": "jump height 2 m, highest 0.00 m, fastest fall 10.0 m/s"
+    },
+    {
+      "name": "the held jumps are the 2 m one and the old 0.7 m one",
+      "pass": true
+    },
+    {
+      "name": "the long fall reaches his fastest fall, where the long-fall pose is",
+      "pass": true,
+      "details": "10 m/s"
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

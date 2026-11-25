@@ -1,0 +1,90 @@
+{
+  "space": {
+    "held": 1.9999223594996218,
+    "tapped": 0.794427190999916,
+    "fifthOfASecond": 1.6740280648886645
+  },
+  "ArrowUp": {
+    "held": 1.9869536453884828,
+    "tapped": 0.794427190999916
+  },
+  "w": {
+    "held": 1.9999223594996218,
+    "tapped": 0.6759115480554856
+  },
+  "blurred": 1.3888543819998316,
+  "fall": {
+    "ticksToStop": 6,
+    "fastest": 10
+  },
+  "jumpOut": {
+    "tapped": 0.6759115480554856,
+    "held": 1.9869536453884822
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "a fresh game plays the owner's numbers",
+      "pass": true,
+      "details": "{\"walkSpeed\":2.2,\"jumpHeight\":2,\"jumpHeightCarrying\":0.7,\"riseGravity\":20,\"fallGravity\":20,\"fastestFall\":10,\"letGoCut\":1,\"airSteering\":100,\"airBraking\":100}"
+    },
+    {
+      "name": "Space held: his feet get 2 m up",
+      "pass": true,
+      "details": "2.000 m"
+    },
+    {
+      "name": "Space tapped: a short hop",
+      "pass": true,
+      "details": "0.794 m"
+    },
+    {
+      "name": "Space held a fifth of a second: between the hop and the full jump",
+      "pass": true,
+      "details": "1.674 m"
+    },
+    {
+      "name": "ArrowUp held jumps 2 m, tapped hops",
+      "pass": true,
+      "details": "1.987 m held, 0.794 m tapped"
+    },
+    {
+      "name": "w held jumps 2 m, tapped hops",
+      "pass": true,
+      "details": "2.000 m held, 0.676 m tapped"
+    },
+    {
+      "name": "a window that loses focus mid-jump lets go of it: the rise stops short",
+      "pass": true,
+      "details": "1.389 m"
+    },
+    {
+      "name": "the key still down and repeating when focus comes back does not jump him again",
+      "pass": true,
+      "details": "standing"
+    },
+    {
+      "name": "let go over the edge, he stops sideways within a tenth of a second",
+      "pass": true,
+      "details": "6 ticks"
+    },
+    {
+      "name": "he never falls faster than 10 m/s, and gets there",
+      "pass": true,
+      "details": "10 m/s"
+    },
+    {
+      "name": "jumping out of the airplane: a tap hops, held it is a full jump",
+      "pass": true,
+      "details": "0.676 m tapped, 1.987 m held"
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}
