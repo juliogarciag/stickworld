@@ -1,0 +1,11 @@
+PASS  before: dev server up, started by this run
+PASS  after: dev server up, started by this run
+PASS  paper-grain: both tiles were read whole and are the same size  (1024x1024 before, 1024x1024 after)
+PASS  paper-grain: the tile that was read is painted paper, not a blank  (845 different colours)
+PASS  paper-grain: the tile is the same before and after, pixel for pixel  (0 of 1048576 pixels differ; largest difference in a channel 0 of 255; sha256 6d4d20dd3e4d013a)
+PASS  paper-tooth: both tiles were read whole and are the same size  (256x256 before, 256x256 after)
+PASS  paper-tooth: the tile that was read is painted paper, not a blank  (76 different colours)
+PASS  paper-tooth: the tile is the same before and after, pixel for pixel  (0 of 65536 pixels differ; largest difference in a channel 0 of 255; sha256 9abea0e047bdaff3)
+PASS  no page errors
+
+ALL 9 CHECKS PASSED

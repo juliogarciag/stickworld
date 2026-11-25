@@ -1,0 +1,158 @@
+{
+  "machine": "Apple M1 Max, darwin arm64",
+  "runs": 7,
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "deviceScaleFactor": 2,
+  "before": {
+    "commit": "6bc00d12ce2180434094aef98ed5dcc28094e12e"
+  },
+  "browser": "159.0.8154.6",
+  "measured": {
+    "before": {
+      "firstFrameMs": 1964.6000000238419,
+      "blockedBeforeFirstFrameMs": 1879,
+      "longestTaskBeforeFirstFrameMs": 1706,
+      "paintGrainMs": 1774.777,
+      "everyRun": {
+        "firstFrameMs": [
+          3512,
+          1821.6999999284744,
+          1853.3999999761581,
+          1868.2999999523163,
+          1964.6000000238419,
+          2047.5,
+          2056.899999976158
+        ],
+        "longTasksMs": [
+          [
+            1433,
+            1690,
+            175
+          ],
+          [
+            74,
+            1681
+          ],
+          [
+            87,
+            1655
+          ],
+          [
+            85,
+            1706
+          ],
+          [
+            79,
+            1800
+          ],
+          [
+            90,
+            1863
+          ],
+          [
+            92,
+            1874
+          ]
+        ],
+        "paintGrainMs": [
+          1976.837,
+          1954.434,
+          1764.78,
+          1687.152,
+          1774.777,
+          1902.442,
+          1768.295
+        ]
+      }
+    },
+    "after": {
+      "firstFrameMs": 259.5,
+      "blockedBeforeFirstFrameMs": 171,
+      "longestTaskBeforeFirstFrameMs": 90,
+      "paintGrainMs": 60.966,
+      "everyRun": {
+        "firstFrameMs": [
+          227.89999997615814,
+          250.29999995231628,
+          316.7999999523163,
+          271.1999999284744,
+          259.5,
+          257.7000000476837,
+          280.10000002384186
+        ],
+        "longTasksMs": [
+          [
+            82,
+            72
+          ],
+          [
+            89,
+            81
+          ],
+          [
+            99,
+            88
+          ],
+          [
+            90,
+            83
+          ],
+          [
+            90,
+            81
+          ],
+          [
+            90,
+            80
+          ],
+          [
+            100,
+            88
+          ]
+        ],
+        "paintGrainMs": [
+          61.536,
+          58.93,
+          55.601,
+          60.966,
+          61.09,
+          63.188,
+          54.546
+        ]
+      }
+    }
+  },
+  "saved": {
+    "paintGrainMs": 1713.8110000000001,
+    "firstFrameMs": 1705.1000000238419,
+    "blockedBeforeFirstFrameMs": 1708
+  },
+  "results": [
+    {
+      "name": "before: the game drew a frame on every load, and paintGrain was in every profile",
+      "pass": true
+    },
+    {
+      "name": "after: the game drew a frame on every load, and paintGrain was in every profile",
+      "pass": true
+    },
+    {
+      "name": "paintGrain takes less than a tenth of what it took",
+      "pass": true,
+      "details": "1774.8 ms before, 61.0 ms after"
+    },
+    {
+      "name": "the first frame comes earlier by what paintGrain no longer costs",
+      "pass": true,
+      "details": "1965 ms before, 260 ms after, 1705 ms earlier"
+    },
+    {
+      "name": "the page is blocked for less before the first frame",
+      "pass": true,
+      "details": "1879 ms of long tasks before, 171 ms after"
+    }
+  ]
+}
