@@ -5,6 +5,7 @@ import { sendGameCommands } from '../input/gameKeys';
 import { sendItemSlotCommands } from '../input/itemSlotKeys';
 import { keysToCommands, type KeysNow } from '../input/playerCommands';
 import { watchPlayerKeys } from '../input/playerKeys';
+import { frameSeconds } from '../loop/frameSeconds';
 import type { GameLoop } from '../loop/GameLoop';
 import { followStickManWith } from '../render/levelCamera';
 import type { PageTurn } from '../render/pageTurn';
@@ -45,7 +46,7 @@ export class LevelScene extends Phaser.Scene {
 
   override update(_time: number, deltaMs: number): void {
     for (const command of this.commandsFor({ keys: this.keysNow(), sim: this.loop.sim })) this.loop.queueCommand(command);
-    const seconds = deltaMs / 1000;
+    const seconds = frameSeconds(deltaMs);
     this.loop.advanceBy(seconds);
 
     const camera = this.cameras.main;
