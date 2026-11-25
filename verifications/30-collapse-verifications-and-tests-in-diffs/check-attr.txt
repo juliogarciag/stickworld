@@ -1,0 +1,24 @@
+# git check-attr linguist-generated, run in the worktree of #30 on 2026-11-25T17:55Z
+# Expected: set for verifications (a ticket's folder, _template, this folder) and test files; unspecified for source and config.
+$ git check-attr linguist-generated -- verifications/1-look-test/00-before.mjs
+verifications/1-look-test/00-before.mjs: linguist-generated: true
+$ git check-attr linguist-generated -- verifications/_template/README.md
+verifications/_template/README.md: linguist-generated: true
+$ git check-attr linguist-generated -- verifications/_template/pnpm-lock.yaml
+verifications/_template/pnpm-lock.yaml: linguist-generated: true
+$ git check-attr linguist-generated -- verifications/30-collapse-verifications-and-tests-in-diffs/check-attr.txt
+verifications/30-collapse-verifications-and-tests-in-diffs/check-attr.txt: linguist-generated: true
+$ git check-attr linguist-generated -- packages/client/src/hud/handwriting.test.ts
+packages/client/src/hud/handwriting.test.ts: linguist-generated: true
+$ git check-attr linguist-generated -- packages/sim/src/core/determinism.test.ts
+packages/sim/src/core/determinism.test.ts: linguist-generated: true
+$ git check-attr linguist-generated -- packages/sim/src/index.ts
+packages/sim/src/index.ts: linguist-generated: unspecified
+$ git check-attr linguist-generated -- packages/client/src/main.ts
+packages/client/src/main.ts: linguist-generated: unspecified
+$ git check-attr linguist-generated -- vitest.config.ts
+vitest.config.ts: linguist-generated: unspecified
+$ git check-attr linguist-generated -- AGENTS.md
+AGENTS.md: linguist-generated: unspecified
+$ git check-attr linguist-generated -- .gitattributes
+.gitattributes: linguist-generated: unspecified
