@@ -1,0 +1,35 @@
+
+> stickworld@0.0.0 check <repo>
+> pnpm test && pnpm typecheck && pnpm lint
+
+
+> stickworld@0.0.0 test <repo>
+> vitest run
+
+
+ RUN  v5.1.1 <repo>
+
+
+ Test Files  40 passed (40)
+      Tests  393 passed (393)
+   Start at  12:49:07
+   Duration  2.51s (tests 58%, transform 19%, import 19%, worker 4%)
+
+    Isolate  40 workers spawned · ~196ms startup each (spawn + environment, per file)
+             at least ~675ms faster with isolate: false — reuses workers across files instead of one per file
+
+
+> stickworld@0.0.0 typecheck <repo>
+> tsc -p tsconfig.json && pnpm -r typecheck
+
+(node:62403) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Scope: 2 of 3 workspace projects
+packages/sim typecheck$ tsc -p tsconfig.json
+packages/sim typecheck: Done
+packages/client typecheck$ tsc -p tsconfig.json && tsc -p tsconfig.node.json
+packages/client typecheck: Done
+
+> stickworld@0.0.0 lint <repo>
+> eslint .
+

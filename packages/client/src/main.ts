@@ -22,6 +22,9 @@ function boot(): void {
     // In the order they are drawn: the level, over it the sheet that is being turned away, over both what is not on the paper.
     scene: [new LevelScene(loop, pageTurn), new TurnedSheetScene(pageTurn), new HudScene(loop, pageTurn)],
     scale: windowViewportConfig(),
+    // The game has no sound, and making Phaser's audio context held up the first frame by a third of a second.
+    // Take this out when the game gets sound.
+    audio: { noAudio: true },
   });
   keepCanvasAtWindowSize(game);
   if (import.meta.env.DEV) exposeDebugApi({ loop, game, pageTurn });
