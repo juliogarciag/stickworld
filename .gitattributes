@@ -1,0 +1,5 @@
+# Collapsed behind "Load diff" in a PR's Files changed tab and left out of the
+# language stats, so a review shows the game code first. They still count in
+# the PR's file and line totals, and they are still in the repository.
+verifications/** linguist-generated=true
+**/*.test.ts linguist-generated=true
