@@ -2,15 +2,15 @@ PASS  dev server up, started by this run
 PASS  choosing the 90s preset reaches the sim: a jump about twice his height, cut whole by letting go  ({"walkSpeed":5,"jumpHeight":3.6,"jumpHeightCarrying":2.4,"riseGravity":68,"fallGravity":80,"fastestFall":25,"letGoCut":1,"airSteering":1000,"airBraking":1000})
 PASS  held, the jump lifts his feet to the preset height  (3.60 m, 2.00 of his height)
 PASS  it rises fast: at the top in less than 0.4 s  (0.350 s)
-PASS  a tap is a short hop, a short hold is in between  (tap 0.36 m, 120 ms 2.55 m, held 3.60 m)
+PASS  a tap is a short hop, a short hold is in between  (tap 0.36 m, 120 ms 2.35 m, held 3.60 m)
 PASS  in the air he turns at once and stops at once  (on the tick of the turn -5 m/s, on the tick of the stop jumping 0 m/s)
 PASS  moving the jump height knob to 2 m changes the next jump at once  (1.998 m)
-PASS  an arrow key pressed in a knob does not walk him  (x 2.0833333333333335 then 2.0833333333333335)
+PASS  an arrow key pressed in a knob does not walk him  (x 2.166666666666667 then 2.166666666666667)
 PASS  a reload keeps what was chosen  ({"walkSpeed":5,"jumpHeight":2,"jumpHeightCarrying":2.4,"riseGravity":68,"fallGravity":80,"fastestFall":25,"letGoCut":1,"airSteering":1000,"airBraking":1000})
 PASS  a new sim (loadLevel) starts with the current preset and is given the chosen tuning again  (0.7 m, then 2 m)
 PASS  after the panel title is clicked, space still jumps him and does not fold the panel  (2.00 m)
 PASS  "back to the preset" puts the 90s numbers back  (jump height 3.6 m)
-PASS  the 2 m jump preset: held, 2 m; tapped, a short hop  (held 2.00 m, tapped 0.15 m)
+PASS  the 2 m jump preset: held, 2 m; tapped, a short hop  (held 2.00 m, tapped 0.29 m)
 PASS  choosing "current" again gives back the game as it is
 PASS  no page errors
 
