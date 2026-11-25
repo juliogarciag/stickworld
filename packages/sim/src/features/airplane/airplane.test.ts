@@ -93,6 +93,12 @@ describe('lifting, carrying and putting down', () => {
     expect(PLAYER.jumpHeightCarrying).toBeLessThanOrEqual(PLAYER.jumpHeight);
   });
 
+  it('jumps with it as high as the movement tuning says, when that is tuned', () => {
+    const sim = carryingTheAirplane();
+    sim.step([{ type: 'player/tuneMovement', tuning: { jumpHeightCarrying: 1.5 } }]);
+    expect(heightOfAJump(sim)).toBeCloseTo(1.5, 1);
+  });
+
   it('stays over his head through a jump on the floor', () => {
     const sim = carryingTheAirplane();
     sim.step([{ type: 'player/jump' }]);

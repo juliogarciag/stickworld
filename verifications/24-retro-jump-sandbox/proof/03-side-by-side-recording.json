@@ -1,0 +1,51 @@
+{
+  "tunings": {
+    "current": {
+      "walkSpeed": 2.2,
+      "jumpHeight": 0.7,
+      "jumpHeightCarrying": 0.45,
+      "riseGravity": 22,
+      "fallGravity": 22,
+      "fastestFall": 1000,
+      "letGoCut": 0,
+      "airSteering": 6,
+      "airBraking": 0
+    },
+    "nineties": {
+      "walkSpeed": 5,
+      "jumpHeight": 3.6,
+      "jumpHeightCarrying": 2.4,
+      "riseGravity": 68,
+      "fallGravity": 80,
+      "fastestFall": 25,
+      "letGoCut": 1,
+      "airSteering": 1000,
+      "airBraking": 1000
+    }
+  },
+  "highest": {
+    "current": 0.6999436925511606,
+    "nineties": 3.597857788056532
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "left plays the current jump, right the 90s preset",
+      "pass": true,
+      "details": "0.7 m and 3.6 m"
+    },
+    {
+      "name": "the 90s jump went far higher than the current one on the same moves",
+      "pass": true,
+      "details": "0.70 m and 3.60 m"
+    },
+    {
+      "name": "the recording was written",
+      "pass": true,
+      "details": "proof/03-side-by-side.webm, 3352822 bytes"
+    }
+  ]
+}

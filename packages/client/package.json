@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
+    "lil-gui": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"

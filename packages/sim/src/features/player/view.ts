@@ -1,8 +1,9 @@
 import type { Point } from '../../content/levels/types';
 import { Sim, type SimHandle } from '../../core/sim';
 import type { WalkDirection } from './commands';
+import type { MovementTuning } from './defs';
 import { isFallingOffAnEdge, standsCheering, walkDirectionNow } from './index';
-import { playerSlice } from './state';
+import { movementTuningSlice, playerSlice } from './state';
 
 /** The stick man as a view needs him: where he is and what he is doing. Which way each limb points is the view's business. */
 export interface StickManView {
@@ -43,6 +44,11 @@ export function stickManOf(handle: SimHandle): StickManView {
     walkDirectionAsked: player.walkDirection,
     carrying: player.carrying,
   };
+}
+
+/** How he walks, jumps and falls right now: what the movement panel of a dev build shows and changes. */
+export function movementTuningOf(handle: SimHandle): MovementTuning {
+  return { ...simBehind(handle).stateOf(movementTuningSlice) };
 }
 
 // ---- Helpers ----
