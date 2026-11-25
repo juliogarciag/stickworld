@@ -7,7 +7,8 @@ import { keysAndWords } from './keysAndWords';
  * What the keys would do right now, written in a corner of the screen: the
  * key in a box and a word or two beside it. A key that would do nothing is
  * not shown. Above them, in words alone, what he has still to be told: that
- * the airplane goes to the edge, and in green once it is there that it is ready (`flyingHintOf`). What each action key would do is the sim's (`itemUseOf`,
+ * the airplane goes to the edge, and in green once it is there that it is
+ * ready (`flyingHintOf`). What each action key would do is the sim's (`itemUseOf`,
  * `interactionOf`), and so is whether he is seated in the airplane, where the
  * keys that fly it are shown; the words and where they are drawn are decided here.
  */
@@ -82,7 +83,7 @@ const INTERACTION_WORDS: Readonly<Record<InteractionMeaning, string>> = {
 
 /**
  * What he is told about the airplane before he has flown it, in words with no key: where to take it, then, in green,
- * that he got it there. The prompt under it says which key boards it.
+ * that he got it there. The keys under it say which one boards it.
  */
 const FLYING_HINTS: Readonly<Record<FlyingHint, Prompt>> = {
   takeItToAnEdge: { key: null, words: 'take the airplane to the edge' },

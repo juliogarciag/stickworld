@@ -80,6 +80,11 @@ export function hasYetToTakeItToAnEdge(sim: Sim): boolean {
   return floor.some((line) => floor.some((other) => other.from.x > line.to.x));
 }
 
+/** True while the airplane sits on an edge, where it is boarded from, and he has not boarded one since the level started. */
+export function isReadyToBoard(sim: Sim): boolean {
+  return !sim.stateOf(hasBoardedSlice) && sitsOnAnEdge(sim);
+}
+
 /** What using the held item does when it is the airplane, for `features/item`: it is put on the floor in front of him. */
 export function airplaneItemUse(sim: Sim) {
   const canPlace = selectedItemOf(sim) === AIRPLANE_ITEM_ID && sim.stateOf(playerSlice).onFloor && !sim.stateOf(airplaneSlice).inWorld;

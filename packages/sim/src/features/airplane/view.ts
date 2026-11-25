@@ -2,8 +2,8 @@ import type { Point } from '../../content/levels/types';
 import { Sim, type SimHandle } from '../../core/sim';
 import type { SteerDirection } from './commands';
 import { AIRPLANE, FLIGHT } from './defs';
-import { hasYetToTakeItToAnEdge, sitsOnAnEdge } from './index';
-import { airplaneSlice, hasBoardedSlice } from './state';
+import { hasYetToTakeItToAnEdge, isReadyToBoard, sitsOnAnEdge } from './index';
+import { airplaneSlice } from './state';
 
 /** The airplane in the world as a view needs it. How it is folded and how it gets from the floor to his hands are the view's business. */
 export interface AirplaneView {
@@ -70,6 +70,6 @@ export type FlyingHint = 'takeItToAnEdge' | 'readyToBoard';
 export function flyingHintOf(handle: SimHandle): FlyingHint | null {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
   if (hasYetToTakeItToAnEdge(handle)) return 'takeItToAnEdge';
-  if (!handle.stateOf(hasBoardedSlice) && sitsOnAnEdge(handle)) return 'readyToBoard';
+  if (isReadyToBoard(handle)) return 'readyToBoard';
   return null;
 }
