@@ -7,7 +7,7 @@
 import path from 'node:path';
 import { chromium } from 'playwright';
 import { PROOF, check, summarize, writeProof } from './lib.mjs';
-import { VIEWPORT, choosePreset, jumpWithKey, knob, movementTuning, openGame, openPanel, recordTicks, setKnob, startDevServer, ticksRecorded, waitForTicks, waitUntilStanding } from './jumps.mjs';
+import { VIEWPORT, choosePreset, jumpWithKey, knob, movementTuning, openGame, openPanel, panelIsOpen, recordTicks, setKnob, startDevServer, ticksRecorded, waitForTicks, waitUntilStanding } from './jumps.mjs';
 
 const STICK_MAN_HEIGHT_ROUNDING = 0.05;
 const results = [];
@@ -89,6 +89,19 @@ try {
   await page.waitForTimeout(600);
   const settled = await movementTuning(page);
   results.push(check('a new sim (loadLevel) starts with the current preset and is given the chosen tuning again', JSON.stringify(rightAfterLoad) === JSON.stringify(current) && JSON.stringify(settled) === JSON.stringify(afterKnob), `${rightAfterLoad.jumpHeight} m, then ${settled.jumpHeight} m`));
+
+  // A button of the panel gives the keys back: the title clicked to fold it and open it again, then a jump.
+  await page.locator('.lil-gui.lil-root > .lil-title').click();
+  await page.locator('.lil-gui.lil-root > .lil-title').click();
+  await page.waitForTimeout(400);
+  const afterTitle = await jumpWithKey(page, { holdMs: 300 });
+  results.push(check('after the panel title is clicked, space still jumps him and does not fold the panel', afterTitle.landed && afterTitle.highest > 1 && (await panelIsOpen(page)), `${afterTitle.highest.toFixed(2)} m`));
+
+  // "Back to the preset" puts the preset's numbers back after a knob moved one.
+  await page.locator('.lil-gui .lil-controller', { hasText: 'back to the preset' }).locator('button').click();
+  await page.waitForTimeout(300);
+  const backToPreset = await movementTuning(page);
+  results.push(check('"back to the preset" puts the 90s numbers back', JSON.stringify(backToPreset) === JSON.stringify(nineties), `jump height ${backToPreset.jumpHeight} m`));
 
   // Back to the game as it is.
   await openPanel(page);

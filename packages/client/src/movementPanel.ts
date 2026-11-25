@@ -1,4 +1,4 @@
-import { MOVEMENT_PRESETS, MOVEMENT_TUNING_LIMITS, movementTuningOf, type MovementPresetName, type MovementTuning } from '@stickworld/sim';
+import { MOVEMENT_PRESETS, MOVEMENT_TUNING_LIMITS, movementTuningOf, type MovementPresetName, type MovementTuning, type SimHandle } from '@stickworld/sim';
 import GUI from 'lil-gui';
 import type { GameLoop } from './loop/GameLoop';
 
@@ -12,39 +12,54 @@ import type { GameLoop } from './loop/GameLoop';
 export function showMovementPanel(loop: GameLoop): void {
   const kept = keptChoice();
   const chosen: Choice = kept ?? { preset: 'current', tuning: { ...MOVEMENT_PRESETS.current }, open: false };
+  // The sim and tick the last send waits for: until that tick has run, the sim has not heard it, and sending again would pile up.
+  let lastSent: { sim: SimHandle; tick: number } | undefined;
   const send = (): void => {
     loop.queueCommand({ type: 'player/tuneMovement', tuning: { ...chosen.tuning } });
+    lastSent = { sim: loop.sim, tick: loop.sim.tick };
     keep(chosen);
   };
 
   const panel = new GUI({ title: 'Movement (dev)', width: 280 });
   panel.domElement.style.left = '0';
   panel.domElement.style.right = 'auto';
-  // The game's keys are read from the window: typed into the panel, they are the panel's and do not move him.
-  for (const type of ['keydown', 'keyup'] as const) panel.domElement.addEventListener(type, (event) => event.stopPropagation());
+  // The game's keys are read from the window: pressed in the panel, they are the panel's and do not move him. A key let
+  // go of in the panel still reaches the game, so that a key held for the game before is not held for ever.
+  panel.domElement.addEventListener('keydown', (event) => event.stopPropagation());
   // Once a change is made the keys are the game's again: a jump pressed right after choosing a preset is a jump.
   const giveTheKeysBack = (): void => {
     if (document.activeElement instanceof HTMLElement && panel.domElement.contains(document.activeElement)) document.activeElement.blur();
   };
+  // A clicked button (the panel's title, a button in it) would keep the keys otherwise: space would click it again.
+  panel.domElement.addEventListener('click', (event) => {
+    if (event.target instanceof HTMLButtonElement || (event.target instanceof HTMLElement && event.target.closest('button'))) giveTheKeysBack();
+  });
 
   const presetNames = Object.keys(MOVEMENT_PRESETS) as MovementPresetName[];
+  const usePreset = (name: MovementPresetName): void => {
+    Object.assign(chosen.tuning, MOVEMENT_PRESETS[name]);
+    for (const knob of panel.controllersRecursive()) knob.updateDisplay();
+    send();
+    giveTheKeysBack();
+  };
   panel
     .add(chosen, 'preset', Object.fromEntries(presetNames.map((name) => [PRESET_LABELS[name], name])))
     .name('preset')
-    .onChange((name: MovementPresetName) => {
-      Object.assign(chosen.tuning, MOVEMENT_PRESETS[name]);
-      for (const knob of panel.controllersRecursive()) knob.updateDisplay();
-      send();
-      giveTheKeysBack();
-    });
+    .onChange(usePreset);
   for (const [name, { label, step }] of Object.entries(KNOBS) as [keyof MovementTuning, Knob][]) {
     const { least, most } = MOVEMENT_TUNING_LIMITS[name];
     panel.add(chosen.tuning, name, least, most, step).name(label).onChange(send).onFinishChange(giveTheKeysBack);
   }
-  panel.add({ copy: () => void navigator.clipboard?.writeText(JSON.stringify(chosen.tuning, null, 2)) }, 'copy').name('copy the numbers as JSON');
+  // Choosing the preset already shown changes nothing in a dropdown: this puts its numbers back after knobs moved them.
+  panel.add({ reset: () => usePreset(chosen.preset) }, 'reset').name('back to the preset');
+  const copyTheNumbers = (): void => {
+    navigator.clipboard?.writeText(JSON.stringify(chosen.tuning, null, 2)).catch(() => console.warn('The numbers could not be copied: the clipboard refused.'));
+  };
+  panel.add({ copy: copyTheNumbers }, 'copy').name('copy the numbers as JSON');
 
   if (!chosen.open) panel.close();
   panel.onOpenClose(() => {
+    // lil-gui 0.21 has no public way to ask whether it is open; `_closed` is what its own docs use.
     chosen.open = !panel._closed;
     keep(chosen);
   });
@@ -52,7 +67,8 @@ export function showMovementPanel(loop: GameLoop): void {
   if (kept) send();
   // The sim forgets the tuning when the game starts over, and a sim from `loadLevel` never had it.
   window.setInterval(() => {
-    if (!sameTuning(movementTuningOf(loop.sim), chosen.tuning)) send();
+    const lastIsStillWaiting = lastSent !== undefined && lastSent.sim === loop.sim && lastSent.tick === loop.sim.tick;
+    if (!lastIsStillWaiting && !sameTuning(movementTuningOf(loop.sim), chosen.tuning)) send();
   }, RESEND_EVERY_MS);
 }
 
@@ -83,7 +99,7 @@ const KNOBS: Record<keyof MovementTuning, Knob> = {
   walkSpeed: { label: 'walk speed (m/s)', step: 0.1 },
   airSteering: { label: 'air steering (m/s²)', step: 1 },
   airBraking: { label: 'air braking (m/s²)', step: 1 },
-  mostFallSpeed: { label: 'fastest fall (m/s)', step: 0.5 },
+  fastestFall: { label: 'fastest fall (m/s)', step: 0.5 },
   jumpHeightCarrying: { label: 'jump carrying (m)', step: 0.05 },
 };
 
@@ -96,9 +112,20 @@ function sameTuning(one: MovementTuning, other: MovementTuning): boolean {
  * that is not a known preset, or a number within a knob's limits, is replaced with what the preset says.
  */
 function keptChoice(): Choice | undefined {
+  let text: string | null;
+  try {
+    text = window.localStorage.getItem(STORAGE_KEY);
+  } catch {
+    return undefined;
+  }
+  return choiceIn(text);
+}
+
+/** The choice `text` holds, as `keptChoice` reads it, or undefined when it holds none. */
+function choiceIn(text: string | null): Choice | undefined {
   let stored: unknown;
   try {
-    stored = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? 'null');
+    stored = JSON.parse(text ?? 'null');
   } catch {
     return undefined;
   }
@@ -122,3 +149,5 @@ function keep(choice: Choice): void {
     // Storage may be full or blocked: the panel still works, it is only not kept for the next reload.
   }
 }
+
+export const __testing__ = { choiceIn };

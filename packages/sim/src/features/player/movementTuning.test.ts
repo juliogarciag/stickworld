@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { levelById } from '../../content/levels';
+import { levelById, levels } from '../../content/levels';
 import type { Command } from '../../core/commands';
 import { createSim, restoreSim } from '../../core/create';
 import type { Sim, SimHandle } from '../../core/sim';
@@ -27,6 +27,21 @@ describe('the movement a game nobody tunes plays', () => {
     const held = createSim({ level: 1 });
     const letGo = createSim({ level: 1 });
     expect(highestJump(held, { letGoAfter: null })).toBe(highestJump(letGo, { letGoAfter: 0 }));
+  });
+
+  it('moves him exactly as before on every level, whether or not, and whenever, the jump is let go of', () => {
+    for (const level of levels) {
+      const withoutLetGo = createSim({ level: level.id });
+      const withLetGo = createSim({ level: level.id });
+      for (let tick = 0; tick < 1500; tick += 1) {
+        const commands = mixedCommandsAt(tick);
+        withoutLetGo.step(commands.filter((command) => command.type !== 'player/letGoOfJump'));
+        withLetGo.step(commands);
+        const one = stickManOf(withoutLetGo);
+        const other = stickManOf(withLetGo);
+        expect([other.feet, other.verticalSpeed, other.horizontalSpeed, other.action], `level ${level.id}, tick ${tick}`).toEqual([one.feet, one.verticalSpeed, one.horizontalSpeed, one.action]);
+      }
+    }
   });
 
   it('presets and limits agree: every preset is within the limits', () => {
@@ -62,6 +77,14 @@ describe('the nineties platformer preset', () => {
     expect(heights[0]).toBeGreaterThan(0);
   });
 
+  it('cuts every jump, not only the first', () => {
+    const sim = tunedSim(MOVEMENT_PRESETS.ninetiesPlatformer);
+    const first = highestJump(sim, { letGoAfter: 3 });
+    const second = highestJump(sim, { letGoAfter: 3 });
+    expect(second).toBe(first);
+    expect(second).toBeLessThan(MOVEMENT_PRESETS.ninetiesPlatformer.jumpHeight / 2);
+  });
+
   it('stops his rise when the jump is let go of, then falls', () => {
     const sim = tunedSim(MOVEMENT_PRESETS.ninetiesPlatformer);
     sim.step([JUMP]);
@@ -93,14 +116,20 @@ describe('the nineties platformer preset', () => {
     expect(stickManOf(nineties).horizontalSpeed).toBe(-MOVEMENT_PRESETS.ninetiesPlatformer.walkSpeed);
   });
 
-  it('falls no faster than its fastest fall', () => {
+  it('falls no faster than its fastest fall, in speed and in how far he goes in a tick', () => {
     const sim = walkedOffTheStart(tunedSim(MOVEMENT_PRESETS.ninetiesPlatformer));
+    const { fastestFall } = MOVEMENT_PRESETS.ninetiesPlatformer;
     let fastest = 0;
-    for (let tick = 0; tick < 120 && sim.level === 1 && stickManOf(sim).action === 'jumping'; tick += 1) {
+    let fellAtFastest: number | undefined;
+    for (let tick = 0; tick < 120 && stickManOf(sim).action === 'jumping'; tick += 1) {
+      const before = stickManOf(sim);
       sim.step();
-      fastest = Math.max(fastest, stickManOf(sim).verticalSpeed);
+      const after = stickManOf(sim);
+      fastest = Math.max(fastest, after.verticalSpeed);
+      if (before.verticalSpeed === fastestFall && after.action === 'jumping') fellAtFastest = after.feet.y - before.feet.y;
     }
-    expect(fastest).toBe(MOVEMENT_PRESETS.ninetiesPlatformer.mostFallSpeed);
+    expect(fastest).toBe(fastestFall);
+    expect(fellAtFastest).toBeCloseTo(fastestFall * sim.dt, 9);
   });
 });
 
@@ -165,6 +194,23 @@ const LET_GO: Command = { type: 'player/letGoOfJump' };
 const WALK_LEFT: Command = { type: 'player/walk', direction: -1 };
 const WALK_RIGHT: Command = { type: 'player/walk', direction: 1 };
 const STOP: Command = { type: 'player/walk', direction: 0 };
+
+/**
+ * A mix of what a player does, the same on any tick for any level: walking both ways and stopping, jumps (some asked
+ * for in the air, so that they wait for the floor), and jumps let go of on the tick they are asked for, a few ticks into
+ * the rise, or later. J and K now and then, so that the airplane levels do something too.
+ */
+function mixedCommandsAt(tick: number): Command[] {
+  const commands: Command[] = [];
+  if (tick % 97 === 0) commands.push(tick % 194 === 0 ? WALK_RIGHT : WALK_LEFT);
+  if (tick % 61 === 30) commands.push(STOP);
+  if (tick % 23 === 0) commands.push(JUMP);
+  if (tick % 23 === 0 && tick % 3 === 0) commands.push(LET_GO);
+  if (tick % 23 === 4 || tick % 23 === 11) commands.push(LET_GO);
+  if (tick % 37 === 5) commands.push({ type: 'world/interact' });
+  if (tick % 53 === 7) commands.push({ type: 'item/use' });
+  return commands;
+}
 
 function tunedSim(tuning: MovementTuning): SimHandle {
   const sim = createSim({ level: 1 });

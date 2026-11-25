@@ -49,7 +49,7 @@ export interface MovementTuning {
   /** How fast he falls faster once he is going down, in metres per second squared. */
   readonly fallGravity: number;
   /** The fastest he falls, in metres per second. */
-  readonly mostFallSpeed: number;
+  readonly fastestFall: number;
   /** The share of his upward speed he loses when the jump key is let go while he rises: 0 keeps it all, 1 ends the rise there and then. */
   readonly letGoCut: number;
   /** In a fall off an edge, how fast a held key changes his sideways speed, in metres per second squared (`PLAYER.airSteering`). */
@@ -65,7 +65,7 @@ export const MOVEMENT_TUNING_LIMITS: { readonly [Name in keyof MovementTuning]: 
   jumpHeightCarrying: { least: 0.1, most: 8 },
   riseGravity: { least: 2, most: 200 },
   fallGravity: { least: 2, most: 200 },
-  mostFallSpeed: { least: 1, most: 1000 },
+  fastestFall: { least: 1, most: 1000 },
   letGoCut: { least: 0, most: 1 },
   airSteering: { least: 0, most: 1000 },
   airBraking: { least: 0, most: 1000 },
@@ -85,7 +85,7 @@ export const MOVEMENT_PRESETS = {
     riseGravity: PLAYER.gravity,
     fallGravity: PLAYER.gravity,
     // Far faster than he ever falls before the level starts again: the current game has no fastest fall.
-    mostFallSpeed: 1000,
+    fastestFall: 1000,
     letGoCut: 0,
     airSteering: PLAYER.airSteering,
     airBraking: 0,
@@ -96,7 +96,7 @@ export const MOVEMENT_PRESETS = {
     jumpHeightCarrying: 2.4,
     riseGravity: 68,
     fallGravity: 80,
-    mostFallSpeed: 25,
+    fastestFall: 25,
     letGoCut: 1,
     airSteering: 1000,
     airBraking: 1000,

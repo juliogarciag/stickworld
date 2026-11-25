@@ -4,7 +4,7 @@
  * right (chosen in its own panel), given the same moves at the same moments: a walk, a jump held long, a tap, a
  * short hold, and a jump that turns back in the air. Writes a video and a still of both at the top of the held jump.
  */
-import { renameSync } from 'node:fs';
+import { renameSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import { PROOF, check, summarize, writeProof } from './lib.mjs';
@@ -39,7 +39,8 @@ try {
   report.tunings = tunings;
   results.push(check('left plays the current jump, right the 90s preset', tunings.current.letGoCut === 0 && tunings.nineties.letGoCut === 1 && tunings.nineties.jumpHeight > tunings.current.jumpHeight, `${tunings.current.jumpHeight} m and ${tunings.nineties.jumpHeight} m`));
 
-  // The same moves in both, at the same moments: queued through the debug API, which is the keys' own path.
+  // The same moves in both, at the same moments: commands queued through the debug API, which is the queue the keys feed
+  // (the keys themselves are script 02's). Both games hear each one at their next tick.
   const both = (commands) => Promise.all(Object.values(frames).map((frame) => frame.evaluate((list) => list.forEach((command) => window.__game.queueCommand(command)), commands)));
   const highest = { current: 0, nineties: 0 };
   const watchHeights = () => Promise.all(Object.entries(frames).map(async ([name, frame]) => (highest[name] = Math.max(highest[name], await frame.evaluate(() => window.__game.level.start.y - window.__game.stickMan().feet.y)))));
@@ -86,7 +87,8 @@ try {
   await context.close();
   const recorded = await video.path();
   renameSync(recorded, path.join(PROOF, '03-side-by-side.webm'));
-  results.push(check('the recording was written', true, 'proof/03-side-by-side.webm'));
+  const bytes = statSync(path.join(PROOF, '03-side-by-side.webm')).size;
+  results.push(check('the recording was written', bytes > 100_000, `proof/03-side-by-side.webm, ${bytes} bytes`));
 } catch (error) {
   results.push(check(`run completed (${error.message})`, false));
 } finally {

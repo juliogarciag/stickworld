@@ -6,7 +6,7 @@
       "jumpHeightCarrying": 0.45,
       "riseGravity": 22,
       "fallGravity": 22,
-      "mostFallSpeed": 1000,
+      "fastestFall": 1000,
       "letGoCut": 0,
       "airSteering": 6,
       "airBraking": 0
@@ -17,7 +17,7 @@
       "jumpHeightCarrying": 2.4,
       "riseGravity": 68,
       "fallGravity": 80,
-      "mostFallSpeed": 25,
+      "fastestFall": 25,
       "letGoCut": 1,
       "airSteering": 1000,
       "airBraking": 1000
@@ -45,7 +45,7 @@
     {
       "name": "the recording was written",
       "pass": true,
-      "details": "proof/03-side-by-side.webm"
+      "details": "proof/03-side-by-side.webm, 3964739 bytes"
     }
   ]
 }

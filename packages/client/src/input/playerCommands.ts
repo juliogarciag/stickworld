@@ -33,12 +33,15 @@ export interface KeysNow {
  * Letting go of the jump is a command too: the sim cuts a rising jump short
  * by how much its tuning says, which in the game as it is is not at all. It is
  * sent when the keys that were jumping are all up, and on the frame of a tap
- * that went down and up between two frames.
+ * that went down and up between two frames. An up key held since he was
+ * seated steered the airplane and holds no jump after he jumps out of it.
  */
 export function keysToCommands(): (now: { keys: KeysNow; sim: SimHandle }) => Command[] {
   const walkIsNews = newsToTheSim<WalkDirection>();
   const steeringIsNews = newsToTheSim<SteerDirection>();
   let jumpWasHeld = false;
+  // An up key held to steer the airplane is not a jump held once he jumps out: it steered, and counts again only once let go of.
+  let upHeldSinceSeated = false;
   return ({ keys, sim }) => {
     const commands: Command[] = [];
     const seated = stickManOf(sim).action === 'seated';
@@ -48,7 +51,8 @@ export function keysToCommands(): (now: { keys: KeysNow; sim: SimHandle }) => Co
     if (steeringIsNews({ wanted: steerDirection, believed: steeringAskedOf(sim), sim })) commands.push({ type: 'airplane/steer', direction: steerDirection });
     const jumpAsked = keys.jumpPressed || (keys.upPressed && !seated);
     if (jumpAsked) commands.push({ type: 'player/jump' });
-    const jumpHeld = keys.jumpHeld || (keys.upHeld && !seated);
+    upHeldSinceSeated = keys.upHeld && (seated || upHeldSinceSeated);
+    const jumpHeld = keys.jumpHeld || (keys.upHeld && !upHeldSinceSeated);
     if (!jumpHeld && (jumpWasHeld || jumpAsked)) commands.push({ type: 'player/letGoOfJump' });
     jumpWasHeld = jumpHeld;
     return commands;

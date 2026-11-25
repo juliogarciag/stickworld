@@ -159,14 +159,14 @@ function walkTo(player: PlayerState, { x, floorHeight, walking }: { x: number; f
 
 /**
  * One tick in the air: gravity pulls him towards `x`, and he lands if the floor there is between where he was and where he would be.
- * Rising, `riseGravity` slows him; going down, `fallGravity` speeds him up to no more than `mostFallSpeed`.
+ * Rising, `riseGravity` slows him; going down, `fallGravity` speeds him up to no more than `fastestFall`.
  * That is right for flat floors, which is all the levels have: a floor that slopes up towards him could be missed.
  */
 function fallTo(player: PlayerState, { x, floorHeight, tuning, dt }: { x: number; floorHeight: number | undefined; tuning: MovementTuning; dt: number }): void {
   const gravity = player.verticalSpeed < 0 ? tuning.riseGravity : tuning.fallGravity;
-  const atMostFallSpeed = player.verticalSpeed >= tuning.mostFallSpeed;
-  const y = atMostFallSpeed ? player.y + tuning.mostFallSpeed * dt : player.y + player.verticalSpeed * dt + (gravity * dt * dt) / 2;
-  player.verticalSpeed = Math.min(player.verticalSpeed + gravity * dt, tuning.mostFallSpeed);
+  const atMostFallSpeed = player.verticalSpeed >= tuning.fastestFall;
+  const y = atMostFallSpeed ? player.y + tuning.fastestFall * dt : player.y + player.verticalSpeed * dt + (gravity * dt * dt) / 2;
+  player.verticalSpeed = Math.min(player.verticalSpeed + gravity * dt, tuning.fastestFall);
   player.x = x;
   const lands = player.verticalSpeed > 0 && floorHeight !== undefined && player.y <= floorHeight && y >= floorHeight;
   if (!lands) {

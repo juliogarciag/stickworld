@@ -5,7 +5,7 @@
     "jumpHeightCarrying": 0.45,
     "riseGravity": 22,
     "fallGravity": 22,
-    "mostFallSpeed": 1000,
+    "fastestFall": 1000,
     "letGoCut": 0,
     "airSteering": 6,
     "airBraking": 0
@@ -32,7 +32,7 @@
     {
       "name": "a fresh page plays the current preset: a 0.7 m jump, nothing cut by letting go, no braking in the air",
       "pass": true,
-      "details": "{\"walkSpeed\":2.2,\"jumpHeight\":0.7,\"jumpHeightCarrying\":0.45,\"riseGravity\":22,\"fallGravity\":22,\"mostFallSpeed\":1000,\"letGoCut\":0,\"airSteering\":6,\"airBraking\":0}"
+      "details": "{\"walkSpeed\":2.2,\"jumpHeight\":0.7,\"jumpHeightCarrying\":0.45,\"riseGravity\":22,\"fallGravity\":22,\"fastestFall\":1000,\"letGoCut\":0,\"airSteering\":6,\"airBraking\":0}"
     },
     {
       "name": "the movement panel is there, folded away",
@@ -51,7 +51,7 @@
     {
       "name": "a production build has neither the panel nor lil-gui",
       "pass": true,
-      "details": "1425548 bytes searched"
+      "details": "1425560 bytes searched"
     },
     {
       "name": "no page errors",

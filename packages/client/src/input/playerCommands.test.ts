@@ -121,7 +121,21 @@ describe('keys to commands, seated in the airplane', () => {
     expect(jumpingOut).toEqual([{ type: 'player/jump' }]);
     sim.step(jumpingOut);
     expect(stickManOf(sim).action).toBe('jumping');
+    expect(commandsFor({ keys: UP, sim })).toEqual([{ type: 'airplane/steer', direction: 0 }, { type: 'player/letGoOfJump' }]);
+  });
+
+  it('does not take an up key held for steering as a jump held once he jumped out with the jump key', () => {
+    const sim = seatedInTheAirplane();
+    const commandsFor = keysToCommands();
+    sim.step(commandsFor({ keys: UP, sim }));
+    const jumpingOut = commandsFor({ keys: { ...UP, jumpPressed: true }, sim });
+    expect(jumpingOut).toEqual([{ type: 'player/jump' }, { type: 'player/letGoOfJump' }]);
+    sim.step(jumpingOut);
+    expect(stickManOf(sim).action).toBe('jumping');
+    // Up still held, now on his feet: no jump is held, so nothing more is let go of; let go and pressed again, it is a jump.
     expect(commandsFor({ keys: UP, sim })).toEqual([{ type: 'airplane/steer', direction: 0 }]);
+    expect(commandsFor({ keys: NOTHING, sim })).toEqual([]);
+    expect(commandsFor({ keys: { ...UP, upPressed: true }, sim })).toEqual([{ type: 'player/jump' }]);
   });
 });
 

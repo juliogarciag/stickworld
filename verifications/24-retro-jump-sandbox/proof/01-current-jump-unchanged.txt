@@ -1,9 +1,9 @@
 PASS  dev server up, started by this run
-PASS  a fresh page plays the current preset: a 0.7 m jump, nothing cut by letting go, no braking in the air  ({"walkSpeed":2.2,"jumpHeight":0.7,"jumpHeightCarrying":0.45,"riseGravity":22,"fallGravity":22,"mostFallSpeed":1000,"letGoCut":0,"airSteering":6,"airBraking":0})
+PASS  a fresh page plays the current preset: a 0.7 m jump, nothing cut by letting go, no braking in the air  ({"walkSpeed":2.2,"jumpHeight":0.7,"jumpHeightCarrying":0.45,"riseGravity":22,"fallGravity":22,"fastestFall":1000,"letGoCut":0,"airSteering":6,"airBraking":0})
 PASS  the movement panel is there, folded away
 PASS  a held jump lifts his feet to the jump height, as before  (0.700 m in 16 ticks)
 PASS  a tap jumps just as high: letting go cuts nothing in the game as it is  (0.700 m)
-PASS  a production build has neither the panel nor lil-gui  (1425548 bytes searched)
+PASS  a production build has neither the panel nor lil-gui  (1425560 bytes searched)
 PASS  no page errors
 
 ALL 7 CHECKS PASSED
