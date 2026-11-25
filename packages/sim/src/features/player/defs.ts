@@ -75,7 +75,10 @@ export const MOVEMENT_TUNING_LIMITS: { readonly [Name in keyof MovementTuning]: 
  * Ways to move that can be tried whole. `current` is the game as it is played. `ninetiesPlatformer` is a jump like
  * the platformers of the nineties: about twice his height, its height chosen by how long the key is held, a fast rise
  * and a faster fall, and steering in the air that turns and stops him at once. It is only tried, not played: its jump
- * crosses the gaps of levels 2 and 3 on foot.
+ * crosses the gaps of levels 2 and 3 on foot. `twoMetreJump` is the one the owner tuned in the panel and liked: a jump
+ * a little over his height, as high as the key is held, an even rise and fall to a fastest fall of 10 m/s, and steering
+ * in the air that turns and stops him almost at once, at his walking speed. Level 2's gap was a jump already, and
+ * level 3's is still too wide for one.
  */
 export const MOVEMENT_PRESETS = {
   current: {
@@ -100,6 +103,17 @@ export const MOVEMENT_PRESETS = {
     letGoCut: 1,
     airSteering: 1000,
     airBraking: 1000,
+  },
+  twoMetreJump: {
+    walkSpeed: 2.2,
+    jumpHeight: 2,
+    jumpHeightCarrying: 0.7,
+    riseGravity: 20,
+    fallGravity: 20,
+    fastestFall: 10,
+    letGoCut: 1,
+    airSteering: 100,
+    airBraking: 100,
   },
 } as const satisfies Record<string, MovementTuning>;
 

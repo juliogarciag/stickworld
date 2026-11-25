@@ -31,17 +31,19 @@ export async function openGame(context, { pageErrors }) {
 }
 
 /**
- * Jumps with the space key held for `holdMs` (0: a tap, down and up at once) and says how high his feet got above
- * where they were, and how many ticks to the top and in the air, read from the sim on every frame.
+ * Jumps with the space key held for `holdMs` (0: a tap, down and up at once), or until the sim says he is at the top
+ * (`holdToTheTop`: a full jump however slowly a headless browser runs the sim), and says how high his feet got above
+ * where they were, and how many ticks to the top and in the air, read from the sim after every tick.
  */
-export async function jumpWithKey(page, { holdMs }) {
+export async function jumpWithKey(page, { holdMs = 0, holdToTheTop = false }) {
   await waitUntilStanding(page);
   // Watching starts before the key goes down, so that the first tick of the jump is seen too.
   await page.evaluate(() => {
     window.jumpBeingWatched = window.watchOneJump();
   });
   await page.keyboard.down('Space');
-  if (holdMs > 0) await page.waitForTimeout(holdMs);
+  if (holdToTheTop) await page.waitForFunction(() => window.__game.stickMan().action === 'jumping' && window.__game.stickMan().verticalSpeed >= 0, null, { timeout: 5000 });
+  else if (holdMs > 0) await page.waitForTimeout(holdMs);
   await page.keyboard.up('Space');
   return page.evaluate(() => window.jumpBeingWatched);
 }
@@ -111,7 +113,7 @@ export function movementTuning(page) {
 // ---- Helpers ----
 
 /**
- * Installs `watchOneJump` in the page: resolves once he has been in the air and stands again, or after 4 s. It reads
+ * Installs `watchOneJump` in the page: resolves once he has been in the air and stands again, or after 600 ticks or 30 s. It reads
  * him after every tick of the sim (frames can be fewer than ticks in a headless browser, and would miss the top), by
  * wrapping `step` on the sim being played: a check's own instrument, never the game's.
  */
@@ -131,7 +133,7 @@ async function installJumpWatcher(page) {
           sim.step = step;
           resolve({ highest, ticksToTop: topTick - startTick, ticksInTheAir: sim.tick - startTick, dt: sim.dt, landed });
         };
-        const timeout = window.setTimeout(() => finish(false), 4000);
+        const timeout = window.setTimeout(() => finish(false), 30000);
         sim.step = (commands) => {
           step.call(sim, commands);
           const stickMan = api.stickMan();
@@ -144,6 +146,9 @@ async function installJumpWatcher(page) {
           else if (left) {
             window.clearTimeout(timeout);
             finish(true);
+          } else if (sim.tick - startTick >= 600) {
+            window.clearTimeout(timeout);
+            finish(false);
           }
         };
       });

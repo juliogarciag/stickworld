@@ -88,7 +88,7 @@ interface Knob {
 const STORAGE_KEY = 'stickworld.movementPanel';
 const RESEND_EVERY_MS = 250;
 
-const PRESET_LABELS: Record<MovementPresetName, string> = { current: 'current', ninetiesPlatformer: '90s platformer' };
+const PRESET_LABELS: Record<MovementPresetName, string> = { current: 'current', ninetiesPlatformer: '90s platformer', twoMetreJump: '2 m jump' };
 
 /** The knobs in the order the panel shows them, with what each is called there. */
 const KNOBS: Record<keyof MovementTuning, Knob> = {

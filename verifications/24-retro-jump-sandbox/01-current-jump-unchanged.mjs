@@ -28,7 +28,7 @@ try {
   results.push(check('a fresh page plays the current preset: a 0.7 m jump, nothing cut by letting go, no braking in the air', tuning.jumpHeight === CURRENT_JUMP_HEIGHT && tuning.letGoCut === 0 && tuning.airBraking === 0 && tuning.riseGravity === tuning.fallGravity, JSON.stringify(tuning)));
   results.push(check('the movement panel is there, folded away', !(await panelIsOpen(page))));
 
-  const held = await jumpWithKey(page, { holdMs: 600 });
+  const held = await jumpWithKey(page, { holdToTheTop: true });
   const tapped = await jumpWithKey(page, { holdMs: 0 });
   report.held = held;
   report.tapped = tapped;

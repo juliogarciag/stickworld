@@ -133,6 +133,30 @@ describe('the nineties platformer preset', () => {
   });
 });
 
+describe('the two metre jump preset', () => {
+  it('jumps two metres when held, and less the sooner it is let go of', () => {
+    const held = highestJump(tunedSim(MOVEMENT_PRESETS.twoMetreJump), { letGoAfter: null });
+    const short = highestJump(tunedSim(MOVEMENT_PRESETS.twoMetreJump), { letGoAfter: 4 });
+    expect(held).toBeGreaterThan(MOVEMENT_PRESETS.twoMetreJump.jumpHeight * 0.97);
+    expect(held).toBeLessThanOrEqual(MOVEMENT_PRESETS.twoMetreJump.jumpHeight + 1e-9);
+    expect(short).toBeLessThan(held / 2);
+  });
+
+  it('crosses level 2\'s gap with a running jump and falls into level 3\'s', () => {
+    for (const [level, crosses] of [[2, true], [3, false]] as const) {
+      const floor = levelById(level).floor;
+      const sim = createSim({ level });
+      sim.step([{ type: 'player/tuneMovement', tuning: MOVEMENT_PRESETS.twoMetreJump }, WALK_RIGHT]);
+      // The last tick on the floor before the edge, then a held jump.
+      while (stickManOf(sim).feet.x + 2 * MOVEMENT_PRESETS.twoMetreJump.walkSpeed * sim.dt < floor[0]!.to.x) sim.step();
+      sim.step([JUMP]);
+      stepFor(sim, 120);
+      const landedOnTheFarSide = sim.level === level && stickManOf(sim).feet.x >= floor[1]!.from.x && stickManOf(sim).action !== 'jumping';
+      expect(landedOnTheFarSide, `level ${level}`).toBe(crosses);
+    }
+  });
+});
+
 describe('tuning the movement', () => {
   it('changes the numbers given and keeps the rest', () => {
     const sim = createSim({ level: 1 });
