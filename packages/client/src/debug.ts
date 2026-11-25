@@ -1,5 +1,5 @@
-import type { AirplaneView, Command, CraftingView, Def, FallenItemView, FlagView, FlyingHint, GameView, InteractionMeaning, ItemSlot, ItemUseMeaning, LetterView, Level, NoteView, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
-import { airplaneOf, craftingOf, defs, fallenItemOf, flagOf, flyingHintOf, gameOf, hashSnapshot, interactionOf, itemSlotsOf, itemUseOf, letterOf, levelOf, notesOf, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf } from '@stickworld/sim';
+import type { AirplaneView, Command, CraftingView, Def, FallenItemView, FlagView, FlyingHint, GameView, InteractionMeaning, ItemSlot, ItemUseMeaning, LetterView, Level, MovementTuning, NoteView, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
+import { airplaneOf, craftingOf, defs, fallenItemOf, flagOf, flyingHintOf, gameOf, hashSnapshot, interactionOf, itemSlotsOf, itemUseOf, letterOf, levelOf, movementTuningOf, notesOf, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf } from '@stickworld/sim';
 import type Phaser from 'phaser';
 import { itemSlotBox, type Rectangle } from './hud/itemSlots';
 import { MAX_FRAME_SECONDS } from './loop/frameSeconds';
@@ -55,6 +55,8 @@ export interface GameDebugApi {
   airplane(): AirplaneView | undefined;
   /** What he has still to be told about flying the airplane he has, as the sim has it right now, or null. */
   flyingHint(): FlyingHint | null;
+  /** How he walks, jumps and falls right now, as the sim has it: what the movement panel shows and changes. */
+  movementTuning(): MovementTuning;
   /** What using the held item would do right now, or null. */
   itemUse(): ItemUseMeaning | null;
   /** What interacting with the world would do right now, or null. */
@@ -144,6 +146,7 @@ export function exposeDebugApi({ loop, game, pageTurn }: { loop: GameLoop; game:
     crafting: () => craftingOf(loop.sim),
     airplane: () => airplaneOf(loop.sim),
     flyingHint: () => flyingHintOf(loop.sim),
+    movementTuning: () => movementTuningOf(loop.sim),
     itemUse: () => itemUseOf(loop.sim),
     interaction: () => interactionOf(loop.sim),
     queueCommand: (command) => loop.queueCommand(command),

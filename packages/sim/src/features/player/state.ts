@@ -1,5 +1,6 @@
 import { defineSlice } from '../../core/slice';
 import type { WalkDirection } from './commands';
+import { MOVEMENT_PRESETS, type MovementTuning } from './defs';
 
 export interface PlayerState {
   /** Where his feet are, in metres. */
@@ -20,6 +21,10 @@ export interface PlayerState {
   ticksSinceWalkedOff: number | null;
   /** Ticks since a jump was asked for that has not happened yet, or null when none is waiting. */
   ticksSinceJumpAsked: number | null;
+  /** True from a `player/jump` until a `player/letGoOfJump`: whether the player still holds the jump. */
+  jumpHeld: boolean;
+  /** True once letting go of the jump has cut this jump's rise short, so that it is cut once; false again when he takes off. */
+  riseCut: boolean;
   /** True while he holds something over his head with both hands. What it is belongs to the feature that put it there (the airplane). */
   carrying: boolean;
   /** True while he sits in something that moves him (the airplane): he neither walks nor falls, and where he is belongs to the feature that seated him. */
@@ -39,7 +44,15 @@ export const playerSlice = defineSlice<PlayerState>('player', (level) => ({
   distanceWalked: 0,
   ticksSinceWalkedOff: null,
   ticksSinceJumpAsked: null,
+  jumpHeld: false,
+  riseCut: false,
   carrying: false,
   seated: false,
   seatedAtTick: null,
 }));
+
+/**
+ * How he walks, jumps and falls right now: `MOVEMENT_PRESETS.current` unless a dev build tuned it. It is kept when a
+ * level starts or starts again, and goes back to `current` when the game starts over.
+ */
+export const movementTuningSlice = defineSlice<MovementTuning>('movementTuning', () => ({ ...MOVEMENT_PRESETS.current }), { carriesAcrossLevels: true });

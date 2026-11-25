@@ -55,8 +55,24 @@ describe('keys to commands', () => {
 
   it('asks for a jump on the frame the key went down', () => {
     const sim = createSim({ level: 1 });
-    expect(keysToCommands()({ keys: { ...NOTHING, jumpPressed: true }, sim })).toEqual([{ type: 'player/jump' }]);
-    expect(keysToCommands()({ keys: { ...RIGHT, jumpPressed: true }, sim })).toEqual([{ type: 'player/walk', direction: 1 }, { type: 'player/jump' }]);
+    expect(keysToCommands()({ keys: JUMP_DOWN, sim })).toEqual([{ type: 'player/jump' }]);
+    expect(keysToCommands()({ keys: { ...RIGHT, jumpHeld: true, jumpPressed: true }, sim })).toEqual([{ type: 'player/walk', direction: 1 }, { type: 'player/jump' }]);
+  });
+
+  it('says the jump was let go of once, when the last key that was jumping goes up', () => {
+    const sim = createSim({ level: 1 });
+    const commandsFor = keysToCommands();
+    expect(commandsFor({ keys: JUMP_DOWN, sim })).toEqual([{ type: 'player/jump' }]);
+    expect(commandsFor({ keys: { ...NOTHING, jumpHeld: true }, sim })).toEqual([]);
+    expect(commandsFor({ keys: { ...UP, jumpHeld: true }, sim })).toEqual([]);
+    expect(commandsFor({ keys: UP, sim })).toEqual([]);
+    expect(commandsFor({ keys: NOTHING, sim })).toEqual([{ type: 'player/letGoOfJump' }]);
+    expect(commandsFor({ keys: NOTHING, sim })).toEqual([]);
+  });
+
+  it('asks for a jump and lets go of it on the same frame for a tap that was down and up between two frames', () => {
+    const sim = createSim({ level: 1 });
+    expect(keysToCommands()({ keys: { ...NOTHING, jumpPressed: true }, sim })).toEqual([{ type: 'player/jump' }, { type: 'player/letGoOfJump' }]);
   });
 
   it('takes an up key for a jump too while he is on his feet, and never steers then', () => {
@@ -93,7 +109,7 @@ describe('keys to commands, seated in the airplane', () => {
     const commandsFor = keysToCommands();
     sim.step(commandsFor({ keys: UP, sim }));
     expect(commandsFor({ keys: { ...UP, downHeld: true }, sim })).toEqual([{ type: 'airplane/steer', direction: 0 }]);
-    expect(keysToCommands()({ keys: { ...UP, upPressed: true, jumpPressed: true }, sim })).toEqual([{ type: 'player/jump' }]);
+    expect(keysToCommands()({ keys: { ...UP, upPressed: true, jumpHeld: true, jumpPressed: true }, sim })).toEqual([{ type: 'player/jump' }]);
   });
 
   it('jumps him out with the jump key, and stops steering once he is out with the key still held', () => {
@@ -101,18 +117,33 @@ describe('keys to commands, seated in the airplane', () => {
     const commandsFor = keysToCommands();
     sim.step(commandsFor({ keys: UP, sim }));
     expect(steeringAskedOf(sim)).toBe(1);
-    const jumpingOut = commandsFor({ keys: { ...UP, jumpPressed: true }, sim });
+    const jumpingOut = commandsFor({ keys: { ...UP, jumpHeld: true, jumpPressed: true }, sim });
     expect(jumpingOut).toEqual([{ type: 'player/jump' }]);
     sim.step(jumpingOut);
     expect(stickManOf(sim).action).toBe('jumping');
+    expect(commandsFor({ keys: UP, sim })).toEqual([{ type: 'airplane/steer', direction: 0 }, { type: 'player/letGoOfJump' }]);
+  });
+
+  it('does not take an up key held for steering as a jump held once he jumped out with the jump key', () => {
+    const sim = seatedInTheAirplane();
+    const commandsFor = keysToCommands();
+    sim.step(commandsFor({ keys: UP, sim }));
+    const jumpingOut = commandsFor({ keys: { ...UP, jumpPressed: true }, sim });
+    expect(jumpingOut).toEqual([{ type: 'player/jump' }, { type: 'player/letGoOfJump' }]);
+    sim.step(jumpingOut);
+    expect(stickManOf(sim).action).toBe('jumping');
+    // Up still held, now on his feet: no jump is held, so nothing more is let go of; let go and pressed again, it is a jump.
     expect(commandsFor({ keys: UP, sim })).toEqual([{ type: 'airplane/steer', direction: 0 }]);
+    expect(commandsFor({ keys: NOTHING, sim })).toEqual([]);
+    expect(commandsFor({ keys: { ...UP, upPressed: true }, sim })).toEqual([{ type: 'player/jump' }]);
   });
 });
 
 // ---- Helpers ----
 
-const NOTHING: KeysNow = { leftHeld: false, rightHeld: false, upHeld: false, downHeld: false, jumpPressed: false, upPressed: false };
+const NOTHING: KeysNow = { leftHeld: false, rightHeld: false, upHeld: false, downHeld: false, jumpHeld: false, jumpPressed: false, upPressed: false };
 const UP: KeysNow = { ...NOTHING, upHeld: true };
+const JUMP_DOWN: KeysNow = { ...NOTHING, jumpHeld: true, jumpPressed: true };
 const DOWN: KeysNow = { ...NOTHING, downHeld: true };
 const RIGHT: KeysNow = { ...NOTHING, rightHeld: true };
 const LEFT: KeysNow = { ...NOTHING, leftHeld: true };

@@ -1,0 +1,206 @@
+{
+  "nineties": {
+    "walkSpeed": 5,
+    "jumpHeight": 3.6,
+    "jumpHeightCarrying": 2.4,
+    "riseGravity": 68,
+    "fallGravity": 80,
+    "fastestFall": 25,
+    "letGoCut": 1,
+    "airSteering": 1000,
+    "airBraking": 1000
+  },
+  "jumps": {
+    "held": {
+      "highest": 3.597857788056532,
+      "ticksToTop": 21,
+      "ticksInTheAir": 39,
+      "dt": 0.016666666666666666,
+      "landed": true
+    },
+    "middle": {
+      "highest": 2.34580978188928,
+      "ticksToTop": 10,
+      "ticksInTheAir": 25,
+      "dt": 0.016666666666666666,
+      "landed": true
+    },
+    "tapped": {
+      "highest": 0.3593373338472711,
+      "ticksToTop": 2,
+      "ticksInTheAir": 8,
+      "dt": 0.016666666666666666,
+      "landed": true
+    }
+  },
+  "airControl": {
+    "turned": {
+      "tick": 234,
+      "commands": [
+        {
+          "type": "player/walk",
+          "direction": -1
+        }
+      ],
+      "stickMan": {
+        "feet": {
+          "x": 2.500000000000001,
+          "y": -2.34580978188928
+        },
+        "facing": -1,
+        "action": "jumping",
+        "distanceWalked": 0.16666666666666696,
+        "verticalSpeed": -13.060240030836269,
+        "horizontalSpeed": -5,
+        "fallingOffAnEdge": false,
+        "walkDirectionAsked": -1,
+        "carrying": false
+      }
+    },
+    "stopped": {
+      "tick": 239,
+      "commands": [
+        {
+          "type": "player/walk",
+          "direction": 0
+        }
+      ],
+      "stickMan": {
+        "feet": {
+          "x": 2.166666666666667,
+          "y": -3.1980520066811904
+        },
+        "facing": -1,
+        "action": "jumping",
+        "distanceWalked": 0.16666666666666696,
+        "verticalSpeed": -7.393573364169605,
+        "horizontalSpeed": 0,
+        "fallingOffAnEdge": false,
+        "walkDirectionAsked": 0,
+        "carrying": false
+      }
+    }
+  },
+  "afterKnob": {
+    "tuning": {
+      "walkSpeed": 5,
+      "jumpHeight": 2,
+      "jumpHeightCarrying": 2.4,
+      "riseGravity": 68,
+      "fallGravity": 80,
+      "fastestFall": 25,
+      "letGoCut": 1,
+      "airSteering": 1000,
+      "airBraking": 1000
+    },
+    "jump": {
+      "highest": 1.9981056256176621,
+      "ticksToTop": 16,
+      "ticksInTheAir": 30,
+      "dt": 0.016666666666666666,
+      "landed": true
+    }
+  },
+  "twoMetre": {
+    "tuning": {
+      "walkSpeed": 2.2,
+      "jumpHeight": 2,
+      "jumpHeightCarrying": 0.7,
+      "riseGravity": 20,
+      "fallGravity": 20,
+      "fastestFall": 10,
+      "letGoCut": 1,
+      "airSteering": 100,
+      "airBraking": 100
+    },
+    "held": {
+      "highest": 1.9999223594996218,
+      "ticksToTop": 29,
+      "ticksInTheAir": 56,
+      "dt": 0.016666666666666666,
+      "landed": true
+    },
+    "tapped": {
+      "highest": 0.28703128588886084,
+      "ticksToTop": 3,
+      "ticksInTheAir": 14,
+      "dt": 0.016666666666666666,
+      "landed": true
+    }
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "choosing the 90s preset reaches the sim: a jump about twice his height, cut whole by letting go",
+      "pass": true,
+      "details": "{\"walkSpeed\":5,\"jumpHeight\":3.6,\"jumpHeightCarrying\":2.4,\"riseGravity\":68,\"fallGravity\":80,\"fastestFall\":25,\"letGoCut\":1,\"airSteering\":1000,\"airBraking\":1000}"
+    },
+    {
+      "name": "held, the jump lifts his feet to the preset height",
+      "pass": true,
+      "details": "3.60 m, 2.00 of his height"
+    },
+    {
+      "name": "it rises fast: at the top in less than 0.4 s",
+      "pass": true,
+      "details": "0.350 s"
+    },
+    {
+      "name": "a tap is a short hop, a short hold is in between",
+      "pass": true,
+      "details": "tap 0.36 m, 120 ms 2.35 m, held 3.60 m"
+    },
+    {
+      "name": "in the air he turns at once and stops at once",
+      "pass": true,
+      "details": "on the tick of the turn -5 m/s, on the tick of the stop jumping 0 m/s"
+    },
+    {
+      "name": "moving the jump height knob to 2 m changes the next jump at once",
+      "pass": true,
+      "details": "1.998 m"
+    },
+    {
+      "name": "an arrow key pressed in a knob does not walk him",
+      "pass": true,
+      "details": "x 2.166666666666667 then 2.166666666666667"
+    },
+    {
+      "name": "a reload keeps what was chosen",
+      "pass": true,
+      "details": "{\"walkSpeed\":5,\"jumpHeight\":2,\"jumpHeightCarrying\":2.4,\"riseGravity\":68,\"fallGravity\":80,\"fastestFall\":25,\"letGoCut\":1,\"airSteering\":1000,\"airBraking\":1000}"
+    },
+    {
+      "name": "a new sim (loadLevel) starts with the current preset and is given the chosen tuning again",
+      "pass": true,
+      "details": "0.7 m, then 2 m"
+    },
+    {
+      "name": "after the panel title is clicked, space still jumps him and does not fold the panel",
+      "pass": true,
+      "details": "2.00 m"
+    },
+    {
+      "name": "\"back to the preset\" puts the 90s numbers back",
+      "pass": true,
+      "details": "jump height 3.6 m"
+    },
+    {
+      "name": "the 2 m jump preset: held, 2 m; tapped, a short hop",
+      "pass": true,
+      "details": "held 2.00 m, tapped 0.29 m"
+    },
+    {
+      "name": "choosing \"current\" again gives back the game as it is",
+      "pass": true
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

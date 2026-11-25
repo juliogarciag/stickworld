@@ -33,7 +33,11 @@ function boot(): void {
     fps: { smoothStep: false },
   });
   keepCanvasAtWindowSize(game);
-  if (import.meta.env.DEV) exposeDebugApi({ loop, game, pageTurn });
+  if (import.meta.env.DEV) {
+    exposeDebugApi({ loop, game, pageTurn });
+    // Loaded only here, so that a production build has neither the panel nor the library that draws it.
+    void import('./movementPanel').then(({ showMovementPanel }) => showMovementPanel(loop));
+  }
 }
 
 boot();
