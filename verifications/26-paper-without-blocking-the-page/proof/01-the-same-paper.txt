@@ -1,11 +1,19 @@
+PASS  the code that paints the paper is not the same before and after  (before is 6bc00d1)
 PASS  before: dev server up, started by this run
 PASS  after: dev server up, started by this run
-PASS  paper-grain: both tiles were read whole and are the same size  (1024x1024 before, 1024x1024 after)
-PASS  paper-grain: the tile that was read is painted paper, not a blank  (845 different colours)
-PASS  paper-grain: the tile is the same before and after, pixel for pixel  (0 of 1048576 pixels differ; largest difference in a channel 0 of 255; sha256 6d4d20dd3e4d013a)
-PASS  paper-tooth: both tiles were read whole and are the same size  (256x256 before, 256x256 after)
-PASS  paper-tooth: the tile that was read is painted paper, not a blank  (76 different colours)
-PASS  paper-tooth: the tile is the same before and after, pixel for pixel  (0 of 65536 pixels differ; largest difference in a channel 0 of 255; sha256 9abea0e047bdaff3)
+PASS  headless shell, paper-grain: both tiles were read whole and are the same size  (1024x1024 before, 1024x1024 after)
+PASS  headless shell, paper-grain: the tile that was read is painted paper, not a blank  (845 different colours, 1 different alphas)
+PASS  headless shell, paper-grain: the tile is the same before and after, pixel for pixel  (0 of 1048576 pixels differ; largest difference in a channel 0 of 255; sha256 6d4d20dd3e4d013a)
+PASS  headless shell, paper-tooth: both tiles were read whole and are the same size  (256x256 before, 256x256 after)
+PASS  headless shell, paper-tooth: the tile that was read is painted paper, not a blank  (76 different colours, 218 different alphas)
+PASS  headless shell, paper-tooth: the tile is the same before and after, pixel for pixel  (0 of 65536 pixels differ; largest difference in a channel 0 of 255; sha256 9abea0e047bdaff3)
+PASS  chromium, paper-grain: both tiles were read whole and are the same size  (1024x1024 before, 1024x1024 after)
+PASS  chromium, paper-grain: the tile that was read is painted paper, not a blank  (845 different colours, 1 different alphas)
+PASS  chromium, paper-grain: the tile is the same before and after, pixel for pixel  (0 of 1048576 pixels differ; largest difference in a channel 0 of 255; sha256 6d4d20dd3e4d013a)
+PASS  chromium, paper-tooth: both tiles were read whole and are the same size  (256x256 before, 256x256 after)
+PASS  chromium, paper-tooth: the tile that was read is painted paper, not a blank  (76 different colours, 218 different alphas)
+PASS  chromium, paper-tooth: the tile is the same before and after, pixel for pixel  (0 of 65536 pixels differ; largest difference in a channel 0 of 255; sha256 9abea0e047bdaff3)
 PASS  no page errors
+PASS  nothing the page asked for was missing, but the icon of the tab
 
-ALL 9 CHECKS PASSED
+ALL 17 CHECKS PASSED

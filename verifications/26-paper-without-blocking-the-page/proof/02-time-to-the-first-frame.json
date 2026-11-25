@@ -12,147 +12,146 @@
   "browser": "159.0.8154.6",
   "measured": {
     "before": {
-      "firstFrameMs": 1964.6000000238419,
-      "blockedBeforeFirstFrameMs": 1879,
-      "longestTaskBeforeFirstFrameMs": 1706,
-      "paintGrainMs": 1774.777,
+      "firstFrameMs": 2182.9000000953674,
+      "blockedBeforeFirstFrameMs": 2086,
+      "longestTaskBeforeFirstFrameMs": 1989,
+      "paintGrainMs": 1724.751,
       "everyRun": {
         "firstFrameMs": [
-          3512,
-          1821.6999999284744,
-          1853.3999999761581,
-          1868.2999999523163,
-          1964.6000000238419,
-          2047.5,
-          2056.899999976158
+          2601.7999999523163,
+          2182.399999976158,
+          2180.899999976158,
+          2189.7000000476837,
+          2207.5999999046326,
+          2182.9000000953674,
+          1765.2000000476837
         ],
         "longTasksMs": [
           [
-            1433,
-            1690,
-            175
-          ],
-          [
-            74,
-            1681
-          ],
-          [
-            87,
-            1655
-          ],
-          [
-            85,
-            1706
-          ],
-          [
-            79,
-            1800
-          ],
-          [
-            90,
-            1863
+            588,
+            1893
           ],
           [
             92,
-            1874
+            1989
+          ],
+          [
+            90,
+            1985
+          ],
+          [
+            90,
+            1996
+          ],
+          [
+            91,
+            2025
+          ],
+          [
+            97,
+            2004
+          ],
+          [
+            91,
+            1600
           ]
         ],
         "paintGrainMs": [
-          1976.837,
-          1954.434,
-          1764.78,
-          1687.152,
-          1774.777,
-          1902.442,
-          1768.295
+          1724.751,
+          1805.571,
+          1832.515,
+          1687.662,
+          1894.362,
+          1692.836,
+          1707.803
         ]
       }
     },
     "after": {
-      "firstFrameMs": 259.5,
-      "blockedBeforeFirstFrameMs": 171,
-      "longestTaskBeforeFirstFrameMs": 90,
-      "paintGrainMs": 60.966,
+      "firstFrameMs": 258.5,
+      "blockedBeforeFirstFrameMs": 168,
+      "longestTaskBeforeFirstFrameMs": 89,
+      "paintGrainMs": 71.174,
       "everyRun": {
         "firstFrameMs": [
-          227.89999997615814,
-          250.29999995231628,
-          316.7999999523163,
-          271.1999999284744,
-          259.5,
-          257.7000000476837,
-          280.10000002384186
+          216.29999995231628,
+          258.5,
+          222.30000007152557,
+          248.60000002384186,
+          267.3000000715256,
+          263.39999997615814,
+          274.39999997615814
         ],
         "longTasksMs": [
           [
-            82,
+            75,
+            61
+          ],
+          [
+            90,
+            84
+          ],
+          [
+            81,
             72
           ],
           [
             89,
+            79
+          ],
+          [
+            86,
             81
           ],
           [
-            99,
-            88
-          ],
-          [
-            90,
+            97,
             83
           ],
           [
-            90,
-            81
-          ],
-          [
-            90,
-            80
-          ],
-          [
-            100,
-            88
+            99,
+            89
           ]
         ],
         "paintGrainMs": [
-          61.536,
-          58.93,
-          55.601,
-          60.966,
-          61.09,
-          63.188,
-          54.546
+          71.174,
+          76.312,
+          70.819,
+          69.721,
+          85.052,
+          78.432,
+          63.788
         ]
       }
     }
   },
   "saved": {
-    "paintGrainMs": 1713.8110000000001,
-    "firstFrameMs": 1705.1000000238419,
-    "blockedBeforeFirstFrameMs": 1708
+    "paintGrainMs": 1653.577,
+    "firstFrameMs": 1924.4000000953674,
+    "blockedBeforeFirstFrameMs": 1918
   },
   "results": [
     {
-      "name": "before: the game drew a frame on every load, and paintGrain was in every profile",
+      "name": "before: paintGrain was in every profile",
       "pass": true
     },
     {
-      "name": "after: the game drew a frame on every load, and paintGrain was in every profile",
+      "name": "after: paintGrain was in every profile",
       "pass": true
     },
     {
-      "name": "paintGrain takes less than a tenth of what it took",
+      "name": "paintGrain takes less time than it took",
       "pass": true,
-      "details": "1774.8 ms before, 61.0 ms after"
+      "details": "1724.8 ms before, 71.2 ms after"
     },
     {
-      "name": "the first frame comes earlier by what paintGrain no longer costs",
+      "name": "the first frame comes earlier by at least half of what paintGrain no longer costs",
       "pass": true,
-      "details": "1965 ms before, 260 ms after, 1705 ms earlier"
+      "details": "2183 ms before, 259 ms after, 1924 ms earlier"
     },
     {
-      "name": "the page is blocked for less before the first frame",
+      "name": "the page is blocked for less before the first frame, by at least half of what paintGrain no longer costs",
       "pass": true,
-      "details": "1879 ms of long tasks before, 171 ms after"
+      "details": "2086 ms of long tasks before, 168 ms after"
     }
   ]
 }

@@ -2,29 +2,64 @@
   "before": {
     "commit": "6bc00d12ce2180434094aef98ed5dcc28094e12e"
   },
-  "textures": {
-    "paper-grain": {
-      "width": 1024,
-      "height": 1024,
-      "pixels": 1048576,
-      "sha256Before": "6d4d20dd3e4d013abcd35265435ea2bf8be73756e4e5173eb6da2ecdcce6b0ea",
-      "sha256After": "6d4d20dd3e4d013abcd35265435ea2bf8be73756e4e5173eb6da2ecdcce6b0ea",
-      "pixelsThatDiffer": 0,
-      "largestDifference": 0,
-      "channelValuesOffBy": {}
+  "engines": {
+    "headless shell": {
+      "version": "159.0.8154.6",
+      "textures": {
+        "paper-grain": {
+          "width": 1024,
+          "height": 1024,
+          "pixels": 1048576,
+          "sha256Before": "6d4d20dd3e4d013abcd35265435ea2bf8be73756e4e5173eb6da2ecdcce6b0ea",
+          "sha256After": "6d4d20dd3e4d013abcd35265435ea2bf8be73756e4e5173eb6da2ecdcce6b0ea",
+          "pixelsThatDiffer": 0,
+          "largestDifference": 0,
+          "channelValuesOffBy": {}
+        },
+        "paper-tooth": {
+          "width": 256,
+          "height": 256,
+          "pixels": 65536,
+          "sha256Before": "9abea0e047bdaff3276a952a4ab3228ba3c167c19e8959a2584f700589bc0c91",
+          "sha256After": "9abea0e047bdaff3276a952a4ab3228ba3c167c19e8959a2584f700589bc0c91",
+          "pixelsThatDiffer": 0,
+          "largestDifference": 0,
+          "channelValuesOffBy": {}
+        }
+      }
     },
-    "paper-tooth": {
-      "width": 256,
-      "height": 256,
-      "pixels": 65536,
-      "sha256Before": "9abea0e047bdaff3276a952a4ab3228ba3c167c19e8959a2584f700589bc0c91",
-      "sha256After": "9abea0e047bdaff3276a952a4ab3228ba3c167c19e8959a2584f700589bc0c91",
-      "pixelsThatDiffer": 0,
-      "largestDifference": 0,
-      "channelValuesOffBy": {}
+    "chromium": {
+      "version": "159.0.8154.6",
+      "textures": {
+        "paper-grain": {
+          "width": 1024,
+          "height": 1024,
+          "pixels": 1048576,
+          "sha256Before": "6d4d20dd3e4d013abcd35265435ea2bf8be73756e4e5173eb6da2ecdcce6b0ea",
+          "sha256After": "6d4d20dd3e4d013abcd35265435ea2bf8be73756e4e5173eb6da2ecdcce6b0ea",
+          "pixelsThatDiffer": 0,
+          "largestDifference": 0,
+          "channelValuesOffBy": {}
+        },
+        "paper-tooth": {
+          "width": 256,
+          "height": 256,
+          "pixels": 65536,
+          "sha256Before": "9abea0e047bdaff3276a952a4ab3228ba3c167c19e8959a2584f700589bc0c91",
+          "sha256After": "9abea0e047bdaff3276a952a4ab3228ba3c167c19e8959a2584f700589bc0c91",
+          "pixelsThatDiffer": 0,
+          "largestDifference": 0,
+          "channelValuesOffBy": {}
+        }
+      }
     }
   },
   "results": [
+    {
+      "name": "the code that paints the paper is not the same before and after",
+      "pass": true,
+      "details": "before is 6bc00d1"
+    },
     {
       "name": "before: dev server up, started by this run",
       "pass": true
@@ -34,37 +69,72 @@
       "pass": true
     },
     {
-      "name": "paper-grain: both tiles were read whole and are the same size",
+      "name": "headless shell, paper-grain: both tiles were read whole and are the same size",
       "pass": true,
       "details": "1024x1024 before, 1024x1024 after"
     },
     {
-      "name": "paper-grain: the tile that was read is painted paper, not a blank",
+      "name": "headless shell, paper-grain: the tile that was read is painted paper, not a blank",
       "pass": true,
-      "details": "845 different colours"
+      "details": "845 different colours, 1 different alphas"
     },
     {
-      "name": "paper-grain: the tile is the same before and after, pixel for pixel",
+      "name": "headless shell, paper-grain: the tile is the same before and after, pixel for pixel",
       "pass": true,
       "details": "0 of 1048576 pixels differ; largest difference in a channel 0 of 255; sha256 6d4d20dd3e4d013a"
     },
     {
-      "name": "paper-tooth: both tiles were read whole and are the same size",
+      "name": "headless shell, paper-tooth: both tiles were read whole and are the same size",
       "pass": true,
       "details": "256x256 before, 256x256 after"
     },
     {
-      "name": "paper-tooth: the tile that was read is painted paper, not a blank",
+      "name": "headless shell, paper-tooth: the tile that was read is painted paper, not a blank",
       "pass": true,
-      "details": "76 different colours"
+      "details": "76 different colours, 218 different alphas"
     },
     {
-      "name": "paper-tooth: the tile is the same before and after, pixel for pixel",
+      "name": "headless shell, paper-tooth: the tile is the same before and after, pixel for pixel",
+      "pass": true,
+      "details": "0 of 65536 pixels differ; largest difference in a channel 0 of 255; sha256 9abea0e047bdaff3"
+    },
+    {
+      "name": "chromium, paper-grain: both tiles were read whole and are the same size",
+      "pass": true,
+      "details": "1024x1024 before, 1024x1024 after"
+    },
+    {
+      "name": "chromium, paper-grain: the tile that was read is painted paper, not a blank",
+      "pass": true,
+      "details": "845 different colours, 1 different alphas"
+    },
+    {
+      "name": "chromium, paper-grain: the tile is the same before and after, pixel for pixel",
+      "pass": true,
+      "details": "0 of 1048576 pixels differ; largest difference in a channel 0 of 255; sha256 6d4d20dd3e4d013a"
+    },
+    {
+      "name": "chromium, paper-tooth: both tiles were read whole and are the same size",
+      "pass": true,
+      "details": "256x256 before, 256x256 after"
+    },
+    {
+      "name": "chromium, paper-tooth: the tile that was read is painted paper, not a blank",
+      "pass": true,
+      "details": "76 different colours, 218 different alphas"
+    },
+    {
+      "name": "chromium, paper-tooth: the tile is the same before and after, pixel for pixel",
       "pass": true,
       "details": "0 of 65536 pixels differ; largest difference in a channel 0 of 255; sha256 9abea0e047bdaff3"
     },
     {
       "name": "no page errors",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "nothing the page asked for was missing, but the icon of the tab",
       "pass": true,
       "details": ""
     }

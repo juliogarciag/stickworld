@@ -114,7 +114,7 @@ function paintGrain(context: CanvasRenderingContext2D): void {
     const radius = GRAIN.patchRadius * (0.5 + nextUnit() * 0.5);
     const shade = nextUnit() < 0.5 ? '120, 100, 70' : '255, 255, 250';
     onEveryRepeat(size, (offsetX, offsetY) => {
-      // A patch fades to nothing at its radius, so only the pixels it reaches are filled: filling the whole tile for each one kept the page from its first frame for over a second.
+      // A patch fades to nothing at its radius, so only the pixels it reaches are filled: nine fills of the whole tile for each patch block the page for over a second.
       const reached = pixelsOfTileWithin({ size, x: x + offsetX, y: y + offsetY, radius });
       if (!reached) return;
       const gradient = context.createRadialGradient(x + offsetX, y + offsetY, 0, x + offsetX, y + offsetY, radius);
@@ -160,7 +160,8 @@ function onEveryRepeat(size: number, paint: (offsetX: number, offsetY: number) =
 
 /**
  * The whole pixels of a tile of side `size` that are within `radius` of (`x`, `y`) along both axes, or undefined when there are none.
- * Whole pixels, so that filling them leaves no half-covered pixel at the rim that filling the whole tile would not have.
+ * Whole pixels, so that filling them leaves no half-covered pixel at the rim that filling the whole tile would not have: on the canvas a texture
+ * gets, which the browser paints on the CPU, the tile then comes out the same to the last bit as with the whole tile filled.
  */
 function pixelsOfTileWithin({ size, x, y, radius }: { size: number; x: number; y: number; radius: number }): { left: number; top: number; width: number; height: number } | undefined {
   const left = Math.max(0, Math.floor(x - radius));

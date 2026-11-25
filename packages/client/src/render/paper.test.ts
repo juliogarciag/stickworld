@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { fixedUnits } from './fixedUnits';
 import { __testing__ } from './paper';
-
-const { pixelsOfTileWithin } = __testing__;
 
 describe('the pixels of a tile a patch reaches', () => {
   it('is the square around a patch that is wholly on the tile, grown to whole pixels', () => {
@@ -25,4 +24,33 @@ describe('the pixels of a tile a patch reaches', () => {
     expect(pixelsOfTileWithin({ size: 1024, x: -100, y: 500, radius: 100 })).toBeUndefined();
     expect(pixelsOfTileWithin({ size: 1024, x: 1124, y: 500, radius: 100 })).toBeUndefined();
   });
+
+  it('is whole pixels of the tile, and every pixel of the tile the patch reaches, wherever the patch is', () => {
+    const size = 64;
+    const nextUnit = fixedUnits(26);
+    for (let patch = 0; patch < 500; patch += 1) {
+      const x = (nextUnit() * 3 - 1) * size;
+      const y = (nextUnit() * 3 - 1) * size;
+      const radius = 1 + nextUnit() * size;
+      const reached = pixelsOfTileWithin({ size, x, y, radius });
+      const isReached = (column: number, row: number): boolean =>
+        reached !== undefined && column >= reached.left && column < reached.left + reached.width && row >= reached.top && row < reached.top + reached.height;
+      if (reached) {
+        expect([reached.left, reached.top, reached.width, reached.height].every(Number.isInteger)).toBe(true);
+        expect(reached.left >= 0 && reached.top >= 0 && reached.left + reached.width <= size && reached.top + reached.height <= size).toBe(true);
+      }
+      for (let column = 0; column < size; column += 1) {
+        for (let row = 0; row < size; row += 1) {
+          // A pixel any part of which is within the radius: its nearest point to the patch's middle is.
+          const nearestX = Math.max(column, Math.min(column + 1, x));
+          const nearestY = Math.max(row, Math.min(row + 1, y));
+          if (Math.hypot(nearestX - x, nearestY - y) < radius && !isReached(column, row)) expect.fail(`pixel ${column}, ${row} is within ${radius} of ${x}, ${y} and is not filled`);
+        }
+      }
+    }
+  });
 });
+
+// ---- Helpers ----
+
+const { pixelsOfTileWithin } = __testing__;
