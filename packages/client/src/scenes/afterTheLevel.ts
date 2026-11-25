@@ -1,8 +1,9 @@
 import Phaser from 'phaser';
+import { frameSeconds } from '../loop/frameSeconds';
 
 /**
  * Calls `draw` once a frame for `scene`, after every scene has updated and
- * before anything is rendered, with the seconds since the last frame.
+ * before anything is rendered, with the seconds the frame counts for.
  *
  * Phaser updates its scenes from the top one down and renders them from the
  * bottom one up. A scene drawn over the level's would so update before the
@@ -12,7 +13,7 @@ import Phaser from 'phaser';
  */
 export function everyFrameAfterTheLevel(scene: Phaser.Scene, draw: (seconds: number) => void): void {
   const afterEveryUpdate = (_time: number, deltaMs: number): void => {
-    if (scene.sys.isActive()) draw(deltaMs / 1000);
+    if (scene.sys.isActive()) draw(frameSeconds(deltaMs));
   };
   scene.game.events.on(Phaser.Core.Events.POST_STEP, afterEveryUpdate);
   scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => scene.game.events.off(Phaser.Core.Events.POST_STEP, afterEveryUpdate));

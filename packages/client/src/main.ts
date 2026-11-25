@@ -26,6 +26,11 @@ function boot(): void {
     // the first time a browser made one.
     // Take this out when the game gets sound.
     audio: { noAudio: true },
+    // A frame's time reaches the loop as it was. Phaser would otherwise average it over the last frames and, for the 120 frames
+    // after a start, a show or a focus, and for as long as the window is not focused, cut it to a sixtieth of a second: a
+    // longer frame then gave the sim less time than had passed, and the game ran in slow motion. `loop/frameSeconds.ts` has
+    // the one cap that is left.
+    fps: { smoothStep: false },
   });
   keepCanvasAtWindowSize(game);
   if (import.meta.env.DEV) exposeDebugApi({ loop, game, pageTurn });

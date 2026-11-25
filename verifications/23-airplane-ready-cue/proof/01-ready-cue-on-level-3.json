@@ -1,0 +1,153 @@
+{
+  "steps": {
+    "edge": 10,
+    "putDownAhead": 0.8999999999999999,
+    "target": 8.75,
+    "folded": {
+      "tick": 190,
+      "feet": {
+        "x": 2.8433333333333324,
+        "y": 0
+      },
+      "action": "standing",
+      "airplane": null,
+      "flyingHint": "takeItToAnEdge",
+      "interaction": null,
+      "itemUse": "place"
+    },
+    "carried": {
+      "tick": 454,
+      "feet": {
+        "x": 8.856666666666717,
+        "y": 0
+      },
+      "action": "standing",
+      "airplane": {
+        "at": {
+          "x": 8.856666666666717,
+          "y": -1.82
+        },
+        "facing": 1,
+        "length": 1.4,
+        "height": 0.34,
+        "state": "carried",
+        "verticalSpeed": 0,
+        "speed": 0,
+        "pitch": 0,
+        "stallSpeed": 3,
+        "onAnEdge": false
+      },
+      "flyingHint": "takeItToAnEdge",
+      "interaction": "putDown",
+      "itemUse": null
+    },
+    "onTheEdge": {
+      "tick": 495,
+      "feet": {
+        "x": 8.856666666666717,
+        "y": 0
+      },
+      "action": "standing",
+      "airplane": {
+        "at": {
+          "x": 9.756666666666717,
+          "y": 0
+        },
+        "facing": 1,
+        "length": 1.4,
+        "height": 0.34,
+        "state": "resting",
+        "verticalSpeed": 0,
+        "speed": 0,
+        "pitch": 0,
+        "stallSpeed": 3,
+        "onAnEdge": true
+      },
+      "flyingHint": "readyToBoard",
+      "interaction": "board",
+      "itemUse": null
+    },
+    "boarded": {
+      "tick": 544,
+      "feet": {
+        "x": 10.980554372715366,
+        "y": -0.09980054617826921
+      },
+      "action": "seated",
+      "airplane": {
+        "at": {
+          "x": 10.980554372715366,
+          "y": -0.09980054617826921
+        },
+        "facing": 1,
+        "length": 1.4,
+        "height": 0.34,
+        "state": "flying",
+        "verticalSpeed": 0,
+        "speed": 7.296094626019324,
+        "pitch": -0.016666666666666663,
+        "stallSpeed": 3,
+        "onAnEdge": false
+      },
+      "flyingHint": null,
+      "interaction": null,
+      "itemUse": null
+    },
+    "green": {
+      "before": 0,
+      "after": 795,
+      "boarded": 0
+    }
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "with the airplane folded, the hint says to take it to the edge",
+      "pass": true,
+      "details": "{\"tick\":190,\"feet\":{\"x\":2.8433333333333324,\"y\":0},\"action\":\"standing\",\"airplane\":null,\"flyingHint\":\"takeItToAnEdge\",\"interaction\":null,\"itemUse\":\"place\"}"
+    },
+    {
+      "name": "carried to the edge, still told to take it to the edge, and K puts it down",
+      "pass": true,
+      "details": "{\"tick\":454,\"feet\":{\"x\":8.856666666666717,\"y\":0},\"action\":\"standing\",\"airplane\":{\"at\":{\"x\":8.856666666666717,\"y\":-1.82},\"facing\":1,\"length\":1.4,\"height\":0.34,\"state\":\"carried\",\"verticalSpeed\":0,\"speed\":0,\"pitch\":0,\"stallSpeed\":3,\"onAnEdge\":false},\"flyingHint\":\"takeItToAnEdge\",\"interaction\":\"putDown\",\"itemUse\":null}"
+    },
+    {
+      "name": "before: nothing green in the prompts",
+      "pass": true,
+      "details": "0 green pixels"
+    },
+    {
+      "name": "put down, it sits on the edge and K boards it",
+      "pass": true,
+      "details": "{\"tick\":495,\"feet\":{\"x\":8.856666666666717,\"y\":0},\"action\":\"standing\",\"airplane\":{\"at\":{\"x\":9.756666666666717,\"y\":0},\"facing\":1,\"length\":1.4,\"height\":0.34,\"state\":\"resting\",\"verticalSpeed\":0,\"speed\":0,\"pitch\":0,\"stallSpeed\":3,\"onAnEdge\":true},\"flyingHint\":\"readyToBoard\",\"interaction\":\"board\",\"itemUse\":null}"
+    },
+    {
+      "name": "the hint is \"ready\" on the same read that it sits on the edge",
+      "pass": true,
+      "details": "flyingHint readyToBoard"
+    },
+    {
+      "name": "after: the ready words are written in green in the prompts",
+      "pass": true,
+      "details": "795 green pixels"
+    },
+    {
+      "name": "K boards it: he is seated and nothing is said about the edge any more",
+      "pass": true,
+      "details": "{\"tick\":544,\"feet\":{\"x\":10.980554372715366,\"y\":-0.09980054617826921},\"action\":\"seated\",\"airplane\":{\"at\":{\"x\":10.980554372715366,\"y\":-0.09980054617826921},\"facing\":1,\"length\":1.4,\"height\":0.34,\"state\":\"flying\",\"verticalSpeed\":0,\"speed\":7.296094626019324,\"pitch\":-0.016666666666666663,\"stallSpeed\":3,\"onAnEdge\":false},\"flyingHint\":null,\"interaction\":null,\"itemUse\":null}"
+    },
+    {
+      "name": "boarded: nothing green in the prompts",
+      "pass": true,
+      "details": "0 green pixels"
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

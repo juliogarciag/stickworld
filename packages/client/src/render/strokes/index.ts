@@ -14,7 +14,7 @@ import { graphicsStrokeLayer } from './graphicsLayer';
  * Points and thickness are in world pixels; `PENCIL` in `./pencil` has the thickness lines usually have. The technique behind a layer
  * lives in `graphicsLayer.ts` and can be swapped there without touching a caller.
  */
-export type { Stroke, StrokeLayer, StrokePoint } from './stroke';
+export type { ColouredPencil, Stroke, StrokeLayer, StrokePoint } from './stroke';
 
 /** A layer of pencil strokes in `scene`, drawn above what the scene already has. */
 export function createStrokeLayer(scene: Phaser.Scene): StrokeLayer {

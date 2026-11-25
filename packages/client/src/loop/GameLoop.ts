@@ -1,8 +1,6 @@
 import { createSim, restoreSim, type Command, type SimHandle } from '@stickworld/sim';
+import { MAX_FRAME_SECONDS } from './frameSeconds';
 import { takeWholeTicks } from './takeWholeTicks';
-
-/** Never simulate more than this much real time per frame (tab switches, hitches). */
-const MAX_FRAME_SECONDS = 0.25;
 
 /**
  * The one place the sim advances. Real time comes in from the scene, whole
@@ -21,7 +19,10 @@ export class GameLoop {
     return this.current;
   }
 
-  /** Runs as many ticks as `deltaSeconds` of real time earns, and says how many ran. */
+  /**
+   * Runs as many ticks as `deltaSeconds` of real time earns, and says how many ran. A scene hands it `frameSeconds`, which
+   * is capped already; the cap is given to `takeWholeTicks` all the same, so that no caller can make the sim run more.
+   */
   advanceBy(deltaSeconds: number): number {
     const { ticks, leftover } = takeWholeTicks({ leftover: this.leftover, deltaSeconds, dt: this.current.dt, maxFrameSeconds: MAX_FRAME_SECONDS });
     this.leftover = leftover;

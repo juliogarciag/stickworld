@@ -1,7 +1,8 @@
-import type { AirplaneView, Command, CraftingView, Def, FallenItemView, FlagView, GameView, InteractionMeaning, ItemSlot, ItemUseMeaning, LetterView, Level, NoteView, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
+import type { AirplaneView, Command, CraftingView, Def, FallenItemView, FlagView, FlyingHint, GameView, InteractionMeaning, ItemSlot, ItemUseMeaning, LetterView, Level, NoteView, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
 import { airplaneOf, craftingOf, defs, fallenItemOf, flagOf, flyingHintOf, gameOf, hashSnapshot, interactionOf, itemSlotsOf, itemUseOf, letterOf, levelOf, notesOf, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf } from '@stickworld/sim';
 import type Phaser from 'phaser';
 import { itemSlotBox, type Rectangle } from './hud/itemSlots';
+import { MAX_FRAME_SECONDS } from './loop/frameSeconds';
 import type { GameLoop } from './loop/GameLoop';
 import { worldSeenBy } from './render/cameraView';
 import type { PageTurn } from './render/pageTurn';
@@ -22,6 +23,8 @@ export interface GameDebugApi {
   readonly stickManHeight: number;
   /** The stick man's width in metres, as the sim's tuning has it: how far the end of a floor line he drops past is kept from the middle of him, half to each side. */
   readonly stickManWidth: number;
+  /** The most real time one frame may give the sim, in seconds: what a longer frame took beyond it is dropped, not played. */
+  readonly maxFrameSeconds: number;
   snapshot(): SimSnapshot;
   hash(): string;
   /** The level camera right now, or undefined until the level scene runs. */
@@ -51,7 +54,7 @@ export interface GameDebugApi {
   /** The airplane in the world as the sim has it right now, or undefined while there is none. */
   airplane(): AirplaneView | undefined;
   /** What he has still to be told about flying the airplane he has, as the sim has it right now, or null. */
-  flyingHint(): 'takeItToAnEdge' | null;
+  flyingHint(): FlyingHint | null;
   /** What using the held item would do right now, or null. */
   itemUse(): ItemUseMeaning | null;
   /** What interacting with the world would do right now, or null. */
@@ -108,6 +111,7 @@ export function exposeDebugApi({ loop, game, pageTurn }: { loop: GameLoop; game:
     pixelsPerMetre: PIXELS_PER_METRE,
     stickManHeight: STICK_MAN_HEIGHT,
     stickManWidth: STICK_MAN_WIDTH,
+    maxFrameSeconds: MAX_FRAME_SECONDS,
     snapshot: () => loop.sim.snapshot(),
     hash: () => hashSnapshot(loop.sim.snapshot()),
     camera: () => cameraOf(LEVEL_SCENE),

@@ -1,5 +1,5 @@
-import type { InteractionMeaning, ItemUseMeaning } from '@stickworld/sim';
-import type { Stroke } from '../render/strokes';
+import type { FlyingHint, InteractionMeaning, ItemUseMeaning } from '@stickworld/sim';
+import type { ColouredPencil, Stroke } from '../render/strokes';
 import type { Rectangle } from './itemSlots';
 import { keysAndWords } from './keysAndWords';
 
@@ -7,7 +7,8 @@ import { keysAndWords } from './keysAndWords';
  * What the keys would do right now, written in a corner of the screen: the
  * key in a box and a word or two beside it. A key that would do nothing is
  * not shown. Above them, in words alone, what he has still to be told: that
- * the airplane goes to the edge (`flyingHintOf`). What each action key would do is the sim's (`itemUseOf`,
+ * the airplane goes to the edge, and in green once it is there that it is
+ * ready (`flyingHintOf`). What each action key would do is the sim's (`itemUseOf`,
  * `interactionOf`), and so is whether he is seated in the airplane, where the
  * keys that fly it are shown; the words and where they are drawn are decided here.
  */
@@ -17,6 +18,8 @@ export interface Prompt {
   /** The key's name as the player knows it, or null for words with no key. */
   readonly key: string | null;
   readonly words: string;
+  /** The coloured pencil the prompt is written in, or absent for graphite: green for the airplane that is ready. */
+  readonly colour?: ColouredPencil;
 }
 
 export interface KeysWouldDo {
@@ -32,7 +35,7 @@ export interface KeysWouldDo {
   readonly seated: boolean;
   readonly flightKeys: { readonly climb: string; readonly dive: string; readonly jumpOut: string };
   /** What he has still to be told about flying the airplane he has, or null (`flyingHintOf`). */
-  readonly flyingHint: 'takeItToAnEdge' | null;
+  readonly flyingHint: FlyingHint | null;
 }
 
 /**
@@ -41,7 +44,7 @@ export interface KeysWouldDo {
  */
 export function promptsFor({ itemUse, wouldMake, useItemKey, interaction, interactKey, seated, flightKeys, flyingHint }: KeysWouldDo): Prompt[] {
   return [
-    ...(flyingHint === null ? [] : [{ key: null, words: FLYING_HINT_WORDS[flyingHint] }]),
+    ...(flyingHint === null ? [] : [FLYING_HINTS[flyingHint]]),
     ...(itemUse === null ? [] : [{ key: useItemKey, words: ITEM_USE_WORDS[itemUse](wouldMake) }]),
     ...(interaction === null ? [] : [{ key: interactKey, words: INTERACTION_WORDS[interaction] }]),
     ...(seated ? [{ key: flightKeys.climb, words: FLIGHT_WORDS.climb }, { key: flightKeys.dive, words: FLIGHT_WORDS.dive }, { key: flightKeys.jumpOut, words: FLIGHT_WORDS.jumpOut }] : []),
@@ -50,10 +53,11 @@ export function promptsFor({ itemUse, wouldMake, useItemKey, interaction, intera
 
 /** The strokes that draw `prompts` in the bottom left corner of what the HUD camera sees, one above the other. */
 export function promptStrokes(prompts: readonly Prompt[], seen: Rectangle): Stroke[] {
-  return prompts.flatMap(({ key, words }, index) => {
+  return prompts.flatMap(({ key, words, colour }, index) => {
     const fromTheBottom = prompts.length - 1 - index;
     const at = { x: seen.x + PROMPTS.margin, y: seen.y + seen.height - PROMPTS.margin - PROMPTS.keySide - fromTheBottom * PROMPTS.rowHeight };
-    return keysAndWords({ keys: key === null ? [] : [key], words, at, sizes: PROMPTS }).strokes;
+    const { strokes } = keysAndWords({ keys: key === null ? [] : [key], words, at, sizes: PROMPTS });
+    return colour === undefined ? strokes : strokes.map((stroke) => ({ ...stroke, colour }));
   });
 }
 
@@ -77,8 +81,14 @@ const INTERACTION_WORDS: Readonly<Record<InteractionMeaning, string>> = {
   pickUp: 'pick up the paper',
 };
 
-/** What he is told to do with the airplane before he has ever flown one. It names the thing and the place: no key does it. */
-const FLYING_HINT_WORDS = { takeItToAnEdge: 'take the airplane to the edge' } as const;
+/**
+ * What he is told about the airplane before he has flown it, in words with no key: where to take it, then, in green,
+ * that he got it there. The keys under it say which one boards it.
+ */
+const FLYING_HINTS: Readonly<Record<FlyingHint, Prompt>> = {
+  takeItToAnEdge: { key: null, words: 'take the airplane to the edge' },
+  readyToBoard: { key: null, words: 'the airplane is ready', colour: 'green' },
+};
 
 const FLIGHT_WORDS = { climb: 'climb', dive: 'dive', jumpOut: 'jump out' } as const;
 

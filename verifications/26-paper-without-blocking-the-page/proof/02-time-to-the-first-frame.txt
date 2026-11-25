@@ -1,0 +1,9 @@
+PASS  before: paintGrain was in every profile
+      before: first frame 2183 ms, blocked before it 2086 ms (longest task 1989 ms), paintGrain 1724.8 ms
+PASS  after: paintGrain was in every profile
+      after: first frame 259 ms, blocked before it 168 ms (longest task 89 ms), paintGrain 71.2 ms
+PASS  paintGrain takes less time than it took  (1724.8 ms before, 71.2 ms after)
+PASS  the first frame comes earlier by at least half of what paintGrain no longer costs  (2183 ms before, 259 ms after, 1924 ms earlier)
+PASS  the page is blocked for less before the first frame, by at least half of what paintGrain no longer costs  (2086 ms of long tasks before, 168 ms after)
+
+ALL 5 CHECKS PASSED
