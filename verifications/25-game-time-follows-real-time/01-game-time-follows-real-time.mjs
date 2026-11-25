@@ -207,7 +207,8 @@ async function walkMeasuredOver(page, { fromFrame }) {
 
 /**
  * Level 1 again from its start, standing still, with the whole floor to the flag ahead of him. It is not always enough:
- * at 30 Hz and at 6x he reaches the flag just before the 120th frame, and his walk is then measured up to the flag.
+ * where 120 frames take four seconds, as at 30 Hz, he reaches the flag just before the last of them, and his walk is
+ * then measured up to the flag.
  */
 async function backAtTheStartOfTheLevel(page) {
   await page.evaluate(() => window.__game.loadLevel(1));
