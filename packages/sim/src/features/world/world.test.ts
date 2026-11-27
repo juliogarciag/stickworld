@@ -17,7 +17,8 @@ import { getInteraction } from './view';
 describe("'world/interact' and 'item/use'", () => {
   it('do one thing a press: next to both the airplane and the letter, a press lifts the airplane and the letter stays unread', () => {
     const sim = new Sim({ features, start: { seed: 1, level: 3 } });
-    // In play the stick man cannot have an airplane before it has read the letter, so this one is handed to it.
+    // In play the stick man cannot have an airplane before it has read the letter, so this one is
+    // handed to it.
     giveItem(sim, AIRPLANE_ITEM_ID);
     walkTo(sim, getLetter(sim)!.position.x - 0.4);
     sim.step([SELECT_SLOT_1]);

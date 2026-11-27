@@ -45,7 +45,8 @@ export function easeAirplanesOverTime(): (
       shown = { position: airplane.position, noseDown };
     } else {
       const isInHands = airplane.state === 'resting' || airplane.state === 'carried';
-      // Handled, it follows at its own pace; falling, it also keeps up with however fast it falls; flying and landing it is where the sim says.
+      // Handled, it follows at its own pace; falling, it also keeps up with however fast it falls;
+      // flying and landing it is where the sim says.
       const reach = seconds * (HANDLING.speed + airplane.speed + Math.abs(airplane.verticalSpeed));
       const position =
         isInHands || airplane.state === 'falling'
@@ -67,12 +68,17 @@ export function easeAirplanesOverTime(): (
   };
 }
 
-/** How far above its underside the point is that the airplane is drawn turning about, in metres: its middle. What sits in it turns about the same point. */
+/**
+ * How far above its underside the point is that the airplane is drawn turning about, in metres: its
+ * middle. What sits in it turns about the same point.
+ */
 export function getPivotHeight(airplane: { height: number }): number {
   return airplane.height / 2;
 }
 
-/** The strokes that draw the airplane, in world pixels: its outline, and the fold along its middle. */
+/**
+ * The strokes that draw the airplane, in world pixels: its outline, and the fold along its middle.
+ */
 export function buildAirplaneStrokes(airplane: ShownAirplane): Stroke[] {
   const middle = {
     x: airplane.position.x,
@@ -103,7 +109,10 @@ export function buildAirplaneStrokes(airplane: ShownAirplane): Stroke[] {
 
 // ---- Helpers ----
 
-/** Where its nose points for what it is doing, in radians down: where the sim points it while it flies, further down the faster it falls, level otherwise. */
+/**
+ * Where its nose points for what it is doing, in radians down: where the sim points it while it
+ * flies, further down the faster it falls, level otherwise.
+ */
 function getNoseDown(airplane: AirplaneView): number {
   if (airplane.state === 'flying') {
     return -airplane.pitch;
@@ -114,7 +123,10 @@ function getNoseDown(airplane: AirplaneView): number {
   return 0;
 }
 
-/** The dart from the side: `along` is a share of its length from its middle towards the nose, `up` a share of its height from its underside. */
+/**
+ * The dart from the side: `along` is a share of its length from its middle towards the nose, `up` a
+ * share of its height from its underside.
+ */
 const DART = {
   nose: { distanceAlong: 0.5, up: 0.2 },
   tailTop: { distanceAlong: -0.5, up: 1 },
@@ -125,12 +137,22 @@ const DART = {
 } as const;
 
 const HANDLING = {
-  /** How fast it goes between the floor and the stick man's hands, in metres per second. Faster than the stick man walks, so it catches up with the stick man and then stays exactly where the sim says. */
+  /**
+   * How fast it goes between the floor and the stick man's hands, in metres per second. Faster than
+   * the stick man walks, so it catches up with the stick man and then stays exactly where the sim
+   * says.
+   */
   speed: 8,
-  /** How far its nose goes down for each metre per second it falls, in radians, and the most it does. */
+  /**
+   * How far its nose goes down for each metre per second it falls, in radians, and the most it
+   * does.
+   */
   noseDownPerSpeed: 0.16,
   mostNoseDown: 1.1,
-  /** How fast its nose turns to where it should point, in radians per second: faster than it is ever steered, so in flight it is exactly where the sim points it. */
+  /**
+   * How fast its nose turns to where it should point, in radians per second: faster than it is ever
+   * steered, so in flight it is exactly where the sim points it.
+   */
   noseTurnRate: 5,
 } as const;
 

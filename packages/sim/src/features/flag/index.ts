@@ -20,7 +20,8 @@ export const flagFeature: Feature = {
     if (flag.reachedAtTick === null) {
       const placed = findFlagPlacedIn(sim.levelDef);
       const { x, y, isSeated } = getPlayerBody(sim);
-      // A flag is reached on the stick man's own feet: flying past it in the airplane does not count.
+      // A flag is reached on the stick man's own feet: flying past it in the airplane does not
+      // count.
       if (placed && !isSeated && isTouchingFlag({ feet: { x, y }, placed })) {
         flag.reachedAtTick = sim.tick;
       }
@@ -66,7 +67,10 @@ export function findFlagPlacedIn(level: Level): Placement | undefined {
 
 // ---- Helpers ----
 
-/** True when the stick man is within reach of the stick and any part of the stick man is level with it: the stick man cannot jump over a flag taller than its jump. */
+/**
+ * True when the stick man is within reach of the stick and any part of the stick man is level with
+ * it: the stick man cannot jump over a flag taller than its jump.
+ */
 function isTouchingFlag(input: { feet: { x: number; y: number }; placed: Placement }): boolean {
   const isInReach = Math.abs(input.feet.x - input.placed.position.x) <= flagDef.reach;
   const isLevelWithStick =
@@ -84,7 +88,10 @@ interface FinishedLevel {
   readonly dt: number;
 }
 
-/** The level that follows the finished one, once the pause after its flag is over; undefined during the pause and after the last level. */
+/**
+ * The level that follows the finished one, once the pause after its flag is over; undefined during
+ * the pause and after the last level.
+ */
 function findLevelToStartNow(finishedLevel: FinishedLevel): Level | undefined {
   if (
     finishedLevel.ticksSinceReached < Math.round(LEVEL_END.pauseBeforeNextLevel / finishedLevel.dt)

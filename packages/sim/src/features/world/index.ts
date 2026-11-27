@@ -23,7 +23,10 @@ export const worldFeature: Feature = {
   },
 };
 
-/** What `'world/interact'` would do right now, with the function that does it, or undefined when there is nothing to interact with. */
+/**
+ * What `'world/interact'` would do right now, with the function that does it, or undefined when
+ * there is nothing to interact with.
+ */
 export function getInteractionNow(sim: Sim): Interaction | undefined {
   if (isFlagReached(sim)) {
     return undefined;
@@ -37,7 +40,10 @@ export function getInteractionNow(sim: Sim): Interaction | undefined {
   return undefined;
 }
 
-/** Every interaction there is, most pressing first: the letter the stick man reads is put away, then what it has in its hands comes before what lies next to it. */
+/**
+ * Every interaction there is, most pressing first: the letter the stick man reads is put away, then
+ * what it has in its hands comes before what lies next to it.
+ */
 const ANSWERS = [
   getLetterBeingRead,
   getAirplaneInteraction,
@@ -47,5 +53,8 @@ const ANSWERS = [
 
 export type Interaction = NonNullable<ReturnType<(typeof ANSWERS)[number]>>;
 
-/** What interacting means: read a letter, put away the one being read, lift the airplane, put it down, board it, or pick up the item that fell from the sky. */
+/**
+ * What interacting means: read a letter, put away the one being read, lift the airplane, put it
+ * down, board it, or pick up the item that fell from the sky.
+ */
 export type InteractionMeaning = Interaction['means'];

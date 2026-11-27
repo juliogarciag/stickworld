@@ -23,7 +23,9 @@ import {
   writeProof,
 } from './lib.mjs';
 
-/** A port no other session uses, and not the one of the dev server you leave running for the human. */
+/**
+ * A port no other session uses, and not the one of the dev server you leave running for the human.
+ */
 const PORT = 5901;
 /** CSS pixels; the page opens at a pixel ratio of 1 so screen, device and CSS pixels agree. */
 const VIEWPORT = { width: 960, height: 540 };
@@ -34,7 +36,8 @@ const pageErrors = [];
 const devServer = start('pnpm', ['dev'], { env: { PORT: String(PORT) } });
 let browser;
 try {
-  // The ready line proves the port is this run's server, not something that was already listening there.
+  // The ready line proves the port is this run's server, not something that was already listening
+  // there.
   const ready =
     (await waitForPort(PORT)) &&
     (await waitFor("the dev server's ready line", {

@@ -15,7 +15,10 @@ export const craftingFeature: Feature = {
   slices: [knownRecipesSlice],
 };
 
-/** The stick man knows the recipe `recipeDefId` from now on. Nothing changes for one the stick man knows already, or for an id that is not a recipe's. */
+/**
+ * The stick man knows the recipe `recipeDefId` from now on. Nothing changes for one the stick man
+ * knows already, or for an id that is not a recipe's.
+ */
 export function teachRecipe(sim: Sim, recipeDefId: number): void {
   const known = sim.getStateOf(knownRecipesSlice);
   if (getRecipeDef(recipeDefId) && !known.includes(recipeDefId)) {
@@ -29,16 +32,19 @@ export function getKnownRecipes(sim: Sim): RecipeDef[] {
 }
 
 /**
- * The recipe that using the held item would make, or undefined when the stick man knows none made from it. No two recipes are
- * made from the same item yet (a test holds that): the first that are need a list to choose from, with a way to
- * move through it.
+ * The recipe that using the held item would make, or undefined when the stick man knows none made
+ * from it. No two recipes are made from the same item yet (a test holds that): the first that are
+ * need a list to choose from, with a way to move through it.
  */
 export function findCraftableRecipe(sim: Sim): RecipeDef | undefined {
   const held = getSelectedItem(sim);
   return held === null ? undefined : getKnownRecipes(sim).find((known) => known.madeFrom === held);
 }
 
-/** What using the held item does for crafting, for `features/item`: it makes the recipe the stick man knows for it. Undefined when the stick man knows none. */
+/**
+ * What using the held item does for crafting, for `features/item`: it makes the recipe the stick
+ * man knows for it. Undefined when the stick man knows none.
+ */
 export function getCraftingUse(sim: Sim) {
   const recipe = findCraftableRecipe(sim);
   if (!recipe) {

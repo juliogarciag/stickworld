@@ -12,14 +12,18 @@ export interface StateSlice<T> {
   readonly key: string;
   /** The value this slice holds when a level starts. */
   getInitialFor(level: Level): T;
-  /** True when starting or restarting a level keeps this slice's value instead of resetting it (the paper the player keeps from level 2). */
+  /**
+   * True when starting or restarting a level keeps this slice's value instead of resetting it (the
+   * paper the player keeps from level 2).
+   */
   readonly isCarriedAcrossLevels: boolean;
 }
 
 export interface SliceOptions {
   /**
-   * True to keep the value when a level starts or restarts, false to go back to `getInitialFor` each time. Every slice
-   * says which, so that the line that declares new state shows what a death does to it.
+   * True to keep the value when a level starts or restarts, false to go back to `getInitialFor`
+   * each time. Every slice says which, so that the line that declares new state shows what a death
+   * does to it.
    */
   readonly isCarriedAcrossLevels: boolean;
 }

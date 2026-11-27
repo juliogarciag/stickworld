@@ -16,7 +16,10 @@ import { convertToPixels } from './units';
 /** The names of the keys for each thing a note can be about, as the player knows them. */
 export type KeysForNotes = Readonly<Record<NonNullable<NoteView['topic']>, readonly string[]>>;
 
-/** The strokes of every note, in world pixels. A note that has been rubbed out goes stroke by stroke, in the order it was written. */
+/**
+ * The strokes of every note, in world pixels. A note that has been rubbed out goes stroke by
+ * stroke, in the order it was written.
+ */
 export function buildNoteStrokes(notes: readonly NoteView[], keysFor: KeysForNotes): Stroke[] {
   return notes.flatMap((note) => {
     const strokes = note.isTitle
@@ -28,7 +31,10 @@ export function buildNoteStrokes(notes: readonly NoteView[], keysFor: KeysForNot
   });
 }
 
-/** True while `notes` are drawn the same from frame to frame: none of them is being rubbed out right now. */
+/**
+ * True while `notes` are drawn the same from frame to frame: none of them is being rubbed out right
+ * now.
+ */
 export function areNotesStill(notes: readonly NoteView[]): boolean {
   return notes.every(
     (note) => note.rubbedOutFor === null || note.rubbedOutFor >= NOTES.rubbedOutIn,
@@ -65,7 +71,10 @@ function buildTitleStrokes(note: NoteView): Stroke[] {
   }).strokes;
 }
 
-/** A note with the keys it is about: boxes and words, centred on where the note is, the boxes standing on its line. */
+/**
+ * A note with the keys it is about: boxes and words, centred on where the note is, the boxes
+ * standing on its line.
+ */
 function buildKeyedStrokes(note: NoteView, keys: readonly string[]): Stroke[] {
   const sizes = NOTES.keyed;
   const { width } = buildKeysAndWords({ keys, words: note.words, position: { x: 0, y: 0 }, sizes });

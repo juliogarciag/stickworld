@@ -191,7 +191,8 @@ describe('keys to commands, seated in the airplane', () => {
     expect(jumpingOut).toEqual([{ type: 'player/jump' }, { type: 'player/letGoOfJump' }]);
     sim.step(jumpingOut);
     expect(getStickMan(sim).action).toBe('jumping');
-    // Up still held, now on the stick man's feet: no jump is held, so nothing more is let go of; let go and pressed again, it is a jump.
+    // Up still held, now on the stick man's feet: no jump is held, so nothing more is let go of;
+    // let go and pressed again, it is a jump.
     expect(commandsFor({ keys: UP, sim })).toEqual([{ type: 'airplane/steer', direction: 0 }]);
     expect(commandsFor({ keys: NOTHING, sim })).toEqual([]);
     expect(commandsFor({ keys: { ...UP, isUpPressed: true }, sim })).toEqual([
@@ -217,7 +218,10 @@ const DOWN: HeldKeys = { ...NOTHING, isDownHeld: true };
 const RIGHT: HeldKeys = { ...NOTHING, isRightHeld: true };
 const LEFT: HeldKeys = { ...NOTHING, isLeftHeld: true };
 
-/** On level 3 with the airplane the letter teaches, boarded on the edge: the sim is one tick into the flight. */
+/**
+ * On level 3 with the airplane the letter teaches, boarded on the edge: the sim is one tick into
+ * the flight.
+ */
 function createSimSeatedInAirplane(): SimHandle {
   const sim = createSim({ level: 3 });
   const interact = { type: 'world/interact' } as const;
@@ -234,7 +238,8 @@ function createSimSeatedInAirplane(): SimHandle {
   for (const command of [interact, interact, useItem, useItem, interact]) {
     sim.step([command]);
   }
-  // Carried to where putting it down leaves it on the edge with its nose out, then put down and boarded.
+  // Carried to where putting it down leaves it on the edge with its nose out, then put down and
+  // boarded.
   const edge = getLevelById(3).floor[0]!.end.x;
   for (let x = edge - 2; getAirplane(sim)?.isOnEdge !== true && x < edge; x += 0.1) {
     walkTo(x);
@@ -248,7 +253,9 @@ function createSimSeatedInAirplane(): SimHandle {
   return sim;
 }
 
-/** Steps until the stick man has fallen off the start of the floor and the level has started again. */
+/**
+ * Steps until the stick man has fallen off the start of the floor and the level has started again.
+ */
 function walkOffPaper(sim: SimHandle): void {
   let hasFallen = false;
   for (let tick = 0; tick < 1200; tick += 1) {

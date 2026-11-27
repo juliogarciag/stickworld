@@ -18,7 +18,10 @@ export interface Prompt {
   /** The key's name as the player knows it, or null for words with no key. */
   readonly key: string | null;
   readonly words: string;
-  /** The coloured pencil the prompt is written in, or absent for graphite: green for the airplane that is ready. */
+  /**
+   * The coloured pencil the prompt is written in, or absent for graphite: green for the airplane
+   * that is ready.
+   */
   readonly colour?: ColouredPencil;
 }
 
@@ -34,13 +37,17 @@ export interface PromptInput {
   /** True while the stick man is seated in the airplane, and the names of the keys that fly it. */
   readonly isSeated: boolean;
   readonly flightKeys: { readonly climb: string; readonly dive: string; readonly jumpOut: string };
-  /** What the stick man has still to be told about flying the airplane it has, or null (`getFlyingHint`). */
+  /**
+   * What the stick man has still to be told about flying the airplane it has, or null
+   * (`getFlyingHint`).
+   */
   readonly flyingHint: FlyingHint | null;
 }
 
 /**
- * The prompts to show: first what the stick man has still to be told, in words alone; then the item key and the interact key,
- * each only when it would do something; then the keys that fly the airplane while the stick man is seated in it.
+ * The prompts to show: first what the stick man has still to be told, in words alone; then the item
+ * key and the interact key, each only when it would do something; then the keys that fly the
+ * airplane while the stick man is seated in it.
  */
 export function getPromptsFor(input: PromptInput): Prompt[] {
   return [
@@ -61,7 +68,10 @@ export function getPromptsFor(input: PromptInput): Prompt[] {
   ];
 }
 
-/** The strokes that draw `prompts` in the bottom left corner of what the HUD camera sees, one above the other. */
+/**
+ * The strokes that draw `prompts` in the bottom left corner of what the HUD camera sees, one above
+ * the other.
+ */
 export function buildPromptStrokes(prompts: readonly Prompt[], seen: Rectangle): Stroke[] {
   return prompts.flatMap((prompt, index) => {
     const indexFromBottom = prompts.length - 1 - index;
@@ -89,8 +99,9 @@ export function buildPromptStrokes(prompts: readonly Prompt[], seen: Rectangle):
 // ---- Helpers ----
 
 /**
- * The HUD's own words for what a key would do. Each names the thing it is done to: "it" would be the letter in one
- * prompt and the airplane in the next. Everything the stick man makes so far is folded paper, so making is called folding.
+ * The HUD's own words for what a key would do. Each names the thing it is done to: "it" would be
+ * the letter in one prompt and the airplane in the next. Everything the stick man makes so far is
+ * folded paper, so making is called folding.
  */
 const ITEM_USE_WORDS: Readonly<Record<ItemUseMeaning, (wouldMake: string | null) => string>> = {
   craft: (wouldMake) => (wouldMake === null ? 'fold it' : `fold a ${wouldMake}`),
@@ -107,8 +118,9 @@ const INTERACTION_WORDS: Readonly<Record<InteractionMeaning, string>> = {
 };
 
 /**
- * What the stick man is told about the airplane before the stick man has flown it, in words with no key: where to take it, then, in green,
- * that the stick man got it there. The keys under it say which one boards it.
+ * What the stick man is told about the airplane before the stick man has flown it, in words with no
+ * key: where to take it, then, in green, that the stick man got it there. The keys under it say
+ * which one boards it.
  */
 const FLYING_HINTS: Readonly<Record<FlyingHint, Prompt>> = {
   takeToEdge: { key: null, words: 'take the airplane to the edge' },

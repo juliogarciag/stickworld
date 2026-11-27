@@ -379,7 +379,8 @@ describe('jumping out', () => {
     expect(unmanned.speed).toBeCloseTo(flying.speed * Math.cos(flying.pitch), 9);
     expect(unmanned.position.x).toBeGreaterThan(flying.position.x);
 
-    // No walk key held: the stick man comes straight down into the gap, the level starts again and the airplane that flew on is gone.
+    // No walk key held: the stick man comes straight down into the gap, the level starts again and
+    // the airplane that flew on is gone.
     for (let tick = 0; tick < 5 * TICK_RATE && getStickMan(sim).action === 'jumping'; tick += 1) {
       sim.step();
     }
@@ -435,7 +436,8 @@ describe('falling while flying', () => {
     expect(getStickMan(sim)).toMatchObject({ action: 'standing', feet: level3.start });
     expect(sim.level).toBe(3);
     expect(getAirplane(sim)).toBeUndefined();
-    // The stick man has read the letter, so it starts again with a new airplane in its hand and no letter has to fall.
+    // The stick man has read the letter, so it starts again with a new airplane in its hand and no
+    // letter has to fall.
     expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, isSelected: true }]);
     for (let tick = 0; tick < Math.round(LETTER.fallsAfter * TICK_RATE) + 2; tick += 1) {
       sim.step();
@@ -474,19 +476,27 @@ const STEER_UP: Command = { type: 'airplane/steer', direction: 1 };
 const STEER_LEVEL: Command = { type: 'airplane/steer', direction: 0 };
 const STEER_DOWN: Command = { type: 'airplane/steer', direction: -1 };
 
-/** Climb for 24 ticks from the first tick of the flight, then let it glide: one of the flights that crosses level 3's gap (`level3.test.ts` has the whole range). */
+/**
+ * Climb for 24 ticks from the first tick of the flight, then let it glide: one of the flights that
+ * crosses level 3's gap (`level3.test.ts` has the whole range).
+ */
 const FLIGHT_THAT_CROSSES: readonly { readonly atTick: number; readonly command: Command }[] = [
   { atTick: 0, command: STEER_UP },
   { atTick: 24, command: STEER_LEVEL },
 ];
 
-/** On level 3, standing next to an airplane that sits on the edge with its nose over the gap: the next interaction boards it. */
+/**
+ * On level 3, standing next to an airplane that sits on the edge with its nose over the gap: the
+ * next interaction boards it.
+ */
 function createSimReadyToBoard(): Sim {
   const sim = new Sim({ features, start: { seed: 1, level: 3 } });
-  // In play the stick man folds it from the paper the letter gives; here it is handed to the stick man.
+  // In play the stick man folds it from the paper the letter gives; here it is handed to the stick
+  // man.
   giveItem(sim, AIRPLANE_ITEM_ID);
   sim.step([{ type: 'inventory/select', slot: 1 }]);
-  // The stick man reads the level's letter and puts it away, as the stick man has by the time the stick man flies: from here on a letter in the level is a new one.
+  // The stick man reads the level's letter and puts it away, as the stick man has by the time the
+  // stick man flies: from here on a letter in the level is a new one.
   walkTo(sim, getLetter(sim)!.position.x);
   sim.step([INTERACT]);
   sim.step([INTERACT]);
@@ -498,7 +508,10 @@ function createSimReadyToBoard(): Sim {
   return sim;
 }
 
-/** The stick man has boarded, climbed as high as a flight that crosses the gap goes, and turned its nose down: it dives, nose still held down. */
+/**
+ * The stick man has boarded, climbed as high as a flight that crosses the gap goes, and turned its
+ * nose down: it dives, nose still held down.
+ */
 function createSimFlyingHighNoseDown(): Sim {
   const sim = createSimReadyToBoard();
   sim.step([INTERACT]);
@@ -515,7 +528,10 @@ function createSimFlyingHighNoseDown(): Sim {
   return sim;
 }
 
-/** Steps the sim for as long as the airplane flies, and gives what `read` made of it on every one of those ticks. */
+/**
+ * Steps the sim for as long as the airplane flies, and gives what `read` made of it on every one of
+ * those ticks.
+ */
 function recordDuringFlight<Read>(
   sim: Sim,
   read: (airplane: NonNullable<ReturnType<typeof getAirplane>>) => Read,
@@ -532,7 +548,10 @@ function recordDuringFlight<Read>(
   return readings;
 }
 
-/** Plays `commands` from the tick after boarding until the airplane rests or is gone, and gives the airplane as it was after every tick. */
+/**
+ * Plays `commands` from the tick after boarding until the airplane rests or is gone, and gives the
+ * airplane as it was after every tick.
+ */
 function recordFlight(
   sim: Sim,
   commands: readonly { readonly atTick: number; readonly command: Command }[],

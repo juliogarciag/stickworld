@@ -13,8 +13,9 @@ export function getFloorHeightAt(floor: readonly FloorSegment[], x: number): num
 }
 
 /**
- * Where a step from `from` towards `to` ends when the ends of the floor line under `from` stop it: `to`, or the end of
- * the line less half the stick man's width. `to` itself when there is no line under `from`.
+ * Where a step from `from` towards `to` ends when the ends of the floor line under `from` stop it:
+ * `to`, or the end of the line less half the stick man's width. `to` itself when there is no line
+ * under `from`.
  */
 export function keepOverLine(
   floor: readonly FloorSegment[],
@@ -38,9 +39,10 @@ export function getLowestFloorHeight(floor: readonly FloorSegment[]): number {
 }
 
 /**
- * Where a body in the air at `feet` has to be so that no floor segment's end is inside it, or undefined when it is clear
- * already. `awayFromFloor` is the side the end pushed the stick man to: 1 to the right, -1 to the left. Right for flat floors with
- * gaps wider than the stick man is, which is all the levels have: each segment pushes by the height of its nearer end.
+ * Where a body in the air at `feet` has to be so that no floor segment's end is inside it, or
+ * undefined when it is clear already. `awayFromFloor` is the side the end pushed the stick man to:
+ * 1 to the right, -1 to the left. Right for flat floors with gaps wider than the stick man is,
+ * which is all the levels have: each segment pushes by the height of its nearer end.
  */
 export function findClearOfFloorEnds(
   floor: readonly FloorSegment[],
@@ -61,8 +63,9 @@ export function findClearOfFloorEnds(
 // ---- Helpers ----
 
 /**
- * How far to each side of the stick man's feet its body reaches, `aboveFeet` metres above them: nothing at the stick man's feet, widening to
- * half its width, and nothing again above its head. The stick man is a controlled body with a simple outline, not a shape with physics.
+ * How far to each side of the stick man's feet its body reaches, `aboveFeet` metres above them:
+ * nothing at the stick man's feet, widening to half its width, and nothing again above its head.
+ * The stick man is a controlled body with a simple outline, not a shape with physics.
  */
 function getBodyReachAt(aboveFeet: number): number {
   if (aboveFeet <= 0 || aboveFeet >= STICK_MAN_HEIGHT) {

@@ -8,7 +8,10 @@ import { inventorySlice } from './state';
  * airplane empties the slot.
  */
 
-/** The def id of the item in the selected slot, or null when no slot is selected or the selected one is empty. */
+/**
+ * The def id of the item in the selected slot, or null when no slot is selected or the selected one
+ * is empty.
+ */
 export function getSelectedItem(sim: Sim): number | null {
   const { slots, selectedSlot } = sim.getStateOf(inventorySlice);
   return selectedSlot === null ? null : (slots[selectedSlot - 1] ?? null);
@@ -19,7 +22,10 @@ export function isHoldingItem(sim: Sim, itemDefId: number): boolean {
   return sim.getStateOf(inventorySlice).slots.includes(itemDefId);
 }
 
-/** Selects the slot that holds the item `itemDefId`, and says whether one does. Nothing changes when none does. */
+/**
+ * Selects the slot that holds the item `itemDefId`, and says whether one does. Nothing changes when
+ * none does.
+ */
 export function selectItem(sim: Sim, itemDefId: number): boolean {
   const inventory = sim.getStateOf(inventorySlice);
   const index = inventory.slots.indexOf(itemDefId);
@@ -31,8 +37,9 @@ export function selectItem(sim: Sim, itemDefId: number): boolean {
 }
 
 /**
- * Puts the item `itemDefId` in the selected slot in place of what it holds, or empties the slot for null, and says
- * whether it did. With no slot selected, or for an id that is not an item's, nothing changes.
+ * Puts the item `itemDefId` in the selected slot in place of what it holds, or empties the slot for
+ * null, and says whether it did. With no slot selected, or for an id that is not an item's, nothing
+ * changes.
  */
 export function replaceSelectedItem(sim: Sim, itemDefId: number | null): boolean {
   const { slots, selectedSlot } = sim.getStateOf(inventorySlice);

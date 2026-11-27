@@ -187,12 +187,14 @@ describe('a new sheet of paper', () => {
       expect(getItemSlots(sim)[0]?.itemDefId).toBeNull();
       expect(getFallenItem(sim)).toBeUndefined();
 
-      // Nothing at first, then a sheet high above the place, coming down, and at last lying there. It is the paper, and no letter.
+      // Nothing at first, then a sheet high above the place, coming down, and at last lying there.
+      // It is the paper, and no letter.
       for (let tick = 0; tick < TICK_RATE && !getFallenItem(sim); tick += 1) {
         sim.step();
       }
       const heights: number[] = [];
-      // The stick man lost it at the edge, far from where the letter lay: the sheet comes to the stick man.
+      // The stick man lost it at the edge, far from where the letter lay: the sheet comes to the
+      // stick man.
       const stoodAt = getStickMan(sim).feet;
       expect(stoodAt.x).toBeGreaterThan(LETTER_AT.x + 3);
       for (
@@ -210,7 +212,8 @@ describe('a new sheet of paper', () => {
       expect(heights).toEqual([...heights].sort((one, other) => other - one));
       expect(getFallenItem(sim)!.height).toBe(0);
 
-      // It lies at the stick man's feet. One press picks it up: nothing is read, and it is in the stick man's hand, where the next press folds it.
+      // It lies at the stick man's feet. One press picks it up: nothing is read, and it is in the
+      // stick man's hand, where the next press folds it.
       expect(getInteraction(sim)).toBe('pickUp');
       sim.step([INTERACT]);
       expect(getFallenItem(sim)).toBeUndefined();
@@ -313,7 +316,8 @@ describe('a new sheet of paper', () => {
     for (let tick = 0; tick < 3; tick += 1) {
       sim.step();
     }
-    // In the air the stick man puts nothing down: the stick man lands, and then sets it down past the edge to lose it.
+    // In the air the stick man puts nothing down: the stick man lands, and then sets it down past
+    // the edge to lose it.
     for (let tick = 0; tick < TICK_RATE; tick += 1) {
       sim.step();
     }
@@ -400,7 +404,10 @@ const EDGE = level3.floor[0]!.end.x;
 const USE_ITEM: Command = { type: 'item/use' };
 const INTERACT: Command = { type: 'world/interact' };
 
-/** Every way there is to lose the airplane and stay alive, each as what the stick man does from the moment it is an item in the stick man's selected slot. */
+/**
+ * Every way there is to lose the airplane and stay alive, each as what the stick man does from the
+ * moment it is an item in the stick man's selected slot.
+ */
 const WAYS_TO_LOSE_AIRPLANE_AND_LIVE: readonly (readonly [string, (sim: Sim) => void])[] = [
   [
     'putting it down too far past the edge',
@@ -420,7 +427,10 @@ const WAYS_TO_LOSE_AIRPLANE_AND_LIVE: readonly (readonly [string, (sim: Sim) => 
   ],
 ];
 
-/** Every way there is to die once the airplane is out of the stick man's slot, each as what the stick man does from the moment it is an item in the stick man's selected slot. */
+/**
+ * Every way there is to die once the airplane is out of the stick man's slot, each as what the
+ * stick man does from the moment it is an item in the stick man's selected slot.
+ */
 const WAYS_TO_DIE_WITHOUT_AIRPLANE: readonly (readonly [string, (sim: Sim) => void])[] = [
   [
     'carrying it off the edge',
@@ -481,7 +491,10 @@ function readLetter(sim: Sim): void {
   expect(getLetter(sim)!.isBeingRead).toBe(true);
 }
 
-/** The stick man has read the letter, put it away and folded the paper: the airplane is the item in the stick man's selected slot. */
+/**
+ * The stick man has read the letter, put it away and folded the paper: the airplane is the item in
+ * the stick man's selected slot.
+ */
 function createSimHoldingAirplane(): Sim {
   const sim = createSimOnLevel3WithPaper();
   readLetter(sim);

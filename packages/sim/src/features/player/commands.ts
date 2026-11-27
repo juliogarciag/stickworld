@@ -20,8 +20,9 @@ export interface LetGoOfJumpCommand {
 }
 
 /**
- * Change how the stick man walks, jumps and falls from now on: each number given replaces that one, the rest stay. Dev builds
- * only send it, from the movement panel; a value that is not a number within `MOVEMENT_TUNING_LIMITS` is ignored.
+ * Change how the stick man walks, jumps and falls from now on: each number given replaces that one,
+ * the rest stay. Dev builds only send it, from the movement panel; a value that is not a number
+ * within `MOVEMENT_TUNING_LIMITS` is ignored.
  */
 export interface TuneMovementCommand {
   readonly type: 'player/tuneMovement';

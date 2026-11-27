@@ -10,16 +10,16 @@ import tseslint from 'typescript-eslint';
  *           No Math.random, Date, performance, timers or I/O: randomness goes through sim.rng.
  * client -> may import phaser and @stickworld/sim through its package entry only, never deep paths.
  *
- * Inside the sim, a feature never imports another feature's `state.ts` (AGENTS.md rule 10): what one
- * feature reads of or does to another has a named function in the other's folder.
+ * Inside the sim, a feature never imports another feature's `state.ts` (AGENTS.md rule 10): what
+ * one feature reads of or does to another has a named function in the other's folder.
  *
  * `__testing__` exports may only be imported by *.test.ts files.
  *
- * Pencil strokes (rule 12): in the client, only `render/strokes/` may make a Phaser object that draws
- * lines or shapes. Everything else asks `createStrokeLayer` for a line.
+ * Pencil strokes (rule 12): in the client, only `render/strokes/` may make a Phaser object that
+ * draws lines or shapes. Everything else asks `createStrokeLayer` for a line.
  *
- * Every function's name starts with a verb from the VERBS list below (AGENTS.md, "Naming"), in both packages,
- * tests included, and in the verification template.
+ * Every function's name starts with a verb from the VERBS list below (AGENTS.md, "Naming"), in both
+ * packages, tests included, and in the verification template.
  *
  * Every `if`, `else` and loop has braces, so each statement is on a line of its own.
  *
@@ -57,7 +57,8 @@ const NODE_BUILTINS = group(
   ],
   'The sim is headless and pure: no Node APIs in packages/sim.',
 );
-// Any relative path that ends in another folder's `state` file, however it is spelled; a feature's own `./state` and `../state` are not matched.
+// Any relative path that ends in another folder's `state` file, however it is spelled; a feature's
+// own `./state` and `../state` are not matched.
 const OTHER_FEATURE_STATE = {
   regex: '^(\\.\\.?/+)+([^/]+/+)*[^/.][^/]*/+(\\./+)*state(\\.[cm]?[jt]s)?$',
   message:
@@ -120,9 +121,10 @@ const TESTING_IMPORT = {
 };
 
 /**
- * Every function's name starts with a verb (AGENTS.md, "Naming"): the first word of the name is one of these, followed
- * by a capital, a digit or nothing. `is`, `has`, `are`, `does`, `can` and `should` are for functions that answer yes or
- * no. A new verb is a one-word edit to this list, in the PR that needs it, so the list stays a decision.
+ * Every function's name starts with a verb (AGENTS.md, "Naming"): the first word of the name is one
+ * of these, followed by a capital, a digit or nothing. `is`, `has`, `are`, `does`, `can` and
+ * `should` are for functions that answer yes or no. A new verb is a one-word edit to this list, in
+ * the PR that needs it, so the list stays a decision.
  */
 const VERBS = [
   'is',
@@ -226,8 +228,9 @@ const VERBS = [
 const NOT_A_VERB = `/^(?!_*(?:${VERBS.join('|')})(?:[A-Z0-9_]|$))/`;
 const NAME_A_FUNCTION_WITH_A_VERB =
   "A function's name starts with a verb from VERBS in eslint.config.js (getFlag, buildFlagStrokes, isFlagReached). Rename it, or add the verb to the list.";
-// What lint can see is a function: declarations, consts and properties that hold one, methods, and members and
-// parameters whose type is written as a function. A function passed around under a type alias is not seen.
+// What lint can see is a function: declarations, consts and properties that hold one, methods, and
+// members and parameters whose type is written as a function. A function passed around under a type
+// alias is not seen.
 const FUNCTIONS_ARE_VERBS = [
   `FunctionDeclaration[id.name=${NOT_A_VERB}]`,
   `VariableDeclarator[id.name=${NOT_A_VERB}] > :matches(ArrowFunctionExpression, FunctionExpression)`,
@@ -240,10 +243,11 @@ const FUNCTIONS_ARE_VERBS = [
 ].map((selector) => ({ selector, message: NAME_A_FUNCTION_WITH_A_VERB }));
 
 /**
- * A name is read on one line of a diff, with no way to jump to where it is declared (AGENTS.md, "Naming"). So:
- * a parameter is named, never destructured, and its fields are read through it (`checkpoint.position`);
- * a name is a technical term, not part of a sentence: no article or pronoun in it (`getPlayerBody`, never `getWhereHeIs`);
- * a name is never a bare preposition or a bare "least"/"most" (`position`, `start`, `end`, `min`, `max`).
+ * A name is read on one line of a diff, with no way to jump to where it is declared (AGENTS.md,
+ * "Naming"). So: a parameter is named, never destructured, and its fields are read through it
+ * (`checkpoint.position`); a name is a technical term, not part of a sentence: no article or
+ * pronoun in it (`getPlayerBody`, never `getWhereHeIs`); a name is never a bare preposition or a
+ * bare "least"/"most" (`position`, `start`, `end`, `min`, `max`).
  */
 const NAME_THE_PARAMETER =
   'Name the parameter and read its fields through it (checkpoint.position), so every line says whose field it is. Do not destructure a parameter.';
@@ -285,7 +289,10 @@ const BARE_WORDS = [
   'which',
 ];
 const BARE_NAMES = [...BARE_WORDS, ...BARE_WORDS.map((word) => word.toUpperCase())];
-/** A boolean's name says it is one: `isSeated`, `hasLanded`, never `seated` or `landed`. Needs types, so it runs with the project's tsconfig. */
+/**
+ * A boolean's name says it is one: `isSeated`, `hasLanded`, never `seated` or `landed`. Needs
+ * types, so it runs with the project's tsconfig.
+ */
 const BOOLEANS_SAY_SO = {
   'id-denylist': ['error', ...BARE_NAMES],
   '@typescript-eslint/naming-convention': [
@@ -356,7 +363,8 @@ export default defineConfig([
       'no-restricted-syntax': ['error', NEW_DATE, ...NAMING],
     },
   },
-  // Later blocks replace a rule's whole setting, so the features block repeats the sim's groups here.
+  // Later blocks replace a rule's whole setting, so the features block repeats the sim's groups
+  // here.
   {
     files: ['packages/sim/src/features/**/*.ts'],
     rules: restrictImports(PHASER, CLIENT_PKG, NODE_BUILTINS, OTHER_FEATURE_STATE),
@@ -369,8 +377,8 @@ export default defineConfig([
     files: ['verifications/_template/**/*.mjs'],
     rules: { 'no-restricted-syntax': ['error', ...NAMING] },
   },
-  // `__testing__` exports exist for tests only. Later blocks replace a rule's
-  // whole setting, so each repeats what the blocks above set: NEW_DATE for the sim, and the verbs everywhere.
+  // `__testing__` exports exist for tests only. Later blocks replace a rule's whole setting, so
+  // each repeats what the blocks above set: NEW_DATE for the sim, and the verbs everywhere.
   {
     files: ['packages/sim/**/*.ts'],
     ignores: ['**/*.test.ts'],
@@ -384,10 +392,24 @@ export default defineConfig([
     },
   },
   {
-    // Layout is Prettier's (`pnpm format`). Prettier keeps an `if` without braces as it is, so lint asks for the braces.
-    // A ticket's verification folder is frozen when its PR merges, so only the template is held to it.
+    // Layout is Prettier's (`pnpm format`). Prettier keeps an `if` without braces as it is, so lint
+    // asks for the braces. A ticket's verification folder is frozen when its PR merges, so only the
+    // template is held to it.
     ignores: ['verifications/*/**', '!verifications/_template/**'],
-    rules: { curly: ['error', 'all'] },
+    rules: {
+      curly: ['error', 'all'],
+      // Prettier does not wrap comments, so lint holds them to the same width as the code.
+      'max-len': [
+        'error',
+        {
+          code: 100,
+          ignoreStrings: true,
+          ignoreTemplateLiterals: true,
+          ignoreRegExpLiterals: true,
+          ignoreUrls: true,
+        },
+      ],
+    },
   },
   {
     files: ['packages/*/src/**/*.ts'],

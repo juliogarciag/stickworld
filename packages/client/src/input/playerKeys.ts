@@ -28,9 +28,9 @@ export function watchPlayerKeys(scene: Phaser.Scene): () => HeldKeys {
   const down = [keyboard.addKey(KeyCodes.DOWN), keyboard.addKey(KeyCodes.S)];
   const jump = [keyboard.addKey(KeyCodes.SPACE)];
 
-  // Noted as it goes down, not looked at once a frame: a tap that is over within one frame is still a jump.
-  // A repeat is not a press: Phaser forgets held keys when the window loses focus, and a key still held
-  // when it comes back would otherwise jump by itself.
+  // Noted as it goes down, not looked at once a frame: a tap that is over within one frame is still
+  // a jump. A repeat is not a press: Phaser forgets held keys when the window loses focus, and a
+  // key still held when it comes back would otherwise jump by itself.
   const pressed = { jump: false, up: false };
   const recordPresses = (
     keys: Phaser.Input.Keyboard.Key[],
@@ -63,7 +63,10 @@ export function watchPlayerKeys(scene: Phaser.Scene): () => HeldKeys {
   };
 }
 
-/** The keys that move the stick man on its feet, as the player knows them: what a note on the sheet draws beside its words. */
+/**
+ * The keys that move the stick man on its feet, as the player knows them: what a note on the sheet
+ * draws beside its words.
+ */
 export const MOVE_KEY_NAMES = { walking: ['←', '→'], jumping: ['↑'] } as const;
 
 /** The keys that fly the airplane, as the player knows them. */

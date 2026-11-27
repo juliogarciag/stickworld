@@ -13,7 +13,10 @@ export const PENCIL = {
   wobble: 1.3,
   /** The length over which the line strays one way and comes back. */
   wobbleLength: 46,
-  /** How many times a second a line is redrawn a little differently. Hand animation "on threes" is 8. */
+  /**
+   * How many times a second a line is redrawn a little differently. Hand animation "on threes" is
+   * 8.
+   */
   boilsPerSecond: 8,
   /** Pressure where the pencil touches down and lifts, against 1 in the middle of a line. */
   pressureAtEnds: 0.55,
@@ -28,8 +31,8 @@ export const PENCIL = {
 } as const;
 
 /**
- * The coloured pencils, for the few lines that must stand out from the graphite: green for what the stick man got right. Muted
- * like a pencil, not a marker, so they still read as drawn on the paper.
+ * The coloured pencils, for the few lines that must stand out from the graphite: green for what the
+ * stick man got right. Muted like a pencil, not a marker, so they still read as drawn on the paper.
  */
 export const COLOURED_PENCILS = {
   green: '#3f8a3a',

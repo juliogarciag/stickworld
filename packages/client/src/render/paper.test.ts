@@ -71,7 +71,8 @@ describe('the pixels of a tile a patch reaches', () => {
       }
       for (let column = 0; column < size; column += 1) {
         for (let row = 0; row < size; row += 1) {
-          // A pixel any part of which is within the radius: its nearest point to the patch's middle is.
+          // A pixel any part of which is within the radius: its nearest point to the patch's middle
+          // is.
           const nearestX = Math.max(column, Math.min(column + 1, x));
           const nearestY = Math.max(row, Math.min(row + 1, y));
           if (Math.hypot(nearestX - x, nearestY - y) < radius && !isReached(column, row)) {

@@ -2,7 +2,10 @@ import type Phaser from 'phaser';
 import { getWorldSeenBy } from './cameraView';
 import { createFixedUnits } from './fixedUnits';
 
-/** The colour of the sheet of paper the game is drawn on. index.html uses the same colour behind the canvas. */
+/**
+ * The colour of the sheet of paper the game is drawn on. index.html uses the same colour behind the
+ * canvas.
+ */
 export const PAPER_COLOUR = '#f3eee2';
 
 /** How the sheet's grain looks. View detail only. */
@@ -72,7 +75,8 @@ export function layPaper(scene: Phaser.Scene): Paper {
   return {
     cover(camera) {
       const seen = getWorldSeenBy(camera);
-      // The sheet's grain is painted in screen pixels, so it is as fine as the screen; the tooth in world pixels.
+      // The sheet's grain is painted in screen pixels, so it is as fine as the screen; the tooth in
+      // world pixels.
       sheet.setPosition(seen.x, seen.y).setSize(seen.width, seen.height);
       sheet.setTileScale(1 / seen.zoom);
       sheet.setTilePosition(seen.x * seen.zoom, seen.y * seen.zoom);
@@ -100,7 +104,10 @@ function paintOnce(
   tile.refresh();
 }
 
-/** Paints one repeatable tile of tooth: the paper's colour, strong at the specks the pencil does not reach and a faint haze everywhere else. */
+/**
+ * Paints one repeatable tile of tooth: the paper's colour, strong at the specks the pencil does not
+ * reach and a faint haze everywhere else.
+ */
 function paintTooth(context: CanvasRenderingContext2D): void {
   const size = TOOTH.tileSize;
   const nextUnit = createFixedUnits(0x51ec);
@@ -115,7 +122,10 @@ function paintTooth(context: CanvasRenderingContext2D): void {
   context.putImageData(image, 0, 0);
 }
 
-/** Paints one repeatable tile of paper: the colour, uneven patches, fibres, and a speckle on every pixel. */
+/**
+ * Paints one repeatable tile of paper: the colour, uneven patches, fibres, and a speckle on every
+ * pixel.
+ */
 function paintGrain(context: CanvasRenderingContext2D): void {
   const size = GRAIN.tileSize;
   const nextUnit = createFixedUnits(0x9a9e7);
@@ -128,7 +138,8 @@ function paintGrain(context: CanvasRenderingContext2D): void {
     const radius = GRAIN.patchRadius * (0.5 + nextUnit() * 0.5);
     const shade = nextUnit() < 0.5 ? '120, 100, 70' : '255, 255, 250';
     runOnEveryRepeat(size, (offsetX, offsetY) => {
-      // A patch fades to nothing at its radius, so only the pixels it reaches are filled: nine fills of the whole tile for each patch block the page for over a second.
+      // A patch fades to nothing at its radius, so only the pixels it reaches are filled: nine
+      // fills of the whole tile for each patch block the page for over a second.
       const reached = getPixelsOfTileWithin({ size, x: x + offsetX, y: y + offsetY, radius });
       if (!reached) {
         return;
@@ -184,7 +195,10 @@ function paintGrain(context: CanvasRenderingContext2D): void {
   context.putImageData(image, 0, 0);
 }
 
-/** Calls `paint` for the tile and its eight neighbours, so what crosses an edge comes back on the other side and the tile repeats without a seam. */
+/**
+ * Calls `paint` for the tile and its eight neighbours, so what crosses an edge comes back on the
+ * other side and the tile repeats without a seam.
+ */
 function runOnEveryRepeat(size: number, paint: (offsetX: number, offsetY: number) => void): void {
   for (const offsetX of [-size, 0, size]) {
     for (const offsetY of [-size, 0, size]) {
@@ -194,9 +208,11 @@ function runOnEveryRepeat(size: number, paint: (offsetX: number, offsetY: number
 }
 
 /**
- * The whole pixels of a tile of side `size` that are within `radius` of (`x`, `y`) along both axes, or undefined when there are none.
- * Whole pixels, so that filling them leaves no half-covered pixel at the rim that filling the whole tile would not have: on the canvas a texture
- * gets, which the browser paints on the CPU, the tile then comes out the same to the last bit as with the whole tile filled.
+ * The whole pixels of a tile of side `size` that are within `radius` of (`x`, `y`) along both axes,
+ * or undefined when there are none. Whole pixels, so that filling them leaves no half-covered pixel
+ * at the rim that filling the whole tile would not have: on the canvas a texture gets, which the
+ * browser paints on the CPU, the tile then comes out the same to the last bit as with the whole
+ * tile filled.
  */
 function getPixelsOfTileWithin(tile: {
   size: number;

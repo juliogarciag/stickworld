@@ -23,8 +23,9 @@ export function boardAndLaunch(sim: Sim): void {
 }
 
 /**
- * One tick of an airplane that is off the floor or sliding along it: where it goes, and what follows from where it got
- * to (the stick man stands up, the level starts again, it is lost). Nothing happens to one that rests or is carried.
+ * One tick of an airplane that is off the floor or sliding along it: where it goes, and what
+ * follows from where it got to (the stick man stands up, the level starts again, it is lost).
+ * Nothing happens to one that rests or is carried.
  */
 export function moveOneTick(sim: Sim): void {
   const airplane = sim.getStateOf(airplaneSlice);
@@ -49,7 +50,8 @@ export function moveOneTick(sim: Sim): void {
   // Asked again: the stick man may have stood up just now.
   const { isSeated } = getPlayerBody(sim);
   const below = airplane.y - getLowestFloorHeight(sim.levelDef.floor);
-  // With the stick man in it, falling out of sight starts the level again, and nothing of the airplane is left. Without the stick man it is only lost.
+  // With the stick man in it, falling out of sight starts the level again, and nothing of the
+  // airplane is left. Without the stick man it is only lost.
   if (isSeated && below > FLIGHT.lostBelowFloor) {
     sim.startLevelAfterThisTick(sim.level);
   }
@@ -62,7 +64,10 @@ export function moveOneTick(sim: Sim): void {
   }
 }
 
-/** It falls from here on, keeping the sideways and the downward part of the way it was going. Nothing changes for one that is not gliding. */
+/**
+ * It falls from here on, keeping the sideways and the downward part of the way it was going.
+ * Nothing changes for one that is not gliding.
+ */
 export function stopGliding(airplane: AirplaneState): void {
   if (!airplane.isFlying) {
     return;
@@ -76,7 +81,10 @@ export function stopGliding(airplane: AirplaneState): void {
 
 // ---- Helpers ----
 
-/** One tick of the glide: the steer keys turn its nose, it goes where its nose points, and what it climbed or dived is paid for or paid back in speed. */
+/**
+ * One tick of the glide: the steer keys turn its nose, it goes where its nose points, and what it
+ * climbed or dived is paid for or paid back in speed.
+ */
 function glide(sim: Sim, airplane: AirplaneState): void {
   airplane.pitch = getPitchAfterSteering(airplane.pitch, {
     steering: airplane.steering,
@@ -108,7 +116,10 @@ function fall(sim: Sim, airplane: AirplaneState): void {
   comeDownOrMoveTo(sim, airplane, { x: airplane.x + airplane.facing * airplane.speed * sim.dt, y });
 }
 
-/** One tick of sliding along the floor: it loses its speed and then rests; slid past the end of the line, it falls. */
+/**
+ * One tick of sliding along the floor: it loses its speed and then rests; slid past the end of the
+ * line, it falls.
+ */
 function slide(sim: Sim, airplane: AirplaneState): void {
   airplane.x += airplane.facing * airplane.speed * sim.dt;
   airplane.speed = Math.max(0, airplane.speed - FLIGHT.landingSlowdown * sim.dt);
@@ -122,9 +133,10 @@ function slide(sim: Sim, airplane: AirplaneState): void {
 }
 
 /**
- * Moves it to `to`, or sets it on the floor line when the way there crosses one from above: then it slides on with the
- * sideways speed it had. True when it came down. A floor line is not flown through from below either: under one, it
- * goes no higher than it is, and a glide ends there in a fall. Right for flat floors, which is all the levels have.
+ * Moves it to `to`, or sets it on the floor line when the way there crosses one from above: then it
+ * slides on with the sideways speed it had. True when it came down. A floor line is not flown
+ * through from below either: under one, it goes no higher than it is, and a glide ends there in a
+ * fall. Right for flat floors, which is all the levels have.
  */
 function comeDownOrMoveTo(
   sim: Sim,
@@ -159,7 +171,10 @@ function comeDownOrMoveTo(
   return true;
 }
 
-/** Where its nose points a tick later: turned by the steer key that is held, or sinking back to where it rests when none is. */
+/**
+ * Where its nose points a tick later: turned by the steer key that is held, or sinking back to
+ * where it rests when none is.
+ */
 function getPitchAfterSteering(pitch: number, input: { steering: -1 | 0 | 1; dt: number }): number {
   if (input.steering !== 0) {
     return Math.max(

@@ -8,7 +8,10 @@ import type { Def } from '../../content/defs';
 /** The sheet of paper level 2's flag gives. The stick man keeps it from then on. */
 export const PAPER_ITEM_ID = 200;
 
-/** The paper airplane the stick man folds the paper into (the `crafting` feature's recipe). Placed on the floor it is the `airplane` feature's. */
+/**
+ * The paper airplane the stick man folds the paper into (the `crafting` feature's recipe). Placed
+ * on the floor it is the `airplane` feature's.
+ */
 export const AIRPLANE_ITEM_ID = 201;
 
 /** How many item slots the stick man has. The player counts them from 1. */

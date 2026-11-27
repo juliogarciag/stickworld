@@ -41,7 +41,8 @@ export const airplaneFeature: Feature = {
     const player = getPlayerBody(sim);
     const floorLevel = getLowestFloorHeight(sim.levelDef.floor);
     if (airplane.isCarried) {
-      // In the air below the floor the stick man is on the stick man's way down a gap or off the paper: the stick man lets go of it.
+      // In the air below the floor the stick man is on the stick man's way down a gap or off the
+      // paper: the stick man lets go of it.
       if (!player.isOnFloor && player.y > floorLevel) {
         letFall(airplane);
         stopCarrying(sim);
@@ -53,14 +54,18 @@ export const airplaneFeature: Feature = {
   },
 };
 
-/** True while the stick man has an airplane, as an item in a slot or in the world. False once it is lost, and before the stick man has made one. */
+/**
+ * True while the stick man has an airplane, as an item in a slot or in the world. False once it is
+ * lost, and before the stick man has made one.
+ */
 export function hasAirplane(sim: Sim): boolean {
   return isHoldingItem(sim, AIRPLANE_ITEM_ID) || sim.getStateOf(airplaneSlice).isInWorld;
 }
 
 /**
- * True while the airplane rests on the floor with its nose out over a gap: where it is boarded from. An airplane whose
- * nose sticks out past the end of the paper, with no floor further on to fly to, does not count: it is only lifted.
+ * True while the airplane rests on the floor with its nose out over a gap: where it is boarded
+ * from. An airplane whose nose sticks out past the end of the paper, with no floor further on to
+ * fly to, does not count: it is only lifted.
  */
 export function isSittingOnEdge(sim: Sim): boolean {
   const airplane = sim.getStateOf(airplaneSlice);
@@ -82,9 +87,10 @@ export function isSittingOnEdge(sim: Sim): boolean {
 }
 
 /**
- * True while the stick man has an airplane that it has still to take to an edge: it is in the stick man's slot, on the floor away from an
- * edge or over the stick man's head, the level has an edge to fly from, and the stick man has not boarded one since the level started. It is
- * true again when the level starts again, a death included.
+ * True while the stick man has an airplane that it has still to take to an edge: it is in the stick
+ * man's slot, on the floor away from an edge or over the stick man's head, the level has an edge to
+ * fly from, and the stick man has not boarded one since the level started. It is true again when
+ * the level starts again, a death included.
  */
 export function hasYetToReachEdge(sim: Sim): boolean {
   const airplane = sim.getStateOf(airplaneSlice);
@@ -97,12 +103,18 @@ export function hasYetToReachEdge(sim: Sim): boolean {
   return floor.some((line) => floor.some((other) => other.start.x > line.end.x));
 }
 
-/** True while the airplane sits on an edge, where it is boarded from, and the stick man has not boarded one since the level started. */
+/**
+ * True while the airplane sits on an edge, where it is boarded from, and the stick man has not
+ * boarded one since the level started.
+ */
 export function isReadyToBoard(sim: Sim): boolean {
   return !sim.getStateOf(hasBoardedSlice) && isSittingOnEdge(sim);
 }
 
-/** What using the held item does when it is the airplane, for `features/item`: it is put on the floor in front of the stick man. */
+/**
+ * What using the held item does when it is the airplane, for `features/item`: it is put on the
+ * floor in front of the stick man.
+ */
 export function getAirplaneItemUse(sim: Sim) {
   const canPlace =
     getSelectedItem(sim) === AIRPLANE_ITEM_ID &&
@@ -121,8 +133,9 @@ export function getAirplaneItemUse(sim: Sim) {
 }
 
 /**
- * What interacting does with the airplane, for `features/world`: put it down while the stick man carries it, board it where it
- * sits on an edge, or lift it anywhere else the stick man stands next to it (ADR 0003).
+ * What interacting does with the airplane, for `features/world`: put it down while the stick man
+ * carries it, board it where it sits on an edge, or lift it anywhere else the stick man stands next
+ * to it (ADR 0003).
  */
 export function getAirplaneInteraction(sim: Sim) {
   const airplane = sim.getStateOf(airplaneSlice);
@@ -161,7 +174,10 @@ function isSteerDirection(value: unknown): value is SteerDirection {
   return value === -1 || value === 0 || value === 1;
 }
 
-/** The airplane leaves the stick man's hands or the stick man's slot for the floor in front of the stick man, or for the air past the end of it. */
+/**
+ * The airplane leaves the stick man's hands or the stick man's slot for the floor in front of the
+ * stick man, or for the air past the end of it.
+ */
 function putDownInFront(sim: Sim): void {
   const airplane = sim.getStateOf(airplaneSlice);
   const player = getPlayerBody(sim);
@@ -195,9 +211,10 @@ function letFall(airplane: AirplaneState): void {
 }
 
 /**
- * Where the middle of an airplane put down at `middle`, nose towards `facing`, comes to rest, or undefined when it
- * falls. It rests where it is put when there is floor under its middle. A little past the end of the line the stick man put it
- * down from, it is pulled back to sit on that edge; it is never pulled on to the far side of a gap.
+ * Where the middle of an airplane put down at `middle`, nose towards `facing`, comes to rest, or
+ * undefined when it falls. It rests where it is put when there is floor under its middle. A little
+ * past the end of the line the stick man put it down from, it is pulled back to sit on that edge;
+ * it is never pulled on to the far side of a gap.
  */
 function findRestingPlace(
   floor: readonly FloorSegment[],

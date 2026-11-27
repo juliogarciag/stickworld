@@ -8,7 +8,10 @@ import type { SimHandle } from './sim';
  * functions next to their code and export them from `src/index.ts`.
  */
 
-/** The level the sim is playing, as its data file has it: the floor to draw and what is placed on it. */
+/**
+ * The level the sim is playing, as its data file has it: the floor to draw and what is placed on
+ * it.
+ */
 export function getLevel(sim: SimHandle): Level {
   return getLevelById(sim.level);
 }

@@ -82,7 +82,10 @@ export function keepCanvasAtWindowSize(game: Phaser.Game): () => void {
   };
 }
 
-/** Calls `onChange` once the pixel ratio stops being `pixelRatio`; the browser fires no resize event for that. Returns a function that stops. */
+/**
+ * Calls `onChange` once the pixel ratio stops being `pixelRatio`; the browser fires no resize event
+ * for that. Returns a function that stops.
+ */
 function watchPixelRatio(pixelRatio: number, onChange: () => void): () => void {
   const query = window.matchMedia(`(resolution: ${pixelRatio}dppx)`);
   query.addEventListener('change', onChange, { once: true });

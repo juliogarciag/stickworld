@@ -20,7 +20,10 @@ interface Redraw {
   readonly boilFrame: number;
 }
 
-/** The path a hand would draw for `stroke` on this redraw. The same arguments always give the same path. */
+/**
+ * The path a hand would draw for `stroke` on this redraw. The same arguments always give the same
+ * path.
+ */
 export function buildHandDrawnPath(stroke: Stroke, redraw: Redraw): PencilPoint[] {
   const path = spaceEvenly(
     stroke.isClosed ? buildOverlappingLoop(stroke.points) : stroke.points,
@@ -77,14 +80,18 @@ function buildOverlappingLoop(points: readonly StrokePoint[]): StrokePoint[] {
   return loop;
 }
 
-/** The same path as points about `spacing` apart (each straight piece is divided evenly), keeping every corner. */
+/**
+ * The same path as points about `spacing` apart (each straight piece is divided evenly), keeping
+ * every corner.
+ */
 function spaceEvenly(points: readonly StrokePoint[], spacing: number): StrokePoint[] {
   const spaced: StrokePoint[] = [];
   for (let index = 1; index < points.length; index += 1) {
     const start = points[index - 1]!;
     const end = points[index]!;
     const length = Math.hypot(end.x - start.x, end.y - start.y);
-    // A piece with no length, or with a coordinate that is not a number, is skipped: it has nowhere to be drawn.
+    // A piece with no length, or with a coordinate that is not a number, is skipped: it has nowhere
+    // to be drawn.
     if (!Number.isFinite(length) || length <= 0) {
       continue;
     }

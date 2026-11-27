@@ -20,11 +20,17 @@ export interface Stroke {
   readonly thickness: number;
   /** True for a loop (a head): the pencil comes back past where it started. */
   readonly isClosed?: boolean;
-  /** A coloured pencil for the few lines that must stand out from the graphite (`COLOURED_PENCILS`); graphite when absent. */
+  /**
+   * A coloured pencil for the few lines that must stand out from the graphite (`COLOURED_PENCILS`);
+   * graphite when absent.
+   */
   readonly colour?: ColouredPencil;
 }
 
-/** The coloured pencils there are, by name. What each looks like is `COLOURED_PENCILS` in `./pencil`. */
+/**
+ * The coloured pencils there are, by name. What each looks like is `COLOURED_PENCILS` in
+ * `./pencil`.
+ */
 export type ColouredPencil = keyof typeof COLOURED_PENCILS;
 
 /**
@@ -34,7 +40,9 @@ export type ColouredPencil = keyof typeof COLOURED_PENCILS;
  * animation.
  */
 export interface StrokeLayer {
-  /** A stroke with fewer than two points draws nothing, and still counts in the order of the list. */
+  /**
+   * A stroke with fewer than two points draws nothing, and still counts in the order of the list.
+   */
   show(strokes: readonly Stroke[]): void;
   destroy(): void;
 }

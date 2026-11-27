@@ -137,7 +137,7 @@ pnpm build        # the client bundle
 
 Before opening a PR: `pnpm install && pnpm check` must pass.
 
-Layout is Prettier's (`.prettierrc.json`: 100 columns, single quotes): run `pnpm format` before committing, and do not lay code out by hand. Every `if`, `else` and loop has braces (lint), so each statement is on a line of its own and a reviewer never has to find where a condition ends and its statement begins. Prettier does not wrap comments: keep a comment line within 100 columns by hand. Markdown and the verification folders of merged tickets are not formatted.
+Layout is Prettier's (`.prettierrc.json`: 100 columns, single quotes): run `pnpm format` before committing, and do not lay code out by hand. Every `if`, `else` and loop has braces (lint), so each statement is on a line of its own and a reviewer never has to find where a condition ends and its statement begins. Prettier does not wrap comments, so lint (`max-len`) fails a comment line longer than 100 columns: wrap it by hand. Markdown and the verification folders of merged tickets are not formatted.
 
 **How to add a feature without breaking the rules**
 

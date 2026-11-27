@@ -21,9 +21,16 @@ export interface Feature {
   readonly name: string;
   /** The slices of state this feature owns. The sim creates and snapshots them. */
   readonly slices?: readonly StateSlice<unknown>[];
-  /** Called when a level starts, after every slice holds its initial value. Not called when a snapshot is restored. It sets up this feature's own state and cannot start a level or ask for one. */
+  /**
+   * Called when a level starts, after every slice holds its initial value. Not called when a
+   * snapshot is restored. It sets up this feature's own state and cannot start a level or ask for
+   * one.
+   */
   init?(sim: Sim): void;
-  /** Called for every command of the tick. Ignore commands you do not own; validate every field; never throw. */
+  /**
+   * Called for every command of the tick. Ignore commands you do not own; validate every field;
+   * never throw.
+   */
   handleCommand?(sim: Sim, command: Command): void;
   /** One tick of this feature's rules. */
   update?(sim: Sim): void;

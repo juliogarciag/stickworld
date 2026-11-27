@@ -4,32 +4,57 @@ import { convertToPixels } from './units';
 
 /** How the camera frames the level. View detail only. Metres and seconds. */
 const FRAMING = {
-  /** How many stick men tall the view is on a window wide enough for that: this, not the pixel ratio, decides how big things are on screen. */
+  /**
+   * How many stick men tall the view is on a window wide enough for that: this, not the pixel
+   * ratio, decides how big things are on screen.
+   */
   stickMenTall: 6,
   /** Where the floor under the stick man sits, as a share of the view's height from the top. */
   floorFromTop: 0.72,
-  /** The view never shows less than this much of the level across: a narrow window is held further from the sheet instead. */
+  /**
+   * The view never shows less than this much of the level across: a narrow window is held further
+   * from the sheet instead.
+   */
   leastMetresAcross: 12,
-  /** Looking ahead, the stick man stands this share of the view's width from the side behind it, and the rest is where it is going. */
+  /**
+   * Looking ahead, the stick man stands this share of the view's width from the side behind it, and
+   * the rest is where it is going.
+   */
   trailingViewShare: 0.3,
-  /** On the floor, facing the end of the stick man's line from this close or closer, with floor further on, it is at an edge. */
+  /**
+   * On the floor, facing the end of the stick man's line from this close or closer, with floor
+   * further on, it is at an edge.
+   */
   edgeDistance: 2.5,
   /** Looking ahead, this much of the next floor line has to be in view. */
   nextLineMargin: 2.5,
-  /** However far the next floor line is, the view is never pulled back to show more than this across (or the window's own width, when that shows more). */
+  /**
+   * However far the next floor line is, the view is never pulled back to show more than this across
+   * (or the window's own width, when that shows more).
+   */
   mostMetresAcross: 21,
   /** How long the view takes to get most of the way to where it is wanted. */
   easeSeconds: 0.4,
-  /** A stick man who is this far from where it was a frame ago did not walk there: a level started, and the view cuts to it. */
+  /**
+   * A stick man who is this far from where it was a frame ago did not walk there: a level started,
+   * and the view cuts to it.
+   */
   cutBeyond: 3,
-  /** The fastest the view moves along the line to keep up with the stick man, in metres a second: faster than anything the stick man does, so only a hop in one tick (sitting down in the airplane) is taken over a few frames. */
+  /**
+   * The fastest the view moves along the line to keep up with the stick man, in metres a second:
+   * faster than anything the stick man does, so only a hop in one tick (sitting down in the
+   * airplane) is taken over a few frames.
+   */
   fastestFollow: 14,
 } as const;
 
 /** What the camera needs to know about the stick man. */
 export type Followed = Pick<StickManView, 'feet' | 'facing' | 'action' | 'isCarrying'>;
 
-/** How the view sits on the level: how far ahead of the stick man's feet its middle is, and how much of the level it shows across. Metres. */
+/**
+ * How the view sits on the level: how far ahead of the stick man's feet its middle is, and how much
+ * of the level it shows across. Metres.
+ */
 interface Framing {
   readonly metresAhead: number;
   readonly metresAcross: number;
@@ -81,9 +106,10 @@ export function followStickManWith(
 }
 
 /**
- * The zoom at which `camera` shows the level while nothing pulls it back: the view is `FRAMING.stickMenTall` stick men
- * tall, or shows `FRAMING.leastMetresAcross` across when the window is too narrow for that. The HUD is always drawn
- * at this zoom, so its lines are as heavy as the level's and it keeps its size when the level's view pulls back.
+ * The zoom at which `camera` shows the level while nothing pulls it back: the view is
+ * `FRAMING.stickMenTall` stick men tall, or shows `FRAMING.leastMetresAcross` across when the
+ * window is too narrow for that. The HUD is always drawn at this zoom, so its lines are as heavy as
+ * the level's and it keeps its size when the level's view pulls back.
  */
 export function getZoomAtRest(camera: Phaser.Cameras.Scene2D.Camera): number {
   return Math.min(
@@ -93,8 +119,9 @@ export function getZoomAtRest(camera: Phaser.Cameras.Scene2D.Camera): number {
 }
 
 /**
- * Where the view wants to be for the stick man as it is now. Centred on the stick man and as wide as it is at rest, unless the stick man is looking
- * where the stick man is going: then the stick man stands to one side, and it is as much wider as it takes to show the next floor line.
+ * Where the view wants to be for the stick man as it is now. Centred on the stick man and as wide
+ * as it is at rest, unless the stick man is looking where the stick man is going: then the stick
+ * man stands to one side, and it is as much wider as it takes to show the next floor line.
  */
 function getFramingWanted(input: {
   stickMan: Followed;
@@ -121,7 +148,10 @@ function getFramingWanted(input: {
   return { metresAhead: facing * (0.5 - FRAMING.trailingViewShare) * metresAcross, metresAcross };
 }
 
-/** `from` a frame of `seconds` closer to `to`: most of the way there after `FRAMING.easeSeconds`, never past it. */
+/**
+ * `from` a frame of `seconds` closer to `to`: most of the way there after `FRAMING.easeSeconds`,
+ * never past it.
+ */
 function easeTowards(start: Framing, end: Framing, seconds: number): Framing {
   const share = 1 - Math.exp(-Math.max(0, seconds) / FRAMING.easeSeconds);
   return {
@@ -131,8 +161,9 @@ function easeTowards(start: Framing, end: Framing, seconds: number): Framing {
 }
 
 /**
- * Where along the line the view follows the stick man to, a frame of `seconds` after it was at `followedX`: where the stick man's feet are,
- * unless they got there faster than `FRAMING.fastestFollow`, which only a hop within one tick does.
+ * Where along the line the view follows the stick man to, a frame of `seconds` after it was at
+ * `followedX`: where the stick man's feet are, unless they got there faster than
+ * `FRAMING.fastestFollow`, which only a hop within one tick does.
  */
 function keepUpWith(input: { followedX: number; feetX: number; seconds: number }): number {
   const furthest = FRAMING.fastestFollow * Math.max(0, input.seconds);
@@ -151,7 +182,10 @@ interface Viewpoint {
   readonly floor: readonly FloorSegment[];
 }
 
-/** True when the end of the floor line under `x` that the stick man faces is near, and there is floor further on to get to. */
+/**
+ * True when the end of the floor line under `x` that the stick man faces is near, and there is
+ * floor further on to get to.
+ */
 function isAtEdge(viewpoint: Viewpoint): boolean {
   const line = viewpoint.floor.find(
     (segment) => segment.start.x <= viewpoint.x && viewpoint.x <= segment.end.x,
@@ -171,7 +205,10 @@ function isAtEdge(viewpoint: Viewpoint): boolean {
   );
 }
 
-/** How far the way the stick man faces the nearest floor line begins that it is not on or over, or undefined when there is none. */
+/**
+ * How far the way the stick man faces the nearest floor line begins that it is not on or over, or
+ * undefined when there is none.
+ */
 function measureDistanceToNextLine(viewpoint: Viewpoint): number | undefined {
   const distances = viewpoint.floor
     .map((segment) =>

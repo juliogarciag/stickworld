@@ -4,7 +4,10 @@ import { ITEM_SLOT_COUNT } from './defs';
 export interface Inventory {
   /** What each slot holds: an item's def id, or null when it is empty. Slot 1 is `slots[0]`. */
   slots: (number | null)[];
-  /** The number of the selected slot, counted from 1 as the player counts them, or null when none is. */
+  /**
+   * The number of the selected slot, counted from 1 as the player counts them, or null when none
+   * is.
+   */
   selectedSlot: number | null;
 }
 

@@ -73,7 +73,8 @@ describe('the movement a game nobody tunes plays', () => {
     );
     stepFor(stopped, Math.ceil(PLAYER.walkSpeed / (PLAYER.airBraking * stopped.dt)));
     expect(getStickMan(stopped).horizontalSpeed).toBe(0);
-    // The other way, a held key changes the stick man's speed as fast: from walking one way to the other in a tenth of a second.
+    // The other way, a held key changes the stick man's speed as fast: from walking one way to the
+    // other in a tenth of a second.
     const turned = walkOffStart(createSim({ level: 1 }));
     turned.step([WALK_RIGHT]);
     expect(getStickMan(turned).horizontalSpeed).toBeCloseTo(
@@ -166,7 +167,8 @@ describe('the nineties platformer preset', () => {
     expect(ninetiesJump.highest).toBeLessThanOrEqual(
       MOVEMENT_PRESETS.ninetiesPlatformer.jumpHeight + 1e-9,
     );
-    // Five times as high in about a third of a second: on average more than three times as fast up as the small jump.
+    // Five times as high in about a third of a second: on average more than three times as fast up
+    // as the small jump.
     expect(ninetiesJump.ticksToTop * nineties.dt).toBeLessThan(0.4);
     expect(ninetiesJump.highest / ninetiesJump.ticksToTop).toBeGreaterThan(
       (3 * smallJump.highest) / smallJump.ticksToTop,
@@ -207,7 +209,8 @@ describe('the nineties platformer preset', () => {
     sim.step([JUMP]);
     sim.step([LET_GO]);
     const afterCut = getStickMan(sim).verticalSpeed;
-    // A press in the air is no jump and holds the key again; letting go once more must not cut a second time.
+    // A press in the air is no jump and holds the key again; letting go once more must not cut a
+    // second time.
     sim.step([JUMP]);
     sim.step([LET_GO]);
     expect(getStickMan(sim).verticalSpeed).toBeCloseTo(
@@ -220,7 +223,8 @@ describe('the nineties platformer preset', () => {
     const nineties = walkOffStart(createTunedSim(MOVEMENT_PRESETS.ninetiesPlatformer));
     nineties.step([STOP]);
     expect(getStickMan(nineties).horizontalSpeed).toBe(0);
-    // Away from the floor's end, which would stop the stick man: a held key is walking speed at once.
+    // Away from the floor's end, which would stop the stick man: a held key is walking speed at
+    // once.
     nineties.step([WALK_LEFT]);
     expect(getStickMan(nineties).horizontalSpeed).toBe(
       -MOVEMENT_PRESETS.ninetiesPlatformer.walkSpeed,
@@ -328,9 +332,10 @@ const WALK_RIGHT: Command = { type: 'player/walk', direction: 1 };
 const STOP: Command = { type: 'player/walk', direction: 0 };
 
 /**
- * A mix of what a player does, the same on any tick for any level: walking both ways and stopping, jumps (some asked
- * for in the air, so that they wait for the floor), and jumps let go of on the tick they are asked for, a few ticks into
- * the rise, or later. J and K now and then, so that the airplane levels do something too.
+ * A mix of what a player does, the same on any tick for any level: walking both ways and stopping,
+ * jumps (some asked for in the air, so that they wait for the floor), and jumps let go of on the
+ * tick they are asked for, a few ticks into the rise, or later. J and K now and then, so that the
+ * airplane levels do something too.
  */
 function getMixedCommandsAt(tick: number): Command[] {
   const commands: Command[] = [];
@@ -373,12 +378,18 @@ function stepFor(sim: SimHandle, ticks: number, commands: readonly Command[] = [
   }
 }
 
-/** How high the stick man's feet get in one jump from where the stick man stands, letting go of it `letGoAfter` ticks after it was asked for (null: never). */
+/**
+ * How high the stick man's feet get in one jump from where the stick man stands, letting go of it
+ * `letGoAfter` ticks after it was asked for (null: never).
+ */
 function measureHighestJump(sim: SimHandle, options: { letGoAfter: number | null }): number {
   return recordJumpOf(sim, { letGoAfter: options.letGoAfter }).highest;
 }
 
-/** One jump from where the stick man stands: how high the stick man's feet get, how many ticks to the top and how many from there to the floor. */
+/**
+ * One jump from where the stick man stands: how high the stick man's feet get, how many ticks to
+ * the top and how many from there to the floor.
+ */
 function recordJumpOf(
   sim: SimHandle,
   options: { letGoAfter: number | null },
