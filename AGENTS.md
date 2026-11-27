@@ -130,11 +130,14 @@ pnpm dev          # client dev server. PORT=5180 pnpm dev to pin a port (needed 
 pnpm test         # all tests in all packages, headless
 pnpm typecheck    # tsc for every package
 pnpm lint         # eslint, including the boundary rules
-pnpm check        # test + typecheck + lint, what CI runs
+pnpm format       # prettier rewrites the code to the repo's layout
+pnpm check        # test + typecheck + lint + format check, what CI runs
 pnpm build        # the client bundle
 ```
 
-Before opening a PR: `pnpm install && pnpm test && pnpm typecheck && pnpm lint` must pass.
+Before opening a PR: `pnpm install && pnpm check` must pass.
+
+Layout is Prettier's (`.prettierrc.json`: 100 columns, single quotes): run `pnpm format` before committing, and do not lay code out by hand. Every `if`, `else` and loop has braces (lint), so each statement is on a line of its own and a reviewer never has to find where a condition ends and its statement begins. Prettier does not wrap comments: keep a comment line within 100 columns by hand. Markdown and the verification folders of merged tickets are not formatted.
 
 **How to add a feature without breaking the rules**
 

@@ -15,13 +15,16 @@
     "typecheck": "tsc -p tsconfig.json && pnpm -r typecheck",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "check": "pnpm test && pnpm typecheck && pnpm lint"
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "pnpm test && pnpm typecheck && pnpm lint && pnpm format:check"
   },
   "devDependencies": {
     "@eslint/js": "catalog:",
     "@types/node": "catalog:",
     "eslint": "catalog:",
     "globals": "catalog:",
+    "prettier": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:",
     "vite": "catalog:",
