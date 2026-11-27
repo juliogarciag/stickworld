@@ -1,23 +1,23 @@
 import { defineSlice } from '../../core/slice';
 
 export interface LetterState {
-  /** True while the level's letter is there: lying on the floor, or in his hands being read. False once he has read it and put it away. */
+  /** True while the level's letter is there: lying on the floor, or in the stick man's hands being read. False once the stick man has read it and put it away. */
   isInLevel: boolean;
-  /** True while he reads it. */
+  /** True while the stick man reads it. */
   isBeingRead: boolean;
 }
 
-/** Whether the level's letter lies there at the start depends on whether he has read it before, so the feature's `init` decides it. */
+/** Whether the level's letter lies there at the start depends on whether the stick man has read it before, so the feature's `init` decides it. */
 export const letterSlice = defineSlice<LetterState>('letter', () => ({ isInLevel: false, isBeingRead: false }), { isCarriedAcrossLevels: false });
 
-/** The def ids of the letters he has read. What he has read he remembers across levels and deaths. */
+/** The def ids of the letters the stick man has read. What the stick man has read it remembers across levels and deaths. */
 export const lettersReadSlice = defineSlice<number[]>('lettersRead', () => [], { isCarriedAcrossLevels: true });
 
-/** The item a letter gave, given again from the sky to him who has lost it and everything he made of it. */
+/** The item a letter gave, given again from the sky to the stick man who has lost it and everything the stick man made of it. */
 export interface FallenItemState {
   /** True while it is there: on its way down, or lying on the floor. */
   isInLevel: boolean;
-  /** Where it lies, or will lie once it has come down, in metres: where he stood when it started to fall. Only read while it is there. */
+  /** Where it lies, or will lie once it has come down, in metres: where the stick man stood when it started to fall. Only read while it is there. */
   x: number;
   y: number;
   /** How far above where it will lie it is, in metres. 0 once it lies on the floor. */

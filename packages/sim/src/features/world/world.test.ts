@@ -17,7 +17,7 @@ import { getInteraction } from './view';
 describe("'world/interact' and 'item/use'", () => {
   it('do one thing a press: next to both the airplane and the letter, a press lifts the airplane and the letter stays unread', () => {
     const sim = new Sim({ features, start: { seed: 1, level: 3 } });
-    // In play he cannot have an airplane before he has read the letter, so this one is handed to him.
+    // In play the stick man cannot have an airplane before it has read the letter, so this one is handed to it.
     giveItem(sim, AIRPLANE_ITEM_ID);
     walkTo(sim, getLetter(sim)!.position.x - 0.4);
     sim.step([SELECT_SLOT_1]);
@@ -30,7 +30,7 @@ describe("'world/interact' and 'item/use'", () => {
     expect(getInteraction(sim)).toBe('putDown');
   });
 
-  it('leave the letter he is reading to the interact key: using an item does nothing until it is put away, and putting it away does nothing more', () => {
+  it('leave the letter the stick man is reading to the interact key: using an item does nothing until it is put away, and putting it away does nothing more', () => {
     const sim = new Sim({ features, start: { seed: 1, level: 3 } });
     giveItem(sim, PAPER_ITEM_ID);
     walkTo(sim, getLetter(sim)!.position.x);
@@ -75,7 +75,7 @@ const SELECT_SLOT_1: Command = { type: 'inventory/select', slot: 1 };
 const USE_ITEM: Command = { type: 'item/use' };
 const INTERACT: Command = { type: 'world/interact' };
 
-/** Walks him to `x` and stops him there, within one tick's walk. */
+/** Walks the stick man to `x` and stops it there, within one tick's walk. */
 function walkTo(sim: Sim, x: number): void {
   const direction = x > getStickMan(sim).feet.x ? 1 : -1;
   sim.step([{ type: 'player/walk', direction }]);

@@ -1,12 +1,12 @@
 PASS  dev server up, started by this run
-PASS  falling into the gap starts the same level again, and the tick count goes on  (level 3, tick 268 -> 278)
-PASS  he is back near where the level starts  (x 2.00, start 2)
-PASS  the key still held walks him on after the restart, without being pressed again  (walking, x 2.00 -> 3.32)
-PASS  a death is not a page turn  (page turns seen in 318 frames: 0; levels: 3)
+PASS  falling into the gap starts the same level again, and the tick count goes on  (level 3, tick 266 -> 278)
+PASS  the stick man is back near where the level starts  (x 2.00, start 2)
+PASS  the key still held walks the stick man on after the restart, without being pressed again  (walking, x 2.00 -> 3.36)
+PASS  a death is not a page turn  (page turns seen in 320 frames: 0; levels: 3)
 PASS  reaching the flag starts the next level  (levels seen: 1,2)
-PASS  the page is turned between the two  (the turn was seen in 31 of 305 frames)
+PASS  the page is turned between the two  (the turn was seen in 34 of 332 frames)
 PASS  the turn begins on the frame the level changes: the new level is never shown bare  (frames on level 2 before the turn: 0)
-PASS  he stands where level 2 starts  (x 2)
+PASS  the stick man stands where level 2 starts  (x 2)
 PASS  no page errors
 
 ALL 10 CHECKS PASSED

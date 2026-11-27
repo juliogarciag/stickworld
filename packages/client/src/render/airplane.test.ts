@@ -33,7 +33,7 @@ describe('easeAirplanesOverTime', () => {
     expect(shownFor(RESTING, FRAME)).toEqual({ position: RESTING.position, facing: 1, length: RESTING.length, height: RESTING.height, noseDown: 0 });
   });
 
-  it('takes a moment to get from the floor to over his head, and then is exactly there', () => {
+  it('takes a moment to get from the floor to over the stick man's head, and then is exactly there', () => {
     const shownFor = easeAirplanesOverTime();
     shownFor(RESTING, FRAME);
     const first = shownFor(CARRIED, FRAME)!;
@@ -46,7 +46,7 @@ describe('easeAirplanesOverTime', () => {
     expect(shownFor(CARRIED, FRAME)!.position).toEqual(CARRIED.position);
   });
 
-  it('keeps up with him as he walks with it: once over his head it stays there', () => {
+  it('keeps up with the stick man as the stick man walks with it: once over the stick man's head it stays there', () => {
     const shownFor = easeAirplanesOverTime();
     shownFor(CARRIED, FRAME);
     for (let frame = 1; frame <= 30; frame += 1) {

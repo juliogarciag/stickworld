@@ -14,7 +14,7 @@ export interface FlagView {
   readonly isReached: boolean;
   /** How long it has been all the way up its stick, in seconds. 0 until it is. */
   readonly upFor: number;
-  /** How far up the stick the flag has gone since he reached it, from 0 to 1. */
+  /** How far up the stick the flag has gone since the stick man reached it, from 0 to 1. */
   readonly raised: number;
   /** True for the flag of the last level: reaching it finishes the game. */
   readonly isFinalFlag: boolean;

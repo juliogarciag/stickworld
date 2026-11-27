@@ -62,7 +62,7 @@ describe('buildItemSlotStrokes', () => {
     expect(measureFromRight(getItemSlotBox(1, narrow), narrow)).toBe(measureFromRight(first, moved));
   });
 
-  it('is small and clear of the letter he holds up, on the narrowest view the HUD has', () => {
+  it('is small and clear of the letter the stick man holds up, on the narrowest view the HUD has', () => {
     const narrow = { ...CAMERA_SEES, width: 1200 };
     const box = getItemSlotBox(1, narrow);
     expect(box.width).toBeLessThan(80);

@@ -1,6 +1,6 @@
 # Stickworld
 
-A 2d platformer drawn in pencil on a sheet of paper. The main character is a stick man; the floor is a pencil line; the things he finds and makes are paper.
+A 2d platformer drawn in pencil on a sheet of paper. The main character is a stick man; the floor is a pencil line; the things the stick man finds and makes are paper.
 
 ```bash
 pnpm install

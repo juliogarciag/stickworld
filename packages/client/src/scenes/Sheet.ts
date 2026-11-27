@@ -91,7 +91,7 @@ export class Sheet {
     this.letter.show(letter ? buildLetterStrokes(letter) : fallenItem ? buildFallenPaperStrokes(fallenItem) : []);
     this.airplane.show(airplane ? buildAirplaneStrokes(airplane) : []);
     const pose = this.poseFor(stickMan, frame.seconds, level.floor);
-    // Seated, he tips with the airplane as it is drawn, about the point it is drawn turning about: its middle.
+    // Seated, the stick man tips with the airplane as it is drawn, about the point it is drawn turning about: its middle.
     this.stickMan.show(buildStickManStrokes(airplane ? seatIn(pose, { noseDown: airplane.noseDown, tipsAboutAbove: getPivotHeight(airplane) }) : pose));
   }
 }

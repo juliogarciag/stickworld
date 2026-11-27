@@ -9,14 +9,14 @@ import { fallenItemSlice, letterSlice } from './state';
 export interface LetterView {
   /** Where it lies, in metres. */
   readonly position: Point;
-  /** True while he reads it: `text` is what to show him. */
+  /** True while the stick man reads it: `text` is what to show the stick man. */
   readonly isBeingRead: boolean;
   readonly text: string;
   /** The name of the recipe that reading it teaches, or null when it teaches none. */
   readonly teaches: string | null;
 }
 
-/** The letter in the level being played, or undefined when there is none: the level has no letter, or he has read it and put it away. */
+/** The letter in the level being played, or undefined when there is none: the level has no letter, or the stick man has read it and put it away. */
 export function getLetter(handle: SimHandle): LetterView | undefined {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
   const placed = findLetterPlacedIn(handle.levelDef);
@@ -26,7 +26,7 @@ export function getLetter(handle: SimHandle): LetterView | undefined {
   return { position: placed.position, isBeingRead: letter.isBeingRead, text: def.text, teaches: getRecipeDef(def.teachesRecipe)?.name ?? null };
 }
 
-/** The item that falls from the sky for him who has lost it, as a view needs it. */
+/** The item that falls from the sky for the stick man who has lost it, as a view needs it. */
 export interface FallenItemView {
   /** Where it lies, or will lie once it has come down, in metres. */
   readonly position: Point;

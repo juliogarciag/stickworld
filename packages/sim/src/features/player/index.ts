@@ -9,18 +9,18 @@ import { findClearOfFloorEnds, getFloorHeightAt, keepOverLine, getLowestFloorHei
 import { movementTuningSlice, playerSlice, type PlayerState } from './state';
 
 /**
- * The stick man: walking, a jump a little over his height with forgiveness on
+ * The stick man: walking, a jump a little over the stick man's height with forgiveness on
  * both sides of it, and falling off the paper, which starts the level again.
- * Walking off an edge he starts with the sideways speed he had, and the keys
- * steer it, or with none held he slows down (`airSteering`, `airBraking`):
- * almost at once in the game as it is. In a jump they move him as they do on
- * the floor. The end of a floor line pushes him aside as he drops past it.
- * Seated in the airplane he does none of that until a jump takes him out of
- * it. Under a flag he has reached he stands and cheers; once the game is over
- * and he is done cheering he walks and jumps again, but not off the line he is
- * on. Letting go of the jump while he rises cuts the rise short by `letGoCut`,
+ * Walking off an edge the stick man starts with the sideways speed the stick man had, and the keys
+ * steer it, or with none held the stick man slows down (`airSteering`, `airBraking`):
+ * almost at once in the game as it is. In a jump they move the stick man as they do on
+ * the floor. The end of a floor line pushes the stick man aside as the stick man drops past it.
+ * Seated in the airplane the stick man does none of that until a jump takes the stick man out of
+ * it. Under a flag the stick man has reached it stands and cheers; once the game is over
+ * and the stick man is done cheering it walks and jumps again, but not off the line it is
+ * on. Letting go of the jump while the stick man rises cuts the rise short by `letGoCut`,
  * which in the game as it is ends the rise there and then: a jump is as high
- * as the key is held. How fast he walks, how he jumps and falls is
+ * as the key is held. How fast the stick man walks, how it jumps and falls is
  * `movementTuningSlice`, which only a dev build changes (ADR 0006). Plain
  * arithmetic on the level's floor segments; no physics library.
  */
@@ -44,10 +44,10 @@ export const playerFeature: Feature = {
     const player = sim.getStateOf(playerSlice);
     const tuning = sim.getStateOf(movementTuningSlice);
     if (player.isSeated) {
-      // Seated he neither walks nor falls: what he sits in moves him. A jump stands him up in his seat, which is floor enough to take off from.
-      // A jump that arrived on the tick he sat down was asked for before the player could see him seated: it is dropped, not a way out of the seat.
+      // Seated the stick man neither walks nor falls: what the stick man sits in moves it. A jump stands the stick man up in its seat, which is floor enough to take off from.
+      // A jump that arrived on the tick the stick man sat down was asked for before the player could see the stick man seated: it is dropped, not a way out of the seat.
       if (player.seatedAtTick === sim.tick) player.ticksSinceJumpAsked = null;
-      // Under a floor line there is no room to stand up: he cannot jump up through it, so the jump is dropped too.
+      // Under a floor line there is no room to stand up: the stick man cannot jump up through it, so the jump is dropped too.
       const floorHeightAtPlayer = getFloorHeightAt(sim.levelDef.floor, player.x);
       if (floorHeightAtPlayer !== undefined && player.y > floorHeightAtPlayer) player.ticksSinceJumpAsked = null;
       if (player.ticksSinceJumpAsked === null) return;
@@ -58,8 +58,8 @@ export const playerFeature: Feature = {
     const direction = getWalkDirectionNow(sim);
     if (direction !== 0) player.facing = direction;
     if (isStandingCheering(sim)) player.ticksSinceJumpAsked = null;
-    // Only a fall that began by walking off an edge has momentum: on the floor and in a jump the keys move him at once.
-    // A jump from the floor takes off with the speed the floor gives him this tick, so the speed comes first.
+    // Only a fall that began by walking off an edge has momentum: on the floor and in a jump the keys move the stick man at once.
+    // A jump from the floor takes off with the speed the floor gives the stick man this tick, so the speed comes first.
     player.horizontalSpeed = isFallingOffEdge(player) ? getSpeedAfterSteering(player.horizontalSpeed, { direction, tuning, dt: sim.dt }) : direction * tuning.walkSpeed;
     // The cut comes before the take-off: a jump let go of in the tick it takes off in still rises for that one tick, the shortest hop.
     cutRiseIfLetGo(player, tuning);
@@ -67,7 +67,7 @@ export const playerFeature: Feature = {
 
     const { floor } = sim.levelDef;
     const wantedX = player.x + player.horizontalSpeed * sim.dt;
-    // After the end there is nothing left to lose: the ends of his line stop him.
+    // After the end there is nothing left to lose: the ends of the stick man's line stop it.
     const x = isPlayingAgainOffered(sim) ? keepOverLine(floor, { start: player.x, end: wantedX }) : wantedX;
     if (player.isOnFloor) walkTo(player, { x, floorHeight: getFloorHeightAt(floor, x), isWalking: direction !== 0 });
     else fallTo(player, { x, floorHeight: getFloorHeightAt(floor, x), tuning, dt: sim.dt });
@@ -77,20 +77,20 @@ export const playerFeature: Feature = {
   },
 };
 
-/** Which way he walks this tick: the way the player asked, or nowhere while he cheers under the flag. */
+/** Which way the stick man walks this tick: the way the player asked, or nowhere while the stick man cheers under the flag. */
 export function getWalkDirectionNow(sim: Sim): WalkDirection {
   return isStandingCheering(sim) ? 0 : sim.getStateOf(playerSlice).walkDirection;
 }
 
 /**
- * True while he stands under the flag he reached and the keys do not move him: until the next level starts, or on the
+ * True while the stick man stands under the flag it reached and the keys do not move it: until the next level starts, or on the
  * last level until playing again is offered.
  */
 export function isStandingCheering(sim: Sim): boolean {
   return isFlagReached(sim) && !isPlayingAgainOffered(sim);
 }
 
-/** True while he is in the air because he walked off an edge, and not because he jumped. */
+/** True while the stick man is in the air because it walked off an edge, and not because it jumped. */
 export function isFallingOffEdge(player: PlayerState): boolean {
   return !player.isOnFloor && player.ticksSinceWalkedOff !== null;
 }
@@ -101,7 +101,7 @@ function isWalkDirection(value: unknown): value is WalkDirection {
   return value === -1 || value === 0 || value === 1;
 }
 
-/** The numbers in `tuning` that are tuning he knows, each a number within its limits; everything else in it is left out. */
+/** The numbers in `tuning` that are tuning the stick man knows, each a number within its limits; everything else in it is left out. */
 function getValidTuningIn(tuning: unknown): Partial<MovementTuning> {
   if (typeof tuning !== 'object' || tuning === null || Array.isArray(tuning)) return {};
   const valid: Partial<Record<keyof MovementTuning, number>> = {};
@@ -114,7 +114,7 @@ function getValidTuningIn(tuning: unknown): Partial<MovementTuning> {
   return valid;
 }
 
-/** Takes off when a jump is waiting and he is on the floor, or left it by an edge a moment ago. A jump that waited too long is forgotten. */
+/** Takes off when a jump is waiting and the stick man is on the floor, or left it by an edge a moment ago. A jump that waited too long is forgotten. */
 function jumpIfAskedAndAble(sim: Sim, player: PlayerState): void {
   if (player.ticksSinceJumpAsked === null) return;
   const hasJustWalkedOff = player.ticksSinceWalkedOff !== null && player.ticksSinceWalkedOff < countWholeTicksIn(PLAYER.jumpAskedLateWindow, sim.dt);
@@ -143,7 +143,7 @@ function cutRiseIfLetGo(player: PlayerState, tuning: MovementTuning): void {
   player.isRiseCut = true;
 }
 
-/** One tick on the floor: he follows it to `x`, or finds no floor there and starts to fall. */
+/** One tick on the floor: the stick man follows it to `x`, or finds no floor there and starts to fall. */
 function walkTo(player: PlayerState, input: { x: number; floorHeight: number | undefined; isWalking: boolean }): void {
   player.distanceWalked = input.isWalking ? player.distanceWalked + Math.abs(input.x - player.x) : 0;
   player.x = input.x;
@@ -156,9 +156,9 @@ function walkTo(player: PlayerState, input: { x: number; floorHeight: number | u
 }
 
 /**
- * One tick in the air: gravity pulls him towards `x`, and he lands if the floor there is between where he was and where he would be.
- * Rising, `riseGravity` slows him; going down, `fallGravity` speeds him up to no more than `fastestFall`.
- * That is right for flat floors, which is all the levels have: a floor that slopes up towards him could be missed.
+ * One tick in the air: gravity pulls the stick man towards `x`, and the stick man lands if the floor there is between where it was and where it would be.
+ * Rising, `riseGravity` slows the stick man; going down, `fallGravity` speeds the stick man up to no more than `fastestFall`.
+ * That is right for flat floors, which is all the levels have: a floor that slopes up towards the stick man could be missed.
  */
 function fallTo(player: PlayerState, input: { x: number; floorHeight: number | undefined; tuning: MovementTuning; dt: number }): void {
   const gravity = player.verticalSpeed < 0 ? input.tuning.riseGravity : input.tuning.fallGravity;
@@ -181,8 +181,8 @@ function fallTo(player: PlayerState, input: { x: number; floorHeight: number | u
 }
 
 /**
- * His sideways speed a tick later in a fall off an edge: a little closer to walking the way a held key says, or with no
- * key held a little closer to still by `airBraking`. With an `airBraking` of 0 he drifts on as he was.
+ * The stick man's sideways speed a tick later in a fall off an edge: a little closer to walking the way a held key says, or with no
+ * key held a little closer to still by `airBraking`. With an `airBraking` of 0 the stick man drifts on as it was.
  */
 function getSpeedAfterSteering(speed: number, input: { direction: WalkDirection; tuning: MovementTuning; dt: number }): number {
   if (input.direction === 0 && input.tuning.airBraking === 0) return speed;
@@ -193,7 +193,7 @@ function getSpeedAfterSteering(speed: number, input: { direction: WalkDirection;
   return speed + Math.sign(wanted - speed) * mostChange;
 }
 
-/** In the air next to the end of a floor line: the end pushes him aside so his body and head clear it, and stops him if he was drifting into it. */
+/** In the air next to the end of a floor line: the end pushes the stick man aside so the stick man's body and head clear it, and stops the stick man if the stick man was drifting into it. */
 function slideOffFloorEnds(player: PlayerState, floor: readonly FloorSegment[]): void {
   const clear = findClearOfFloorEnds(floor, player);
   if (!clear) return;

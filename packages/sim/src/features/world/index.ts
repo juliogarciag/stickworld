@@ -6,7 +6,7 @@ import { isFlagReached } from '../flag';
 
 /**
  * Interacting with the world: one command, `'world/interact'`, whose meaning
- * depends on what is next to him. This feature owns the command and knows
+ * depends on what is next to the stick man. This feature owns the command and knows
  * nothing about the things themselves: it asks each feature that has
  * something to interact with, in order, and the first that answers is what
  * the command does (ADR 0003). One press never does two things. A feature
@@ -31,7 +31,7 @@ export function getInteractionNow(sim: Sim): Interaction | undefined {
   return undefined;
 }
 
-/** Every interaction there is, most pressing first: the letter he reads is put away, then what he has in his hands comes before what lies next to him. */
+/** Every interaction there is, most pressing first: the letter the stick man reads is put away, then what it has in its hands comes before what lies next to it. */
 const ANSWERS = [getLetterBeingRead, getAirplaneInteraction, getLetterInteraction, getFallenItemInteraction] as const;
 
 export type Interaction = NonNullable<ReturnType<(typeof ANSWERS)[number]>>;

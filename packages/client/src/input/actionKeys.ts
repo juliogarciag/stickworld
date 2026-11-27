@@ -2,7 +2,7 @@ import type { Command } from '@stickworld/sim';
 import type Phaser from 'phaser';
 
 /**
- * The keys for what he does with things: J uses the held item, K interacts
+ * The keys for what the stick man does with things: J uses the held item, K interacts
  * with the world. This is the only file that knows which keys those are;
  * `ACTION_KEY_NAMES` is how the HUD names them to the player.
  */

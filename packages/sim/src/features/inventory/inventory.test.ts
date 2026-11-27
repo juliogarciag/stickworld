@@ -21,7 +21,7 @@ describe('inventory', () => {
     expect(getDef(PAPER_ITEM_ID)?.name).toBe('paper');
   });
 
-  it('does not give an item he already holds a second time, nor something that is not an item', () => {
+  it('does not give an item the stick man already holds a second time, nor something that is not an item', () => {
     const sim = createSimOnLevel(1);
     giveItem(sim, PAPER_ITEM_ID);
     const before = hashSnapshot(sim.takeSnapshot());
@@ -42,7 +42,7 @@ describe('inventory', () => {
     expect(getItemSlots(sim)[0]?.isSelected).toBe(false);
   });
 
-  it('selects a slot that holds nothing: the key answers whether or not he has an item yet', () => {
+  it('selects a slot that holds nothing: the key answers whether or not the stick man has an item yet', () => {
     const sim = createSimOnLevel(1);
     sim.step([SELECT_SLOT_1]);
     expect(getItemSlots(sim)[0]).toEqual({ slot: 1, itemDefId: null, isSelected: true });
@@ -55,7 +55,7 @@ describe('inventory', () => {
     expect(sim.takeSnapshot().slices).toEqual(before);
   });
 
-  it('keeps what he holds and what is selected when a level restarts and when the next one starts', () => {
+  it('keeps what the stick man holds and what is selected when a level restarts and when the next one starts', () => {
     const sim = createSimOnLevel(1);
     giveItem(sim, PAPER_ITEM_ID);
     sim.step([SELECT_SLOT_1]);

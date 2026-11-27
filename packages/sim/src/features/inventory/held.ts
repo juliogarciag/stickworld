@@ -3,7 +3,7 @@ import { isItemDefId } from './defs';
 import { inventorySlice } from './state';
 
 /**
- * What he holds, for the features whose rules depend on it or change it: a
+ * What the stick man holds, for the features whose rules depend on it or change it: a
  * recipe turns the item in the selected slot into another, placing an
  * airplane empties the slot.
  */
@@ -14,7 +14,7 @@ export function getSelectedItem(sim: Sim): number | null {
   return selectedSlot === null ? null : (slots[selectedSlot - 1] ?? null);
 }
 
-/** True when one of his slots holds the item `itemDefId`. */
+/** True when one of the stick man's slots holds the item `itemDefId`. */
 export function isHoldingItem(sim: Sim, itemDefId: number): boolean {
   return sim.getStateOf(inventorySlice).slots.includes(itemDefId);
 }

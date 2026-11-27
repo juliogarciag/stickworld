@@ -12,7 +12,7 @@ import { teachRecipe } from './index';
 import { getCrafting } from './view';
 
 describe('making a recipe', () => {
-  it('turns the paper into the airplane in the same slot with one use, once he knows how', () => {
+  it('turns the paper into the airplane in the same slot with one use, once the stick man knows how', () => {
     const sim = createSimWithPaperSelected();
     teachRecipe(sim, PAPER_AIRPLANE_RECIPE_ID);
     expect(getItemUse(sim)).toBe('craft');
@@ -22,7 +22,7 @@ describe('making a recipe', () => {
     expect(getCrafting(sim).canMake).toBeNull();
   });
 
-  it('is nothing the paper can do while he knows no recipe for it', () => {
+  it('is nothing the paper can do while the stick man knows no recipe for it', () => {
     const sim = createSimWithPaperSelected();
     expect(getItemUse(sim)).toBeNull();
     expect(getCrafting(sim)).toEqual({ knownRecipes: [], canMake: null });
@@ -30,7 +30,7 @@ describe('making a recipe', () => {
     expect(getItemSlots(sim)[0]?.itemDefId).toBe(PAPER_ITEM_ID);
   });
 
-  it('needs the paper in his hand', () => {
+  it('needs the paper in the stick man's hand', () => {
     const unselected = createSimWithPaperSelected();
     teachRecipe(unselected, PAPER_AIRPLANE_RECIPE_ID);
     unselected.step([SELECT_SLOT_1]);
@@ -45,7 +45,7 @@ describe('making a recipe', () => {
     expect(getItemUse(emptyHanded)).toBeNull();
   });
 
-  it('can be done while he walks or is in the air: there is nothing to stop and look at', () => {
+  it('can be done while the stick man walks or is in the air: there is nothing to stop and look at', () => {
     const walking = createSimWithPaperSelected();
     teachRecipe(walking, PAPER_AIRPLANE_RECIPE_ID);
     walking.step([{ type: 'player/walk', direction: 1 }]);
@@ -55,7 +55,7 @@ describe('making a recipe', () => {
     expect(getItemSlots(walking)[0]?.itemDefId).toBe(AIRPLANE_ITEM_ID);
   });
 
-  it('is kept when a level starts again: what he learned he knows', () => {
+  it('is kept when a level starts again: what the stick man learned it knows', () => {
     const sim = createSimWithPaperSelected();
     teachRecipe(sim, PAPER_AIRPLANE_RECIPE_ID);
     sim.startLevel(sim.level);

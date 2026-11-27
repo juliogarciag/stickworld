@@ -19,7 +19,7 @@ describe('buildLetterSheetStrokes', () => {
     expect((box.left + box.right) / 2).toBeCloseTo(CAMERA_SEES.x + CAMERA_SEES.width / 2, -1);
   });
 
-  it('says under the text what the letter has taught him, inside a sheet that is taller for it', () => {
+  it('says under the text what the letter has taught the stick man, inside a sheet that is taller for it', () => {
     const [plainSheet, ...plainWords] = buildLetterSheetStrokes(LETTER, CAMERA_SEES);
     const [sheet, ...words] = buildLetterSheetStrokes(TEACHING, CAMERA_SEES);
     expect(words).toHaveLength(plainWords.length + buildWriting('learned: paper airplane', WRITING).strokes.length);

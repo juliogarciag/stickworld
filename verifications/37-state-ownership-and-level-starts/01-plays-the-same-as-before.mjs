@@ -61,8 +61,8 @@ try {
 
   results.push(check('every tick of every game hashes the same on both builds', firstDifference === undefined, firstDifference ? JSON.stringify(firstDifference) : `${totals.games} games, ${totals.ticks} ticks`));
   // The comparison only means something if the games did what this ticket changed.
-  results.push(check('he fell to his death and the level started again (the player asks)', totals.fallsToDeath > 0, `${totals.fallsToDeath} times`));
-  results.push(check('a flight was lost with him in it and the level started again (the airplane asks)', totals.lostFlights > 0, `${totals.lostFlights} times`));
+  results.push(check('the stick man fell to its death and the level started again (the player asks)', totals.fallsToDeath > 0, `${totals.fallsToDeath} times`));
+  results.push(check('a flight was lost with the stick man in it and the level started again (the airplane asks)', totals.lostFlights > 0, `${totals.lostFlights} times`));
   results.push(check('a flag was reached and the next level started (the flag asks)', totals.nextLevels > 0, `${totals.nextLevels} times`));
   results.push(check('the game was finished and played again (the game asks to start over)', totals.playedAgain > 0, `${totals.playedAgain} times`));
   report.totals = totals;
@@ -196,7 +196,7 @@ function scriptedPlayer(build, { plan, laps }) {
       flight += 1;
     }
 
-    // A fall he meant is counted once he is below the floor, and once: he is down there for more than a tick.
+    // A fall the stick man meant is counted once it is below the floor, and once: the stick man is down there for more than a tick.
     if (fallsLeft > 0 && man.feet.y > 1 && sim.tick >= countFallsFromTick) {
       fallsLeft -= 1;
       countFallsFromTick = sim.tick + 120;

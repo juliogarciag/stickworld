@@ -5,5 +5,5 @@ export interface NotesState {
   rubbedOutAtTick: (number | null)[];
 }
 
-/** Every note is there again when the level starts again: he may need it a second time. */
+/** Every note is there again when the level starts again: the stick man may need it a second time. */
 export const notesSlice = defineSlice<NotesState>('notes', (level) => ({ rubbedOutAtTick: (level.notes ?? []).map(() => null) }), { isCarriedAcrossLevels: false });

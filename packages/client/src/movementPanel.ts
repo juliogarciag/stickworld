@@ -3,7 +3,7 @@ import GUI from 'lil-gui';
 import type { GameLoop } from './loop/GameLoop';
 
 /**
- * Dev builds only: a small panel in the top left corner to try other ways for him to move while the game runs (ADR
+ * Dev builds only: a small panel in the top left corner to try other ways for the stick man to move while the game runs (ADR
  * 0006). A preset sets every knob at once; each knob then changes one number. What the panel shows is sent to the sim
  * as `'player/tuneMovement'`, which keeps it in its state: the panel decides nothing, and it sends it again whenever the
  * sim has other numbers (the game started over, or `loadLevel` made a new sim). What was chosen, and whether the panel
@@ -23,7 +23,7 @@ export function showMovementPanel(loop: GameLoop): void {
   const panel = new GUI({ title: 'Movement (dev)', width: 280 });
   panel.domElement.style.left = '0';
   panel.domElement.style.right = 'auto';
-  // The game's keys are read from the window: pressed in the panel, they are the panel's and do not move him. A key let
+  // The game's keys are read from the window: pressed in the panel, they are the panel's and do not move the stick man. A key let
   // go of in the panel still reaches the game, so that a key held for the game before is not held for ever.
   panel.domElement.addEventListener('keydown', (event) => event.stopPropagation());
   // Once a change is made the keys are the game's again: a jump pressed right after choosing a preset is a jump.

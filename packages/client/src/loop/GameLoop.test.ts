@@ -37,7 +37,7 @@ describe('GameLoop', () => {
     expect(loop.takeFinishedLevel()).toBeUndefined();
   });
 
-  it('keeps nothing when he dies and the same level starts again', () => {
+  it('keeps nothing when the stick man dies and the same level starts again', () => {
     const loop = new GameLoop(createSim({ level: 1 }));
     loop.queueCommand({ type: 'player/walk', direction: -1 });
     let deepest = 0;
@@ -45,7 +45,7 @@ describe('GameLoop', () => {
       loop.advanceBy(FIXED_DT);
       deepest = Math.max(deepest, getStickMan(loop.sim).feet.y);
     }
-    // He fell off the paper and is back where the level starts.
+    // The stick man fell off the paper and is back where the level starts.
     expect(deepest).toBeGreaterThan(1);
     expect(getStickMan(loop.sim).feet).toEqual(getLevel(loop.sim).start);
     expect(loop.sim.level).toBe(1);

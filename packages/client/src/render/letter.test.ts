@@ -16,7 +16,7 @@ describe('buildLetterStrokes', () => {
     expect(top).toBeLessThan(LETTER.position.y - 0.2);
   });
 
-  it('is not drawn on the floor while he reads it', () => {
+  it('is not drawn on the floor while the stick man reads it', () => {
     expect(buildLetterStrokes({ ...LETTER, isBeingRead: true })).toEqual([]);
   });
 });

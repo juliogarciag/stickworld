@@ -1,6 +1,6 @@
 PASS  every tick of every game hashes the same on both builds  (52 games, 136946 ticks)
-PASS  he fell to his death and the level started again (the player asks)  (224 times)
-PASS  a flight was lost with him in it and the level started again (the airplane asks)  (6 times)
+PASS  the stick man fell to its death and the level started again (the player asks)  (224 times)
+PASS  a flight was lost with the stick man in it and the level started again (the airplane asks)  (6 times)
 PASS  a flag was reached and the next level started (the flag asks)  (43 times)
 PASS  the game was finished and played again (the game asks to start over)  (2 times)
 

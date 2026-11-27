@@ -37,7 +37,7 @@ describe('level 1', () => {
     expect(getFlag(sim)!.isReached).toBe(false);
   });
 
-  it('stays finished, and he stays put, whatever is pressed before the next level starts', () => {
+  it('stays finished, and the stick man stays put, whatever is pressed before the next level starts', () => {
     const sim = createSim({ level: 1 });
     walkUntilFlagIsReached(sim);
     const stoodAt = getStickMan(sim).feet;
@@ -67,7 +67,7 @@ interface Recording {
   readonly ticks: number;
 }
 
-/** Walk right, jump once on the way, keep walking: he reaches the flag after about four seconds. It ends with the flag up, before the next level starts. */
+/** Walk right, jump once on the way, keep walking: the stick man reaches the flag after about four seconds. It ends with the flag up, before the next level starts. */
 const WALK_TO_FLAG: Recording = {
   commands: [
     { atTick: 10, command: { type: 'player/walk', direction: 1 } },
@@ -88,7 +88,7 @@ const STOP_SHORT: Recording = {
 /** How many ticks a finished level stays before the next one starts. */
 const PAUSE_TICKS = Math.round(LEVEL_END.pauseBeforeNextLevel * TICK_RATE);
 
-/** Walks him right from where he is until the tick the flag is reached. */
+/** Walks the stick man right from where it is until the tick the flag is reached. */
 function walkUntilFlagIsReached(sim: SimHandle): void {
   sim.step([{ type: 'player/walk', direction: 1 }]);
   for (let tick = 0; tick < 600 && !getFlag(sim)!.isReached; tick += 1) sim.step();

@@ -8,7 +8,7 @@ import { buildKeysAndWords } from './keysAndWords';
 /**
  * What the game writes across the sheet once it is over: "THE END", a
  * stroke at a time, and under it the key that plays it again once the sim
- * offers that. That it is over is the sim's: the flag he reached is the one
+ * offers that. That it is over is the sim's: the flag the stick man reached is the one
  * that ends the game (`getFlag`), and so is when playing again is heard
  * (`getGame`). The words, their size and how fast they are written are
  * decided here.

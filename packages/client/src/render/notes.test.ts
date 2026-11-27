@@ -4,7 +4,7 @@ import { __testing__, areNotesStill, buildNoteStrokes } from './notes';
 import { convertToPixels } from './units';
 
 describe('buildNoteStrokes', () => {
-  it('writes a note about something he does as its keys in boxes and its words, centred on where it is, above its line', () => {
+  it('writes a note about something the stick man does as its keys in boxes and its words, centred on where it is, above its line', () => {
     const strokes = buildNoteStrokes([WALK], KEYS);
     expect(strokes.filter((stroke) => stroke.isClosed)).toHaveLength(2);
     const { xs, ys } = getExtent(strokes);

@@ -17,8 +17,8 @@ import { worldFeature } from './world';
  * has moved, and the inventory is given what a flag gives after the flag is
  * checked. `item` and `world` own the two commands whose meaning other
  * features answer for, and come before those features. The airplane follows
- * the stick man who carries it, so it comes after him. `game` only hears a
- * command, so where it comes decides nothing; `note` watches where he
- * stands, and comes after him so a note is rubbed out on the tick he gets there.
+ * the stick man who carries it, so it comes after the stick man. `game` only hears a
+ * command, so where it comes decides nothing; `note` watches where the stick man
+ * stands, and comes after it so a note is rubbed out on the tick it gets there.
  */
 export const features: readonly Feature[] = [gameFeature, playerFeature, flagFeature, inventoryFeature, itemFeature, worldFeature, craftingFeature, letterFeature, airplaneFeature, noteFeature];

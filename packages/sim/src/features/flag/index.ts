@@ -20,7 +20,7 @@ export const flagFeature: Feature = {
     if (flag.reachedAtTick === null) {
       const placed = findFlagPlacedIn(sim.levelDef);
       const { x, y, isSeated } = getPlayerBody(sim);
-      // A flag is reached on his own feet: flying past it in the airplane does not count.
+      // A flag is reached on the stick man's own feet: flying past it in the airplane does not count.
       if (placed && !isSeated && isTouchingFlag({ feet: { x, y }, placed })) flag.reachedAtTick = sim.tick;
       return;
     }
@@ -34,17 +34,17 @@ export function isLastLevel(level: Level): boolean {
   return levels[levels.length - 1]?.id === level.id;
 }
 
-/** True once he has reached the level's flag: the level is finished. */
+/** True once the stick man has reached the level's flag: the level is finished. */
 export function isFlagReached(sim: Sim): boolean {
   return sim.getStateOf(flagSlice).reachedAtTick !== null;
 }
 
-/** The tick he reached the level's flag on, or null until he does. */
+/** The tick the stick man reached the level's flag on, or null until it does. */
 export function getTickFlagWasReached(sim: Sim): number | null {
   return sim.getStateOf(flagSlice).reachedAtTick;
 }
 
-/** How long ago he reached the level's flag, in seconds, or undefined until he does. */
+/** How long ago the stick man reached the level's flag, in seconds, or undefined until it does. */
 export function getSecondsSinceFlagReached(sim: Sim): number | undefined {
   const { reachedAtTick } = sim.getStateOf(flagSlice);
   return reachedAtTick === null ? undefined : (sim.tick - reachedAtTick) * sim.dt;
@@ -57,7 +57,7 @@ export function findFlagPlacedIn(level: Level): Placement | undefined {
 
 // ---- Helpers ----
 
-/** True when he is within reach of the stick and any part of him is level with it: he cannot jump over a flag taller than his jump. */
+/** True when the stick man is within reach of the stick and any part of the stick man is level with it: the stick man cannot jump over a flag taller than its jump. */
 function isTouchingFlag(input: { feet: { x: number; y: number }; placed: Placement }): boolean {
   const isInReach = Math.abs(input.feet.x - input.placed.position.x) <= flagDef.reach;
   const isLevelWithStick = input.feet.y >= input.placed.position.y - flagDef.height && input.feet.y - STICK_MAN_HEIGHT <= input.placed.position.y;

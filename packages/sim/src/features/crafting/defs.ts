@@ -2,7 +2,7 @@ import type { Def } from '../../content/defs';
 import { AIRPLANE_ITEM_ID, PAPER_ITEM_ID } from '../inventory/defs';
 
 /**
- * The recipes: what an item he holds can be made into. Ids 400-499 are this
+ * The recipes: what an item the stick man holds can be made into. Ids 400-499 are this
  * feature's block in content/defs.ts. A new recipe is a new entry here.
  */
 export interface RecipeDef extends Def {

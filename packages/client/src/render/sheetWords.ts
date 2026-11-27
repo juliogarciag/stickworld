@@ -13,7 +13,7 @@ import { convertToPixels } from './units';
  */
 
 /**
- * The level's number and name, "2. A GAP", above where he starts, in world pixels: written stroke by stroke as the
+ * The level's number and name, "2. A GAP", above where the stick man starts, in world pixels: written stroke by stroke as the
  * sheet arrives, left for a few seconds and then rubbed out. `secondsOnSheet` is how long this sheet has been the
  * one being played.
  */
@@ -56,7 +56,7 @@ const NOTHING: readonly Stroke[] = [];
 /** World pixels and seconds. View detail only. */
 const LEVEL_NAME = {
   letterHeight: convertToPixels(0.4),
-  /** From the floor he starts on up to the top of the words. */
+  /** From the floor the stick man starts on up to the top of the words. */
   heightAboveFloor: convertToPixels(4.3),
   /** It is written once the sheet before has been turned away, and takes this long. */
   writtenAfter: 0.55,

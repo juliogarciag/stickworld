@@ -24,7 +24,7 @@ describe('levels', () => {
       }
     });
 
-    it('has no gap he is too wide to fall into: the two ends of a gap never push him at once', () => {
+    it('has no gap the stick man is too wide to fall into: the two ends of a gap never push the stick man at once', () => {
       for (let index = 1; index < level.floor.length; index += 1) {
         const gap = level.floor[index].start.x - level.floor[index - 1].end.x;
         if (gap > 0) expect(gap).toBeGreaterThan(STICK_MAN_WIDTH);

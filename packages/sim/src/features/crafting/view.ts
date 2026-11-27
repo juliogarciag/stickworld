@@ -7,9 +7,9 @@ export interface RecipeView {
   readonly name: string;
 }
 
-/** What he knows how to make, as a view shows it. */
+/** What the stick man knows how to make, as a view shows it. */
 export interface CraftingView {
-  /** The recipes he knows, in the order he learned them. */
+  /** The recipes the stick man knows, in the order it learned them. */
   readonly knownRecipes: readonly RecipeView[];
   /** The recipe that using the held item would make right now, or null when it would make none. */
   readonly canMake: RecipeView | null;

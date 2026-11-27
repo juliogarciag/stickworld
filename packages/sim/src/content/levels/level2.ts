@@ -5,8 +5,8 @@ import type { Level } from './types';
 /**
  * Level 2: a gap in the line. A jump clears it and a walk does not; falling
  * in is a death, which starts the level again. The flag past the gap gives
- * the paper, which he keeps from then on. A note before the gap says to
- * jump, and is rubbed out once he stands on the far side.
+ * the paper, which the stick man keeps from then on. A note before the gap says to
+ * jump, and is rubbed out once the stick man stands on the far side.
  */
 export const level2: Level = {
   id: 2,
