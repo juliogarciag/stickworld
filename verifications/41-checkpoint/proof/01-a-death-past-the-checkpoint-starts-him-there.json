@@ -1,0 +1,177 @@
+{
+  "afterDeath1": {
+    "man": {
+      "feet": {
+        "x": 7,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "standing",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "fallingOffAnEdge": false,
+      "walkDirectionAsked": 0,
+      "carrying": false
+    },
+    "checkpoint": {
+      "at": {
+        "x": 7,
+        "y": 0
+      },
+      "passed": true
+    },
+    "level": 3,
+    "turning": false
+  },
+  "afterDeath2": {
+    "man": {
+      "feet": {
+        "x": 7,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "standing",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "fallingOffAnEdge": false,
+      "walkDirectionAsked": 0,
+      "carrying": false
+    },
+    "checkpoint": {
+      "at": {
+        "x": 7,
+        "y": 0
+      },
+      "passed": true
+    },
+    "level": 3,
+    "turning": false
+  },
+  "level": {
+    "start": {
+      "x": 2,
+      "y": 0
+    },
+    "checkpoint": {
+      "at": {
+        "x": 7,
+        "y": 0
+      },
+      "passed": false
+    }
+  },
+  "afterDeathBefore": {
+    "man": {
+      "feet": {
+        "x": 2,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "standing",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "fallingOffAnEdge": false,
+      "walkDirectionAsked": 0,
+      "carrying": false
+    },
+    "checkpoint": {
+      "at": {
+        "x": 7,
+        "y": 0
+      },
+      "passed": false
+    }
+  },
+  "before": {
+    "passed": false,
+    "at": {
+      "x": 7,
+      "y": 0
+    },
+    "seen": {
+      "left": -3.7866666666666493,
+      "right": 15.41333333333335,
+      "top": -7.775999999999999,
+      "bottom": 3.024000000000001
+    },
+    "inView": true
+  },
+  "passedAt": 7.0233333333333645,
+  "afresh": {
+    "man": {
+      "feet": {
+        "x": 2,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "standing",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "fallingOffAnEdge": false,
+      "walkDirectionAsked": 0,
+      "carrying": false
+    },
+    "checkpoint": {
+      "at": {
+        "x": 7,
+        "y": 0
+      },
+      "passed": false
+    }
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "a level has a checkpoint",
+      "pass": true,
+      "details": "level 3"
+    },
+    {
+      "name": "it stands past the start and is not passed yet",
+      "pass": true,
+      "details": "{\"start\":{\"x\":2,\"y\":0},\"checkpoint\":{\"at\":{\"x\":7,\"y\":0},\"passed\":false}}"
+    },
+    {
+      "name": "a death before it starts him at the start of the level",
+      "pass": true,
+      "details": "x 2"
+    },
+    {
+      "name": "the mark is in view before he reaches it",
+      "pass": true,
+      "details": "{\"passed\":false,\"at\":{\"x\":7,\"y\":0},\"seen\":{\"left\":-3.7866666666666493,\"right\":15.41333333333335,\"top\":-7.775999999999999,\"bottom\":3.024000000000001},\"inView\":true}"
+    },
+    {
+      "name": "it is passed as he walks past it, not before",
+      "pass": true,
+      "details": "passed with his feet at x 7.023, the mark at 7"
+    },
+    {
+      "name": "death 1 past it starts him at the checkpoint, standing, with no page turned",
+      "pass": true,
+      "details": "x 7, standing"
+    },
+    {
+      "name": "death 2 past it starts him at the checkpoint, standing, with no page turned",
+      "pass": true,
+      "details": "x 7, standing"
+    },
+    {
+      "name": "the level loaded afresh starts him at its start, the checkpoint not passed",
+      "pass": true,
+      "details": "x 2"
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}
