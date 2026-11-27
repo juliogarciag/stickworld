@@ -68,10 +68,11 @@ export function standPlayerUp(sim: Sim): void {
 }
 
 /**
- * Starts the level with the stick man standing at `position` instead of at the level's start (used for a passed checkpoint).
- * It may only be called while a level is being started, from a feature's `init`. At that point the stick man has just been
- * set up standing still, so changing the position is all that is needed.
- * In the middle of a level the speed and the seat would be left as they were, so it throws.
+ * Starts the level with the stick man standing at `position` instead of at the level's start (used
+ * for a passed checkpoint). It may only be called while a level is being started, from a feature's
+ * `init`. At that point the stick man has just been set up standing still, so changing the position
+ * is all that is needed. In the middle of a level the speed and the seat would be left as they
+ * were, so it throws.
  */
 export function startPlayerAt(
   sim: Sim,

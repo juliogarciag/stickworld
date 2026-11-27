@@ -84,7 +84,8 @@ describe('the checkpoint', () => {
   });
 
   it('forgets a checkpoint passed on another level even when the level that starts has one of its own', () => {
-    // No two levels have a checkpoint yet, so the state is made by hand: the checkpoint of level 2 passed, and level 3 starting.
+    // No two levels have a checkpoint yet, so the state is made by hand: the checkpoint of level 2
+    // passed, and level 3 starting.
     const before = createSimOn(2).takeSnapshot();
     const sim = new Sim({
       features,
@@ -139,7 +140,10 @@ function createSimStandingAt(x: number): Sim {
   });
 }
 
-/** Walks the stick man off the paper to one side and steps until the level has restarted and the stick man stands still on the floor. */
+/**
+ * Walks the stick man off the paper to one side and steps until the level has restarted and the
+ * stick man stands still on the floor.
+ */
 function walkOffPaper(sim: Sim, direction: 1 | -1): void {
   sim.step([{ type: 'player/walk', direction }]);
   let ticks = 0;

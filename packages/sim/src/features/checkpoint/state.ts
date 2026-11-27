@@ -6,8 +6,8 @@ export interface CheckpointState {
 }
 
 /**
- * Carried across level starts, because a death restarts the same level and must keep the checkpoint.
- * Starting a different level must clear it, and the feature's `init` does that.
+ * Carried across level starts, because a death restarts the same level and must keep the
+ * checkpoint. Starting a different level must clear it, and the feature's `init` does that.
  * Starting the game over resets every slice, including this one.
  */
 export const checkpointSlice = defineSlice<CheckpointState>(

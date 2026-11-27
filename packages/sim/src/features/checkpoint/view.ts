@@ -6,7 +6,10 @@ import { hasPassedCheckpoint } from './index';
 export interface CheckpointView {
   /** Where the checkpoint stands on the floor, in metres. */
   readonly position: Point;
-  /** True once the stick man has stood on the floor at or past the checkpoint. From then on the level restarts here. */
+  /**
+   * True once the stick man has stood on the floor at or past the checkpoint. From then on the
+   * level restarts here.
+   */
   readonly isPassed: boolean;
 }
 

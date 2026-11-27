@@ -50,6 +50,10 @@ export interface Level {
   readonly flagGivesItem?: number;
   /** What is written on the sheet for the player. Most levels have none. */
   readonly notes?: readonly Note[];
-  /** Where the level's checkpoint stands on the floor, if the level has one. After a death the level restarts here, once the stick man has stood on the floor at or past this point (the `checkpoint` feature). */
+  /**
+   * Where the level's checkpoint stands on the floor, if the level has one. After a death the level
+   * restarts here, once the stick man has stood on the floor at or past this point (the
+   * `checkpoint` feature).
+   */
   readonly checkpoint?: Point;
 }
