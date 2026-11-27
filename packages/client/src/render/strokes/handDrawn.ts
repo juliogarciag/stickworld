@@ -86,7 +86,7 @@ function getNormalAt(path: readonly StrokePoint[], index: number): StrokePoint {
   return { x: -(after.y - before.y) / length, y: (after.x - before.x) / length };
 }
 
-/** A smooth value between -1 and 1 that depends only on `seed` and `at`. */
+/** A smooth value between -1 and 1 that depends only on `seed` and `offset`. */
 function getSmoothNoise(seed: number, offset: number): number {
   const cell = Math.floor(offset);
   const within = offset - cell;

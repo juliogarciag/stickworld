@@ -130,7 +130,7 @@ function putAway(sim: Sim): void {
   letter.isInLevel = false;
 }
 
-/** True while he stands on the floor within reach of something that lies at `at`: the letter, or the item that fell. */
+/** True while he stands on the floor within reach of something that lies at `position`: the letter, or the item that fell. */
 function isWithinReach(sim: Sim, position: { readonly x: number }): boolean {
   const player = getPlayerBody(sim);
   return player.isOnFloor && Math.abs(player.x - position.x) <= LETTER.reach;
