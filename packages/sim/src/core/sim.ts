@@ -78,6 +78,11 @@ export class Sim implements SimHandle {
     return this.levelId;
   }
 
+  /** True while a level is being started: its slices hold their first values and the features' `init` are running. */
+  get isStartingALevel(): boolean {
+    return this.startingALevel;
+  }
+
   /** The level being played, as its data file has it. */
   get levelDef(): Level {
     return levelById(this.levelId);

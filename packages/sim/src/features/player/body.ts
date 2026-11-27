@@ -57,10 +57,11 @@ export function standHimUp(sim: Sim): void {
 
 /**
  * The level begins with him standing here instead of where the level's data starts him (a checkpoint he has passed).
- * For a feature's `init` only: it moves a stick man who has just been set up, and leaves everything else about him as a
- * level's start has it.
+ * Only while a level is being started, from a feature's `init`: he has just been set up, standing still, and this
+ * moves him and nothing else. In the middle of a level it would leave his speed and his seat as they were, so it throws.
  */
 export function beginHimAt(sim: Sim, at: { readonly x: number; readonly y: number }): void {
+  if (!sim.isStartingALevel) throw new Error('beginHimAt is for a feature\'s init: once the level is under way he is not moved like this');
   const player = sim.stateOf(playerSlice);
   player.x = at.x;
   player.y = at.y;

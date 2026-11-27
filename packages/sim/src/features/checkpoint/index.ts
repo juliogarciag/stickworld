@@ -15,10 +15,11 @@ export const checkpointFeature: Feature = {
   slices: [checkpointSlice],
 
   init(sim) {
-    const checkpoint = sim.stateOf(checkpointSlice);
+    const state = sim.stateOf(checkpointSlice);
     const { checkpoint: at } = sim.levelDef;
-    // The slice is kept whenever a level starts, so another level's checkpoint is still in it here: forget it.
-    if (checkpoint.passedOnLevel !== sim.level || !at) checkpoint.passedOnLevel = null;
+    // A level starting keeps this slice, so that a death does. That also keeps it when another level starts: what was
+    // passed on any level but this one is forgotten here.
+    if (state.passedOnLevel !== sim.level || !at) state.passedOnLevel = null;
     else beginHimAt(sim, at);
   },
 

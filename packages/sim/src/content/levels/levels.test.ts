@@ -35,6 +35,14 @@ describe('levels', () => {
       expect(level.floor.some((segment) => segment.from.x <= level.start.x && level.start.x <= segment.to.x)).toBe(true);
     });
 
+    it('has its checkpoint, if it has one, on a floor line: started there, he must not fall', () => {
+      const { checkpoint } = level;
+      if (!checkpoint) return;
+      const under = level.floor.find((segment) => segment.from.x <= checkpoint.x && checkpoint.x <= segment.to.x);
+      expect(under).toBeDefined();
+      expect(checkpoint.y).toBe(under!.from.y);
+    });
+
     it('places only things that have a def', () => {
       for (const placement of level.placements) expect(getDef(placement.defId), `def ${placement.defId}`).toBeDefined();
     });

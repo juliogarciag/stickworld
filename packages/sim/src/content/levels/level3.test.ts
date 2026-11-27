@@ -213,6 +213,11 @@ describe('level 3', () => {
     expect(itemSlotsOf(sim)[0]?.itemDefId).toBeNull();
   });
 
+  it('has its checkpoint on the way from the start to the edge of the gap, past the letter', () => {
+    expect(level3.checkpoint!.x).toBeGreaterThan(LETTER_AT.x);
+    expect(level3.checkpoint!.x).toBeLessThan(GAP.from);
+  });
+
   it('is tried again without the chores: after a flight is lost the level starts again with the airplane in his hand, and a retry is walk, set down, board', () => {
     const sim = createSim({ level: 3 });
     putTheAirplaneOnTheEdge(sim);
@@ -395,7 +400,7 @@ function putTheAirplaneOnTheEdge(sim: SimHandle): void {
   expect(airplaneOf(sim)).toMatchObject({ state: 'resting', onAnEdge: true });
 }
 
-/** He is back at the start with the airplane as the item in his hand, none in the world, the flag not reached, and neither a letter there nor a sheet of paper on its way. */
+/** He is back at the checkpoint, which every way to the gap goes past, with the airplane as the item in his hand, none in the world, the flag not reached, and neither a letter there nor a sheet of paper on its way. */
 function expectTheLevelToHaveStartedAgainWithTheAirplaneInHisHand(sim: SimHandle): void {
   expect(sim.level).toBe(3);
   expect(stickManOf(sim)).toMatchObject({ action: 'standing', feet: level3.checkpoint });
