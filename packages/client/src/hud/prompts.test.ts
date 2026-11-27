@@ -68,7 +68,7 @@ describe('buildPromptStrokes', () => {
     expect(Math.max(...two.flatMap((stroke) => stroke.points).map((point) => point.y))).toBe(Math.max(...points.map((point) => point.y)));
   });
 
-  it('writes words with no key as words alone, in a row of their own above the keys, starting where a key\'s box would', () => {
+  it("writes words with no key as words alone, in a row of their own above the keys, starting where a key's box would", () => {
     const hint = { key: null, words: 'take the airplane to the edge' };
     const alone = buildPromptStrokes([hint], CAMERA_SEES);
     expect(alone.some((stroke) => stroke.isClosed)).toBe(false);

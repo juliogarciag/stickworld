@@ -89,7 +89,7 @@ describe('every note', () => {
     expect(note.words).not.toMatch(/\b(key|press|arrow|space|enter|[b-z])\b|[←→↑↓]/i);
   });
 
-  it.each(notes)('%s is written above the floor, clear of the stick man's head, and what rubs it out can be done before the flag', (_, note, level) => {
+  it.each(notes)("%s is written above the floor, clear of the stick man's head, and what rubs it out can be done before the flag", (_, note, level) => {
     expect(getFloorHeightAt(level.floor, note.position.x)).toBeDefined();
     expect(note.position.y).toBeLessThan(-2);
     if (note.rubbedOutPast === undefined) return;

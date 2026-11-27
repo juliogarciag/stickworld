@@ -73,7 +73,7 @@ describe('the movement a game nobody tunes plays', () => {
     expect((2 * PLAYER.walkSpeed) / PLAYER.airSteering).toBeLessThan(0.1);
   });
 
-  it('crosses level 2\'s gap with a running jump and falls into level 3\'s', () => {
+  it("crosses level 2's gap with a running jump and falls into level 3's", () => {
     for (const [level, doesCross] of [[2, true], [3, false]] as const) {
       const floor = getLevelById(level).floor;
       const sim = createSim({ level });
@@ -99,7 +99,7 @@ describe('the movement a game nobody tunes plays', () => {
 });
 
 describe('the small jump preset, the jump the game had before the two metre one', () => {
-  it('jumps well under the stick man's height, as high whether or not the jump is let go of', () => {
+  it("jumps well under the stick man's height, as high whether or not the jump is let go of", () => {
     const held = measureHighestJump(createTunedSim(MOVEMENT_PRESETS.smallJump), { letGoAfter: null });
     expect(held).toBe(measureHighestJump(createTunedSim(MOVEMENT_PRESETS.smallJump), { letGoAfter: 0 }));
     expect(held).toBeGreaterThan(MOVEMENT_PRESETS.smallJump.jumpHeight * 0.97);
@@ -130,7 +130,7 @@ describe('the small jump preset, the jump the game had before the two metre one'
 });
 
 describe('the nineties platformer preset', () => {
-  it('jumps about twice the stick man's height when the jump is held, rising fast and falling faster', () => {
+  it("jumps about twice the stick man's height when the jump is held, rising fast and falling faster", () => {
     const small = createTunedSim(MOVEMENT_PRESETS.smallJump);
     const nineties = createTunedSim(MOVEMENT_PRESETS.ninetiesPlatformer);
     const smallJump = recordJumpOf(small, { letGoAfter: null });
@@ -159,7 +159,7 @@ describe('the nineties platformer preset', () => {
     expect(second).toBeLessThan(MOVEMENT_PRESETS.ninetiesPlatformer.jumpHeight / 2);
   });
 
-  it('stops the stick man's rise when the jump is let go of, then falls', () => {
+  it("stops the stick man's rise when the jump is let go of, then falls", () => {
     const sim = createTunedSim(MOVEMENT_PRESETS.ninetiesPlatformer);
     sim.step([JUMP]);
     stepFor(sim, 4);

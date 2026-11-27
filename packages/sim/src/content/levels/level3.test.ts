@@ -49,7 +49,7 @@ describe('level 3', () => {
     expect(hasRestarted).toBe(true);
   });
 
-  it('cannot be finished by jumping with the airplane over the stick man's head either: that jump is no longer than the other', () => {
+  it("cannot be finished by jumping with the airplane over the stick man's head either: that jump is no longer than the other", () => {
     for (let jumpAtTick = TICK_AT_EDGE - 40; jumpAtTick <= TICK_AT_EDGE + 12; jumpAtTick += 1) {
       const sim = createSim({ level: 3 });
       // Read, put away, select, open, fold, set down, lift: the letter gives the paper to a level 3 started on its own.
@@ -213,7 +213,7 @@ describe('level 3', () => {
     expect(getItemSlots(sim)[0]?.itemDefId).toBeNull();
   });
 
-  it('is tried again without the chores: after a flight is lost the level starts again with the airplane in the stick man's hand, and a retry is walk, set down, board', () => {
+  it("is tried again without the chores: after a flight is lost the level starts again with the airplane in the stick man's hand, and a retry is walk, set down, board", () => {
     const sim = createSim({ level: 3 });
     putAirplaneOnEdge(sim);
     sim.step([INTERACT]);

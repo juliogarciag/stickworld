@@ -14,7 +14,7 @@ import { PLAYER } from './player/defs';
  * level as it was, and the level has started by the time the tick is over.
  */
 describe('a level started by the game itself', () => {
-  it('after a fall to the stick man's death: the features after the player see the stick man below the floor in that tick, and the tick ends with it back at the start', () => {
+  it("after a fall to the stick man's death: the features after the player see the stick man below the floor in that tick, and the tick ends with it back at the start", () => {
     const { sim, seen } = createSimWithWitness(2);
     const { start } = getLevelById(2);
     sim.step([WALK_RIGHT]);

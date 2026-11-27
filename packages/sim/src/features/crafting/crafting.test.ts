@@ -30,7 +30,7 @@ describe('making a recipe', () => {
     expect(getItemSlots(sim)[0]?.itemDefId).toBe(PAPER_ITEM_ID);
   });
 
-  it('needs the paper in the stick man's hand', () => {
+  it("needs the paper in the stick man's hand", () => {
     const unselected = createSimWithPaperSelected();
     teachRecipe(unselected, PAPER_AIRPLANE_RECIPE_ID);
     unselected.step([SELECT_SLOT_1]);

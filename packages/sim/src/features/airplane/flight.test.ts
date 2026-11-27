@@ -287,7 +287,7 @@ describe('a floor line', () => {
 });
 
 describe('jumping out', () => {
-  it('stands the stick man up and jumps the stick man out of the stick man's seat; the airplane falls on without the stick man', () => {
+  it("stands the stick man up and jumps the stick man out of the stick man's seat; the airplane falls on without the stick man", () => {
     const sim = createSimReadyToBoard();
     sim.step([INTERACT]);
     for (let tick = 0; tick < 25; tick += 1) sim.step();

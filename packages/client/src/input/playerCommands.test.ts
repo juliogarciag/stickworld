@@ -75,7 +75,7 @@ describe('keys to commands', () => {
     expect(createKeysToCommands()({ keys: { ...NOTHING, isJumpPressed: true }, sim })).toEqual([{ type: 'player/jump' }, { type: 'player/letGoOfJump' }]);
   });
 
-  it('takes an up key for a jump too while the stick man is on the stick man's feet, and never steers then', () => {
+  it("takes an up key for a jump too while the stick man is on the stick man's feet, and never steers then", () => {
     const sim = createSim({ level: 1 });
     expect(createKeysToCommands()({ keys: { ...UP, isUpPressed: true }, sim })).toEqual([{ type: 'player/jump' }]);
     expect(createKeysToCommands()({ keys: UP, sim })).toEqual([]);

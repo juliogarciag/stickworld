@@ -28,7 +28,7 @@ describe('placing the airplane', () => {
     expect(getItemUse(sim)).toBeNull();
   });
 
-  it('needs the airplane to be the selected item, and the stick man's feet on the floor', () => {
+  it("needs the airplane to be the selected item, and the stick man's feet on the floor", () => {
     const unselected = createSimHoldingAirplane();
     unselected.step([SELECT_SLOT_1]);
     unselected.step([USE_ITEM]);
@@ -55,7 +55,7 @@ describe('lifting, carrying and putting down', () => {
     expect(getAirplane(sim)!.state).toBe('carried');
   });
 
-  it('carries it over the stick man's head wherever the stick man walks, turning with the stick man', () => {
+  it("carries it over the stick man's head wherever the stick man walks, turning with the stick man", () => {
     const sim = createSimCarryingAirplane();
     sim.step([{ type: 'player/walk', direction: -1 }]);
     for (let tick = 0; tick < 30; tick += 1) {
@@ -66,7 +66,7 @@ describe('lifting, carrying and putting down', () => {
     expect(getStickMan(sim)).toMatchObject({ action: 'walking', isCarrying: true });
   });
 
-  it('puts it down in front of the stick man and leaves the stick man's hands free', () => {
+  it("puts it down in front of the stick man and leaves the stick man's hands free", () => {
     const sim = createSimCarryingAirplane();
     const { feet } = getStickMan(sim);
     sim.step([INTERACT]);
@@ -75,7 +75,7 @@ describe('lifting, carrying and putting down', () => {
     expect(getInteraction(sim)).toBe('lift');
   });
 
-  it('is neither lifted nor put down while the stick man's feet are off the floor', () => {
+  it("is neither lifted nor put down while the stick man's feet are off the floor", () => {
     const sim = createSimWithAirplaneOnFloor();
     sim.step([{ type: 'player/jump' }]);
     sim.step([INTERACT]);
@@ -87,7 +87,7 @@ describe('lifting, carrying and putting down', () => {
     expect(getAirplane(carrying)!.state).toBe('carried');
   });
 
-  it('shortens the stick man's jump while the stick man carries it, by the tuning value', () => {
+  it("shortens the stick man's jump while the stick man carries it, by the tuning value", () => {
     expect(measureHeightOfJump(createSimHoldingAirplane())).toBeCloseTo(PLAYER.jumpHeight, 1);
     expect(measureHeightOfJump(createSimCarryingAirplane())).toBeCloseTo(PLAYER.jumpHeightCarrying, 1);
     expect(PLAYER.jumpHeightCarrying).toBeLessThanOrEqual(PLAYER.jumpHeight);
@@ -99,7 +99,7 @@ describe('lifting, carrying and putting down', () => {
     expect(measureHeightOfJump(sim)).toBeCloseTo(1.5, 1);
   });
 
-  it('stays over the stick man's head through a jump on the floor', () => {
+  it("stays over the stick man's head through a jump on the floor", () => {
     const sim = createSimCarryingAirplane();
     sim.step([{ type: 'player/jump' }]);
     for (let tick = 0; tick < 60; tick += 1) sim.step();
@@ -184,7 +184,7 @@ describe('losing the airplane', () => {
     expectAirplaneToFallAndBeLost(sim);
   });
 
-  it('falls out of the stick man's hands when the stick man carries it off the edge: it is not carried down the gap with the stick man', () => {
+  it("falls out of the stick man's hands when the stick man carries it off the edge: it is not carried down the gap with the stick man", () => {
     const sim = createSimCarryingAirplane();
     sim.step([{ type: 'player/walk', direction: 1 }]);
     let hasLetGoDuringFall = false;
@@ -201,7 +201,7 @@ describe('losing the airplane', () => {
     expect(getAirplane(sim)).toBeUndefined();
   });
 
-  it('falls out of the stick man's hands when the stick man jumps into the gap with it', () => {
+  it("falls out of the stick man's hands when the stick man jumps into the gap with it", () => {
     const sim = createSimCarryingAirplane();
     walkTo(sim, EDGE - 0.3);
     sim.step([{ type: 'player/walk', direction: 1 }, { type: 'player/jump' }]);
@@ -213,7 +213,7 @@ describe('losing the airplane', () => {
     expect([...states]).toEqual(['carried', 'falling', 'lost']);
   });
 
-  it('is gone from the floor when the stick man dies while it rests there: the level starts again with one in the stick man's hand instead', () => {
+  it("is gone from the floor when the stick man dies while it rests there: the level starts again with one in the stick man's hand instead", () => {
     const sim = createSimWithAirplaneOnFloor();
     sim.step([{ type: 'player/walk', direction: -1 }]);
     for (let tick = 0; tick < 600 && getAirplane(sim); tick += 1) sim.step();
@@ -222,7 +222,7 @@ describe('losing the airplane', () => {
     expect(getStickMan(sim).feet).toEqual(level3.start);
   });
 
-  it('is kept as an item when the stick man dies with it in the stick man's slot', () => {
+  it("is kept as an item when the stick man dies with it in the stick man's slot", () => {
     const sim = createSimHoldingAirplane();
     sim.step([{ type: 'player/walk', direction: -1 }]);
     for (let tick = 0; tick < 300; tick += 1) sim.step();
@@ -239,7 +239,7 @@ describe('that the airplane has to be taken to an edge', () => {
     expect(getFlyingHint(sim)).toBeNull();
   });
 
-  it('is said from the moment the stick man has one, in the stick man's slot, on the floor away from an edge or over the stick man's head', () => {
+  it("is said from the moment the stick man has one, in the stick man's slot, on the floor away from an edge or over the stick man's head", () => {
     const sim = createSimHoldingAirplane();
     expect(getFlyingHint(sim)).toBe('takeToEdge');
     sim.step([USE_ITEM]);
@@ -282,7 +282,7 @@ describe('that the airplane has to be taken to an edge', () => {
     expect(getFlyingHint(sim)).toBeNull();
   });
 
-  it('is not said from the stick man's boarding on, and is said again when the level starts again after a lost flight', () => {
+  it("is not said from the stick man's boarding on, and is said again when the level starts again after a lost flight", () => {
     const sim = createSimCarryingAirplane();
     walkTo(sim, EDGE - AIRPLANE.putDownAhead - AIRPLANE.length / 4);
     sim.step([INTERACT]);

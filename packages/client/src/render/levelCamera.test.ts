@@ -21,7 +21,7 @@ describe('getFramingWanted', () => {
     }
   });
 
-  it('is at an edge only on the floor, near the end of the stick man's line, facing it, with floor further on', () => {
+  it("is at an edge only on the floor, near the end of the stick man's line, facing it, with floor further on", () => {
     const atRest = { metresAhead: 0, metresAcross: 12 };
     const near = GAP.start - FRAMING.edgeDistance + 0.1;
     expect(getFramingWanted({ stickMan: makeStickManStandingAt(near), floor: LEVEL_3, metresAcrossAtRest: 12 }).metresAhead).toBeGreaterThan(0);
@@ -84,7 +84,7 @@ describe('easeTowards', () => {
 });
 
 describe('keepUpWith', () => {
-  it('is where the stick man's feet are at anything the stick man does: walking, falling, and the airplane at its fastest', () => {
+  it("is where the stick man's feet are at anything the stick man does: walking, falling, and the airplane at its fastest", () => {
     for (const metresPerSecond of [2.2, 7.5, 11]) {
       const feetX = 10 + metresPerSecond / 60;
       expect(keepUpWith({ followedX: 10, feetX, seconds: 1 / 60 })).toBe(feetX);
@@ -92,7 +92,7 @@ describe('keepUpWith', () => {
     }
   });
 
-  it('takes a hop of the stick man's within one tick over a few frames, and ends exactly on the stick man', () => {
+  it("takes a hop of the stick man's within one tick over a few frames, and ends exactly on the stick man", () => {
     let followedX = 9;
     const frames = [];
     for (let frame = 0; frame < 10 && followedX !== 9.9; frame += 1) {

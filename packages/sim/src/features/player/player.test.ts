@@ -45,7 +45,7 @@ describe('walking', () => {
 });
 
 describe('jumping', () => {
-  it('lifts the stick man's feet to the jump height and brings the stick man back to the floor', () => {
+  it("lifts the stick man's feet to the jump height and brings the stick man back to the floor", () => {
     const sim = createSim({ level: 1 });
     sim.step([JUMP]);
     expect(getStickMan(sim).action).toBe('jumping');
@@ -159,7 +159,7 @@ describe('momentum falling off an edge', () => {
 });
 
 describe('dropping past the end of a floor line', () => {
-  it('never leaves the end of a floor line inside the stick man's body, whatever the stick man does', () => {
+  it("never leaves the end of a floor line inside the stick man's body, whatever the stick man does", () => {
     for (const level of levels) {
       for (let pattern = 0; pattern < PATTERNS_PER_LEVEL; pattern += 1) {
         const sim = createSim({ level: level.id });
@@ -177,7 +177,7 @@ describe('dropping past the end of a floor line', () => {
     }
   });
 
-  it('is pushed aside by the end as the stick man comes down beside it, a little every tick, until the stick man's whole width is clear of it', () => {
+  it("is pushed aside by the end as the stick man comes down beside it, a little every tick, until the stick man's whole width is clear of it", () => {
     const sim = createSimStandingAtEdge();
     const end = LEVEL.floor[0]!.start.x;
     // A hop with a touch outward, three ticks long: the stick man comes down just past the end, straight.
@@ -201,7 +201,7 @@ describe('dropping past the end of a floor line', () => {
     for (let tick = 1; tick < besideEnd.length; tick += 1) expect(Math.abs(besideEnd[tick]! - besideEnd[tick - 1]!)).toBeLessThan(STICK_MAN_WIDTH / 4);
   });
 
-  it('is stopped by the end of a line the stick man walks into in a fall, and goes under it once the stick man's head has dropped below it', () => {
+  it("is stopped by the end of a line the stick man walks into in a fall, and goes under it once the stick man's head has dropped below it", () => {
     const sim = createSim({ level: 2 });
     const farEnd = getLevelById(2).floor[1]!.start.x;
     sim.step([WALK_RIGHT]);
@@ -257,7 +257,7 @@ describe('the player state', () => {
 });
 
 describe('keepOverTheLine', () => {
-  it('lets a step end where it was going while that is over the stick man's line, half the stick man's width from its ends at the nearest', () => {
+  it("lets a step end where it was going while that is over the stick man's line, half the stick man's width from its ends at the nearest", () => {
     expect(keepOverLine(TWO_LINES, { start: 22, end: 22.04 })).toBe(22.04);
     expect(keepOverLine(TWO_LINES, { start: 26.9, end: 27.5 })).toBe(27 - STICK_MAN_WIDTH / 2);
     expect(keepOverLine(TWO_LINES, { start: 19.1, end: 18 })).toBe(19 + STICK_MAN_WIDTH / 2);
