@@ -43,7 +43,11 @@ export function selectItem(sim: Sim, itemDefId: number): boolean {
  */
 export function replaceSelectedItem(sim: Sim, itemDefId: number | null): boolean {
   const { slots, selectedSlot } = sim.getStateOf(inventorySlice);
-  if (selectedSlot === null || (itemDefId !== null && !isItemDefId(itemDefId))) {
+  const isValidItem = itemDefId === null || isItemDefId(itemDefId);
+  if (selectedSlot === null) {
+    return false;
+  }
+  if (!isValidItem) {
     return false;
   }
   slots[selectedSlot - 1] = itemDefId;

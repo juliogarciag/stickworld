@@ -169,10 +169,10 @@ export class Sim implements SimHandle {
   startLevelAfterThisTick(id: number): void {
     this.refuseDuringLevelStart();
     const asked: LevelStartRequest = { level: getLevelById(id).id, shouldKeepNothing: false };
-    if (
+    const shouldReplaceRequest =
       this.requestedDuringTick === null ||
-      shouldComeBefore(asked, this.requestedDuringTick, this.levelId)
-    ) {
+      shouldComeBefore(asked, this.requestedDuringTick, this.levelId);
+    if (shouldReplaceRequest) {
       this.requestedDuringTick = asked;
     }
     if (!this.isInTick) {

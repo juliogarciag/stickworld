@@ -28,7 +28,8 @@ export const airplaneFeature: Feature = {
 
   handleCommand(sim, command) {
     const { type, direction } = command as { type: string; direction?: unknown };
-    if (type === 'airplane/steer' && isSteerDirection(direction)) {
+    const isSteerCommand = type === 'airplane/steer' && isSteerDirection(direction);
+    if (isSteerCommand) {
       sim.getStateOf(airplaneSlice).steering = direction;
     }
   },
@@ -43,7 +44,8 @@ export const airplaneFeature: Feature = {
     if (airplane.isCarried) {
       // In the air below the floor the stick man is on the stick man's way down a gap or off the
       // paper: the stick man lets go of it.
-      if (!player.isOnFloor && player.y > floorLevel) {
+      const isFallingBelowFloor = !player.isOnFloor && player.y > floorLevel;
+      if (isFallingBelowFloor) {
         letFall(airplane);
         stopCarrying(sim);
       } else {
@@ -69,13 +71,9 @@ export function hasAirplane(sim: Sim): boolean {
  */
 export function isSittingOnEdge(sim: Sim): boolean {
   const airplane = sim.getStateOf(airplaneSlice);
-  if (
-    !airplane.isInWorld ||
-    airplane.isCarried ||
-    airplane.isFalling ||
-    airplane.isFlying ||
-    airplane.isSliding
-  ) {
+  const isMoving = airplane.isFalling || airplane.isFlying || airplane.isSliding;
+  const isLyingStill = airplane.isInWorld && !airplane.isCarried && !isMoving;
+  if (!isLyingStill) {
     return false;
   }
   const { floor } = sim.levelDef;
@@ -96,7 +94,9 @@ export function hasYetToReachEdge(sim: Sim): boolean {
   const airplane = sim.getStateOf(airplaneSlice);
   const isInFlight =
     airplane.isInWorld && (airplane.isFlying || airplane.isFalling || airplane.isSliding);
-  if (sim.getStateOf(hasBoardedSlice) || !hasAirplane(sim) || isInFlight || isSittingOnEdge(sim)) {
+  const isStillToBeTaken =
+    !sim.getStateOf(hasBoardedSlice) && hasAirplane(sim) && !isInFlight && !isSittingOnEdge(sim);
+  if (!isStillToBeTaken) {
     return false;
   }
   const { floor } = sim.levelDef;
@@ -140,13 +140,9 @@ export function getAirplaneItemUse(sim: Sim) {
 export function getAirplaneInteraction(sim: Sim) {
   const airplane = sim.getStateOf(airplaneSlice);
   const player = getPlayerBody(sim);
-  if (
-    !airplane.isInWorld ||
-    airplane.isFalling ||
-    airplane.isFlying ||
-    airplane.isSliding ||
-    !player.isOnFloor
-  ) {
+  const isMoving = airplane.isFalling || airplane.isFlying || airplane.isSliding;
+  const canInteract = airplane.isInWorld && !isMoving && player.isOnFloor;
+  if (!canInteract) {
     return undefined;
   }
   if (airplane.isCarried) {
@@ -226,7 +222,8 @@ function findRestingPlace(
   for (const segment of floor) {
     const edgeX = airplane.facing === 1 ? segment.end.x : segment.start.x;
     const overhang = (airplane.middle - edgeX) * airplane.facing;
-    if (overhang > 0 && overhang <= AIRPLANE.edgeOverhangTolerance) {
+    const isJustOverEdge = overhang > 0 && overhang <= AIRPLANE.edgeOverhangTolerance;
+    if (isJustOverEdge) {
       return edgeX - airplane.facing * AIRPLANE.edgeInset;
     }
   }

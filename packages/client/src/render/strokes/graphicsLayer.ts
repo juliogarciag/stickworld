@@ -48,15 +48,15 @@ export function createGraphicsStrokeLayer(scene: Phaser.Scene): StrokeLayer {
       seenWidth: seen.width,
       seenHeight: seen.height,
     };
-    if (
-      drawn &&
+    const isAlreadyDrawn =
+      drawn !== undefined &&
       drawn.strokes === strokes &&
       drawn.boilFrame === boilFrame &&
       drawn.seenX === seen.x &&
       drawn.seenY === seen.y &&
       drawn.seenWidth === seen.width &&
-      drawn.seenHeight === seen.height
-    ) {
+      drawn.seenHeight === seen.height;
+    if (isAlreadyDrawn) {
       return;
     }
     drawn = next;

@@ -68,12 +68,13 @@ export class LevelScene extends Phaser.Scene {
     }
 
     const { sim } = this.loop;
+    const previous = this.onTop;
     const isSheetOnTop =
-      this.onTop !== undefined && this.onTop.sim === sim && this.onTop.level === sim.level;
+      previous !== undefined && previous.sim === sim && previous.level === sim.level;
     this.onTop = {
       sim,
       level: sim.level,
-      seconds: isSheetOnTop && this.onTop ? this.onTop.seconds + seconds : 0,
+      seconds: isSheetOnTop ? previous.seconds + seconds : 0,
     };
     this.follow({ stickMan: getStickMan(sim), floor: getLevel(sim).floor, seconds });
     this.sheet.draw({ sim, seconds, secondsOnSheet: this.onTop.seconds });

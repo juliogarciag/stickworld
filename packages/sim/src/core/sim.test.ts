@@ -212,7 +212,8 @@ const askerFeature: Feature = {
   name: 'asker',
   handleCommand(sim, command) {
     const { type, level } = command as { type: string; level?: number };
-    if (type === 'asker/level' && level !== undefined) {
+    const isLevelRequest = type === 'asker/level' && level !== undefined;
+    if (isLevelRequest) {
       sim.startLevelAfterThisTick(level);
     }
     if (type === 'asker/over') {

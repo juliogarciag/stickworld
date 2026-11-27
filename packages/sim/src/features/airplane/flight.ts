@@ -30,7 +30,8 @@ export function boardAndLaunch(sim: Sim): void {
 export function moveOneTick(sim: Sim): void {
   const airplane = sim.getStateOf(airplaneSlice);
   // The stick man has jumped out: with nobody to steer it, it stops gliding and falls.
-  if (airplane.isFlying && !getPlayerBody(sim).isSeated) {
+  const isFlyingUnmanned = airplane.isFlying && !getPlayerBody(sim).isSeated;
+  if (isFlyingUnmanned) {
     stopGliding(airplane);
   }
 
@@ -43,7 +44,8 @@ export function moveOneTick(sim: Sim): void {
   }
 
   movePlayerWithSeat(sim, airplane);
-  if (!airplane.isSliding && !airplane.isFlying && !airplane.isFalling) {
+  const hasComeToRest = !airplane.isSliding && !airplane.isFlying && !airplane.isFalling;
+  if (hasComeToRest) {
     standPlayerUp(sim);
   }
 
@@ -51,12 +53,14 @@ export function moveOneTick(sim: Sim): void {
   const { isSeated } = getPlayerBody(sim);
   const below = airplane.y - getLowestFloorHeight(sim.levelDef.floor);
   // With the stick man in it, falling out of sight starts the level again, and nothing of the
-  // airplane is left. Without the stick man it is only lost.
-  if (isSeated && below > FLIGHT.lostBelowFloor) {
+  // airplane is left.
+  const isLostWithPlayer = isSeated && below > FLIGHT.lostBelowFloor;
+  // Without the stick man it is only lost, once it is as deep as the stick man can fall itself:
+  // it is gone when the stick man would be.
+  const isLostAlone = !isSeated && below > PLAYER.fallBelowFloor;
+  if (isLostWithPlayer) {
     sim.startLevelAfterThisTick(sim.level);
-  }
-  // As deep as the stick man can fall itself: it is gone when the stick man would be.
-  else if (!isSeated && below > PLAYER.fallBelowFloor) {
+  } else if (isLostAlone) {
     sim.setStateOf(airplaneSlice, {
       ...airplaneSlice.getInitialFor(sim.levelDef),
       steering: airplane.steering,
@@ -104,7 +108,8 @@ function glide(sim: Sim, airplane: AirplaneState): void {
     x: airplane.x + airplane.facing * forward,
     y: airplane.y - climbed,
   });
-  if (!hasLanded && airplane.speed < FLIGHT.stallSpeed) {
+  const hasStalled = !hasLanded && airplane.speed < FLIGHT.stallSpeed;
+  if (hasStalled) {
     stopGliding(airplane);
   }
 }

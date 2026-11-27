@@ -41,22 +41,22 @@ export function easeAirplanesOverTime(): (
       return undefined;
     }
     const noseDown = getNoseDown(airplane);
-    if (!shown) {
-      shown = { position: airplane.position, noseDown };
-    } else {
+    if (shown) {
       const isInHands = airplane.state === 'resting' || airplane.state === 'carried';
       // Handled, it follows at its own pace; falling, it also keeps up with however fast it falls;
       // flying and landing it is where the sim says.
       const reach = seconds * (HANDLING.speed + airplane.speed + Math.abs(airplane.verticalSpeed));
-      const position =
-        isInHands || airplane.state === 'falling'
-          ? moveTowards(shown.position, airplane.position, reach)
-          : airplane.position;
+      const shouldEaseToPosition = isInHands || airplane.state === 'falling';
+      const position = shouldEaseToPosition
+        ? moveTowards(shown.position, airplane.position, reach)
+        : airplane.position;
       const turn = seconds * HANDLING.noseTurnRate;
       shown = {
         position,
         noseDown: shown.noseDown + Math.max(-turn, Math.min(turn, noseDown - shown.noseDown)),
       };
+    } else {
+      shown = { position: airplane.position, noseDown };
     }
     return {
       position: shown.position,

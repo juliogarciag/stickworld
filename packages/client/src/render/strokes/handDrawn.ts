@@ -92,7 +92,8 @@ function spaceEvenly(points: readonly StrokePoint[], spacing: number): StrokePoi
     const length = Math.hypot(end.x - start.x, end.y - start.y);
     // A piece with no length, or with a coordinate that is not a number, is skipped: it has nowhere
     // to be drawn.
-    if (!Number.isFinite(length) || length <= 0) {
+    const isDrawable = Number.isFinite(length) && length > 0;
+    if (!isDrawable) {
       continue;
     }
     const steps = Math.max(1, Math.round(length / spacing));

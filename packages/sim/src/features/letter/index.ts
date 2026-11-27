@@ -35,7 +35,8 @@ export const letterFeature: Feature = {
     const hasReadLetter = sim.getStateOf(lettersReadSlice).includes(def.id);
     // A letter the stick man has read before does not lie there again when the level starts again.
     sim.getStateOf(letterSlice).isInLevel = !hasReadLetter;
-    if (!hasReadLetter || hasRecipeResult(sim, def)) {
+    const hasLostRecipeResult = hasReadLetter && !hasRecipeResult(sim, def);
+    if (!hasLostRecipeResult) {
       return;
     }
     // The stick man has learned what it teaches and lost what the stick man made of it with the
@@ -48,11 +49,16 @@ export const letterFeature: Feature = {
 
   update(sim) {
     const placed = findLetterPlacedIn(sim.levelDef);
-    const def = placed && getLetterDef(placed.defId);
-    if (!placed || !def) {
+    if (!placed) {
       return;
     }
-    if (sim.getStateOf(letterSlice).isBeingRead && !isWithinReach(sim, placed.position)) {
+    const def = getLetterDef(placed.defId);
+    if (!def) {
+      return;
+    }
+    const hasWalkedAwayReading =
+      sim.getStateOf(letterSlice).isBeingRead && !isWithinReach(sim, placed.position);
+    if (hasWalkedAwayReading) {
       putAway(sim);
     }
     const fallen = sim.getStateOf(fallenItemSlice);
@@ -61,7 +67,9 @@ export const letterFeature: Feature = {
       return;
     }
     // The letter that still lies there gives it; with the flag reached the stick man needs none.
-    if (hasRecipeResult(sim, def) || sim.getStateOf(letterSlice).isInLevel || isFlagReached(sim)) {
+    const isItemNeeded =
+      !hasRecipeResult(sim, def) && !sim.getStateOf(letterSlice).isInLevel && !isFlagReached(sim);
+    if (!isItemNeeded) {
       fallen.ticksUntilFall = null;
     } else if (fallen.ticksUntilFall === null) {
       fallen.ticksUntilFall = Math.round(LETTER.fallsAfter / sim.dt);
@@ -110,13 +118,13 @@ export function getLetterInteraction(sim: Sim) {
   const placed = findLetterPlacedIn(sim.levelDef);
   const def = placed && getLetterDef(placed.defId);
   const letter = sim.getStateOf(letterSlice);
-  if (
-    !placed ||
-    !def ||
-    !letter.isInLevel ||
-    letter.isBeingRead ||
-    !isWithinReach(sim, placed.position)
-  ) {
+  const canRead =
+    placed !== undefined &&
+    def !== undefined &&
+    letter.isInLevel &&
+    !letter.isBeingRead &&
+    isWithinReach(sim, placed.position);
+  if (!canRead) {
     return undefined;
   }
   return {
@@ -146,7 +154,9 @@ export function getFallenItemInteraction(sim: Sim) {
   const placed = findLetterPlacedIn(sim.levelDef);
   const def = placed && getLetterDef(placed.defId);
   const fallen = sim.getStateOf(fallenItemSlice);
-  if (!def || !fallen.isInLevel || fallen.height > 0 || !isWithinReach(sim, fallen)) {
+  const canPickUp =
+    def !== undefined && fallen.isInLevel && fallen.height <= 0 && isWithinReach(sim, fallen);
+  if (!canPickUp) {
     return undefined;
   }
   return {

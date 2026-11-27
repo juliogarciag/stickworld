@@ -75,7 +75,9 @@ describe('the pixels of a tile a patch reaches', () => {
           // is.
           const nearestX = Math.max(column, Math.min(column + 1, x));
           const nearestY = Math.max(row, Math.min(row + 1, y));
-          if (Math.hypot(nearestX - x, nearestY - y) < radius && !isReached(column, row)) {
+          const isMissedTile =
+            Math.hypot(nearestX - x, nearestY - y) < radius && !isReached(column, row);
+          if (isMissedTile) {
             expect.fail(
               `pixel ${column}, ${row} is within ${radius} of ${x}, ${y} and is not filled`,
             );

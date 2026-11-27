@@ -18,10 +18,9 @@ import { convertToPixels } from './units';
  * `secondsOnSheet` is how long this sheet has been the one being played.
  */
 export function buildLevelNameStrokes(level: Level, secondsOnSheet: number): readonly Stroke[] {
-  if (
-    getLevelNameState(secondsOnSheet) === 'notYet' ||
-    getLevelNameState(secondsOnSheet) === 'gone'
-  ) {
+  const nameState = getLevelNameState(secondsOnSheet);
+  const isNameOnSheet = nameState !== 'notYet' && nameState !== 'gone';
+  if (!isNameOnSheet) {
     return NOTHING;
   }
   const words = `${level.id}. ${level.name}`;

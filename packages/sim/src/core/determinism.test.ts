@@ -91,7 +91,9 @@ const noiseFeature: Feature = {
   slices: [noiseSlice],
   handleCommand(sim, command) {
     const { type, amount } = command as { type: string; amount?: unknown };
-    if (type !== 'noise/add' || typeof amount !== 'number' || !Number.isFinite(amount)) {
+    const isNoiseCommand =
+      type === 'noise/add' && typeof amount === 'number' && Number.isFinite(amount);
+    if (!isNoiseCommand) {
       return;
     }
     sim.getStateOf(noiseSlice).total += amount;

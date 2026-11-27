@@ -43,20 +43,18 @@ export function showMovementPanel(loop: GameLoop): void {
   // Once a change is made the keys are the game's again: a jump pressed right after choosing a
   // preset is a jump.
   const giveKeysBack = (): void => {
-    if (
-      document.activeElement instanceof HTMLElement &&
-      panel.domElement.contains(document.activeElement)
-    ) {
-      document.activeElement.blur();
+    const focused = document.activeElement;
+    const isFocusInPanel = focused instanceof HTMLElement && panel.domElement.contains(focused);
+    if (isFocusInPanel) {
+      focused.blur();
     }
   };
   // A clicked button (the panel's title, a button in it) would keep the keys otherwise: space would
   // click it again.
   panel.domElement.addEventListener('click', (event) => {
-    if (
-      event.target instanceof HTMLButtonElement ||
-      (event.target instanceof HTMLElement && event.target.closest('button'))
-    ) {
+    const clicked = event.target;
+    const isButtonClick = clicked instanceof HTMLElement && clicked.closest('button') !== null;
+    if (isButtonClick) {
       giveKeysBack();
     }
   });
@@ -112,7 +110,9 @@ export function showMovementPanel(loop: GameLoop): void {
   window.setInterval(() => {
     const isLastRequestPending =
       lastSent !== undefined && lastSent.sim === loop.sim && lastSent.tick === loop.sim.tick;
-    if (!isLastRequestPending && !isSameTuning(getMovementTuning(loop.sim), chosen.tuning)) {
+    const shouldResend =
+      !isLastRequestPending && !isSameTuning(getMovementTuning(loop.sim), chosen.tuning);
+    if (shouldResend) {
       send();
     }
   }, RESEND_EVERY_MS);
@@ -185,7 +185,8 @@ function readChoiceIn(text: string | null): Choice | undefined {
   } catch {
     return undefined;
   }
-  if (typeof stored !== 'object' || stored === null) {
+  const isObject = typeof stored === 'object' && stored !== null;
+  if (!isObject) {
     return undefined;
   }
   const { preset, tuning, isOpen } = stored as {
@@ -193,17 +194,17 @@ function readChoiceIn(text: string | null): Choice | undefined {
     tuning?: unknown;
     isOpen?: unknown;
   };
-  const presetName: MovementPresetName =
-    typeof preset === 'string' && Object.hasOwn(MOVEMENT_PRESETS, preset)
-      ? (preset as MovementPresetName)
-      : 'current';
-  const keptTuning =
-    typeof tuning === 'object' && tuning !== null ? (tuning as Record<string, unknown>) : {};
+  const isKnownPreset = typeof preset === 'string' && Object.hasOwn(MOVEMENT_PRESETS, preset);
+  const presetName: MovementPresetName = isKnownPreset ? (preset as MovementPresetName) : 'current';
+  const hasStoredTuning = typeof tuning === 'object' && tuning !== null;
+  const keptTuning = hasStoredTuning ? (tuning as Record<string, unknown>) : {};
   const chosenTuning = { ...MOVEMENT_PRESETS[presetName] } as Choice['tuning'];
   for (const name of Object.keys(MOVEMENT_TUNING_LIMITS) as (keyof MovementTuning)[]) {
     const value = Object.hasOwn(keptTuning, name) ? keptTuning[name] : undefined;
     const { min, max } = MOVEMENT_TUNING_LIMITS[name];
-    if (typeof value === 'number' && Number.isFinite(value) && value >= min && value <= max) {
+    const isWithinLimits =
+      typeof value === 'number' && Number.isFinite(value) && value >= min && value <= max;
+    if (isWithinLimits) {
       chosenTuning[name] = value;
     }
   }

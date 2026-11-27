@@ -177,10 +177,12 @@ export function easePosesOverTime(): (
     | undefined;
   return (stickMan, seconds, floor) => {
     const pose = getPose(stickMan);
+    const last = previous;
     const hasJumpedAcrossPaper =
-      previous !== undefined &&
-      Math.hypot(pose.feet.x - previous.feet.x, pose.feet.y - previous.feet.y) > STICK_MAN_HEIGHT;
-    if (!previous || hasJumpedAcrossPaper) {
+      last !== undefined &&
+      Math.hypot(pose.feet.x - last.feet.x, pose.feet.y - last.feet.y) > STICK_MAN_HEIGHT;
+    const shouldStartFresh = last === undefined || hasJumpedAcrossPaper;
+    if (shouldStartFresh) {
       // The first frame, or the level started again: nothing to ease from.
       const shown = keepOffFloor({ ...pose, tilt: 0 }, floor);
       previous = {
@@ -198,23 +200,21 @@ export function easePosesOverTime(): (
       seconds / (pose.airborneShare === 1 ? EASING.takeoffSeconds : EASING.landingSeconds);
     const airborneShare =
       pose.airborneShare === 1
-        ? Math.min(1, previous.airborneShare + share)
-        : Math.max(0, previous.airborneShare - share);
-    const hasJustLanded = previous.isFalling && stickMan.action !== 'jumping';
-    const landing = hasJustLanded ? 1 : Math.max(0, previous.landing - seconds / EASING.landing);
+        ? Math.min(1, last.airborneShare + share)
+        : Math.max(0, last.airborneShare - share);
+    const hasJustLanded = last.isFalling && stickMan.action !== 'jumping';
+    const landing = hasJustLanded ? 1 : Math.max(0, last.landing - seconds / EASING.landing);
     const mostTipping = seconds * EASING.tiltPerSecond;
-    const tilt =
-      previous.tilt + Math.max(-mostTipping, Math.min(mostTipping, pose.tilt - previous.tilt));
+    const tilt = last.tilt + Math.max(-mostTipping, Math.min(mostTipping, pose.tilt - last.tilt));
     // An arm the line has let go of comes down over a moment, and stays on the line for as long as
     // that would take it across.
     const mostComingDown = seconds * EASING.armComesDownPerSecond;
     const armsMove = seconds / EASING.armsUpAndDown;
     const carrying =
-      previous.carrying +
-      Math.max(-armsMove, Math.min(armsMove, pose.carrying - previous.carrying));
+      last.carrying + Math.max(-armsMove, Math.min(armsMove, pose.carrying - last.carrying));
     const shown = keepOffFloor({ ...pose, airborneShare, landing, tilt, carrying }, floor, [
-      Math.max(0, previous.armsLifted[0] - mostComingDown),
-      Math.max(0, previous.armsLifted[1] - mostComingDown),
+      Math.max(0, last.armsLifted[0] - mostComingDown),
+      Math.max(0, last.armsLifted[1] - mostComingDown),
     ]);
     previous = {
       feet: pose.feet,
@@ -580,7 +580,8 @@ function movePartWay(start: Point, end: Point, share: number): Point {
  * its own poses, forward or back.
  */
 function getTiltOfFall(stickMan: StickManView): number {
-  if (!stickMan.isFallingOffEdge || stickMan.verticalSpeed <= 0) {
+  const isFallingDown = stickMan.isFallingOffEdge && stickMan.verticalSpeed > 0;
+  if (!isFallingDown) {
     return 0;
   }
   const sidewaysShare =

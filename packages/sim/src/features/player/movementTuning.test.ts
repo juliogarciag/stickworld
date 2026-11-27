@@ -241,7 +241,8 @@ describe('the nineties platformer preset', () => {
       sim.step();
       const after = getStickMan(sim);
       fastest = Math.max(fastest, after.verticalSpeed);
-      if (before.verticalSpeed === fastestFall && after.action === 'jumping') {
+      const hasFallenAtFastest = before.verticalSpeed === fastestFall && after.action === 'jumping';
+      if (hasFallenAtFastest) {
         fellAtFastest = after.feet.y - before.feet.y;
       }
     }
@@ -348,10 +349,12 @@ function getMixedCommandsAt(tick: number): Command[] {
   if (tick % 23 === 0) {
     commands.push(JUMP);
   }
-  if (tick % 23 === 0 && tick % 3 === 0) {
+  const isEarlyLetGoTick = tick % 23 === 0 && tick % 3 === 0;
+  if (isEarlyLetGoTick) {
     commands.push(LET_GO);
   }
-  if (tick % 23 === 4 || tick % 23 === 11) {
+  const isLateLetGoTick = tick % 23 === 4 || tick % 23 === 11;
+  if (isLateLetGoTick) {
     commands.push(LET_GO);
   }
   if (tick % 37 === 5) {

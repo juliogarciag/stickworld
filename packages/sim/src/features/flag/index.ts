@@ -22,7 +22,9 @@ export const flagFeature: Feature = {
       const { x, y, isSeated } = getPlayerBody(sim);
       // A flag is reached on the stick man's own feet: flying past it in the airplane does not
       // count.
-      if (placed && !isSeated && isTouchingFlag({ feet: { x, y }, placed })) {
+      const hasReachedFlag =
+        placed !== undefined && !isSeated && isTouchingFlag({ feet: { x, y }, placed });
+      if (hasReachedFlag) {
         flag.reachedAtTick = sim.tick;
       }
       return;

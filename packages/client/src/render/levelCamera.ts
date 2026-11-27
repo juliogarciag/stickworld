@@ -75,32 +75,34 @@ export function followStickManWith(
   let shown: { framing: Framing; followedX: number } | undefined;
   return (input) => {
     const { feet, action } = input.stickMan;
-    if ((action !== 'jumping' && action !== 'seated') || floorHeight === undefined) {
-      floorHeight = feet.y;
-    }
+    const isOffFloor = action === 'jumping' || action === 'seated';
+    const heldFloorHeight = floorHeight ?? feet.y;
+    const followedFloorHeight = isOffFloor ? heldFloorHeight : feet.y;
+    floorHeight = followedFloorHeight;
     const wanted = getFramingWanted({
       stickMan: input.stickMan,
       floor: input.floor,
       metresAcrossAtRest: getMetresAcrossAtRest(camera),
     });
-    const isCut = shown === undefined || Math.abs(feet.x - shown.followedX) > FRAMING.cutBeyond;
-    shown =
-      isCut || !shown
-        ? { framing: wanted, followedX: feet.x }
-        : {
-            framing: easeTowards(shown.framing, wanted, input.seconds),
-            followedX: keepUpWith({
-              followedX: shown.followedX,
-              feetX: feet.x,
-              seconds: input.seconds,
-            }),
-          };
+    const previous = shown;
+    const isCut =
+      previous === undefined || Math.abs(feet.x - previous.followedX) > FRAMING.cutBeyond;
+    shown = isCut
+      ? { framing: wanted, followedX: feet.x }
+      : {
+          framing: easeTowards(previous.framing, wanted, input.seconds),
+          followedX: keepUpWith({
+            followedX: previous.followedX,
+            feetX: feet.x,
+            seconds: input.seconds,
+          }),
+        };
 
     const zoom = camera.width / convertToPixels(shown.framing.metresAcross);
     camera.setZoom(zoom);
     camera.centerOn(
       convertToPixels(shown.followedX + shown.framing.metresAhead),
-      convertToPixels(floorHeight) - ((FRAMING.floorFromTop - 0.5) * camera.height) / zoom,
+      convertToPixels(followedFloorHeight) - ((FRAMING.floorFromTop - 0.5) * camera.height) / zoom,
     );
   };
 }

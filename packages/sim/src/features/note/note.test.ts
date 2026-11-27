@@ -60,9 +60,11 @@ describe('the notes of a level', () => {
       tick += 1
     ) {
       const { x } = getStickMan(jumping).feet;
-      jumping.step(x < gap.start && x > gap.start - 0.25 ? [{ type: 'player/jump' }] : []);
+      const isJustBeforeGap = x < gap.start && x > gap.start - 0.25;
+      jumping.step(isJustBeforeGap ? [{ type: 'player/jump' }] : []);
       const feet = getStickMan(jumping).feet;
-      if (feet.x > gap.start && feet.x < gap.end) {
+      const isOverGap = feet.x > gap.start && feet.x < gap.end;
+      if (isOverGap) {
         hasSeenPlayerOverGap = true;
         expect(getJumpNote(jumping).rubbedOutFor).toBeNull();
       }

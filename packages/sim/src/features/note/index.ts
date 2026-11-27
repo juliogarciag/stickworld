@@ -17,7 +17,8 @@ export const noteFeature: Feature = {
     const { x, isOnFloor } = getPlayerBody(sim);
     (sim.levelDef.notes ?? []).forEach((note, index) => {
       const isNoteDone = note.rubbedOutPast !== undefined && isOnFloor && x > note.rubbedOutPast;
-      if (isNoteDone && rubbedOutAtTick[index] === null) {
+      const isNewlyDone = isNoteDone && rubbedOutAtTick[index] === null;
+      if (isNewlyDone) {
         rubbedOutAtTick[index] = sim.tick;
       }
     });
