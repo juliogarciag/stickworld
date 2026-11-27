@@ -1,13 +1,13 @@
 import { defineSlice } from '../../core/slice';
 
 export interface CheckpointState {
-  /** The id of the level whose checkpoint the stick man has stood past, or null while it has passed none. */
+  /** The id of the level whose checkpoint has been passed, or null when none has. */
   passedOnLevel: number | null;
 }
 
 /**
- * Carried, because a death must not forget it: a restart is the same level started again. What must forget it, the
- * next level, is done by the feature's `init`, which drops a checkpoint passed on any level but the one that starts.
- * Starting over resets every slice, this one too.
+ * Carried across level starts, because a death restarts the same level and must keep the checkpoint.
+ * Starting a different level must clear it, and the feature's `init` does that.
+ * Starting the game over resets every slice, including this one.
  */
 export const checkpointSlice = defineSlice<CheckpointState>('checkpoint', () => ({ passedOnLevel: null }), { isCarriedAcrossLevels: true });

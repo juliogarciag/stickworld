@@ -3,7 +3,7 @@ import type { Stroke } from './strokes';
 import { PENCIL } from './strokes/pencil';
 import { convertToPixels } from './units';
 
-/** The checkpoint's shape, in metres: a peg up to the stick man's knee with a diamond on top, and a tick over it once it is passed. View detail only. */
+/** The checkpoint's shape, in metres: a peg as tall as the stick man's knee with a diamond on top, and a tick above the diamond once the checkpoint is passed. View detail only. */
 const CHECKPOINT = {
   pegHeight: 0.45,
   /** From the middle of the diamond to each of its corners. */
@@ -14,7 +14,7 @@ const CHECKPOINT = {
   tickLongArm: 0.26,
 } as const;
 
-/** The checkpoint as pencil strokes in world pixels: a peg and a diamond, with a tick over them once the stick man has passed it. */
+/** The checkpoint as pencil strokes in world pixels: a peg and a diamond, plus a tick above them once the checkpoint is passed. */
 export function buildCheckpointStrokes(checkpoint: CheckpointView): Stroke[] {
   const base = checkpoint.position;
   const { pegHeight, diamondReach: reach, tickAbove, tickShortArm, tickLongArm } = CHECKPOINT;

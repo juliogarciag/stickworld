@@ -56,12 +56,13 @@ export function standPlayerUp(sim: Sim): void {
 }
 
 /**
- * The level begins with the stick man standing here instead of where the level's data starts it (a checkpoint it has passed).
- * Only while a level is being started, from a feature's `init`: the stick man has just been set up, standing still, and this
- * moves it and nothing else. In the middle of a level it would leave the stick man's speed and the stick man's seat as they were, so it throws.
+ * Starts the level with the stick man standing at `position` instead of at the level's start (used for a passed checkpoint).
+ * It may only be called while a level is being started, from a feature's `init`. At that point the stick man has just been
+ * set up standing still, so changing the position is all that is needed.
+ * In the middle of a level the speed and the seat would be left as they were, so it throws.
  */
 export function startPlayerAt(sim: Sim, position: { readonly x: number; readonly y: number }): void {
-  if (!sim.isStartingLevel) throw new Error("startPlayerAt is for a feature's init: once the level is under way the stick man is not moved like this");
+  if (!sim.isStartingLevel) throw new Error("startPlayerAt may only be called from a feature's init, while a level is being started");
   const player = sim.getStateOf(playerSlice);
   player.x = position.x;
   player.y = position.y;

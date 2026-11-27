@@ -98,7 +98,7 @@ describe('a level that starts again', () => {
     for (const [way, die] of WAYS_TO_DIE_WITHOUT_AIRPLANE) {
       const sim = createSimHoldingAirplane();
       die(sim);
-      // Some of these ways go past the level's checkpoint before the stick man dies and some do not: either the level starts the stick man at its start, or there.
+      // Some of these ways to die pass the level's checkpoint first and some do not, so the level restarts either at the checkpoint or at its start.
       const isBackAtLevelStart = (): boolean => isSameSpot(getStickMan(sim).feet, getCheckpoint(sim)!.isPassed ? level3.checkpoint! : level3.start);
       for (let tick = 0; tick < 20 * TICK_RATE && (getAirplane(sim) || !isBackAtLevelStart()); tick += 1) sim.step();
       expect(isBackAtLevelStart(), way).toBe(true);

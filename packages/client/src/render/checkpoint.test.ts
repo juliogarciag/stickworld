@@ -4,7 +4,7 @@ import { buildCheckpointStrokes } from './checkpoint';
 import { convertToPixels } from './units';
 
 describe('the checkpoint', () => {
-  it('is a peg standing where the sim says, with a closed diamond on top of it', () => {
+  it('is a peg at the position the sim gives, with a closed diamond on top of the peg', () => {
     const [peg, diamond] = buildCheckpointStrokes(NOT_PASSED);
     expect(peg!.points[0]).toEqual({ x: convertToPixels(NOT_PASSED.position.x), y: convertToPixels(NOT_PASSED.position.y) });
     expect(peg!.points[1]!.x).toBe(convertToPixels(NOT_PASSED.position.x));
@@ -15,7 +15,7 @@ describe('the checkpoint', () => {
     expect(buildCheckpointStrokes(NOT_PASSED)).toHaveLength(2);
   });
 
-  it('gets a tick over it once it is passed, and is otherwise drawn the same', () => {
+  it('gets a tick above the diamond once passed, and is otherwise drawn the same', () => {
     const passedStrokes = buildCheckpointStrokes({ ...NOT_PASSED, isPassed: true });
     expect(passedStrokes.slice(0, 2)).toEqual(buildCheckpointStrokes(NOT_PASSED));
     expect(passedStrokes).toHaveLength(3);
@@ -25,7 +25,7 @@ describe('the checkpoint', () => {
     expect(tick.isClosed).toBeFalsy();
   });
 
-  it('is nowhere below the floor it stands on', () => {
+  it('has no stroke below the floor', () => {
     for (const stroke of buildCheckpointStrokes({ ...NOT_PASSED, isPassed: true })) {
       for (const point of stroke.points) expect(point.y).toBeLessThanOrEqual(convertToPixels(NOT_PASSED.position.y));
     }

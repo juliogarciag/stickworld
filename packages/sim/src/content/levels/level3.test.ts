@@ -400,7 +400,10 @@ function putAirplaneOnEdge(sim: SimHandle): void {
   expect(getAirplane(sim)).toMatchObject({ state: 'resting', isOnEdge: true });
 }
 
-/** The stick man is back at the checkpoint, which every way to the gap goes past, with the airplane as the item in the stick man's hand, none in the world, the flag not reached, and neither a letter there nor a sheet of paper on its way. */
+/**
+ * The level has restarted at the checkpoint, which every way to the gap goes past. The airplane is the held item and there is none in the world.
+ * The flag is not reached, and there is neither a letter nor a sheet of paper on its way.
+ */
 function expectLevelRestartedWithAirplaneInHand(sim: SimHandle): void {
   expect(sim.level).toBe(3);
   expect(getStickMan(sim)).toMatchObject({ action: 'standing', feet: level3.checkpoint });
