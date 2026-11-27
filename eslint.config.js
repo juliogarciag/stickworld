@@ -18,6 +18,9 @@ import tseslint from 'typescript-eslint';
  * Pencil strokes (rule 12): in the client, only `render/strokes/` may make a Phaser object that draws
  * lines or shapes. Everything else asks `createStrokeLayer` for a line.
  *
+ * Every function's name starts with a verb from the VERBS list below (AGENTS.md, "Naming"), in both packages,
+ * tests included, and in the verification template.
+ *
  * Violations fail `pnpm lint`. Keep the lists below in step with AGENTS.md.
  */
 const group = (patterns, message) => ({ group: patterns, message });
@@ -53,6 +56,34 @@ const TESTING_IMPORT = {
   selector: 'ImportSpecifier[imported.name="__testing__"]',
   message: '`__testing__` exports are for *.test.ts files only.',
 };
+
+/**
+ * Every function's name starts with a verb (AGENTS.md, "Naming"): the first word of the name is one of these, followed
+ * by a capital, a digit or nothing. `is`, `has`, `are`, `does`, `can` and `should` are for functions that answer yes or
+ * no. A new verb is a one-word edit to this list, in the PR that needs it, so the list stays a decision.
+ */
+const VERBS = [
+  'is', 'has', 'are', 'does', 'can', 'should', 'get', 'set', 'build', 'make', 'create', 'define', 'find', 'measure', 'count', 'take', 'give', 'put',
+  'show', 'draw', 'paint', 'clear', 'start', 'stop', 'step', 'play', 'send', 'queue', 'load', 'expose', 'add', 'remove', 'replace', 'select', 'update',
+  'init', 'handle', 'restore', 'reset', 'read', 'write', 'keep', 'cut', 'move', 'walk', 'fall', 'slide', 'glide', 'board', 'seat', 'stand', 'carry',
+  'lift', 'place', 'steer', 'teach', 'craft', 'turn', 'follow', 'fit', 'copy', 'hash', 'assert', 'expect', 'refuse', 'ask', 'watch', 'advance', 'boot',
+  'use', 'destroy', 'perform', 'finish', 'lay', 'cover', 'let', 'come', 'jump', 'run', 'convert', 'record', 'ease', 'skew', 'grow', 'wrap', 'blend',
+  'mix', 'smooth', 'space', 'clamp', 'tip', 'collapse', 'tune', 'begin', 'wait', 'check', 'summarize',
+];
+const NOT_A_VERB = `/^(?!_*(?:${VERBS.join('|')})(?:[A-Z0-9_]|$))/`;
+const NAME_A_FUNCTION_WITH_A_VERB = 'A function\'s name starts with a verb from VERBS in eslint.config.js (getFlag, buildFlagStrokes, isFlagReached). Rename it, or add the verb to the list.';
+// What lint can see is a function: declarations, consts and properties that hold one, methods, and members and
+// parameters whose type is written as a function. A function passed around under a type alias is not seen.
+const FUNCTIONS_ARE_VERBS = [
+  `FunctionDeclaration[id.name=${NOT_A_VERB}]`,
+  `VariableDeclarator[id.name=${NOT_A_VERB}] > :matches(ArrowFunctionExpression, FunctionExpression)`,
+  `MethodDefinition[kind="method"][key.name=${NOT_A_VERB}]`,
+  `PropertyDefinition[key.name=${NOT_A_VERB}] > :matches(ArrowFunctionExpression, FunctionExpression)`,
+  `Property[kind="init"][key.name=${NOT_A_VERB}] > :matches(ArrowFunctionExpression, FunctionExpression)`,
+  `TSMethodSignature[key.name=${NOT_A_VERB}]`,
+  `TSPropertySignature[key.name=${NOT_A_VERB}]:has(> TSTypeAnnotation > TSFunctionType)`,
+  `Identifier[name=${NOT_A_VERB}]:has(> TSTypeAnnotation > TSFunctionType)`,
+].map((selector) => ({ selector, message: NAME_A_FUNCTION_WITH_A_VERB }));
 
 const STROKES_ONLY = 'Only packages/client/src/render/strokes/ draws lines and shapes. Ask createStrokeLayer for a stroke instead (AGENTS.md rule 12).';
 const DRAWN_OUTSIDE_STROKES = [
@@ -95,7 +126,7 @@ export default defineConfig([
         { object: 'Date', property: 'now', message: 'Non-deterministic. Use sim.tick instead.' },
         { object: 'performance', property: 'now', message: 'Non-deterministic. Use sim.tick instead.' },
       ],
-      'no-restricted-syntax': ['error', NEW_DATE],
+      'no-restricted-syntax': ['error', NEW_DATE, ...FUNCTIONS_ARE_VERBS],
     },
   },
   // Later blocks replace a rule's whole setting, so the features block repeats the sim's groups here.
@@ -105,23 +136,27 @@ export default defineConfig([
   },
   {
     files: ['packages/client/**/*.ts'],
-    rules: restrictImports(SIM_DEEP),
+    rules: { ...restrictImports(SIM_DEEP), 'no-restricted-syntax': ['error', ...FUNCTIONS_ARE_VERBS] },
+  },
+  {
+    files: ['verifications/_template/**/*.mjs'],
+    rules: { 'no-restricted-syntax': ['error', ...FUNCTIONS_ARE_VERBS] },
   },
   // `__testing__` exports exist for tests only. Later blocks replace a rule's
-  // whole setting, so the sim block repeats NEW_DATE here.
+  // whole setting, so each repeats what the blocks above set: NEW_DATE for the sim, and the verbs everywhere.
   {
     files: ['packages/sim/**/*.ts'],
     ignores: ['**/*.test.ts'],
-    rules: { 'no-restricted-syntax': ['error', NEW_DATE, TESTING_IMPORT] },
+    rules: { 'no-restricted-syntax': ['error', NEW_DATE, TESTING_IMPORT, ...FUNCTIONS_ARE_VERBS] },
   },
   {
     files: ['packages/client/**/*.ts'],
     ignores: ['**/*.test.ts'],
-    rules: { 'no-restricted-syntax': ['error', TESTING_IMPORT, ...DRAWN_OUTSIDE_STROKES] },
+    rules: { 'no-restricted-syntax': ['error', TESTING_IMPORT, ...DRAWN_OUTSIDE_STROKES, ...FUNCTIONS_ARE_VERBS] },
   },
   {
     files: ['packages/client/src/render/strokes/**/*.ts'],
     ignores: ['**/*.test.ts'],
-    rules: { 'no-restricted-syntax': ['error', TESTING_IMPORT] },
+    rules: { 'no-restricted-syntax': ['error', TESTING_IMPORT, ...FUNCTIONS_ARE_VERBS] },
   },
 ]);

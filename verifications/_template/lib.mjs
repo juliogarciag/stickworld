@@ -60,7 +60,7 @@ export async function waitFor(what, { read, until, timeoutMs = 8000 }) {
 }
 
 /** The end of what a command printed, on one line and without stack frames: why a server did not start. */
-export function lastLinesOf(output) {
+export function getLastLines(output) {
   const lines = output.split('\n').filter((line) => line.trim() !== '' && !line.startsWith('    at '));
   return lines.slice(-5).join(' | ');
 }
@@ -100,11 +100,11 @@ function stopEverythingOnExit() {
 
 function isPortOpen(port) {
   // Vite binds "localhost", which may be ::1 or 127.0.0.1 depending on the machine.
-  const answers = (host) =>
+  const doesAnswer = (host) =>
     new Promise((resolve) => {
       const socket = net.connect({ port, host });
       socket.once('connect', () => (socket.destroy(), resolve(true)));
       socket.once('error', () => resolve(false));
     });
-  return Promise.all([answers('127.0.0.1'), answers('::1')]).then((answered) => answered.some(Boolean));
+  return Promise.all([doesAnswer('127.0.0.1'), doesAnswer('::1')]).then((answered) => answered.some(Boolean));
 }

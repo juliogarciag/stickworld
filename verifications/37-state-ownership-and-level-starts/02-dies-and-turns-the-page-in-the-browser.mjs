@@ -38,15 +38,15 @@ try {
   const startsAt = await page.evaluate(() => window.__game.level.start);
   await watch(page);
   await page.keyboard.down('ArrowRight');
-  await page.waitForFunction(() => window.__game.stickMan().feet.y > 2, null, { timeout: 20000 });
+  await page.waitForFunction(() => window.__game.getStickMan().feet.y > 2, null, { timeout: 20000 });
   await page.screenshot({ path: path.join(PROOF, '02-falling-into-the-gap.png') });
   const tickWhileFalling = await page.evaluate(() => window.__game.sim.tick);
-  await page.waitForFunction(() => window.__game.stickMan().feet.y === window.__game.level.start.y, null, { timeout: 10000 });
-  const afterDeath = await page.evaluate(() => ({ tick: window.__game.sim.tick, level: window.__game.level.id, man: window.__game.stickMan() }));
+  await page.waitForFunction(() => window.__game.getStickMan().feet.y === window.__game.level.start.y, null, { timeout: 10000 });
+  const afterDeath = await page.evaluate(() => ({ tick: window.__game.sim.tick, level: window.__game.level.id, man: window.__game.getStickMan() }));
   results.push(check('falling into the gap starts the same level again, and the tick count goes on', afterDeath.level === LEVEL_WITH_THE_WIDE_GAP && afterDeath.tick > tickWhileFalling, `level ${afterDeath.level}, tick ${tickWhileFalling} -> ${afterDeath.tick}`));
   results.push(check('he is back near where the level starts', Math.abs(afterDeath.man.feet.x - startsAt.x) < 1, `x ${afterDeath.man.feet.x.toFixed(2)}, start ${startsAt.x}`));
   await page.waitForTimeout(600);
-  const walkedOn = await page.evaluate(() => window.__game.stickMan());
+  const walkedOn = await page.evaluate(() => window.__game.getStickMan());
   results.push(check('the key still held walks him on after the restart, without being pressed again', walkedOn.feet.x > afterDeath.man.feet.x + 0.5, `${walkedOn.action}, x ${afterDeath.man.feet.x.toFixed(2)} -> ${walkedOn.feet.x.toFixed(2)}`));
   await page.screenshot({ path: path.join(PROOF, '02-walking-again-after-the-death.png') });
   await page.keyboard.up('ArrowRight');
@@ -58,14 +58,14 @@ try {
   await page.waitForFunction(() => window.__game.sim.tick > 5 && window.__game.level.id === 1);
   await watch(page);
   await page.keyboard.down('ArrowRight');
-  await page.waitForFunction(() => window.__game.flag().reached, null, { timeout: 30000 });
+  await page.waitForFunction(() => window.__game.getFlag().reached, null, { timeout: 30000 });
   await page.keyboard.up('ArrowRight');
   await page.waitForFunction(() => window.__game.level.id === 2, null, { timeout: 15000 });
-  await page.waitForFunction(() => window.__game.pageTurn() !== null, null, { timeout: 3000 }).catch(() => undefined);
+  await page.waitForFunction(() => window.__game.getPageTurn() !== null, null, { timeout: 3000 }).catch(() => undefined);
   await page.screenshot({ path: path.join(PROOF, '02-the-page-turns-to-level-2.png') });
-  await page.waitForFunction(() => window.__game.pageTurn() === null, null, { timeout: 15000 });
+  await page.waitForFunction(() => window.__game.getPageTurn() === null, null, { timeout: 15000 });
   const flag = await watched(page);
-  const onLevel2 = await page.evaluate(() => ({ level: window.__game.level.id, man: window.__game.stickMan(), start: window.__game.level.start }));
+  const onLevel2 = await page.evaluate(() => ({ level: window.__game.level.id, man: window.__game.getStickMan(), start: window.__game.level.start }));
   results.push(check('reaching the flag starts the next level', onLevel2.level === 2 && flag.levels.join() === '1,2', `levels seen: ${flag.levels}`));
   results.push(check('the page is turned between the two', flag.turnsSeen > 10, `the turn was seen in ${flag.turnsSeen} of ${flag.frames} frames`));
   results.push(check('the turn begins on the frame the level changes: the new level is never shown bare', flag.framesOnTheNewLevelBeforeTheTurn === 0, `frames on level 2 before the turn: ${flag.framesOnTheNewLevelBeforeTheTurn}`));
@@ -96,7 +96,7 @@ function watch(page) {
     const look = () => {
       if (!seen.watching) return;
       const level = window.__game.level.id;
-      const turning = window.__game.pageTurn() !== null;
+      const turning = window.__game.getPageTurn() !== null;
       seen.frames += 1;
       if (turning) seen.turnsSeen += 1;
       seen.turned ||= turning;

@@ -6,6 +6,8 @@ Three changes to how the sim is put together, none of which should change how th
 - #38: every slice says whether it carries across levels.
 - #39: a level asked for during a tick starts once every feature has had the tick.
 
+A fourth change came with the owner's review: every function's name starts with a verb (261 functions renamed with the TypeScript language service, 12 more by hand), and lint requires it.
+
 So what is verified is that the game plays exactly as before, in the sim and in the real app, and that the two new rules are enforced.
 
 ```bash
@@ -17,6 +19,7 @@ bash verifications/37-state-ownership-and-level-starts/run.sh
 | `01-plays-the-same-as-before.mjs` | Builds the sim from the commit this branch was cut from and from the working tree, and plays the same 52 games on both (a scripted player that finishes the game after falling into the gap, losing flights and jumping out of the airplane, and 40 games of random keys): after every one of about 137,000 ticks the whole state hashes the same. It also counts that each of the four callers of a level start happened in those games (a fall, a lost flight, a flag, playing again). | `proof/01-plays-the-same-as-before.json`, `.txt` |
 | `02-dies-and-turns-the-page-in-the-browser.mjs` | In Chromium against `pnpm dev`, with real keys: falling into level 3's gap starts the level again with no page turn, and the key still held walks him on; reaching level 1's flag starts level 2 with the page turning from the very frame the level changes. | `proof/02-*.json`, `.txt`, four screenshots |
 | (run by hand, once) | `pnpm lint` on the commit where a test still imported `../player/state`: the new rule rejects it. | `proof/lint-rejects-another-features-state.txt` |
+| (run by hand, once) | `pnpm eslint` on a file with `flagOf`, `flagStrokes`, an interface member `stateOf` and `getFlag`: the first three are rejected, the last is not. | `proof/lint-rejects-a-function-not-named-with-a-verb.txt` |
 | (run by hand, once) | `tsc` on a slice declared without `carriesAcrossLevels`: it does not compile. | `proof/a-slice-must-say-whether-it-carries.txt` |
 
 What the scripts cannot show: that the code is easier to read. That is what the PR is for.
