@@ -34,6 +34,11 @@ export function isTheLastLevel(level: Level): boolean {
   return levels[levels.length - 1]?.id === level.id;
 }
 
+/** True once he has reached the level's flag: the level is finished. */
+export function flagIsReached(sim: Sim): boolean {
+  return sim.stateOf(flagSlice).reachedAtTick !== null;
+}
+
 /** The tick he reached the level's flag on, or null until he does. */
 export function tickFlagWasReached(sim: Sim): number | null {
   return sim.stateOf(flagSlice).reachedAtTick;

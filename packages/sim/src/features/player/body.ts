@@ -8,7 +8,7 @@ import { playerSlice, type PlayerState } from './state';
  * file decides which parts of his state that touches.
  */
 
-/** Where he is and how: on the floor or in the air, seated or on his feet. Read-only; it is his state as it is this moment, not a copy. */
+/** Where he is and how: on the floor or in the air, seated or on his feet. Read-only, and live: it is his state itself, so it changes as he does. Ask again after changing him rather than keeping it. */
 export type WhereHeIs = Readonly<Pick<PlayerState, 'x' | 'y' | 'facing' | 'onFloor' | 'seated'>>;
 
 export function whereHeIs(sim: Sim): WhereHeIs {

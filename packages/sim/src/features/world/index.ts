@@ -2,7 +2,7 @@ import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
 import { airplaneInteraction } from '../airplane';
 import { fallenItemInteraction, letterBeingRead, letterInteraction } from '../letter';
-import { hasFinishedLevel } from '../player';
+import { flagIsReached } from '../flag';
 
 /**
  * Interacting with the world: one command, `'world/interact'`, whose meaning
@@ -23,7 +23,7 @@ export const worldFeature: Feature = {
 
 /** What `'world/interact'` would do right now, with the function that does it, or undefined when there is nothing to interact with. */
 export function interactionNow(sim: Sim): Interaction | undefined {
-  if (hasFinishedLevel(sim)) return undefined;
+  if (flagIsReached(sim)) return undefined;
   for (const answer of ANSWERS) {
     const interaction = answer(sim);
     if (interaction) return interaction;

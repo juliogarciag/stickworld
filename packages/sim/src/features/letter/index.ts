@@ -6,7 +6,7 @@ import { teachRecipe } from '../crafting';
 import { recipeDef } from '../crafting/defs';
 import { giveItem } from '../inventory/give';
 import { holdsItem, selectItem } from '../inventory/held';
-import { hasFinishedLevel } from '../player';
+import { flagIsReached } from '../flag';
 import { whereHeIs } from '../player/body';
 import { LETTER, letterDef, type LetterDef } from './defs';
 import { fallenItemSlice, letterSlice, lettersReadSlice } from './state';
@@ -50,7 +50,7 @@ export const letterFeature: Feature = {
       return;
     }
     // The letter that still lies there gives it; with the flag reached he needs none.
-    if (hasWhatItIsFor(sim, def) || sim.stateOf(letterSlice).inLevel || hasFinishedLevel(sim)) {
+    if (hasWhatItIsFor(sim, def) || sim.stateOf(letterSlice).inLevel || flagIsReached(sim)) {
       fallen.ticksUntilItFalls = null;
     } else if (fallen.ticksUntilItFalls === null) {
       fallen.ticksUntilItFalls = Math.round(LETTER.fallsAfter / sim.dt);

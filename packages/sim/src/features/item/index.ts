@@ -3,7 +3,7 @@ import type { Sim } from '../../core/sim';
 import { airplaneItemUse } from '../airplane';
 import { craftingUse } from '../crafting';
 import { isReadingALetter } from '../letter';
-import { hasFinishedLevel } from '../player';
+import { flagIsReached } from '../flag';
 
 /**
  * Using the held item: one command, `'item/use'`, whose meaning depends on
@@ -24,7 +24,7 @@ export const itemFeature: Feature = {
 /** What `'item/use'` would do right now, with the function that does it, or undefined when it would do nothing. */
 export function itemUseNow(sim: Sim): ItemUse | undefined {
   // A letter he reads fills his hands: it is put away by interacting, and until then no item is used.
-  if (hasFinishedLevel(sim) || isReadingALetter(sim)) return undefined;
+  if (flagIsReached(sim) || isReadingALetter(sim)) return undefined;
   for (const answer of ANSWERS) {
     const use = answer(sim);
     if (use) return use;

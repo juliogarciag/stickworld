@@ -28,9 +28,8 @@ export function boardAndLaunch(sim: Sim): void {
  */
 export function moveOneTick(sim: Sim): void {
   const airplane = sim.stateOf(airplaneSlice);
-  const player = whereHeIs(sim);
   // He has jumped out: with nobody to steer it, it stops gliding and falls.
-  if (airplane.flying && !player.seated) stopGliding(airplane);
+  if (airplane.flying && !whereHeIs(sim).seated) stopGliding(airplane);
 
   if (airplane.flying) glide(sim, airplane);
   else if (airplane.falling) fall(sim, airplane);
@@ -39,11 +38,13 @@ export function moveOneTick(sim: Sim): void {
   moveHimWithHisSeat(sim, airplane);
   if (!airplane.sliding && !airplane.flying && !airplane.falling) standHimUp(sim);
 
+  // Asked again: he may have stood up just now.
+  const { seated } = whereHeIs(sim);
   const below = airplane.y - lowestFloorHeight(sim.levelDef.floor);
   // With him in it, falling out of sight starts the level again, and nothing of the airplane is left. Without him it is only lost.
-  if (player.seated && below > FLIGHT.lostBelowFloor) sim.startLevelAfterThisTick(sim.level);
+  if (seated && below > FLIGHT.lostBelowFloor) sim.startLevelAfterThisTick(sim.level);
   // As deep as he can fall himself: it is gone when he would be.
-  else if (!player.seated && below > PLAYER.fallBelowFloor) sim.setStateOf(airplaneSlice, { ...airplaneSlice.initialFor(sim.levelDef), steering: airplane.steering });
+  else if (!seated && below > PLAYER.fallBelowFloor) sim.setStateOf(airplaneSlice, { ...airplaneSlice.initialFor(sim.levelDef), steering: airplane.steering });
 }
 
 /** It falls from here on, keeping the sideways and the downward part of the way it was going. Nothing changes for one that is not gliding. */

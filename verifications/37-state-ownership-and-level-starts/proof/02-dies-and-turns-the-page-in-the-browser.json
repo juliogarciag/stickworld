@@ -1,6 +1,6 @@
 {
   "afterDeath": {
-    "tick": 278,
+    "tick": 277,
     "level": 3,
     "man": {
       "feet": {
@@ -42,8 +42,8 @@
     "watching": false
   },
   "flag": {
-    "frames": 339,
-    "turnsSeen": 37,
+    "frames": 335,
+    "turnsSeen": 34,
     "levels": [
       1,
       2
@@ -81,7 +81,7 @@
     {
       "name": "falling into the gap starts the same level again, and the tick count goes on",
       "pass": true,
-      "details": "level 3, tick 265 -> 278"
+      "details": "level 3, tick 263 -> 277"
     },
     {
       "name": "he is back near where the level starts",
@@ -106,7 +106,7 @@
     {
       "name": "the page is turned between the two",
       "pass": true,
-      "details": "the turn was seen in 37 of 339 frames"
+      "details": "the turn was seen in 34 of 335 frames"
     },
     {
       "name": "the turn begins on the frame the level changes: the new level is never shown bare",

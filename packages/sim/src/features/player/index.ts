@@ -1,7 +1,7 @@
 import type { FloorSegment } from '../../content/levels/types';
 import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
-import { tickFlagWasReached } from '../flag';
+import { flagIsReached } from '../flag';
 import { playingAgainIsOffered } from '../game';
 import type { WalkDirection } from './commands';
 import { MOVEMENT_TUNING_LIMITS, PLAYER, type MovementTuning } from './defs';
@@ -87,16 +87,12 @@ export function walkDirectionNow(sim: Sim): WalkDirection {
  * last level until playing again is offered.
  */
 export function standsCheering(sim: Sim): boolean {
-  return hasFinishedLevel(sim) && !playingAgainIsOffered(sim);
+  return flagIsReached(sim) && !playingAgainIsOffered(sim);
 }
 
 /** True while he is in the air because he walked off an edge, and not because he jumped. */
 export function isFallingOffAnEdge(player: PlayerState): boolean {
   return !player.onFloor && player.ticksSinceWalkedOff !== null;
-}
-
-export function hasFinishedLevel(sim: Sim): boolean {
-  return tickFlagWasReached(sim) !== null;
 }
 
 // ---- Helpers ----

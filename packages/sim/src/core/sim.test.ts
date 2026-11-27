@@ -34,10 +34,13 @@ describe('Sim.step', () => {
 describe('a level asked for from inside a tick', () => {
   it('starts once every feature has had the tick, in that same step', () => {
     const sim = new Sim({ features: [askerFeature, witnessFeature], start: { seed: 1, level: 1 } });
+    sim.step();
     sim.step([ask(2)]);
     expect(sim.level).toBe(2);
-    expect(sim.tick).toBe(1);
+    expect(sim.tick).toBe(2);
     expect(sim.stateOf(ticksOnThisLevelSlice)).toBe(0);
+    // It starts in the tick that asked, before the tick count goes up: that is the tick a feature's `init` reads.
+    expect(sim.stateOf(tickOfLastStartSlice)).toBe(1);
     sim.step();
     expect(sim.stateOf(ticksOnThisLevelSlice)).toBe(1);
   });
@@ -94,6 +97,35 @@ describe('a level asked for from inside a tick', () => {
     expect(() => sim.startLevel(1)).not.toThrow();
   });
 
+  it('leaves nothing asked for behind when the tick throws after the asking', () => {
+    const throwsOnceFeature: Feature = {
+      name: 'throwsOnce',
+      update(sim) {
+        if (sim.tick === 0) throw new Error('a bug in a feature');
+      },
+    };
+    const sim = new Sim({ features: [askerFeature, throwsOnceFeature], start: { seed: 1, level: 1 } });
+    expect(() => sim.step([ask(2)])).toThrow('a bug in a feature');
+    sim.tick = 1;
+    sim.step();
+    expect(sim.level).toBe(1);
+  });
+
+  it("refuses a feature whose `init` starts a level or asks for one: a level being started is not started again half way", () => {
+    for (const start of [(sim: Sim) => sim.startLevel(3), (sim: Sim) => sim.startLevelAfterThisTick(3), (sim: Sim) => sim.startOver(), (sim: Sim) => sim.startOverAfterThisTick()]) {
+      const restlessFeature: Feature = {
+        name: 'restless',
+        init(sim) {
+          if (sim.level === 2) start(sim);
+        },
+      };
+      const sim = new Sim({ features: [askerFeature, restlessFeature, witnessFeature], start: { seed: 1, level: 1 } });
+      expect(() => sim.step([ask(2)])).toThrow(/being started/);
+      // The sim can be used again afterwards.
+      expect(() => sim.startLevel(1)).not.toThrow();
+    }
+  });
+
   it('starts what is asked for at once when no tick is running', () => {
     const sim = new Sim({ features: [askerFeature, witnessFeature], start: { seed: 1, level: 1 } });
     sim.startLevelAfterThisTick(3);
@@ -125,12 +157,14 @@ const askerFeature: Feature = {
 
 const ticksOnThisLevelSlice = defineSlice<number>('ticksOnThisLevel', () => 0, { carriesAcrossLevels: false });
 const levelsStartedSlice = defineSlice<number>('levelsStarted', () => 0, { carriesAcrossLevels: true });
+const tickOfLastStartSlice = defineSlice<number>('tickOfLastStart', () => -1, { carriesAcrossLevels: false });
 
-/** A fixture feature: counts its ticks on the level being played, and the levels started since the game began or started over. */
+/** A fixture feature: counts its ticks on the level being played and the levels started since the game began or started over, and notes the tick its `init` last ran on. */
 const witnessFeature: Feature = {
   name: 'witness',
-  slices: [ticksOnThisLevelSlice, levelsStartedSlice],
+  slices: [ticksOnThisLevelSlice, levelsStartedSlice, tickOfLastStartSlice],
   init(sim) {
+    sim.setStateOf(tickOfLastStartSlice, sim.tick);
     sim.setStateOf(levelsStartedSlice, sim.stateOf(levelsStartedSlice) + 1);
   },
   update(sim) {

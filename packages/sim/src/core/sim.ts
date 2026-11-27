@@ -51,6 +51,8 @@ export class Sim implements SimHandle {
   private inATick = false;
   /** What a feature asked for during the tick being run, or null. Always null between two ticks, so it is not game state. */
   private askedDuringTick: LevelStartAsked | null = null;
+  /** True while a level is being started: until every feature's `init` has run, another start cannot begin. */
+  private startingALevel = false;
 
   constructor({ features, start, snapshot }: SimOptions) {
     this.features = features;
@@ -102,6 +104,7 @@ export class Sim implements SimHandle {
    */
   startLevel(id: number): void {
     if (this.inATick) throw new Error('a level cannot start in the middle of a tick: ask with startLevelAfterThisTick');
+    this.refuseWhileALevelStarts();
     const level = levelById(id);
     const previous = this.slices;
     this.levelId = level.id;
@@ -112,7 +115,12 @@ export class Sim implements SimHandle {
         this.slices[slice.key] = carried ? previous[slice.key] : slice.initialFor(level);
       }
     }
-    for (const feature of this.features) feature.init?.(this);
+    this.startingALevel = true;
+    try {
+      for (const feature of this.features) feature.init?.(this);
+    } finally {
+      this.startingALevel = false;
+    }
   }
 
   /**
@@ -121,6 +129,7 @@ export class Sim implements SimHandle {
    */
   startOver(): void {
     if (this.inATick) throw new Error('the game cannot start over in the middle of a tick: ask with startOverAfterThisTick');
+    this.refuseWhileALevelStarts();
     this.slices = {};
     this.startLevel(levels[0]!.id);
   }
@@ -129,22 +138,31 @@ export class Sim implements SimHandle {
    * Asks for level `id` to start once every feature has had this tick: how a feature restarts the level after a death
    * (`sim.level`) or moves on to the next one. Until the tick ends every feature still sees the level as it was. When
    * more than one thing is asked for in a tick, starting over beats another level, which beats the level being played
-   * again; of two different other levels the first asked for is kept.
+   * again; of two different other levels the first asked for is kept. Asked for between two ticks (a test), it starts at
+   * once. A feature's `init` cannot ask: a level that is being started is not started again half way, and this throws.
    */
   startLevelAfterThisTick(id: number): void {
+    this.refuseWhileALevelStarts();
     const asked: LevelStartAsked = { level: levelById(id).id, withNothingKept: false };
     if (this.askedDuringTick === null || comesBefore(asked, this.askedDuringTick, this.levelId)) this.askedDuringTick = asked;
     if (!this.inATick) this.startWhatWasAsked();
   }
 
-  /** Asks for the game to start again from its first level with nothing kept, once every feature has had this tick. */
+  /**
+   * Asks for the game to start again from its first level with nothing kept, once every feature has had this tick; at
+   * once when asked for between two ticks. The commands that come after it in the same tick are still handled on the
+   * game that is ending, and are gone with it.
+   */
   startOverAfterThisTick(): void {
+    this.refuseWhileALevelStarts();
     this.askedDuringTick = { level: levels[0]!.id, withNothingKept: true };
     if (!this.inATick) this.startWhatWasAsked();
   }
 
   step(commands: readonly Command[] = []): void {
     const received: readonly unknown[] = Array.isArray(commands) ? commands : [];
+    // Nothing is left over from a tick that threw after a feature had asked.
+    this.askedDuringTick = null;
     this.inATick = true;
     try {
       for (const command of received) {
@@ -157,6 +175,10 @@ export class Sim implements SimHandle {
     }
     this.startWhatWasAsked();
     this.tick += 1;
+  }
+
+  private refuseWhileALevelStarts(): void {
+    if (this.startingALevel) throw new Error('a level is being started: a feature\'s init cannot start another, or ask for one');
   }
 
   private startWhatWasAsked(): void {
