@@ -1,5 +1,43 @@
-import type { AirplaneView, Command, CraftingView, Def, FallenItemView, FlagView, FlyingHint, GameView, InteractionMeaning, ItemSlot, ItemUseMeaning, LetterView, Level, MovementTuning, NoteView, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
-import { getAirplane, getCrafting, defs, getFallenItem, getFlag, getFlyingHint, getGame, hashSnapshot, getInteraction, getItemSlots, getItemUse, getLetter, getLevel, getMovementTuning, getNotes, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, getStickMan } from '@stickworld/sim';
+import type {
+  AirplaneView,
+  Command,
+  CraftingView,
+  Def,
+  FallenItemView,
+  FlagView,
+  FlyingHint,
+  GameView,
+  InteractionMeaning,
+  ItemSlot,
+  ItemUseMeaning,
+  LetterView,
+  Level,
+  MovementTuning,
+  NoteView,
+  SimHandle,
+  SimSnapshot,
+  StickManView,
+} from '@stickworld/sim';
+import {
+  getAirplane,
+  getCrafting,
+  defs,
+  getFallenItem,
+  getFlag,
+  getFlyingHint,
+  getGame,
+  hashSnapshot,
+  getInteraction,
+  getItemSlots,
+  getItemUse,
+  getLetter,
+  getLevel,
+  getMovementTuning,
+  getNotes,
+  STICK_MAN_HEIGHT,
+  STICK_MAN_WIDTH,
+  getStickMan,
+} from '@stickworld/sim';
 import type Phaser from 'phaser';
 import { getItemSlotBox, type Rectangle } from './hud/itemSlots';
 import { MAX_FRAME_SECONDS } from './loop/frameSeconds';
@@ -95,10 +133,17 @@ declare global {
   }
 }
 
-export function exposeDebugApi(sources: { loop: GameLoop; game: Phaser.Game; pageTurn: PageTurn }): void {
+export function exposeDebugApi(sources: {
+  loop: GameLoop;
+  game: Phaser.Game;
+  pageTurn: PageTurn;
+}): void {
   const getCameraOf = (scene: string): CameraView | undefined => {
-    if (!sources.game.scene.isActive(scene)) return undefined;
-    const { zoom, scrollX, scrollY, width, height } = sources.game.scene.getScene(scene).cameras.main;
+    if (!sources.game.scene.isActive(scene)) {
+      return undefined;
+    }
+    const { zoom, scrollX, scrollY, width, height } =
+      sources.game.scene.getScene(scene).cameras.main;
     return { zoom, scrollX, scrollY, width, height };
   };
   window.__game = {
@@ -118,9 +163,16 @@ export function exposeDebugApi(sources: { loop: GameLoop; game: Phaser.Game; pag
     hash: () => hashSnapshot(sources.loop.sim.takeSnapshot()),
     getCamera: () => getCameraOf(LEVEL_SCENE),
     getLevelInView: () => {
-      if (!sources.game.scene.isActive(LEVEL_SCENE)) return undefined;
+      if (!sources.game.scene.isActive(LEVEL_SCENE)) {
+        return undefined;
+      }
       const seen = getWorldSeenBy(sources.game.scene.getScene(LEVEL_SCENE).cameras.main);
-      return { left: seen.x / PIXELS_PER_METRE, right: (seen.x + seen.width) / PIXELS_PER_METRE, top: seen.y / PIXELS_PER_METRE, bottom: (seen.y + seen.height) / PIXELS_PER_METRE };
+      return {
+        left: seen.x / PIXELS_PER_METRE,
+        right: (seen.x + seen.width) / PIXELS_PER_METRE,
+        top: seen.y / PIXELS_PER_METRE,
+        bottom: (seen.y + seen.height) / PIXELS_PER_METRE,
+      };
     },
     getHudCamera: () => getCameraOf(HUD_SCENE),
     getPageTurn: () => {
@@ -132,13 +184,23 @@ export function exposeDebugApi(sources: { loop: GameLoop; game: Phaser.Game; pag
     getStickMan: () => getStickMan(sources.loop.sim),
     getFlag: () => getFlag(sources.loop.sim),
     getItemSlots: () => {
-      if (!sources.game.scene.isActive(HUD_SCENE)) return [];
+      if (!sources.game.scene.isActive(HUD_SCENE)) {
+        return [];
+      }
       const seen = getWorldSeenBy(sources.game.scene.getScene(HUD_SCENE).cameras.main);
       // World pixels to canvas pixels by the camera's zoom, canvas pixels to CSS pixels by the game's.
       const cssPixelsPerWorldPixel = seen.zoom * sources.game.scale.zoom;
       return getItemSlots(sources.loop.sim).map((itemSlot) => {
         const box = getItemSlotBox(itemSlot.slot, seen);
-        return { ...itemSlot, onPage: { x: (box.x - seen.x) * cssPixelsPerWorldPixel, y: (box.y - seen.y) * cssPixelsPerWorldPixel, width: box.width * cssPixelsPerWorldPixel, height: box.height * cssPixelsPerWorldPixel } };
+        return {
+          ...itemSlot,
+          onPage: {
+            x: (box.x - seen.x) * cssPixelsPerWorldPixel,
+            y: (box.y - seen.y) * cssPixelsPerWorldPixel,
+            width: box.width * cssPixelsPerWorldPixel,
+            height: box.height * cssPixelsPerWorldPixel,
+          },
+        };
       });
     },
     getLetter: () => getLetter(sources.loop.sim),

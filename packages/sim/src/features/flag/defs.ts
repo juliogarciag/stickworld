@@ -12,7 +12,13 @@ export interface FlagDef extends Def {
 
 export const FLAG_DEF_ID = 100;
 
-export const flagDef: FlagDef = { id: FLAG_DEF_ID, name: 'flag', height: 2.2, reach: 0.45, raiseSeconds: 0.6 };
+export const flagDef: FlagDef = {
+  id: FLAG_DEF_ID,
+  name: 'flag',
+  height: 2.2,
+  reach: 0.45,
+  raiseSeconds: 0.6,
+};
 
 export const flagDefs: readonly Def[] = [flagDef];
 

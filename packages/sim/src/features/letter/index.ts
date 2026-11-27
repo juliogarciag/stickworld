@@ -29,21 +29,31 @@ export const letterFeature: Feature = {
   init(sim) {
     const placed = findLetterPlacedIn(sim.levelDef);
     const def = placed && getLetterDef(placed.defId);
-    if (!def) return;
+    if (!def) {
+      return;
+    }
     const hasReadLetter = sim.getStateOf(lettersReadSlice).includes(def.id);
     // A letter the stick man has read before does not lie there again when the level starts again.
     sim.getStateOf(letterSlice).isInLevel = !hasReadLetter;
-    if (!hasReadLetter || hasRecipeResult(sim, def)) return;
+    if (!hasReadLetter || hasRecipeResult(sim, def)) {
+      return;
+    }
     // The stick man has learned what it teaches and lost what the stick man made of it with the level: the stick man starts again with that in the stick man's hand.
     const made = getRecipeDef(def.teachesRecipe)?.makes ?? def.gives;
-    if (giveItem(sim, made)) selectItem(sim, made);
+    if (giveItem(sim, made)) {
+      selectItem(sim, made);
+    }
   },
 
   update(sim) {
     const placed = findLetterPlacedIn(sim.levelDef);
     const def = placed && getLetterDef(placed.defId);
-    if (!placed || !def) return;
-    if (sim.getStateOf(letterSlice).isBeingRead && !isWithinReach(sim, placed.position)) putAway(sim);
+    if (!placed || !def) {
+      return;
+    }
+    if (sim.getStateOf(letterSlice).isBeingRead && !isWithinReach(sim, placed.position)) {
+      putAway(sim);
+    }
     const fallen = sim.getStateOf(fallenItemSlice);
     if (fallen.isInLevel) {
       fallen.height = Math.max(0, fallen.height - LETTER.fallSpeed * sim.dt);
@@ -80,7 +90,9 @@ export function isReadingLetter(sim: Sim): boolean {
 
 /** What interacting does while the stick man reads a letter, for `features/world`: the stick man puts it away, and the press does nothing else. */
 export function getLetterBeingRead(sim: Sim) {
-  if (!sim.getStateOf(letterSlice).isBeingRead) return undefined;
+  if (!sim.getStateOf(letterSlice).isBeingRead) {
+    return undefined;
+  }
   return { means: 'putLetterAway' as const, perform: () => putAway(sim) };
 }
 
@@ -89,15 +101,27 @@ export function getLetterInteraction(sim: Sim) {
   const placed = findLetterPlacedIn(sim.levelDef);
   const def = placed && getLetterDef(placed.defId);
   const letter = sim.getStateOf(letterSlice);
-  if (!placed || !def || !letter.isInLevel || letter.isBeingRead || !isWithinReach(sim, placed.position)) return undefined;
+  if (
+    !placed ||
+    !def ||
+    !letter.isInLevel ||
+    letter.isBeingRead ||
+    !isWithinReach(sim, placed.position)
+  ) {
+    return undefined;
+  }
   return {
     means: 'read' as const,
     perform: () => {
       letter.isBeingRead = true;
       const lettersRead = sim.getStateOf(lettersReadSlice);
-      if (!lettersRead.includes(def.id)) lettersRead.push(def.id);
+      if (!lettersRead.includes(def.id)) {
+        lettersRead.push(def.id);
+      }
       teachRecipe(sim, def.teachesRecipe);
-      if (!hasRecipeResult(sim, def)) giveItem(sim, def.gives);
+      if (!hasRecipeResult(sim, def)) {
+        giveItem(sim, def.gives);
+      }
       // What the letter is about is in the stick man's hand when the stick man looks up from it, so the key that uses it has a use at once.
       selectItem(sim, def.gives);
     },
@@ -109,11 +133,15 @@ export function getFallenItemInteraction(sim: Sim) {
   const placed = findLetterPlacedIn(sim.levelDef);
   const def = placed && getLetterDef(placed.defId);
   const fallen = sim.getStateOf(fallenItemSlice);
-  if (!def || !fallen.isInLevel || fallen.height > 0 || !isWithinReach(sim, fallen)) return undefined;
+  if (!def || !fallen.isInLevel || fallen.height > 0 || !isWithinReach(sim, fallen)) {
+    return undefined;
+  }
   return {
     means: 'pickUp' as const,
     perform: () => {
-      if (!giveItem(sim, def.gives)) return;
+      if (!giveItem(sim, def.gives)) {
+        return;
+      }
       selectItem(sim, def.gives);
       fallen.isInLevel = false;
     },
@@ -125,7 +153,9 @@ export function getFallenItemInteraction(sim: Sim) {
 /** The stick man stops reading, and the letter it was reading is gone. Nothing changes when the stick man is not reading. */
 function putAway(sim: Sim): void {
   const letter = sim.getStateOf(letterSlice);
-  if (!letter.isBeingRead) return;
+  if (!letter.isBeingRead) {
+    return;
+  }
   letter.isBeingRead = false;
   letter.isInLevel = false;
 }
@@ -142,5 +172,9 @@ function isWithinReach(sim: Sim, position: { readonly x: number }): boolean {
  */
 function hasRecipeResult(sim: Sim, def: LetterDef): boolean {
   const made = getRecipeDef(def.teachesRecipe)?.makes;
-  return isHoldingItem(sim, def.gives) || (made !== undefined && isHoldingItem(sim, made)) || hasAirplane(sim);
+  return (
+    isHoldingItem(sim, def.gives) ||
+    (made !== undefined && isHoldingItem(sim, made)) ||
+    hasAirplane(sim)
+  );
 }

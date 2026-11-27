@@ -8,7 +8,9 @@
 export function keepUntilChanged<Made>(): (key: string, make: () => Made) => Made {
   let last: { key: string; made: Made } | undefined;
   return (key, make) => {
-    if (!last || last.key !== key) last = { key, made: make() };
+    if (!last || last.key !== key) {
+      last = { key, made: make() };
+    }
     return last.made;
   };
 }

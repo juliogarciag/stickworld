@@ -8,7 +8,10 @@ describe('the flag', () => {
     const [stick, cloth] = buildFlagStrokes(WAITING);
     expect(stick!.points).toEqual([
       { x: convertToPixels(WAITING.position.x), y: convertToPixels(WAITING.position.y) },
-      { x: convertToPixels(WAITING.position.x), y: convertToPixels(WAITING.position.y - WAITING.height) },
+      {
+        x: convertToPixels(WAITING.position.x),
+        y: convertToPixels(WAITING.position.y - WAITING.height),
+      },
     ]);
     expect(cloth!.isClosed).toBe(true);
     expect(buildFlagStrokes(WAITING)).toHaveLength(2);
@@ -18,13 +21,16 @@ describe('the flag', () => {
     for (const raised of [0, 0.3, 1]) {
       const [, cloth] = buildFlagStrokes({ ...WAITING, raised });
       const heights = cloth!.points.map((point) => point.y);
-      expect(Math.min(...heights)).toBeGreaterThan(convertToPixels(WAITING.position.y - WAITING.height));
+      expect(Math.min(...heights)).toBeGreaterThan(
+        convertToPixels(WAITING.position.y - WAITING.height),
+      );
       expect(Math.max(...heights)).toBeLessThan(convertToPixels(WAITING.position.y));
     }
   });
 
   it('carries the cloth higher the more the flag is raised', () => {
-    const getTopOfCloth = (raised: number): number => Math.min(...buildFlagStrokes({ ...WAITING, raised })[1]!.points.map((point) => point.y));
+    const getTopOfCloth = (raised: number): number =>
+      Math.min(...buildFlagStrokes({ ...WAITING, raised })[1]!.points.map((point) => point.y));
     expect(getTopOfCloth(0.5)).toBeLessThan(getTopOfCloth(0));
     expect(getTopOfCloth(1)).toBeLessThan(getTopOfCloth(0.5));
   });
@@ -32,4 +38,11 @@ describe('the flag', () => {
 
 // ---- Helpers ----
 
-const WAITING: FlagView = { position: { x: 4, y: 0.5 }, height: 1.5, isReached: false, upFor: 0, raised: 0, isFinalFlag: false };
+const WAITING: FlagView = {
+  position: { x: 4, y: 0.5 },
+  height: 1.5,
+  isReached: false,
+  upFor: 0,
+  raised: 0,
+  isFinalFlag: false,
+};

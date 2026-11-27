@@ -16,7 +16,15 @@ export interface CraftingView {
 }
 
 export function getCrafting(handle: SimHandle): CraftingView {
-  if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
+  if (!(handle instanceof Sim)) {
+    throw new TypeError('not a sim made by createSim or restoreSim');
+  }
   const canMake = findCraftableRecipe(handle);
-  return { knownRecipes: getKnownRecipes(handle).map((recipe) => ({ defId: recipe.id, name: recipe.name })), canMake: canMake ? { defId: canMake.id, name: canMake.name } : null };
+  return {
+    knownRecipes: getKnownRecipes(handle).map((recipe) => ({
+      defId: recipe.id,
+      name: recipe.name,
+    })),
+    canMake: canMake ? { defId: canMake.id, name: canMake.name } : null,
+  };
 }

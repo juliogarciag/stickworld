@@ -8,7 +8,10 @@ describe('getStartingLevel', () => {
     expect(getStartingLevel(String(last))).toBe(last);
   });
 
-  it.each([undefined, '', 'two', '0', '999', '1.5'])('starts on the first level for %j', (configured) => {
-    expect(getStartingLevel(configured)).toBe(levels[0]?.id);
-  });
+  it.each([undefined, '', 'two', '0', '999', '1.5'])(
+    'starts on the first level for %j',
+    (configured) => {
+      expect(getStartingLevel(configured)).toBe(levels[0]?.id);
+    },
+  );
 });

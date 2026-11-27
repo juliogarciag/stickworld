@@ -8,10 +8,16 @@ export interface LetterState {
 }
 
 /** Whether the level's letter lies there at the start depends on whether the stick man has read it before, so the feature's `init` decides it. */
-export const letterSlice = defineSlice<LetterState>('letter', () => ({ isInLevel: false, isBeingRead: false }), { isCarriedAcrossLevels: false });
+export const letterSlice = defineSlice<LetterState>(
+  'letter',
+  () => ({ isInLevel: false, isBeingRead: false }),
+  { isCarriedAcrossLevels: false },
+);
 
 /** The def ids of the letters the stick man has read. What the stick man has read it remembers across levels and deaths. */
-export const lettersReadSlice = defineSlice<number[]>('lettersRead', () => [], { isCarriedAcrossLevels: true });
+export const lettersReadSlice = defineSlice<number[]>('lettersRead', () => [], {
+  isCarriedAcrossLevels: true,
+});
 
 /** The item a letter gave, given again from the sky to the stick man who has lost it and everything the stick man made of it. */
 export interface FallenItemState {
@@ -26,4 +32,8 @@ export interface FallenItemState {
   ticksUntilFall: number | null;
 }
 
-export const fallenItemSlice = defineSlice<FallenItemState>('fallenItem', () => ({ isInLevel: false, x: 0, y: 0, height: 0, ticksUntilFall: null }), { isCarriedAcrossLevels: false });
+export const fallenItemSlice = defineSlice<FallenItemState>(
+  'fallenItem',
+  () => ({ isInLevel: false, x: 0, y: 0, height: 0, ticksUntilFall: null }),
+  { isCarriedAcrossLevels: false },
+);

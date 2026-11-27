@@ -1,4 +1,12 @@
-import { createSim, FIXED_DT, getFlag, getLevel, getStickMan, type Command, type SimHandle } from '@stickworld/sim';
+import {
+  createSim,
+  FIXED_DT,
+  getFlag,
+  getLevel,
+  getStickMan,
+  type Command,
+  type SimHandle,
+} from '@stickworld/sim';
 import { describe, expect, it } from 'vitest';
 import { GameLoop } from './GameLoop';
 
@@ -41,7 +49,11 @@ describe('GameLoop', () => {
     const loop = new GameLoop(createSim({ level: 1 }));
     loop.queueCommand({ type: 'player/walk', direction: -1 });
     let deepest = 0;
-    for (let frame = 0; frame < 60 * 6 && !(deepest > 1 && getStickMan(loop.sim).feet.y === 0); frame += 1) {
+    for (
+      let frame = 0;
+      frame < 60 * 6 && !(deepest > 1 && getStickMan(loop.sim).feet.y === 0);
+      frame += 1
+    ) {
       loop.advanceBy(FIXED_DT);
       deepest = Math.max(deepest, getStickMan(loop.sim).feet.y);
     }

@@ -34,15 +34,27 @@ export interface AirplaneView {
 
 /** The airplane in the world, or undefined while there is none: it is an item in the stick man's slot, or lost, or not made yet. */
 export function getAirplane(handle: SimHandle): AirplaneView | undefined {
-  if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
+  if (!(handle instanceof Sim)) {
+    throw new TypeError('not a sim made by createSim or restoreSim');
+  }
   const airplane = handle.getStateOf(airplaneSlice);
-  if (!airplane.isInWorld) return undefined;
+  if (!airplane.isInWorld) {
+    return undefined;
+  }
   return {
     position: { x: airplane.x, y: airplane.y },
     facing: airplane.facing,
     length: AIRPLANE.length,
     height: AIRPLANE.height,
-    state: airplane.isCarried ? 'carried' : airplane.isFlying ? 'flying' : airplane.isFalling ? 'falling' : airplane.isSliding ? 'landing' : 'resting',
+    state: airplane.isCarried
+      ? 'carried'
+      : airplane.isFlying
+        ? 'flying'
+        : airplane.isFalling
+          ? 'falling'
+          : airplane.isSliding
+            ? 'landing'
+            : 'resting',
     verticalSpeed: airplane.isFalling ? airplane.verticalSpeed : 0,
     speed: airplane.speed,
     pitch: airplane.pitch,
@@ -53,7 +65,9 @@ export function getAirplane(handle: SimHandle): AirplaneView | undefined {
 
 /** Which way the sim believes the player wants to steer the airplane, whether or not the stick man is flying one right now. */
 export function getSteeringAsked(handle: SimHandle): SteerDirection {
-  if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
+  if (!(handle instanceof Sim)) {
+    throw new TypeError('not a sim made by createSim or restoreSim');
+  }
   return handle.getStateOf(airplaneSlice).steering;
 }
 
@@ -68,8 +82,14 @@ export type FlyingHint = 'takeToEdge' | 'readyToBoard';
  * to be taken to an edge, and once it sits on one that it is ready, until the stick man has boarded one since the level started.
  */
 export function getFlyingHint(handle: SimHandle): FlyingHint | null {
-  if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
-  if (hasYetToReachEdge(handle)) return 'takeToEdge';
-  if (isReadyToBoard(handle)) return 'readyToBoard';
+  if (!(handle instanceof Sim)) {
+    throw new TypeError('not a sim made by createSim or restoreSim');
+  }
+  if (hasYetToReachEdge(handle)) {
+    return 'takeToEdge';
+  }
+  if (isReadyToBoard(handle)) {
+    return 'readyToBoard';
+  }
   return null;
 }

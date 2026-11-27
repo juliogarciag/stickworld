@@ -25,19 +25,39 @@ export interface Rectangle {
 
 /** Where slot number `slot` (counted from 1) is drawn when the HUD camera sees `seen`: a row from the top right corner, the first slot in the corner and each next one to its left. */
 export function getItemSlotBox(slot: number, seen: Rectangle): Rectangle {
-  const rightOffset = SLOT_LAYOUT.margin + SLOT_LAYOUT.side + (slot - 1) * (SLOT_LAYOUT.side + SLOT_LAYOUT.spacing);
-  return { x: seen.x + seen.width - rightOffset, y: seen.y + SLOT_LAYOUT.margin, width: SLOT_LAYOUT.side, height: SLOT_LAYOUT.side };
+  const rightOffset =
+    SLOT_LAYOUT.margin + SLOT_LAYOUT.side + (slot - 1) * (SLOT_LAYOUT.side + SLOT_LAYOUT.spacing);
+  return {
+    x: seen.x + seen.width - rightOffset,
+    y: seen.y + SLOT_LAYOUT.margin,
+    width: SLOT_LAYOUT.side,
+    height: SLOT_LAYOUT.side,
+  };
 }
 
 /** The strokes that draw `slots` when the HUD camera sees `seen`. For each slot, in this order: its box, the item it holds, and last the second box when it is selected. */
 export function buildItemSlotStrokes(slots: readonly ItemSlot[], seen: Rectangle): Stroke[] {
   return slots.flatMap((itemSlot) => {
     const box = getItemSlotBox(itemSlot.slot, seen);
-    const buildStrokeIn = (shape: UnitPath): Stroke => ({ points: shape.map((point) => getPointIn(box, point)), thickness: PENCIL.thickness });
+    const buildStrokeIn = (shape: UnitPath): Stroke => ({
+      points: shape.map((point) => getPointIn(box, point)),
+      thickness: PENCIL.thickness,
+    });
     return [
       { points: getCorners(box), thickness: PENCIL.thickness, isClosed: true },
-      ...(itemSlot.itemDefId === null ? [] : (ITEM_DRAWINGS[itemSlot.itemDefId] ?? UNKNOWN_ITEM)).map(buildStrokeIn),
-      ...(itemSlot.isSelected ? [{ points: getCorners(growBy(box, SLOT_LAYOUT.selectedOutset)), thickness: PENCIL.thickness * SLOT_LAYOUT.selectedWeight, isClosed: true }] : []),
+      ...(itemSlot.itemDefId === null
+        ? []
+        : (ITEM_DRAWINGS[itemSlot.itemDefId] ?? UNKNOWN_ITEM)
+      ).map(buildStrokeIn),
+      ...(itemSlot.isSelected
+        ? [
+            {
+              points: getCorners(growBy(box, SLOT_LAYOUT.selectedOutset)),
+              thickness: PENCIL.thickness * SLOT_LAYOUT.selectedWeight,
+              isClosed: true,
+            },
+          ]
+        : []),
     ];
   });
 }
@@ -122,5 +142,10 @@ function getCorners(rectangle: Rectangle): StrokePoint[] {
 }
 
 function growBy(rectangle: Rectangle, outset: number): Rectangle {
-  return { x: rectangle.x - outset, y: rectangle.y - outset, width: rectangle.width + 2 * outset, height: rectangle.height + 2 * outset };
+  return {
+    x: rectangle.x - outset,
+    y: rectangle.y - outset,
+    width: rectangle.width + 2 * outset,
+    height: rectangle.height + 2 * outset,
+  };
 }

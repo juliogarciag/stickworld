@@ -9,11 +9,17 @@ import { inventorySlice } from './state';
  * For the features whose rules hand out items (a flag, a recipe).
  */
 export function giveItem(sim: Sim, itemDefId: number): boolean {
-  if (!isItemDefId(itemDefId)) return false;
+  if (!isItemDefId(itemDefId)) {
+    return false;
+  }
   const { slots } = sim.getStateOf(inventorySlice);
-  if (slots.includes(itemDefId)) return true;
+  if (slots.includes(itemDefId)) {
+    return true;
+  }
   const emptySlot = slots.indexOf(null);
-  if (emptySlot === -1) return false;
+  if (emptySlot === -1) {
+    return false;
+  }
   slots[emptySlot] = itemDefId;
   return true;
 }

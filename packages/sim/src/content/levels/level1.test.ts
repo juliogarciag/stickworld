@@ -33,7 +33,10 @@ describe('level 1', () => {
 
   it('is not finished by walking the wrong way and falling off the paper', () => {
     const sim = createSim({ level: 1 });
-    play(sim, { commands: [{ atTick: 0, command: { type: 'player/walk', direction: -1 } }], ticks: 600 });
+    play(sim, {
+      commands: [{ atTick: 0, command: { type: 'player/walk', direction: -1 } }],
+      ticks: 600,
+    });
     expect(getFlag(sim)!.isReached).toBe(false);
   });
 
@@ -41,7 +44,13 @@ describe('level 1', () => {
     const sim = createSim({ level: 1 });
     walkUntilFlagIsReached(sim);
     const stoodAt = getStickMan(sim).feet;
-    play(sim, { commands: [{ atTick: 0, command: { type: 'player/walk', direction: -1 } }, { atTick: 5, command: { type: 'player/jump' } }], ticks: PAUSE_TICKS - 2 });
+    play(sim, {
+      commands: [
+        { atTick: 0, command: { type: 'player/walk', direction: -1 } },
+        { atTick: 5, command: { type: 'player/jump' } },
+      ],
+      ticks: PAUSE_TICKS - 2,
+    });
     expect(sim.level).toBe(1);
     expect(getFlag(sim)!.isReached).toBe(true);
     expect(getStickMan(sim)).toMatchObject({ feet: stoodAt, action: 'cheering' });
@@ -91,12 +100,16 @@ const PAUSE_TICKS = Math.round(LEVEL_END.pauseBeforeNextLevel * TICK_RATE);
 /** Walks the stick man right from where it is until the tick the flag is reached. */
 function walkUntilFlagIsReached(sim: SimHandle): void {
   sim.step([{ type: 'player/walk', direction: 1 }]);
-  for (let tick = 0; tick < 600 && !getFlag(sim)!.isReached; tick += 1) sim.step();
+  for (let tick = 0; tick < 600 && !getFlag(sim)!.isReached; tick += 1) {
+    sim.step();
+  }
   expect(getFlag(sim)!.isReached).toBe(true);
 }
 
 function play(sim: SimHandle, recording: Recording): void {
   for (let tick = 0; tick < recording.ticks; tick += 1) {
-    sim.step(recording.commands.filter((entry) => entry.atTick === tick).map((entry) => entry.command));
+    sim.step(
+      recording.commands.filter((entry) => entry.atTick === tick).map((entry) => entry.command),
+    );
   }
 }

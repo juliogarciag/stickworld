@@ -37,9 +37,13 @@ export function createPageTurn(): PageTurn {
       turning = { finished, seconds: 0 };
     },
     advanceBy(seconds) {
-      if (!turning) return;
+      if (!turning) {
+        return;
+      }
       turning.seconds += seconds;
-      if (turning.seconds >= TURN.seconds) turning = undefined;
+      if (turning.seconds >= TURN.seconds) {
+        turning = undefined;
+      }
     },
     getTurningPage() {
       return turning && { ...turning.finished, edgeAt: getEdgeAfter(turning.seconds) };

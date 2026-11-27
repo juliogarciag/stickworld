@@ -15,7 +15,16 @@ describe('Sim.step', () => {
 
   it('hands features only commands that are objects with a string type, and survives anything else', () => {
     const sim = new Sim({ features: [recorderFeature], start: { seed: 1, level: 1 } });
-    const received: unknown[] = [null, undefined, 1, 'x', [], { type: 3 }, { kind: 'x' }, { type: 'recorder/keep' }];
+    const received: unknown[] = [
+      null,
+      undefined,
+      1,
+      'x',
+      [],
+      { type: 3 },
+      { kind: 'x' },
+      { type: 'recorder/keep' },
+    ];
     sim.step(received as Command[]);
     sim.step('not an array' as unknown as Command[]);
     expect(sim.takeSnapshot().slices.recorder).toEqual(['recorder/keep']);
@@ -27,7 +36,13 @@ describe('Sim.step', () => {
   });
 
   it('refuses two features that claim the same slice', () => {
-    expect(() => new Sim({ features: [recorderFeature, { ...recorderFeature, name: 'copy' }], start: { seed: 1, level: 1 } })).toThrow(/recorder/);
+    expect(
+      () =>
+        new Sim({
+          features: [recorderFeature, { ...recorderFeature, name: 'copy' }],
+          start: { seed: 1, level: 1 },
+        }),
+    ).toThrow(/recorder/);
   });
 });
 
@@ -47,8 +62,18 @@ describe('a level asked for from inside a tick', () => {
 
   it('shows the features after the one that asked the level as it was, not one that has only just begun', () => {
     const seen: { level: number; ticksOnThisLevel: number }[] = [];
-    const spyFeature: Feature = { name: 'spy', update: (sim) => void seen.push({ level: sim.level, ticksOnThisLevel: sim.getStateOf(ticksOnThisLevelSlice) }) };
-    const sim = new Sim({ features: [askerFeature, witnessFeature, spyFeature], start: { seed: 1, level: 1 } });
+    const spyFeature: Feature = {
+      name: 'spy',
+      update: (sim) =>
+        void seen.push({
+          level: sim.level,
+          ticksOnThisLevel: sim.getStateOf(ticksOnThisLevelSlice),
+        }),
+    };
+    const sim = new Sim({
+      features: [askerFeature, witnessFeature, spyFeature],
+      start: { seed: 1, level: 1 },
+    });
     sim.step();
     sim.step([ask(2)]);
     sim.step();
@@ -61,12 +86,22 @@ describe('a level asked for from inside a tick', () => {
 
   it.each([
     { asked: [1, 2], starts: 2, because: 'another level beats the level being played again' },
-    { asked: [2, 1], starts: 2, because: 'another level beats the level being played again, whichever was asked for first' },
+    {
+      asked: [2, 1],
+      starts: 2,
+      because: 'another level beats the level being played again, whichever was asked for first',
+    },
     { asked: [2, 3], starts: 2, because: 'of two other levels the first asked for is kept' },
-    { asked: [3, 'over' as const, 2], starts: 1, because: 'starting over beats a level asked for before or after it' },
+    {
+      asked: [3, 'over' as const, 2],
+      starts: 1,
+      because: 'starting over beats a level asked for before or after it',
+    },
   ])('with $asked asked for in one tick level $starts starts: $because', (testCase) => {
     const sim = new Sim({ features: [askerFeature, witnessFeature], start: { seed: 1, level: 1 } });
-    sim.step(testCase.asked.map((request) => (request === 'over' ? askToStartOver() : ask(request))));
+    sim.step(
+      testCase.asked.map((request) => (request === 'over' ? askToStartOver() : ask(request))),
+    );
     expect(sim.level).toBe(testCase.starts);
   });
 
@@ -88,11 +123,16 @@ describe('a level asked for from inside a tick', () => {
   });
 
   it('refuses a feature that starts a level or starts over itself in the middle of a tick', () => {
-    const impatientFeature: Feature = { name: 'impatient', update: (sim) => sim.startLevel(sim.level) };
+    const impatientFeature: Feature = {
+      name: 'impatient',
+      update: (sim) => sim.startLevel(sim.level),
+    };
     const sim = new Sim({ features: [impatientFeature], start: { seed: 1, level: 1 } });
     expect(() => sim.step()).toThrow(/startLevelAfterThisTick/);
     const startsOverFeature: Feature = { name: 'startsOver', update: (sim) => sim.startOver() };
-    expect(() => new Sim({ features: [startsOverFeature], start: { seed: 1, level: 1 } }).step()).toThrow(/startOverAfterThisTick/);
+    expect(() =>
+      new Sim({ features: [startsOverFeature], start: { seed: 1, level: 1 } }).step(),
+    ).toThrow(/startOverAfterThisTick/);
     // After the tick that threw, the sim is between two ticks again.
     expect(() => sim.startLevel(1)).not.toThrow();
   });
@@ -102,12 +142,17 @@ describe('a level asked for from inside a tick', () => {
     const throwsOnceFeature: Feature = {
       name: 'throwsOnce',
       update() {
-        if (hasThrown) return;
+        if (hasThrown) {
+          return;
+        }
         hasThrown = true;
         throw new Error('a bug in a feature');
       },
     };
-    const sim = new Sim({ features: [askerFeature, throwsOnceFeature], start: { seed: 1, level: 1 } });
+    const sim = new Sim({
+      features: [askerFeature, throwsOnceFeature],
+      start: { seed: 1, level: 1 },
+    });
     expect(() => sim.step([ask(2)])).toThrow('a bug in a feature');
     // Neither the next tick nor a level asked for between two ticks finds the level 2 that was asked for then.
     sim.startLevelAfterThisTick(1);
@@ -116,15 +161,25 @@ describe('a level asked for from inside a tick', () => {
     expect(sim.level).toBe(1);
   });
 
-  it("refuses a feature whose `init` starts a level or asks for one: a level being started is not started again half way", () => {
-    for (const start of [(sim: Sim) => sim.startLevel(3), (sim: Sim) => sim.startLevelAfterThisTick(3), (sim: Sim) => sim.startOver(), (sim: Sim) => sim.startOverAfterThisTick()]) {
+  it('refuses a feature whose `init` starts a level or asks for one: a level being started is not started again half way', () => {
+    for (const start of [
+      (sim: Sim) => sim.startLevel(3),
+      (sim: Sim) => sim.startLevelAfterThisTick(3),
+      (sim: Sim) => sim.startOver(),
+      (sim: Sim) => sim.startOverAfterThisTick(),
+    ]) {
       const restlessFeature: Feature = {
         name: 'restless',
         init(sim) {
-          if (sim.level === 2) start(sim);
+          if (sim.level === 2) {
+            start(sim);
+          }
         },
       };
-      const sim = new Sim({ features: [askerFeature, restlessFeature, witnessFeature], start: { seed: 1, level: 1 } });
+      const sim = new Sim({
+        features: [askerFeature, restlessFeature, witnessFeature],
+        start: { seed: 1, level: 1 },
+      });
       expect(() => sim.step([ask(2)])).toThrow(/being started/);
       // The sim can be used again afterwards.
       expect(() => sim.startLevel(1)).not.toThrow();
@@ -155,14 +210,24 @@ const askerFeature: Feature = {
   name: 'asker',
   handleCommand(sim, command) {
     const { type, level } = command as { type: string; level?: number };
-    if (type === 'asker/level' && level !== undefined) sim.startLevelAfterThisTick(level);
-    if (type === 'asker/over') sim.startOverAfterThisTick();
+    if (type === 'asker/level' && level !== undefined) {
+      sim.startLevelAfterThisTick(level);
+    }
+    if (type === 'asker/over') {
+      sim.startOverAfterThisTick();
+    }
   },
 };
 
-const ticksOnThisLevelSlice = defineSlice<number>('ticksOnThisLevel', () => 0, { isCarriedAcrossLevels: false });
-const levelsStartedSlice = defineSlice<number>('levelsStarted', () => 0, { isCarriedAcrossLevels: true });
-const tickOfLastStartSlice = defineSlice<number>('tickOfLastStart', () => -1, { isCarriedAcrossLevels: false });
+const ticksOnThisLevelSlice = defineSlice<number>('ticksOnThisLevel', () => 0, {
+  isCarriedAcrossLevels: false,
+});
+const levelsStartedSlice = defineSlice<number>('levelsStarted', () => 0, {
+  isCarriedAcrossLevels: true,
+});
+const tickOfLastStartSlice = defineSlice<number>('tickOfLastStart', () => -1, {
+  isCarriedAcrossLevels: false,
+});
 
 /** A fixture feature: counts its ticks on the level being played and the levels started since the game began or started over, and notes the tick its `init` last ran on. */
 const witnessFeature: Feature = {

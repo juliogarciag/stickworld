@@ -25,6 +25,10 @@ export interface SliceOptions {
 }
 
 /** Declares a slice of state. `key` must be unique across features; use the feature's name. */
-export function defineSlice<T>(key: string, initialFor: (level: Level) => T, options: SliceOptions): StateSlice<T> {
+export function defineSlice<T>(
+  key: string,
+  initialFor: (level: Level) => T,
+  options: SliceOptions,
+): StateSlice<T> {
   return { key, getInitialFor: initialFor, isCarriedAcrossLevels: options.isCarriedAcrossLevels };
 }

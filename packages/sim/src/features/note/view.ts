@@ -10,10 +10,15 @@ export interface NoteView extends Note {
 
 /** Every note of the level being played, in the order the level lists them. */
 export function getNotes(handle: SimHandle): NoteView[] {
-  if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
+  if (!(handle instanceof Sim)) {
+    throw new TypeError('not a sim made by createSim or restoreSim');
+  }
   const { rubbedOutAtTick } = handle.getStateOf(notesSlice);
   return (handle.levelDef.notes ?? []).map((note, index) => {
     const rubbedOutAt = rubbedOutAtTick[index] ?? null;
-    return { ...note, rubbedOutFor: rubbedOutAt === null ? null : (handle.tick - rubbedOutAt) * handle.dt };
+    return {
+      ...note,
+      rubbedOutFor: rubbedOutAt === null ? null : (handle.tick - rubbedOutAt) * handle.dt,
+    };
   });
 }

@@ -1,4 +1,14 @@
-import { getCrafting, getFlag, getFlyingHint, getGame, getInteraction, getItemSlots, getItemUse, getLetter, getStickMan } from '@stickworld/sim';
+import {
+  getCrafting,
+  getFlag,
+  getFlyingHint,
+  getGame,
+  getInteraction,
+  getItemSlots,
+  getItemUse,
+  getLetter,
+  getStickMan,
+} from '@stickworld/sim';
 import Phaser from 'phaser';
 import { buildItemSlotStrokes } from '../hud/itemSlots';
 import { buildPageEdgeStrokes } from '../hud/pageEdge';
@@ -62,7 +72,11 @@ export class HudScene extends Phaser.Scene {
 
     const letter = getLetter(sim);
     const reading = letter?.isBeingRead ? { text: letter.text, teaches: letter.teaches } : null;
-    this.heldUp.show(this.getHeldUpStrokes(JSON.stringify([reading, seen]), () => (reading === null ? [] : buildLetterSheetStrokes(reading, seen))));
+    this.heldUp.show(
+      this.getHeldUpStrokes(JSON.stringify([reading, seen]), () =>
+        reading === null ? [] : buildLetterSheetStrokes(reading, seen),
+      ),
+    );
 
     const prompts = getPromptsFor({
       itemUse: getItemUse(sim),
@@ -74,14 +88,32 @@ export class HudScene extends Phaser.Scene {
       flightKeys: FLIGHT_KEY_NAMES,
       flyingHint: getFlyingHint(sim),
     });
-    this.prompts.show(this.getPromptStrokes(JSON.stringify([prompts, seen]), () => buildPromptStrokes(prompts, seen)));
+    this.prompts.show(
+      this.getPromptStrokes(JSON.stringify([prompts, seen]), () =>
+        buildPromptStrokes(prompts, seen),
+      ),
+    );
 
     const flag = getFlag(sim);
-    const endScreen = isEndScreenShown(flag) && flag ? { shareWritten: getEndScreenProgress(flag.upFor), playAgainKey: getGame(sim).isPlayAgainOffered ? GAME_KEY_NAMES.playAgain : null } : null;
-    this.endScreen.show(this.getEndScreenStrokes(JSON.stringify([endScreen, seen]), () => (endScreen ? buildEndScreenStrokes(endScreen, seen) : [])));
+    const endScreen =
+      isEndScreenShown(flag) && flag
+        ? {
+            shareWritten: getEndScreenProgress(flag.upFor),
+            playAgainKey: getGame(sim).isPlayAgainOffered ? GAME_KEY_NAMES.playAgain : null,
+          }
+        : null;
+    this.endScreen.show(
+      this.getEndScreenStrokes(JSON.stringify([endScreen, seen]), () =>
+        endScreen ? buildEndScreenStrokes(endScreen, seen) : [],
+      ),
+    );
 
     const edgeAt = this.pageTurn.getTurningPage()?.edgeAt ?? null;
-    this.pageEdge.show(this.getPageEdgeStrokes(JSON.stringify([edgeAt, seen]), () => (edgeAt === null ? [] : buildPageEdgeStrokes(edgeAt, seen))));
+    this.pageEdge.show(
+      this.getPageEdgeStrokes(JSON.stringify([edgeAt, seen]), () =>
+        edgeAt === null ? [] : buildPageEdgeStrokes(edgeAt, seen),
+      ),
+    );
   }
 }
 

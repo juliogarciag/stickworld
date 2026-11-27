@@ -19,15 +19,24 @@ export function buildFlagStrokes(flag: FlagView): Stroke[] {
   const clothTop = top + flag.height * (FLAG.gapAtTop + FLAG.loweredBy * (1 - flag.raised));
   const cloth = [
     { x: flag.position.x, y: clothTop },
-    { x: flag.position.x + flag.height * FLAG.clothLength, y: clothTop + (flag.height * FLAG.clothHeight) / 2 },
+    {
+      x: flag.position.x + flag.height * FLAG.clothLength,
+      y: clothTop + (flag.height * FLAG.clothHeight) / 2,
+    },
     { x: flag.position.x, y: clothTop + flag.height * FLAG.clothHeight },
   ];
   return [
-    { points: [flag.position, { x: flag.position.x, y: top }].map(convertPointToPixels), thickness: PENCIL.thickness },
+    {
+      points: [flag.position, { x: flag.position.x, y: top }].map(convertPointToPixels),
+      thickness: PENCIL.thickness,
+    },
     { points: cloth.map(convertPointToPixels), thickness: PENCIL.thickness, isClosed: true },
   ];
 }
 
 // ---- Helpers ----
 
-const convertPointToPixels = (point: { x: number; y: number }): { x: number; y: number } => ({ x: convertToPixels(point.x), y: convertToPixels(point.y) });
+const convertPointToPixels = (point: { x: number; y: number }): { x: number; y: number } => ({
+  x: convertToPixels(point.x),
+  y: convertToPixels(point.y),
+});

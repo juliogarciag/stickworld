@@ -29,27 +29,44 @@ export function boardAndLaunch(sim: Sim): void {
 export function moveOneTick(sim: Sim): void {
   const airplane = sim.getStateOf(airplaneSlice);
   // The stick man has jumped out: with nobody to steer it, it stops gliding and falls.
-  if (airplane.isFlying && !getPlayerBody(sim).isSeated) stopGliding(airplane);
+  if (airplane.isFlying && !getPlayerBody(sim).isSeated) {
+    stopGliding(airplane);
+  }
 
-  if (airplane.isFlying) glide(sim, airplane);
-  else if (airplane.isFalling) fall(sim, airplane);
-  else if (airplane.isSliding) slide(sim, airplane);
+  if (airplane.isFlying) {
+    glide(sim, airplane);
+  } else if (airplane.isFalling) {
+    fall(sim, airplane);
+  } else if (airplane.isSliding) {
+    slide(sim, airplane);
+  }
 
   movePlayerWithSeat(sim, airplane);
-  if (!airplane.isSliding && !airplane.isFlying && !airplane.isFalling) standPlayerUp(sim);
+  if (!airplane.isSliding && !airplane.isFlying && !airplane.isFalling) {
+    standPlayerUp(sim);
+  }
 
   // Asked again: the stick man may have stood up just now.
   const { isSeated } = getPlayerBody(sim);
   const below = airplane.y - getLowestFloorHeight(sim.levelDef.floor);
   // With the stick man in it, falling out of sight starts the level again, and nothing of the airplane is left. Without the stick man it is only lost.
-  if (isSeated && below > FLIGHT.lostBelowFloor) sim.startLevelAfterThisTick(sim.level);
+  if (isSeated && below > FLIGHT.lostBelowFloor) {
+    sim.startLevelAfterThisTick(sim.level);
+  }
   // As deep as the stick man can fall itself: it is gone when the stick man would be.
-  else if (!isSeated && below > PLAYER.fallBelowFloor) sim.setStateOf(airplaneSlice, { ...airplaneSlice.getInitialFor(sim.levelDef), steering: airplane.steering });
+  else if (!isSeated && below > PLAYER.fallBelowFloor) {
+    sim.setStateOf(airplaneSlice, {
+      ...airplaneSlice.getInitialFor(sim.levelDef),
+      steering: airplane.steering,
+    });
+  }
 }
 
 /** It falls from here on, keeping the sideways and the downward part of the way it was going. Nothing changes for one that is not gliding. */
 export function stopGliding(airplane: AirplaneState): void {
-  if (!airplane.isFlying) return;
+  if (!airplane.isFlying) {
+    return;
+  }
   airplane.isFlying = false;
   airplane.isFalling = true;
   airplane.verticalSpeed = -airplane.speed * Math.sin(airplane.pitch);
@@ -61,13 +78,27 @@ export function stopGliding(airplane: AirplaneState): void {
 
 /** One tick of the glide: the steer keys turn its nose, it goes where its nose points, and what it climbed or dived is paid for or paid back in speed. */
 function glide(sim: Sim, airplane: AirplaneState): void {
-  airplane.pitch = getPitchAfterSteering(airplane.pitch, { steering: airplane.steering, dt: sim.dt });
+  airplane.pitch = getPitchAfterSteering(airplane.pitch, {
+    steering: airplane.steering,
+    dt: sim.dt,
+  });
   const climbed = airplane.speed * Math.sin(airplane.pitch) * sim.dt;
   const forward = airplane.speed * Math.cos(airplane.pitch) * sim.dt;
-  const exchanged = climbed > 0 ? -climbed * FLIGHT.speedLostPerMetreClimbed : -climbed * FLIGHT.speedGainedPerMetreDived;
-  airplane.speed = Math.min(FLIGHT.fastestSpeed, airplane.speed + exchanged - FLIGHT.speedLostPerSecond * sim.dt);
-  const hasLanded = comeDownOrMoveTo(sim, airplane, { x: airplane.x + airplane.facing * forward, y: airplane.y - climbed });
-  if (!hasLanded && airplane.speed < FLIGHT.stallSpeed) stopGliding(airplane);
+  const exchanged =
+    climbed > 0
+      ? -climbed * FLIGHT.speedLostPerMetreClimbed
+      : -climbed * FLIGHT.speedGainedPerMetreDived;
+  airplane.speed = Math.min(
+    FLIGHT.fastestSpeed,
+    airplane.speed + exchanged - FLIGHT.speedLostPerSecond * sim.dt,
+  );
+  const hasLanded = comeDownOrMoveTo(sim, airplane, {
+    x: airplane.x + airplane.facing * forward,
+    y: airplane.y - climbed,
+  });
+  if (!hasLanded && airplane.speed < FLIGHT.stallSpeed) {
+    stopGliding(airplane);
+  }
 }
 
 /** One tick of falling: it drifts on sideways as it was going and drops faster and faster. */
@@ -95,16 +126,22 @@ function slide(sim: Sim, airplane: AirplaneState): void {
  * sideways speed it had. True when it came down. A floor line is not flown through from below either: under one, it
  * goes no higher than it is, and a glide ends there in a fall. Right for flat floors, which is all the levels have.
  */
-function comeDownOrMoveTo(sim: Sim, airplane: AirplaneState, end: { x: number; y: number }): boolean {
+function comeDownOrMoveTo(
+  sim: Sim,
+  airplane: AirplaneState,
+  end: { x: number; y: number },
+): boolean {
   const floorHeight = getFloorHeightAt(sim.levelDef.floor, end.x);
-  const isHittingFromBelow = floorHeight !== undefined && airplane.y > floorHeight && end.y <= floorHeight;
+  const isHittingFromBelow =
+    floorHeight !== undefined && airplane.y > floorHeight && end.y <= floorHeight;
   if (isHittingFromBelow) {
     stopGliding(airplane);
     airplane.verticalSpeed = Math.max(0, airplane.verticalSpeed);
     airplane.x = end.x;
     return false;
   }
-  const isComingDown = floorHeight !== undefined && airplane.y < floorHeight && end.y >= floorHeight;
+  const isComingDown =
+    floorHeight !== undefined && airplane.y < floorHeight && end.y >= floorHeight;
   if (!isComingDown) {
     airplane.x = end.x;
     airplane.y = end.y;
@@ -124,8 +161,15 @@ function comeDownOrMoveTo(sim: Sim, airplane: AirplaneState, end: { x: number; y
 
 /** Where its nose points a tick later: turned by the steer key that is held, or sinking back to where it rests when none is. */
 function getPitchAfterSteering(pitch: number, input: { steering: -1 | 0 | 1; dt: number }): number {
-  if (input.steering !== 0) return Math.max(FLIGHT.steepestDive, Math.min(FLIGHT.steepestClimb, pitch + input.steering * FLIGHT.pitchRate * input.dt));
+  if (input.steering !== 0) {
+    return Math.max(
+      FLIGHT.steepestDive,
+      Math.min(FLIGHT.steepestClimb, pitch + input.steering * FLIGHT.pitchRate * input.dt),
+    );
+  }
   const mostChange = FLIGHT.noseSinkRate * input.dt;
-  if (Math.abs(FLIGHT.restingPitch - pitch) <= mostChange) return FLIGHT.restingPitch;
+  if (Math.abs(FLIGHT.restingPitch - pitch) <= mostChange) {
+    return FLIGHT.restingPitch;
+  }
   return pitch + Math.sign(FLIGHT.restingPitch - pitch) * mostChange;
 }

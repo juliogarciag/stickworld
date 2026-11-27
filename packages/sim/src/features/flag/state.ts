@@ -5,4 +5,6 @@ export interface FlagState {
   reachedAtTick: number | null;
 }
 
-export const flagSlice = defineSlice<FlagState>('flag', () => ({ reachedAtTick: null }), { isCarriedAcrossLevels: false });
+export const flagSlice = defineSlice<FlagState>('flag', () => ({ reachedAtTick: null }), {
+  isCarriedAcrossLevels: false,
+});

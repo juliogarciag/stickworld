@@ -13,8 +13,12 @@ export const gameFeature: Feature = {
   name: 'game',
 
   handleCommand(sim, command) {
-    if (command.type !== 'game/playAgain') return;
-    if (isPlayingAgainOffered(sim)) sim.startOverAfterThisTick();
+    if (command.type !== 'game/playAgain') {
+      return;
+    }
+    if (isPlayingAgainOffered(sim)) {
+      sim.startOverAfterThisTick();
+    }
   },
 };
 
@@ -26,5 +30,9 @@ export function isGameOver(sim: Sim): boolean {
 /** True once the game has been over for long enough: the stick man is done cheering and walks about again, and `'game/playAgain'` is heard. Counted in whole ticks, as the pause after a flag is. */
 export function isPlayingAgainOffered(sim: Sim): boolean {
   const reachedAtTick = getTickFlagWasReached(sim);
-  return isGameOver(sim) && reachedAtTick !== null && sim.tick - reachedAtTick >= Math.round(GAME_END.playAgainAfter / sim.dt);
+  return (
+    isGameOver(sim) &&
+    reachedAtTick !== null &&
+    sim.tick - reachedAtTick >= Math.round(GAME_END.playAgainAfter / sim.dt)
+  );
 }

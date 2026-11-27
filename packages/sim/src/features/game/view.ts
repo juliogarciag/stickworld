@@ -10,6 +10,8 @@ export interface GameView {
 }
 
 export function getGame(handle: SimHandle): GameView {
-  if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
+  if (!(handle instanceof Sim)) {
+    throw new TypeError('not a sim made by createSim or restoreSim');
+  }
   return { isOver: isGameOver(handle), isPlayAgainOffered: isPlayingAgainOffered(handle) };
 }

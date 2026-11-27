@@ -11,7 +11,9 @@ describe('the edge of a sheet being turned away', () => {
     expect(hatches.length).toBeGreaterThan(20);
     for (const hatch of hatches) {
       expect(hatch.thickness).toBeLessThan(line!.thickness);
-      for (const point of hatch.points) expect(point.x).toBeGreaterThan(x);
+      for (const point of hatch.points) {
+        expect(point.x).toBeGreaterThan(x);
+      }
     }
     const hatchYs = hatches.flatMap((hatch) => hatch.points.map((point) => point.y));
     expect(Math.min(...hatchYs)).toBeLessThan(SEEN.y);
@@ -19,7 +21,10 @@ describe('the edge of a sheet being turned away', () => {
   });
 
   it('moves with the sheet, and is the same hatching wherever it is', () => {
-    const getPointXsAt = (edgeAt: number): number[] => buildPageEdgeStrokes(edgeAt, SEEN).flatMap((stroke) => stroke.points.map((point) => point.x - (SEEN.x + edgeAt * SEEN.width)));
+    const getPointXsAt = (edgeAt: number): number[] =>
+      buildPageEdgeStrokes(edgeAt, SEEN).flatMap((stroke) =>
+        stroke.points.map((point) => point.x - (SEEN.x + edgeAt * SEEN.width)),
+      );
     expect(getPointXsAt(0.2)).toEqual(getPointXsAt(0.9).map((x) => expect.closeTo(x, 6)));
   });
 });

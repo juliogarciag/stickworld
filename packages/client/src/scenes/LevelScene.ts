@@ -45,19 +45,32 @@ export class LevelScene extends Phaser.Scene {
   }
 
   override update(_time: number, deltaMs: number): void {
-    for (const command of this.commandsFor({ keys: this.getHeldKeys(), sim: this.loop.sim })) this.loop.queueCommand(command);
+    for (const command of this.commandsFor({ keys: this.getHeldKeys(), sim: this.loop.sim })) {
+      this.loop.queueCommand(command);
+    }
     const seconds = getFrameSeconds(deltaMs);
     this.loop.advanceBy(seconds);
 
     const camera = this.cameras.main;
     const finished = this.loop.takeFinishedLevel();
     // The camera still looks at the level that was left: the sheet that is turned away is drawn as it was last seen.
-    if (finished) this.pageTurn.start({ sim: finished, camera: { scrollX: camera.scrollX, scrollY: camera.scrollY, zoom: camera.zoom } });
-    else this.pageTurn.advanceBy(seconds);
+    if (finished) {
+      this.pageTurn.start({
+        sim: finished,
+        camera: { scrollX: camera.scrollX, scrollY: camera.scrollY, zoom: camera.zoom },
+      });
+    } else {
+      this.pageTurn.advanceBy(seconds);
+    }
 
     const { sim } = this.loop;
-    const isSheetOnTop = this.onTop !== undefined && this.onTop.sim === sim && this.onTop.level === sim.level;
-    this.onTop = { sim, level: sim.level, seconds: isSheetOnTop && this.onTop ? this.onTop.seconds + seconds : 0 };
+    const isSheetOnTop =
+      this.onTop !== undefined && this.onTop.sim === sim && this.onTop.level === sim.level;
+    this.onTop = {
+      sim,
+      level: sim.level,
+      seconds: isSheetOnTop && this.onTop ? this.onTop.seconds + seconds : 0,
+    };
     this.follow({ stickMan: getStickMan(sim), floor: getLevel(sim).floor, seconds });
     this.sheet.draw({ sim, seconds, secondsOnSheet: this.onTop.seconds });
   }

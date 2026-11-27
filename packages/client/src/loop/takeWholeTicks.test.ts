@@ -12,7 +12,12 @@ describe('takeWholeTicks', () => {
     let acc = 0;
     let total = 0;
     for (let i = 0; i < 100; i += 1) {
-      const r = takeWholeTicks({ leftover: acc, deltaSeconds: 0.0069, dt: DT, maxFrameSeconds: MAX }); // 144 Hz frames
+      const r = takeWholeTicks({
+        leftover: acc,
+        deltaSeconds: 0.0069,
+        dt: DT,
+        maxFrameSeconds: MAX,
+      }); // 144 Hz frames
       acc = r.leftover;
       total += r.ticks;
     }
@@ -21,15 +26,21 @@ describe('takeWholeTicks', () => {
   });
 
   it('runs several ticks for a long frame', () => {
-    expect(takeWholeTicks({ leftover: 0, deltaSeconds: 0.05, dt: DT, maxFrameSeconds: MAX }).ticks).toBe(3);
+    expect(
+      takeWholeTicks({ leftover: 0, deltaSeconds: 0.05, dt: DT, maxFrameSeconds: MAX }).ticks,
+    ).toBe(3);
   });
 
   it('clamps huge frames (tab switch) instead of spiralling', () => {
-    expect(takeWholeTicks({ leftover: 0, deltaSeconds: 10, dt: DT, maxFrameSeconds: MAX }).ticks).toBe(Math.round(MAX / DT));
+    expect(
+      takeWholeTicks({ leftover: 0, deltaSeconds: 10, dt: DT, maxFrameSeconds: MAX }).ticks,
+    ).toBe(Math.round(MAX / DT));
   });
 
   it('ignores negative deltas', () => {
-    expect(takeWholeTicks({ leftover: 0.005, deltaSeconds: -1, dt: DT, maxFrameSeconds: MAX })).toEqual({ ticks: 0, leftover: 0.005 });
+    expect(
+      takeWholeTicks({ leftover: 0.005, deltaSeconds: -1, dt: DT, maxFrameSeconds: MAX }),
+    ).toEqual({ ticks: 0, leftover: 0.005 });
   });
 });
 

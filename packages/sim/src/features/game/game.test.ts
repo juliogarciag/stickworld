@@ -18,7 +18,12 @@ import { getGame } from './view';
 
 describe('the game', () => {
   it('is not over on any level until its last flag is reached', () => {
-    for (const level of levels) expect(getGame(new Sim({ features, start: { seed: 1, level: level.id } }))).toEqual({ isOver: false, isPlayAgainOffered: false });
+    for (const level of levels) {
+      expect(getGame(new Sim({ features, start: { seed: 1, level: level.id } }))).toEqual({
+        isOver: false,
+        isPlayAgainOffered: false,
+      });
+    }
     const finishedFirst = createSimAtFlagOf(levels[0]!.id);
     expect(getFlag(finishedFirst)!.isReached).toBe(true);
     expect(getGame(finishedFirst)).toEqual({ isOver: false, isPlayAgainOffered: false });
@@ -28,7 +33,9 @@ describe('the game', () => {
     const sim = createSimAtFlagOf(LAST_LEVEL.id);
     expect(getGame(sim)).toEqual({ isOver: true, isPlayAgainOffered: false });
     // The flag was reached on the tick before this one: one tick of the wait has passed.
-    for (let tick = 1; tick < OFFERED_AFTER_TICKS - 1; tick += 1) sim.step();
+    for (let tick = 1; tick < OFFERED_AFTER_TICKS - 1; tick += 1) {
+      sim.step();
+    }
     expect(getGame(sim)).toEqual({ isOver: true, isPlayAgainOffered: false });
     sim.step();
     expect(getGame(sim)).toEqual({ isOver: true, isPlayAgainOffered: true });
@@ -54,7 +61,9 @@ describe("'game/playAgain'", () => {
     const sim = createSimAtFlagOf(LAST_LEVEL.id);
     giveItem(sim, PAPER_ITEM_ID);
     teachRecipe(sim, PAPER_AIRPLANE_RECIPE_ID);
-    for (let tick = 0; tick < OFFERED_AFTER_TICKS; tick += 1) sim.step();
+    for (let tick = 0; tick < OFFERED_AFTER_TICKS; tick += 1) {
+      sim.step();
+    }
     const tick = sim.tick;
     sim.step([{ type: 'game/playAgain' }]);
     expect(sim.level).toBe(levels[0]!.id);
@@ -72,9 +81,13 @@ describe("'game/playAgain'", () => {
 
   it('is in the snapshot: a game restored after the end is played again the same way', () => {
     const sim = createSimAtFlagOf(LAST_LEVEL.id);
-    for (let tick = 0; tick < OFFERED_AFTER_TICKS; tick += 1) sim.step();
+    for (let tick = 0; tick < OFFERED_AFTER_TICKS; tick += 1) {
+      sim.step();
+    }
     const restored = new Sim({ features, snapshot: sim.takeSnapshot() });
-    for (const each of [sim, restored]) each.step([{ type: 'game/playAgain' }]);
+    for (const each of [sim, restored]) {
+      each.step([{ type: 'game/playAgain' }]);
+    }
     expect(restored.takeSnapshot()).toEqual(sim.takeSnapshot());
     expect(restored.level).toBe(levels[0]!.id);
   });
@@ -90,7 +103,16 @@ function createSimAtFlagOf(level: number): Sim {
   const fresh = new Sim({ features, start: { seed: 1, level } });
   const flagAt = findFlagPlacedIn(fresh.levelDef)!.position;
   const snapshot = fresh.takeSnapshot();
-  const sim = new Sim({ features, snapshot: { ...snapshot, slices: { ...snapshot.slices, player: { ...(snapshot.slices.player as object), x: flagAt.x, y: flagAt.y } } } });
+  const sim = new Sim({
+    features,
+    snapshot: {
+      ...snapshot,
+      slices: {
+        ...snapshot.slices,
+        player: { ...(snapshot.slices.player as object), x: flagAt.x, y: flagAt.y },
+      },
+    },
+  });
   sim.step();
   expect(getFlag(sim)!.isReached).toBe(true);
   return sim;

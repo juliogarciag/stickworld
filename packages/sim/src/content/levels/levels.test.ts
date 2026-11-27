@@ -11,7 +11,9 @@ describe('levels', () => {
   describe.each(levels.map((level) => [level.id, level] as const))('level %i', (_, level) => {
     it('has a floor of segments that run left to right and do not overlap', () => {
       expect(level.floor.length).toBeGreaterThan(0);
-      for (const segment of level.floor) expect(segment.end.x).toBeGreaterThan(segment.start.x);
+      for (const segment of level.floor) {
+        expect(segment.end.x).toBeGreaterThan(segment.start.x);
+      }
       for (let index = 1; index < level.floor.length; index += 1) {
         expect(level.floor[index].start.x).toBeGreaterThanOrEqual(level.floor[index - 1].end.x);
       }
@@ -27,16 +29,24 @@ describe('levels', () => {
     it('has no gap the stick man is too wide to fall into: the two ends of a gap never push the stick man at once', () => {
       for (let index = 1; index < level.floor.length; index += 1) {
         const gap = level.floor[index].start.x - level.floor[index - 1].end.x;
-        if (gap > 0) expect(gap).toBeGreaterThan(STICK_MAN_WIDTH);
+        if (gap > 0) {
+          expect(gap).toBeGreaterThan(STICK_MAN_WIDTH);
+        }
       }
     });
 
     it('starts the stick man over the floor', () => {
-      expect(level.floor.some((segment) => segment.start.x <= level.start.x && level.start.x <= segment.end.x)).toBe(true);
+      expect(
+        level.floor.some(
+          (segment) => segment.start.x <= level.start.x && level.start.x <= segment.end.x,
+        ),
+      ).toBe(true);
     });
 
     it('places only things that have a def', () => {
-      for (const placement of level.placements) expect(getDef(placement.defId), `def ${placement.defId}`).toBeDefined();
+      for (const placement of level.placements) {
+        expect(getDef(placement.defId), `def ${placement.defId}`).toBeDefined();
+      }
     });
   });
 });

@@ -36,14 +36,38 @@ export interface EndScreen {
  * view has room for, with the key that plays again and its words under them.
  */
 export function buildEndScreenStrokes(endScreen: EndScreen, seen: Rectangle): Stroke[] {
-  const widthOfOne = buildWriting(END_SCREEN.words, { position: { x: 0, y: 0 }, letterHeight: 1 }).width;
-  const letterHeight = Math.min(END_SCREEN.letterHeight, (seen.width * END_SCREEN.maxWidthShare) / widthOfOne);
+  const widthOfOne = buildWriting(END_SCREEN.words, {
+    position: { x: 0, y: 0 },
+    letterHeight: 1,
+  }).width;
+  const letterHeight = Math.min(
+    END_SCREEN.letterHeight,
+    (seen.width * END_SCREEN.maxWidthShare) / widthOfOne,
+  );
   const top = seen.y + seen.height * END_SCREEN.topMargin;
-  const words = buildWriting(END_SCREEN.words, { position: { x: seen.x + (seen.width - widthOfOne * letterHeight) / 2, y: top }, letterHeight }).strokes;
-  if (endScreen.playAgainKey === null) return [...getWrittenSoFar(words, endScreen.shareWritten)];
-  const prompt = { keys: [endScreen.playAgainKey], words: END_SCREEN.playAgain, sizes: END_SCREEN.prompt };
+  const words = buildWriting(END_SCREEN.words, {
+    position: { x: seen.x + (seen.width - widthOfOne * letterHeight) / 2, y: top },
+    letterHeight,
+  }).strokes;
+  if (endScreen.playAgainKey === null) {
+    return [...getWrittenSoFar(words, endScreen.shareWritten)];
+  }
+  const prompt = {
+    keys: [endScreen.playAgainKey],
+    words: END_SCREEN.playAgain,
+    sizes: END_SCREEN.prompt,
+  };
   const { width } = buildKeysAndWords({ ...prompt, position: { x: 0, y: 0 } });
-  return [...getWrittenSoFar(words, endScreen.shareWritten), ...buildKeysAndWords({ ...prompt, position: { x: seen.x + (seen.width - width) / 2, y: top + letterHeight + END_SCREEN.promptGap } }).strokes];
+  return [
+    ...getWrittenSoFar(words, endScreen.shareWritten),
+    ...buildKeysAndWords({
+      ...prompt,
+      position: {
+        x: seen.x + (seen.width - width) / 2,
+        y: top + letterHeight + END_SCREEN.promptGap,
+      },
+    }).strokes,
+  ];
 }
 
 // ---- Helpers ----

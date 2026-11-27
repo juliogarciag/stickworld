@@ -17,10 +17,14 @@ describe('a page turn', () => {
   });
 
   it('slides the sheet one way only, slowly at first, from covering the view to out of it', () => {
-    const edges = Array.from({ length: 55 }, (_, frame) => getEdgeAfter((frame / 54) * TURN.seconds));
+    const edges = Array.from({ length: 55 }, (_, frame) =>
+      getEdgeAfter((frame / 54) * TURN.seconds),
+    );
     expect(edges[0]).toBe(1);
     expect(edges[edges.length - 1]).toBeLessThan(0);
-    for (let frame = 1; frame < edges.length; frame += 1) expect(edges[frame]).toBeLessThan(edges[frame - 1]!);
+    for (let frame = 1; frame < edges.length; frame += 1) {
+      expect(edges[frame]).toBeLessThan(edges[frame - 1]!);
+    }
     // A tenth of the way through the time it has hardly moved.
     expect(getEdgeAfter(TURN.seconds / 10)).toBeGreaterThan(0.95);
   });

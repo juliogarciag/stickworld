@@ -22,14 +22,18 @@ describe('buildLetterSheetStrokes', () => {
   it('says under the text what the letter has taught the stick man, inside a sheet that is taller for it', () => {
     const [plainSheet, ...plainWords] = buildLetterSheetStrokes(LETTER, CAMERA_SEES);
     const [sheet, ...words] = buildLetterSheetStrokes(TEACHING, CAMERA_SEES);
-    expect(words).toHaveLength(plainWords.length + buildWriting('learned: paper airplane', WRITING).strokes.length);
+    expect(words).toHaveLength(
+      plainWords.length + buildWriting('learned: paper airplane', WRITING).strokes.length,
+    );
     expect(measureHeight([sheet!])).toBeGreaterThan(measureHeight([plainSheet!]));
     expect(getBounds(words).bottom).toBeGreaterThan(getBounds(plainWords).bottom);
     expect(getBounds(words).bottom).toBeLessThan(getBounds([sheet!]).bottom);
   });
 
   it('is taller for a longer letter, and stays on a narrow screen', () => {
-    expect(measureHeight(buildLetterSheetStrokes({ ...LETTER, text: `${TEXT} ${TEXT}` }, CAMERA_SEES))).toBeGreaterThan(measureHeight(buildLetterSheetStrokes(LETTER, CAMERA_SEES)));
+    expect(
+      measureHeight(buildLetterSheetStrokes({ ...LETTER, text: `${TEXT} ${TEXT}` }, CAMERA_SEES)),
+    ).toBeGreaterThan(measureHeight(buildLetterSheetStrokes(LETTER, CAMERA_SEES)));
     const narrow = { ...CAMERA_SEES, width: 600 };
     const box = getBounds(buildLetterSheetStrokes(TEACHING, narrow));
     expect(box.left).toBeGreaterThan(narrow.x);
@@ -47,7 +51,12 @@ const TEACHING = { text: TEXT, teaches: 'paper airplane' };
 
 function getBounds(strokes: readonly Stroke[]) {
   const points = strokes.flatMap((stroke) => stroke.points);
-  return { left: Math.min(...points.map((point) => point.x)), right: Math.max(...points.map((point) => point.x)), top: Math.min(...points.map((point) => point.y)), bottom: Math.max(...points.map((point) => point.y)) };
+  return {
+    left: Math.min(...points.map((point) => point.x)),
+    right: Math.max(...points.map((point) => point.x)),
+    top: Math.min(...points.map((point) => point.y)),
+    bottom: Math.max(...points.map((point) => point.y)),
+  };
 }
 
 function measureHeight(strokes: readonly Stroke[]): number {
