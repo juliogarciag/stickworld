@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import type { Stroke } from '../render/strokes';
-import { written } from './handwriting';
-import { letterSheetStrokes } from './panels';
+import { buildWriting } from './handwriting';
+import { buildLetterSheetStrokes } from './panels';
 
-describe('letterSheetStrokes', () => {
+describe('buildLetterSheetStrokes', () => {
   it('draws a sheet near the top of the screen with all of the text inside it', () => {
-    const [sheet, ...words] = letterSheetStrokes(LETTER, CAMERA_SEES);
+    const [sheet, ...words] = buildLetterSheetStrokes(LETTER, CAMERA_SEES);
     expect(sheet).toMatchObject({ closed: true });
     expect(words.length).toBeGreaterThan(TEXT.replaceAll(' ', '').length / 2);
-    const box = boundsOf([sheet!]);
-    const text = boundsOf(words);
+    const box = getBounds([sheet!]);
+    const text = getBounds(words);
     expect(text.left).toBeGreaterThan(box.left);
     expect(text.right).toBeLessThan(box.right);
     expect(text.top).toBeGreaterThan(box.top);
@@ -20,18 +20,18 @@ describe('letterSheetStrokes', () => {
   });
 
   it('says under the text what the letter has taught him, inside a sheet that is taller for it', () => {
-    const [plainSheet, ...plainWords] = letterSheetStrokes(LETTER, CAMERA_SEES);
-    const [sheet, ...words] = letterSheetStrokes(TEACHING, CAMERA_SEES);
-    expect(words).toHaveLength(plainWords.length + written('learned: paper airplane', WRITING).strokes.length);
-    expect(heightOf([sheet!])).toBeGreaterThan(heightOf([plainSheet!]));
-    expect(boundsOf(words).bottom).toBeGreaterThan(boundsOf(plainWords).bottom);
-    expect(boundsOf(words).bottom).toBeLessThan(boundsOf([sheet!]).bottom);
+    const [plainSheet, ...plainWords] = buildLetterSheetStrokes(LETTER, CAMERA_SEES);
+    const [sheet, ...words] = buildLetterSheetStrokes(TEACHING, CAMERA_SEES);
+    expect(words).toHaveLength(plainWords.length + buildWriting('learned: paper airplane', WRITING).strokes.length);
+    expect(measureHeight([sheet!])).toBeGreaterThan(measureHeight([plainSheet!]));
+    expect(getBounds(words).bottom).toBeGreaterThan(getBounds(plainWords).bottom);
+    expect(getBounds(words).bottom).toBeLessThan(getBounds([sheet!]).bottom);
   });
 
   it('is taller for a longer letter, and stays on a narrow screen', () => {
-    expect(heightOf(letterSheetStrokes({ ...LETTER, text: `${TEXT} ${TEXT}` }, CAMERA_SEES))).toBeGreaterThan(heightOf(letterSheetStrokes(LETTER, CAMERA_SEES)));
+    expect(measureHeight(buildLetterSheetStrokes({ ...LETTER, text: `${TEXT} ${TEXT}` }, CAMERA_SEES))).toBeGreaterThan(measureHeight(buildLetterSheetStrokes(LETTER, CAMERA_SEES)));
     const narrow = { ...CAMERA_SEES, width: 600 };
-    const box = boundsOf(letterSheetStrokes(TEACHING, narrow));
+    const box = getBounds(buildLetterSheetStrokes(TEACHING, narrow));
     expect(box.left).toBeGreaterThan(narrow.x);
     expect(box.right).toBeLessThan(narrow.x + narrow.width);
   });
@@ -45,12 +45,12 @@ const TEXT = 'A sheet of paper can fly. Fold it into an airplane and carry it to
 const LETTER = { text: TEXT, teaches: null };
 const TEACHING = { text: TEXT, teaches: 'paper airplane' };
 
-function boundsOf(strokes: readonly Stroke[]) {
+function getBounds(strokes: readonly Stroke[]) {
   const points = strokes.flatMap((stroke) => stroke.points);
   return { left: Math.min(...points.map((point) => point.x)), right: Math.max(...points.map((point) => point.x)), top: Math.min(...points.map((point) => point.y)), bottom: Math.max(...points.map((point) => point.y)) };
 }
 
-function heightOf(strokes: readonly Stroke[]): number {
-  const { top, bottom } = boundsOf(strokes);
+function measureHeight(strokes: readonly Stroke[]): number {
+  const { top, bottom } = getBounds(strokes);
   return bottom - top;
 }

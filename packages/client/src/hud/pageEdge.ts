@@ -1,4 +1,4 @@
-import { fixedUnits } from '../render/fixedUnits';
+import { createFixedUnits } from '../render/fixedUnits';
 import type { Stroke } from '../render/strokes';
 import { PENCIL } from '../render/strokes/pencil';
 import type { Rectangle } from './itemSlots';
@@ -9,9 +9,9 @@ import type { Rectangle } from './itemSlots';
  * the sheet under it, as hatching. Where the edge is comes from the page
  * turn; how it is drawn is decided here.
  */
-export function pageEdgeStrokes(edgeAt: number, seen: Rectangle): Stroke[] {
+export function buildPageEdgeStrokes(edgeAt: number, seen: Rectangle): Stroke[] {
   const x = seen.x + edgeAt * seen.width;
-  const nextUnit = fixedUnits(0x7a9e);
+  const nextUnit = createFixedUnits(0x7a9e);
   const hatches: Stroke[] = [];
   for (let y = seen.y - EDGE.hatchLength; y < seen.y + seen.height; y += EDGE.betweenHatches) {
     const length = EDGE.hatchLength * (0.45 + 0.55 * nextUnit());

@@ -1,4 +1,4 @@
-import { createSim, FIXED_DT, flagOf, levelOf, stickManOf, type Command, type SimHandle } from '@stickworld/sim';
+import { createSim, FIXED_DT, getFlag, getLevel, getStickMan, type Command, type SimHandle } from '@stickworld/sim';
 import { describe, expect, it } from 'vitest';
 import { GameLoop } from './GameLoop';
 
@@ -11,13 +11,13 @@ describe('GameLoop', () => {
   });
 
   it('hands queued commands to the next earned tick, once', () => {
-    const { sim, steps } = recordingSim();
+    const { sim, steps } = createRecordingSim();
     const loop = new GameLoop(sim);
-    loop.queueCommand(fakeCommand('a'));
+    loop.queueCommand(makeFakeCommand('a'));
     loop.advanceBy(FIXED_DT / 2);
     expect(steps).toHaveLength(0);
     loop.advanceBy(FIXED_DT * 2);
-    expect(steps).toEqual([[fakeCommand('a')], []]);
+    expect(steps).toEqual([[makeFakeCommand('a')], []]);
   });
 
   it('keeps the level that gave way to the next as it was on its last tick, to be taken once', () => {
@@ -33,7 +33,7 @@ describe('GameLoop', () => {
     const finished = loop.takeFinishedLevel()!;
     expect(finished.level).toBe(1);
     expect(finished.tick).toBe(lastTickOnLevel1);
-    expect(flagOf(finished)).toMatchObject({ reached: true, raised: 1 });
+    expect(getFlag(finished)).toMatchObject({ reached: true, raised: 1 });
     expect(loop.takeFinishedLevel()).toBeUndefined();
   });
 
@@ -41,13 +41,13 @@ describe('GameLoop', () => {
     const loop = new GameLoop(createSim({ level: 1 }));
     loop.queueCommand({ type: 'player/walk', direction: -1 });
     let deepest = 0;
-    for (let frame = 0; frame < 60 * 6 && !(deepest > 1 && stickManOf(loop.sim).feet.y === 0); frame += 1) {
+    for (let frame = 0; frame < 60 * 6 && !(deepest > 1 && getStickMan(loop.sim).feet.y === 0); frame += 1) {
       loop.advanceBy(FIXED_DT);
-      deepest = Math.max(deepest, stickManOf(loop.sim).feet.y);
+      deepest = Math.max(deepest, getStickMan(loop.sim).feet.y);
     }
     // He fell off the paper and is back where the level starts.
     expect(deepest).toBeGreaterThan(1);
-    expect(stickManOf(loop.sim).feet).toEqual(levelOf(loop.sim).start);
+    expect(getStickMan(loop.sim).feet).toEqual(getLevel(loop.sim).start);
     expect(loop.sim.level).toBe(1);
     expect(loop.takeFinishedLevel()).toBeUndefined();
   });
@@ -63,12 +63,12 @@ describe('GameLoop', () => {
 // ---- Helpers ----
 
 /** No feature has commands yet, so the test sends one the sim will ignore. */
-function fakeCommand(name: string): Command {
+function makeFakeCommand(name: string): Command {
   return { type: `test/${name}` } as unknown as Command;
 }
 
 /** A sim that only counts ticks and records the commands each tick was given. */
-function recordingSim(): { sim: SimHandle; steps: (readonly Command[])[] } {
+function createRecordingSim(): { sim: SimHandle; steps: (readonly Command[])[] } {
   const steps: (readonly Command[])[] = [];
   const sim = {
     tick: 0,
@@ -79,7 +79,7 @@ function recordingSim(): { sim: SimHandle; steps: (readonly Command[])[] } {
       steps.push(commands);
       sim.tick += 1;
     },
-    snapshot: () => createSim({ level: 1 }).snapshot(),
+    takeSnapshot: () => createSim({ level: 1 }).takeSnapshot(),
   };
   return { sim, steps };
 }

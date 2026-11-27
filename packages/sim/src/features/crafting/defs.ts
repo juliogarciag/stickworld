@@ -18,6 +18,6 @@ export const PAPER_AIRPLANE_RECIPE_ID = 400;
 export const recipeDefs: readonly RecipeDef[] = [{ id: PAPER_AIRPLANE_RECIPE_ID, name: 'paper airplane', madeFrom: PAPER_ITEM_ID, makes: AIRPLANE_ITEM_ID }];
 
 /** The recipe with this id, or undefined if none has it. */
-export function recipeDef(id: number): RecipeDef | undefined {
+export function getRecipeDef(id: number): RecipeDef | undefined {
   return recipeDefs.find((def) => def.id === id);
 }

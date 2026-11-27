@@ -8,6 +8,9 @@
  * and games of random keys. After every tick the two sims' whole state must
  * hash the same.
  *
+ * The build from before still has its functions under their old names (`stickManOf`, `snapshot()`); this branch renamed
+ * them (`getStickMan`, `takeSnapshot()`), so only what both are asked is spelled twice below.
+ *
  * The scripted player decides from the sim built from the commit before, and
  * both sims are given the same commands, so a difference shows as a hash that
  * differs and not as two players who went different ways.
@@ -111,9 +114,9 @@ function playBoth({ simBefore, simNow, from, seed, mostTicks, commandsFor }) {
     else if (backAtTheStart) counts.fallsToDeath += 1;
     if (a.level !== was.level && !was.offered) counts.nextLevels += 1;
     if (was.offered && commands.some((command) => command.type === 'game/playAgain')) counts.playedAgain += 1;
-    const [hashA, hashB] = [simBefore.hashSnapshot(a.snapshot()), simNow.hashSnapshot(b.snapshot())];
+    const [hashA, hashB] = [simBefore.hashSnapshot(a.snapshot()), simNow.hashSnapshot(b.takeSnapshot())];
     if (hashA !== hashB) {
-      difference = { atTick: a.tick, before: a.snapshot(), now: b.snapshot() };
+      difference = { atTick: a.tick, before: a.snapshot(), now: b.takeSnapshot() };
       break;
     }
   }

@@ -9,19 +9,19 @@ import { inventorySlice } from './state';
  */
 
 /** The def id of the item in the selected slot, or null when no slot is selected or the selected one is empty. */
-export function selectedItemOf(sim: Sim): number | null {
-  const { slots, selectedSlot } = sim.stateOf(inventorySlice);
+export function getSelectedItem(sim: Sim): number | null {
+  const { slots, selectedSlot } = sim.getStateOf(inventorySlice);
   return selectedSlot === null ? null : (slots[selectedSlot - 1] ?? null);
 }
 
 /** True when one of his slots holds the item `itemDefId`. */
-export function holdsItem(sim: Sim, itemDefId: number): boolean {
-  return sim.stateOf(inventorySlice).slots.includes(itemDefId);
+export function isHoldingItem(sim: Sim, itemDefId: number): boolean {
+  return sim.getStateOf(inventorySlice).slots.includes(itemDefId);
 }
 
 /** Selects the slot that holds the item `itemDefId`, and says whether one does. Nothing changes when none does. */
 export function selectItem(sim: Sim, itemDefId: number): boolean {
-  const inventory = sim.stateOf(inventorySlice);
+  const inventory = sim.getStateOf(inventorySlice);
   const index = inventory.slots.indexOf(itemDefId);
   if (index === -1) return false;
   inventory.selectedSlot = index + 1;
@@ -33,7 +33,7 @@ export function selectItem(sim: Sim, itemDefId: number): boolean {
  * whether it did. With no slot selected, or for an id that is not an item's, nothing changes.
  */
 export function replaceSelectedItem(sim: Sim, itemDefId: number | null): boolean {
-  const { slots, selectedSlot } = sim.stateOf(inventorySlice);
+  const { slots, selectedSlot } = sim.getStateOf(inventorySlice);
   if (selectedSlot === null || (itemDefId !== null && !isItemDefId(itemDefId))) return false;
   slots[selectedSlot - 1] = itemDefId;
   return true;

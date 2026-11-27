@@ -1,6 +1,6 @@
 import type { Stroke, StrokePoint } from '../render/strokes';
 import { PENCIL } from '../render/strokes/pencil';
-import { written } from './handwriting';
+import { buildWriting } from './handwriting';
 
 /**
  * How the game shows a key to the player, wherever it does: the key's name
@@ -31,20 +31,20 @@ export interface KeysAndWords {
 }
 
 /** The strokes of the boxed keys and their words, with how wide all of it came out. For each key its box, then its name; the words last. */
-export function keysAndWords({ keys, words, at, sizes }: KeysAndWords): { strokes: Stroke[]; width: number } {
+export function buildKeysAndWords({ keys, words, at, sizes }: KeysAndWords): { strokes: Stroke[]; width: number } {
   const strokes: Stroke[] = [];
   const letterTop = at.y + (sizes.keySide - sizes.letterHeight) / 2;
   let x = at.x;
   for (const key of keys) {
-    const name = written(key, { at: { x: 0, y: 0 }, letterHeight: sizes.letterHeight });
+    const name = buildWriting(key, { at: { x: 0, y: 0 }, letterHeight: sizes.letterHeight });
     const box = { x, y: at.y, width: Math.max(sizes.keySide, name.width + 2 * sizes.insideTheKey), height: sizes.keySide };
     strokes.push(
       { points: [{ x: box.x, y: box.y }, { x: box.x + box.width, y: box.y }, { x: box.x + box.width, y: box.y + box.height }, { x: box.x, y: box.y + box.height }], thickness: Math.min(PENCIL.thickness, sizes.keySide * BOX_THICKNESS), closed: true },
-      ...written(key, { at: { x: box.x + (box.width - name.width) / 2, y: letterTop }, letterHeight: sizes.letterHeight }).strokes,
+      ...buildWriting(key, { at: { x: box.x + (box.width - name.width) / 2, y: letterTop }, letterHeight: sizes.letterHeight }).strokes,
     );
     x += box.width + sizes.besideTheKey;
   }
-  const said = written(words, { at: { x, y: letterTop }, letterHeight: sizes.letterHeight });
+  const said = buildWriting(words, { at: { x, y: letterTop }, letterHeight: sizes.letterHeight });
   strokes.push(...said.strokes);
   return { strokes, width: x + said.width - at.x };
 }

@@ -1,6 +1,6 @@
 import type Phaser from 'phaser';
 import type { StrokeLayer } from './stroke';
-import { graphicsStrokeLayer } from './graphicsLayer';
+import { createGraphicsStrokeLayer } from './graphicsLayer';
 
 /**
  * The only place a pencil stroke is drawn (AGENTS.md rule 12, ADR 0002).
@@ -18,5 +18,5 @@ export type { ColouredPencil, Stroke, StrokeLayer, StrokePoint } from './stroke'
 
 /** A layer of pencil strokes in `scene`, drawn above what the scene already has. */
 export function createStrokeLayer(scene: Phaser.Scene): StrokeLayer {
-  return graphicsStrokeLayer(scene);
+  return createGraphicsStrokeLayer(scene);
 }

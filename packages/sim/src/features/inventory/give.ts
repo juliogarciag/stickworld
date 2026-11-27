@@ -10,7 +10,7 @@ import { inventorySlice } from './state';
  */
 export function giveItem(sim: Sim, itemDefId: number): boolean {
   if (!isItemDefId(itemDefId)) return false;
-  const { slots } = sim.stateOf(inventorySlice);
+  const { slots } = sim.getStateOf(inventorySlice);
   if (slots.includes(itemDefId)) return true;
   const emptySlot = slots.indexOf(null);
   if (emptySlot === -1) return false;

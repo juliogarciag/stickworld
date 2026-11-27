@@ -1,6 +1,6 @@
 import type Phaser from 'phaser';
-import { worldSeenBy } from './cameraView';
-import { fixedUnits } from './fixedUnits';
+import { getWorldSeenBy } from './cameraView';
+import { createFixedUnits } from './fixedUnits';
 
 /** The colour of the sheet of paper the game is drawn on. index.html uses the same colour behind the canvas. */
 export const PAPER_COLOUR = '#f3eee2';
@@ -65,7 +65,7 @@ export function layPaper(scene: Phaser.Scene): Paper {
   const tooth = scene.add.tileSprite(0, 0, TOOTH.tileSize, TOOTH.tileSize, TOOTH_TEXTURE).setOrigin(0, 0).setDepth(TOOTH_DEPTH);
   return {
     cover(camera) {
-      const seen = worldSeenBy(camera);
+      const seen = getWorldSeenBy(camera);
       // The sheet's grain is painted in screen pixels, so it is as fine as the screen; the tooth in world pixels.
       sheet.setPosition(seen.x, seen.y).setSize(seen.width, seen.height);
       sheet.setTileScale(1 / seen.zoom);
@@ -90,7 +90,7 @@ function paintOnce(scene: Phaser.Scene, { key, size, paint }: { key: string; siz
 /** Paints one repeatable tile of tooth: the paper's colour, strong at the specks the pencil does not reach and a faint haze everywhere else. */
 function paintTooth(context: CanvasRenderingContext2D): void {
   const size = TOOTH.tileSize;
-  const nextUnit = fixedUnits(0x51ec);
+  const nextUnit = createFixedUnits(0x51ec);
   context.fillStyle = PAPER_COLOUR;
   context.fillRect(0, 0, size, size);
   const image = context.getImageData(0, 0, size, size);
@@ -104,7 +104,7 @@ function paintTooth(context: CanvasRenderingContext2D): void {
 /** Paints one repeatable tile of paper: the colour, uneven patches, fibres, and a speckle on every pixel. */
 function paintGrain(context: CanvasRenderingContext2D): void {
   const size = GRAIN.tileSize;
-  const nextUnit = fixedUnits(0x9a9e7);
+  const nextUnit = createFixedUnits(0x9a9e7);
   context.fillStyle = PAPER_COLOUR;
   context.fillRect(0, 0, size, size);
 
@@ -113,9 +113,9 @@ function paintGrain(context: CanvasRenderingContext2D): void {
     const y = nextUnit() * size;
     const radius = GRAIN.patchRadius * (0.5 + nextUnit() * 0.5);
     const shade = nextUnit() < 0.5 ? '120, 100, 70' : '255, 255, 250';
-    onEveryRepeat(size, (offsetX, offsetY) => {
+    runOnEveryRepeat(size, (offsetX, offsetY) => {
       // A patch fades to nothing at its radius, so only the pixels it reaches are filled: nine fills of the whole tile for each patch block the page for over a second.
-      const reached = pixelsOfTileWithin({ size, x: x + offsetX, y: y + offsetY, radius });
+      const reached = getPixelsOfTileWithin({ size, x: x + offsetX, y: y + offsetY, radius });
       if (!reached) return;
       const gradient = context.createRadialGradient(x + offsetX, y + offsetY, 0, x + offsetX, y + offsetY, radius);
       gradient.addColorStop(0, `rgba(${shade}, ${GRAIN.patchAlpha})`);
@@ -133,7 +133,7 @@ function paintGrain(context: CanvasRenderingContext2D): void {
     const length = GRAIN.fibreLength * (0.3 + nextUnit() * 0.7);
     const bend = (nextUnit() - 0.5) * length * 0.5;
     context.strokeStyle = nextUnit() < 0.6 ? `rgba(90, 75, 50, ${GRAIN.fibreAlpha})` : `rgba(255, 255, 255, ${GRAIN.fibreAlpha * 3})`;
-    onEveryRepeat(size, (offsetX, offsetY) => {
+    runOnEveryRepeat(size, (offsetX, offsetY) => {
       const endX = x + offsetX + Math.cos(angle) * length;
       const endY = y + offsetY + Math.sin(angle) * length;
       context.beginPath();
@@ -146,15 +146,15 @@ function paintGrain(context: CanvasRenderingContext2D): void {
   const image = context.getImageData(0, 0, size, size);
   for (let channel = 0; channel < image.data.length; channel += 4) {
     const speckle = (nextUnit() + nextUnit() - 1) * GRAIN.speckle;
-    image.data[channel] = clampedByte(image.data[channel]! + speckle);
-    image.data[channel + 1] = clampedByte(image.data[channel + 1]! + speckle);
-    image.data[channel + 2] = clampedByte(image.data[channel + 2]! + speckle * 1.2);
+    image.data[channel] = clampToByte(image.data[channel]! + speckle);
+    image.data[channel + 1] = clampToByte(image.data[channel + 1]! + speckle);
+    image.data[channel + 2] = clampToByte(image.data[channel + 2]! + speckle * 1.2);
   }
   context.putImageData(image, 0, 0);
 }
 
 /** Calls `paint` for the tile and its eight neighbours, so what crosses an edge comes back on the other side and the tile repeats without a seam. */
-function onEveryRepeat(size: number, paint: (offsetX: number, offsetY: number) => void): void {
+function runOnEveryRepeat(size: number, paint: (offsetX: number, offsetY: number) => void): void {
   for (const offsetX of [-size, 0, size]) for (const offsetY of [-size, 0, size]) paint(offsetX, offsetY);
 }
 
@@ -163,7 +163,7 @@ function onEveryRepeat(size: number, paint: (offsetX: number, offsetY: number) =
  * Whole pixels, so that filling them leaves no half-covered pixel at the rim that filling the whole tile would not have: on the canvas a texture
  * gets, which the browser paints on the CPU, the tile then comes out the same to the last bit as with the whole tile filled.
  */
-function pixelsOfTileWithin({ size, x, y, radius }: { size: number; x: number; y: number; radius: number }): { left: number; top: number; width: number; height: number } | undefined {
+function getPixelsOfTileWithin({ size, x, y, radius }: { size: number; x: number; y: number; radius: number }): { left: number; top: number; width: number; height: number } | undefined {
   const left = Math.max(0, Math.floor(x - radius));
   const top = Math.max(0, Math.floor(y - radius));
   const right = Math.min(size, Math.ceil(x + radius));
@@ -172,6 +172,6 @@ function pixelsOfTileWithin({ size, x, y, radius }: { size: number; x: number; y
   return { left, top, width: right - left, height: bottom - top };
 }
 
-const clampedByte = (value: number): number => Math.max(0, Math.min(255, Math.round(value)));
+const clampToByte = (value: number): number => Math.max(0, Math.min(255, Math.round(value)));
 
-export const __testing__ = { pixelsOfTileWithin };
+export const __testing__ = { getPixelsOfTileWithin };

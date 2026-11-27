@@ -1,11 +1,11 @@
-import { levelById, levels } from '../content/levels';
+import { getLevelById, levels } from '../content/levels';
 import type { Level } from '../content/levels/types';
 import { FIXED_DT } from '../content/tuning';
 import { isCommandShaped, type Command } from './commands';
 import type { Feature } from './feature';
 import { createRng, type Rng } from './rng';
 import type { StateSlice } from './slice';
-import { copyOfJson, type SimSnapshot } from './snapshot';
+import { copyJson, type SimSnapshot } from './snapshot';
 
 /**
  * What views get from `createSim`. It can advance the sim and read it; it
@@ -22,7 +22,7 @@ export interface SimHandle {
   /** Advances the sim by exactly one fixed tick, applying `commands` first. */
   step(commands?: readonly Command[]): void;
   /** Full serializable state. */
-  snapshot(): SimSnapshot;
+  takeSnapshot(): SimSnapshot;
 }
 
 export interface SimOptions {
@@ -60,16 +60,16 @@ export class Sim implements SimHandle {
     if (snapshot) {
       this.seed = snapshot.seed;
       this.tick = snapshot.tick;
-      this.levelId = levelById(snapshot.level).id;
+      this.levelId = getLevelById(snapshot.level).id;
       this.rng = createRng(snapshot.rngState);
-      this.slices = copyOfJson({ ...snapshot.slices });
+      this.slices = copyJson({ ...snapshot.slices });
       return;
     }
     if (!start) throw new TypeError('a sim needs either a start or a snapshot');
     this.seed = start.seed;
     this.tick = 0;
     this.rng = createRng(start.seed);
-    this.levelId = levelById(start.level).id;
+    this.levelId = getLevelById(start.level).id;
     this.slices = {};
     this.startLevel(start.level);
   }
@@ -80,11 +80,11 @@ export class Sim implements SimHandle {
 
   /** The level being played, as its data file has it. */
   get levelDef(): Level {
-    return levelById(this.levelId);
+    return getLevelById(this.levelId);
   }
 
   /** The live value of a slice. Features read and change their state through this. */
-  stateOf<T>(slice: StateSlice<T>): T {
+  getStateOf<T>(slice: StateSlice<T>): T {
     if (!(slice.key in this.slices)) throw new Error(`no slice "${slice.key}": is its feature registered in features/index.ts?`);
     return this.slices[slice.key] as T;
   }
@@ -105,14 +105,14 @@ export class Sim implements SimHandle {
   startLevel(id: number): void {
     if (this.inATick) throw new Error('a level cannot start in the middle of a tick: ask with startLevelAfterThisTick');
     this.refuseWhileALevelStarts();
-    const level = levelById(id);
+    const level = getLevelById(id);
     const previous = this.slices;
     this.levelId = level.id;
     this.slices = {};
     for (const feature of this.features) {
       for (const slice of feature.slices ?? []) {
         const carried = slice.carriesAcrossLevels && slice.key in previous;
-        this.slices[slice.key] = carried ? previous[slice.key] : slice.initialFor(level);
+        this.slices[slice.key] = carried ? previous[slice.key] : slice.getInitialFor(level);
       }
     }
     this.startingALevel = true;
@@ -143,8 +143,8 @@ export class Sim implements SimHandle {
    */
   startLevelAfterThisTick(id: number): void {
     this.refuseWhileALevelStarts();
-    const asked: LevelStartAsked = { level: levelById(id).id, withNothingKept: false };
-    if (this.askedDuringTick === null || comesBefore(asked, this.askedDuringTick, this.levelId)) this.askedDuringTick = asked;
+    const asked: LevelStartAsked = { level: getLevelById(id).id, withNothingKept: false };
+    if (this.askedDuringTick === null || shouldComeBefore(asked, this.askedDuringTick, this.levelId)) this.askedDuringTick = asked;
     if (!this.inATick) this.startWhatWasAsked();
   }
 
@@ -191,8 +191,8 @@ export class Sim implements SimHandle {
     else this.startLevel(asked.level);
   }
 
-  snapshot(): SimSnapshot {
-    return copyOfJson({ seed: this.seed, tick: this.tick, level: this.levelId, rngState: this.rng.state(), slices: this.slices });
+  takeSnapshot(): SimSnapshot {
+    return copyJson({ seed: this.seed, tick: this.tick, level: this.levelId, rngState: this.rng.getState(), slices: this.slices });
   }
 }
 
@@ -205,7 +205,7 @@ interface LevelStartAsked {
 }
 
 /** True when `asked` is to be done instead of `other`, asked for earlier in the same tick on level `playing`. */
-function comesBefore(asked: LevelStartAsked, other: LevelStartAsked, playing: number): boolean {
+function shouldComeBefore(asked: LevelStartAsked, other: LevelStartAsked, playing: number): boolean {
   if (other.withNothingKept) return false;
   return asked.level !== playing && other.level === playing;
 }

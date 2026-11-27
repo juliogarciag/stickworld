@@ -1,8 +1,8 @@
 import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
-import { airplaneInteraction } from '../airplane';
-import { fallenItemInteraction, letterBeingRead, letterInteraction } from '../letter';
-import { flagIsReached } from '../flag';
+import { getAirplaneInteraction } from '../airplane';
+import { getFallenItemInteraction, getLetterBeingRead, getLetterInteraction } from '../letter';
+import { isFlagReached } from '../flag';
 
 /**
  * Interacting with the world: one command, `'world/interact'`, whose meaning
@@ -17,13 +17,13 @@ export const worldFeature: Feature = {
 
   handleCommand(sim, command) {
     if (command.type !== 'world/interact') return;
-    interactionNow(sim)?.perform();
+    getInteractionNow(sim)?.perform();
   },
 };
 
 /** What `'world/interact'` would do right now, with the function that does it, or undefined when there is nothing to interact with. */
-export function interactionNow(sim: Sim): Interaction | undefined {
-  if (flagIsReached(sim)) return undefined;
+export function getInteractionNow(sim: Sim): Interaction | undefined {
+  if (isFlagReached(sim)) return undefined;
   for (const answer of ANSWERS) {
     const interaction = answer(sim);
     if (interaction) return interaction;
@@ -32,7 +32,7 @@ export function interactionNow(sim: Sim): Interaction | undefined {
 }
 
 /** Every interaction there is, most pressing first: the letter he reads is put away, then what he has in his hands comes before what lies next to him. */
-const ANSWERS = [letterBeingRead, airplaneInteraction, letterInteraction, fallenItemInteraction] as const;
+const ANSWERS = [getLetterBeingRead, getAirplaneInteraction, getLetterInteraction, getFallenItemInteraction] as const;
 
 export type Interaction = NonNullable<ReturnType<(typeof ANSWERS)[number]>>;
 

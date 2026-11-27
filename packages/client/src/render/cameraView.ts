@@ -14,7 +14,7 @@ export interface WorldRectangle {
  * right now. Phaser's own `worldView` is only updated when the camera
  * renders, so it is one frame behind while a scene updates.
  */
-export function worldSeenBy(camera: Phaser.Cameras.Scene2D.Camera): WorldRectangle {
+export function getWorldSeenBy(camera: Phaser.Cameras.Scene2D.Camera): WorldRectangle {
   const { zoom } = camera;
   const width = camera.width / zoom;
   const height = camera.height / zoom;

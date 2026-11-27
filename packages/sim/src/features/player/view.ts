@@ -2,7 +2,7 @@ import type { Point } from '../../content/levels/types';
 import { Sim, type SimHandle } from '../../core/sim';
 import type { WalkDirection } from './commands';
 import type { MovementTuning } from './defs';
-import { isFallingOffAnEdge, standsCheering, walkDirectionNow } from './index';
+import { isFallingOffAnEdge, isStandingCheering, getWalkDirectionNow } from './index';
 import { movementTuningSlice, playerSlice } from './state';
 
 /** The stick man as a view needs him: where he is and what he is doing. Which way each limb points is the view's business. */
@@ -26,17 +26,17 @@ export interface StickManView {
   readonly fallingOffAnEdge: boolean;
   /** Which way the sim believes the player wants to walk, whether or not he can right now. */
   readonly walkDirectionAsked: WalkDirection;
-  /** True while he holds something over his head with both hands (the airplane, as `airplaneOf` has it). */
+  /** True while he holds something over his head with both hands (the airplane, as `getAirplane` has it). */
   readonly carrying: boolean;
 }
 
-export function stickManOf(handle: SimHandle): StickManView {
-  const sim = simBehind(handle);
-  const player = sim.stateOf(playerSlice);
+export function getStickMan(handle: SimHandle): StickManView {
+  const sim = getSimBehind(handle);
+  const player = sim.getStateOf(playerSlice);
   return {
     feet: { x: player.x, y: player.y },
     facing: player.facing,
-    action: player.seated ? 'seated' : !player.onFloor ? 'jumping' : standsCheering(sim) ? 'cheering' : walkDirectionNow(sim) !== 0 ? 'walking' : 'standing',
+    action: player.seated ? 'seated' : !player.onFloor ? 'jumping' : isStandingCheering(sim) ? 'cheering' : getWalkDirectionNow(sim) !== 0 ? 'walking' : 'standing',
     distanceWalked: player.distanceWalked,
     verticalSpeed: player.verticalSpeed,
     horizontalSpeed: player.horizontalSpeed,
@@ -47,14 +47,14 @@ export function stickManOf(handle: SimHandle): StickManView {
 }
 
 /** How he walks, jumps and falls right now: what the movement panel of a dev build shows and changes. */
-export function movementTuningOf(handle: SimHandle): MovementTuning {
-  return { ...simBehind(handle).stateOf(movementTuningSlice) };
+export function getMovementTuning(handle: SimHandle): MovementTuning {
+  return { ...getSimBehind(handle).getStateOf(movementTuningSlice) };
 }
 
 // ---- Helpers ----
 
 /** Every SimHandle is a Sim: `createSim` and `restoreSim` are the only ways to get one. */
-function simBehind(handle: SimHandle): Sim {
+function getSimBehind(handle: SimHandle): Sim {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
   return handle;
 }

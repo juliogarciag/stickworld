@@ -20,7 +20,7 @@ export class GameLoop {
   }
 
   /**
-   * Runs as many ticks as `deltaSeconds` of real time earns, and says how many ran. A scene hands it `frameSeconds`, which
+   * Runs as many ticks as `deltaSeconds` of real time earns, and says how many ran. A scene hands it `getFrameSeconds`, which
    * is capped already; the cap is given to `takeWholeTicks` all the same, so that no caller can make the sim run more.
    */
   advanceBy(deltaSeconds: number): number {
@@ -29,7 +29,7 @@ export class GameLoop {
     for (let tick = 0; tick < ticks; tick += 1) {
       // The sim moves to the next level by itself, within one tick. The tick before is kept each time, so the sheet that was left can still be drawn: a snapshot is a few hundred bytes.
       const level = this.current.level;
-      const tickBefore = this.current.snapshot();
+      const tickBefore = this.current.takeSnapshot();
       this.current.step(this.pendingCommands);
       this.pendingCommands = [];
       if (this.current.level !== level) this.finishedLevel = restoreSim(tickBefore);

@@ -3,7 +3,7 @@ import type { Level, Placement } from '../../content/levels/types';
 import { STICK_MAN_HEIGHT } from '../../content/tuning';
 import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
-import { whereHeIs } from '../player/body';
+import { getWhereHeIs } from '../player/body';
 import { FLAG_DEF_ID, flagDef, LEVEL_END } from './defs';
 import { flagSlice } from './state';
 
@@ -16,15 +16,15 @@ export const flagFeature: Feature = {
   slices: [flagSlice],
 
   update(sim) {
-    const flag = sim.stateOf(flagSlice);
+    const flag = sim.getStateOf(flagSlice);
     if (flag.reachedAtTick === null) {
-      const placed = flagPlacedIn(sim.levelDef);
-      const { x, y, seated } = whereHeIs(sim);
+      const placed = findFlagPlacedIn(sim.levelDef);
+      const { x, y, seated } = getWhereHeIs(sim);
       // A flag is reached on his own feet: flying past it in the airplane does not count.
-      if (placed && !seated && touchesFlag({ feet: { x, y }, placed })) flag.reachedAtTick = sim.tick;
+      if (placed && !seated && isTouchingFlag({ feet: { x, y }, placed })) flag.reachedAtTick = sim.tick;
       return;
     }
-    const nextLevel = levelToStartNow({ levels, level: sim.level, ticksSinceReached: sim.tick - flag.reachedAtTick, dt: sim.dt });
+    const nextLevel = findLevelToStartNow({ levels, level: sim.level, ticksSinceReached: sim.tick - flag.reachedAtTick, dt: sim.dt });
     if (nextLevel) sim.startLevelAfterThisTick(nextLevel.id);
   },
 };
@@ -35,30 +35,30 @@ export function isTheLastLevel(level: Level): boolean {
 }
 
 /** True once he has reached the level's flag: the level is finished. */
-export function flagIsReached(sim: Sim): boolean {
-  return sim.stateOf(flagSlice).reachedAtTick !== null;
+export function isFlagReached(sim: Sim): boolean {
+  return sim.getStateOf(flagSlice).reachedAtTick !== null;
 }
 
 /** The tick he reached the level's flag on, or null until he does. */
-export function tickFlagWasReached(sim: Sim): number | null {
-  return sim.stateOf(flagSlice).reachedAtTick;
+export function getTickFlagWasReached(sim: Sim): number | null {
+  return sim.getStateOf(flagSlice).reachedAtTick;
 }
 
 /** How long ago he reached the level's flag, in seconds, or undefined until he does. */
-export function secondsSinceFlagReached(sim: Sim): number | undefined {
-  const { reachedAtTick } = sim.stateOf(flagSlice);
+export function getSecondsSinceFlagReached(sim: Sim): number | undefined {
+  const { reachedAtTick } = sim.getStateOf(flagSlice);
   return reachedAtTick === null ? undefined : (sim.tick - reachedAtTick) * sim.dt;
 }
 
 /** Where the level's flag stands, or undefined for a level without one. */
-export function flagPlacedIn(level: Level): Placement | undefined {
+export function findFlagPlacedIn(level: Level): Placement | undefined {
   return level.placements.find((placement) => placement.defId === FLAG_DEF_ID);
 }
 
 // ---- Helpers ----
 
 /** True when he is within reach of the stick and any part of him is level with it: he cannot jump over a flag taller than his jump. */
-function touchesFlag({ feet, placed }: { feet: { x: number; y: number }; placed: Placement }): boolean {
+function isTouchingFlag({ feet, placed }: { feet: { x: number; y: number }; placed: Placement }): boolean {
   const withinReach = Math.abs(feet.x - placed.at.x) <= flagDef.reach;
   const levelWithTheStick = feet.y >= placed.at.y - flagDef.height && feet.y - STICK_MAN_HEIGHT <= placed.at.y;
   return withinReach && levelWithTheStick;
@@ -74,10 +74,10 @@ interface FinishedLevel {
 }
 
 /** The level that follows the finished one, once the pause after its flag is over; undefined during the pause and after the last level. */
-function levelToStartNow({ levels, level, ticksSinceReached, dt }: FinishedLevel): Level | undefined {
+function findLevelToStartNow({ levels, level, ticksSinceReached, dt }: FinishedLevel): Level | undefined {
   if (ticksSinceReached < Math.round(LEVEL_END.pauseBeforeNextLevel / dt)) return undefined;
   const finished = levels.findIndex((candidate) => candidate.id === level);
   return finished === -1 ? undefined : levels[finished + 1];
 }
 
-export const __testing__ = { levelToStartNow };
+export const __testing__ = { findLevelToStartNow };

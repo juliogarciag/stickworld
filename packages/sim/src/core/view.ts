@@ -1,4 +1,4 @@
-import { levelById } from '../content/levels';
+import { getLevelById } from '../content/levels';
 import type { Level } from '../content/levels/types';
 import type { SimHandle } from './sim';
 
@@ -9,6 +9,6 @@ import type { SimHandle } from './sim';
  */
 
 /** The level the sim is playing, as its data file has it: the floor to draw and what is placed on it. */
-export function levelOf(sim: SimHandle): Level {
-  return levelById(sim.level);
+export function getLevel(sim: SimHandle): Level {
+  return getLevelById(sim.level);
 }

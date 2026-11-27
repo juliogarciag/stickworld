@@ -30,7 +30,7 @@ export const letterDefs: readonly LetterDef[] = [
 ];
 
 /** The letter with this id, or undefined if none has it. */
-export function letterDef(id: number): LetterDef | undefined {
+export function getLetterDef(id: number): LetterDef | undefined {
   return letterDefs.find((def) => def.id === id);
 }
 

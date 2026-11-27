@@ -27,7 +27,7 @@ export interface PageTurn {
   /** Lets `seconds` of the turn pass. */
   advanceBy(seconds: number): void;
   /** The turn in progress, or undefined when no page is being turned. */
-  now(): TurningPage | undefined;
+  getTurningPage(): TurningPage | undefined;
 }
 
 export function createPageTurn(): PageTurn {
@@ -41,8 +41,8 @@ export function createPageTurn(): PageTurn {
       turning.seconds += seconds;
       if (turning.seconds >= TURN.seconds) turning = undefined;
     },
-    now() {
-      return turning && { ...turning.finished, edgeAt: edgeAfter(turning.seconds) };
+    getTurningPage() {
+      return turning && { ...turning.finished, edgeAt: getEdgeAfter(turning.seconds) };
     },
   };
 }
@@ -59,9 +59,9 @@ const TURN = {
 } as const;
 
 /** Where the sheet's right edge is `seconds` into the turn: it starts slowly, as a sheet lifted by a corner does, and is whisked away. */
-function edgeAfter(seconds: number): number {
+function getEdgeAfter(seconds: number): number {
   const share = Math.max(0, Math.min(1, seconds / TURN.seconds));
   return 1 - TURN.slidesBy * share ** TURN.slowStart;
 }
 
-export const __testing__ = { TURN, edgeAfter };
+export const __testing__ = { TURN, getEdgeAfter };

@@ -1,5 +1,5 @@
 /** A function that returns the next number between 0 and 1 of a fixed sequence (mulberry32), so what is painted with it looks the same on every run. View detail only: the sim has its own rng. */
-export function fixedUnits(seed: number): () => number {
+export function createFixedUnits(seed: number): () => number {
   let state = seed >>> 0;
   return () => {
     state = (state + 0x6d2b79f5) >>> 0;

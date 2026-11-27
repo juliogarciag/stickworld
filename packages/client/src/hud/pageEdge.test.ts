@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { pageEdgeStrokes } from './pageEdge';
+import { buildPageEdgeStrokes } from './pageEdge';
 
 describe('the edge of a sheet being turned away', () => {
   it('is a line from above the view to below it, where the sheet ends, with its shadow as hatching on the sheet under it', () => {
-    const [line, ...hatches] = pageEdgeStrokes(0.5, SEEN);
+    const [line, ...hatches] = buildPageEdgeStrokes(0.5, SEEN);
     const x = SEEN.x + SEEN.width / 2;
     expect(line!.points.map((point) => point.x)).toEqual([x, x]);
     expect(line!.points[0]!.y).toBeLessThan(SEEN.y);
@@ -19,8 +19,8 @@ describe('the edge of a sheet being turned away', () => {
   });
 
   it('moves with the sheet, and is the same hatching wherever it is', () => {
-    const at = (edgeAt: number): number[] => pageEdgeStrokes(edgeAt, SEEN).flatMap((stroke) => stroke.points.map((point) => point.x - (SEEN.x + edgeAt * SEEN.width)));
-    expect(at(0.2)).toEqual(at(0.9).map((x) => expect.closeTo(x, 6)));
+    const getPointXsAt = (edgeAt: number): number[] => buildPageEdgeStrokes(edgeAt, SEEN).flatMap((stroke) => stroke.points.map((point) => point.x - (SEEN.x + edgeAt * SEEN.width)));
+    expect(getPointXsAt(0.2)).toEqual(getPointXsAt(0.9).map((x) => expect.closeTo(x, 6)));
   });
 });
 

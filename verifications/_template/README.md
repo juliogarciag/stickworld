@@ -34,7 +34,7 @@ Content search skips every ticket folder, yours included (the root `.ignore`). T
 | File | What it gives you |
 |---|---|
 | `solo.mjs` | Starts `PORT=<n> pnpm dev`, opens Chromium, reads the sim through `window.__game`, checks it runs with real time and restarts a level, writes a screenshot and a report |
-| `lib.mjs` | `start` (a server that stops with the script, printing without colours), `waitForPort`, `waitFor`, `lastLinesOf`, `check`, `summarize`, `writeProof`, and the `ROOT` and `PROOF` paths |
+| `lib.mjs` | `start` (a server that stops with the script, printing without colours), `waitForPort`, `waitFor`, `getLastLines`, `check`, `summarize`, `writeProof`, and the `ROOT` and `PROOF` paths |
 | `run.sh` | Installs on first run, runs the scripts in order, keeps their console output as proof |
 
 ## What the template relies on

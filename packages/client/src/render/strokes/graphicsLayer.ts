@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
-import { worldSeenBy } from '../cameraView';
-import { boilFrameAt, handDrawnPath, type PencilPoint } from './handDrawn';
+import { getWorldSeenBy } from '../cameraView';
+import { getBoilFrameAt, buildHandDrawnPath, type PencilPoint } from './handDrawn';
 import { COLOURED_PENCILS, PENCIL } from './pencil';
 import type { ColouredPencil, Stroke, StrokeLayer } from './stroke';
 
@@ -14,7 +14,7 @@ import type { ColouredPencil, Stroke, StrokeLayer } from './stroke';
  */
 
 /** A new layer of pencil strokes in `scene`, drawn above what the scene already has. */
-export function graphicsStrokeLayer(scene: Phaser.Scene): StrokeLayer {
+export function createGraphicsStrokeLayer(scene: Phaser.Scene): StrokeLayer {
   const layerNumber = layersMade;
   layersMade += 1;
   const graphics = scene.add.graphics();
@@ -25,14 +25,14 @@ export function graphicsStrokeLayer(scene: Phaser.Scene): StrokeLayer {
   let drawn: { strokes: readonly Stroke[]; boilFrame: number; seenX: number; seenY: number; seenWidth: number; seenHeight: number } | undefined;
 
   const draw = (): void => {
-    const boilFrame = boilFrameAt(scene.time.now / 1000);
-    const seen = worldSeenBy(scene.cameras.main);
+    const boilFrame = getBoilFrameAt(scene.time.now / 1000);
+    const seen = getWorldSeenBy(scene.cameras.main);
     // The view is part of it: points off screen are skipped, so a camera that moved needs a new drawing.
     const next = { strokes, boilFrame, seenX: seen.x, seenY: seen.y, seenWidth: seen.width, seenHeight: seen.height };
     if (drawn && drawn.strokes === strokes && drawn.boilFrame === boilFrame && drawn.seenX === seen.x && drawn.seenY === seen.y && drawn.seenWidth === seen.width && drawn.seenHeight === seen.height) return;
     drawn = next;
 
-    const inView = (point: PencilPoint): boolean =>
+    const isInView = (point: PencilPoint): boolean =>
       point.x > seen.x - OFF_SCREEN_MARGIN && point.x < seen.x + seen.width + OFF_SCREEN_MARGIN && point.y > seen.y - OFF_SCREEN_MARGIN && point.y < seen.y + seen.height + OFF_SCREEN_MARGIN;
 
     graphics.clear();
@@ -40,9 +40,9 @@ export function graphicsStrokeLayer(scene: Phaser.Scene): StrokeLayer {
       const colour = stroke.colour === undefined ? graphite : colouredPencils[stroke.colour];
       graphics.fillStyle(colour, 1);
       // Numbered by layer, so two layers' lines do not wobble alike.
-      const path = handDrawnPath(stroke, { strokeIndex: layerNumber * STROKES_PER_LAYER + index, boilFrame });
+      const path = buildHandDrawnPath(stroke, { strokeIndex: layerNumber * STROKES_PER_LAYER + index, boilFrame });
       path.forEach((point, pointIndex) => {
-        if (!inView(point)) return;
+        if (!isInView(point)) return;
         const width = stroke.thickness * point.pressure;
         graphics.fillCircle(point.x, point.y, width / 2);
         const next = path[pointIndex + 1];
