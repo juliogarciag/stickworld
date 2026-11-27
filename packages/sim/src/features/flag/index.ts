@@ -3,7 +3,7 @@ import type { Level, Placement } from '../../content/levels/types';
 import { STICK_MAN_HEIGHT } from '../../content/tuning';
 import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
-import { playerSlice } from '../player/state';
+import { whereHeIs } from '../player/body';
 import { FLAG_DEF_ID, flagDef, LEVEL_END } from './defs';
 import { flagSlice } from './state';
 
@@ -19,19 +19,24 @@ export const flagFeature: Feature = {
     const flag = sim.stateOf(flagSlice);
     if (flag.reachedAtTick === null) {
       const placed = flagPlacedIn(sim.levelDef);
-      const { x, y, seated } = sim.stateOf(playerSlice);
+      const { x, y, seated } = whereHeIs(sim);
       // A flag is reached on his own feet: flying past it in the airplane does not count.
       if (placed && !seated && touchesFlag({ feet: { x, y }, placed })) flag.reachedAtTick = sim.tick;
       return;
     }
     const nextLevel = levelToStartNow({ levels, level: sim.level, ticksSinceReached: sim.tick - flag.reachedAtTick, dt: sim.dt });
-    if (nextLevel) sim.startLevel(nextLevel.id);
+    if (nextLevel) sim.startLevelAfterThisTick(nextLevel.id);
   },
 };
 
 /** True for the last level there is: its flag finishes the game, and no level follows it. */
 export function isTheLastLevel(level: Level): boolean {
   return levels[levels.length - 1]?.id === level.id;
+}
+
+/** The tick he reached the level's flag on, or null until he does. */
+export function tickFlagWasReached(sim: Sim): number | null {
+  return sim.stateOf(flagSlice).reachedAtTick;
 }
 
 /** How long ago he reached the level's flag, in seconds, or undefined until he does. */

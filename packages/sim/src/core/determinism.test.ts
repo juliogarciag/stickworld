@@ -57,7 +57,7 @@ interface Noise {
   draws: number[];
 }
 
-const noiseSlice = defineSlice<Noise>('noise', () => ({ total: 0, draws: [] }));
+const noiseSlice = defineSlice<Noise>('noise', () => ({ total: 0, draws: [] }), { carriesAcrossLevels: false });
 
 /** A fixture feature: adds a random number every tick and the amount of every `noise/add` command. */
 const noiseFeature: Feature = {

@@ -8,7 +8,7 @@ export interface LetterState {
 }
 
 /** Whether the level's letter lies there at the start depends on whether he has read it before, so the feature's `init` decides it. */
-export const letterSlice = defineSlice<LetterState>('letter', () => ({ inLevel: false, beingRead: false }));
+export const letterSlice = defineSlice<LetterState>('letter', () => ({ inLevel: false, beingRead: false }), { carriesAcrossLevels: false });
 
 /** The def ids of the letters he has read. What he has read he remembers across levels and deaths. */
 export const lettersReadSlice = defineSlice<number[]>('lettersRead', () => [], { carriesAcrossLevels: true });
@@ -26,4 +26,4 @@ export interface FallenItemState {
   ticksUntilItFalls: number | null;
 }
 
-export const fallenItemSlice = defineSlice<FallenItemState>('fallenItem', () => ({ inLevel: false, x: 0, y: 0, height: 0, ticksUntilItFalls: null }));
+export const fallenItemSlice = defineSlice<FallenItemState>('fallenItem', () => ({ inLevel: false, x: 0, y: 0, height: 0, ticksUntilItFalls: null }), { carriesAcrossLevels: false });

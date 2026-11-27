@@ -1,7 +1,7 @@
 import type { FloorSegment } from '../../content/levels/types';
 import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
-import { flagSlice } from '../flag/state';
+import { tickFlagWasReached } from '../flag';
 import { playingAgainIsOffered } from '../game';
 import type { WalkDirection } from './commands';
 import { MOVEMENT_TUNING_LIMITS, PLAYER, type MovementTuning } from './defs';
@@ -73,7 +73,7 @@ export const playerFeature: Feature = {
     else fallTo(player, { x, floorHeight: floorHeightAt(floor, x), tuning, dt: sim.dt });
     if (!player.onFloor) slideOffFloorEnds(player, floor);
 
-    if (player.y > lowestFloorHeight(floor) + PLAYER.fallBelowFloor) sim.startLevel(sim.level);
+    if (player.y > lowestFloorHeight(floor) + PLAYER.fallBelowFloor) sim.startLevelAfterThisTick(sim.level);
   },
 };
 
@@ -96,7 +96,7 @@ export function isFallingOffAnEdge(player: PlayerState): boolean {
 }
 
 export function hasFinishedLevel(sim: Sim): boolean {
-  return sim.stateOf(flagSlice).reachedAtTick !== null;
+  return tickFlagWasReached(sim) !== null;
 }
 
 // ---- Helpers ----

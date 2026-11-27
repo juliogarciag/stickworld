@@ -13,7 +13,6 @@ import { craftingOf } from '../crafting/view';
 import { AIRPLANE_ITEM_ID, isItemDefId, PAPER_ITEM_ID } from '../inventory/defs';
 import { giveItem } from '../inventory/give';
 import { itemSlotsOf } from '../inventory/view';
-import type { PlayerState } from '../player/state';
 import { stickManOf } from '../player/view';
 import { interactionOf } from '../world/view';
 import { LETTER, letterDefs } from './defs';
@@ -219,7 +218,7 @@ describe('a new sheet of paper', () => {
     const snapshot = sim.snapshot();
     const flagAt = level3.placements.find((placement) => letterPlacedIn(level3) !== placement)!.at;
     // Put next to the flag with nothing in his slot: the next tick reaches it.
-    const atTheFlag = new Sim({ features, snapshot: { ...snapshot, slices: { ...snapshot.slices, inventory: { slots: [null], selectedSlot: 1 }, player: { ...(snapshot.slices.player as PlayerState), x: flagAt.x, y: flagAt.y } } } });
+    const atTheFlag = new Sim({ features, snapshot: { ...snapshot, slices: { ...snapshot.slices, inventory: { slots: [null], selectedSlot: 1 }, player: { ...(snapshot.slices.player as object), x: flagAt.x, y: flagAt.y } } } });
     for (let tick = 0; tick < 10 * TICK_RATE; tick += 1) {
       atTheFlag.step();
       expect(fallenItemOf(atTheFlag)).toBeUndefined();

@@ -49,7 +49,7 @@ export const playerSlice = defineSlice<PlayerState>('player', (level) => ({
   carrying: false,
   seated: false,
   seatedAtTick: null,
-}));
+}), { carriesAcrossLevels: false });
 
 /**
  * How he walks, jumps and falls right now: `MOVEMENT_PRESETS.current` unless a dev build tuned it. It is kept when a

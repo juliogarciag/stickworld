@@ -1,7 +1,7 @@
 import type { Sim } from '../../core/sim';
+import { moveHimWithHisSeat, seatHim, standHimUp, whereHeIs } from '../player/body';
 import { PLAYER } from '../player/defs';
 import { floorHeightAt, lowestFloorHeight } from '../player/floor';
-import { playerSlice, type PlayerState } from '../player/state';
 import { AIRPLANE, FLIGHT } from './defs';
 import { airplaneSlice, type AirplaneState, hasBoardedSlice } from './state';
 
@@ -15,22 +15,11 @@ import { airplaneSlice, type AirplaneState, hasBoardedSlice } from './state';
 /** He sits down in the airplane where it rests and it leaves the edge, nose first. */
 export function boardAndLaunch(sim: Sim): void {
   const airplane = sim.stateOf(airplaneSlice);
-  const player = sim.stateOf(playerSlice);
   sim.setStateOf(hasBoardedSlice, true);
   airplane.flying = true;
   airplane.speed = FLIGHT.launchSpeed;
   airplane.pitch = FLIGHT.launchPitch;
-  player.seated = true;
-  player.seatedAtTick = sim.tick;
-  player.onFloor = false;
-  player.facing = airplane.facing;
-  player.verticalSpeed = 0;
-  player.horizontalSpeed = 0;
-  player.distanceWalked = 0;
-  player.ticksSinceWalkedOff = null;
-  // A jump asked for a moment before he sat down was for the floor: it must not throw him out of his seat.
-  player.ticksSinceJumpAsked = null;
-  seatHim(player, airplane);
+  seatHim(sim, airplane);
 }
 
 /**
@@ -39,7 +28,7 @@ export function boardAndLaunch(sim: Sim): void {
  */
 export function moveOneTick(sim: Sim): void {
   const airplane = sim.stateOf(airplaneSlice);
-  const player = sim.stateOf(playerSlice);
+  const player = whereHeIs(sim);
   // He has jumped out: with nobody to steer it, it stops gliding and falls.
   if (airplane.flying && !player.seated) stopGliding(airplane);
 
@@ -47,12 +36,12 @@ export function moveOneTick(sim: Sim): void {
   else if (airplane.falling) fall(sim, airplane);
   else if (airplane.sliding) slide(sim, airplane);
 
-  if (player.seated) seatHim(player, airplane);
-  if (!airplane.sliding && !airplane.flying && !airplane.falling && player.seated) standHimUp(player);
+  moveHimWithHisSeat(sim, airplane);
+  if (!airplane.sliding && !airplane.flying && !airplane.falling) standHimUp(sim);
 
   const below = airplane.y - lowestFloorHeight(sim.levelDef.floor);
   // With him in it, falling out of sight starts the level again, and nothing of the airplane is left. Without him it is only lost.
-  if (player.seated && below > FLIGHT.lostBelowFloor) sim.startLevel(sim.level);
+  if (player.seated && below > FLIGHT.lostBelowFloor) sim.startLevelAfterThisTick(sim.level);
   // As deep as he can fall himself: it is gone when he would be.
   else if (!player.seated && below > PLAYER.fallBelowFloor) sim.setStateOf(airplaneSlice, { ...airplaneSlice.initialFor(sim.levelDef), steering: airplane.steering });
 }
@@ -138,20 +127,4 @@ function pitchAfterSteering(pitch: number, { steering, dt }: { steering: -1 | 0 
   const mostChange = FLIGHT.noseSinkRate * dt;
   if (Math.abs(FLIGHT.restingPitch - pitch) <= mostChange) return FLIGHT.restingPitch;
   return pitch + Math.sign(FLIGHT.restingPitch - pitch) * mostChange;
-}
-
-/** Seated, he is where the airplane is: its underside is what the sim calls his feet. */
-function seatHim(player: PlayerState, airplane: AirplaneState): void {
-  player.x = airplane.x;
-  player.y = airplane.y;
-}
-
-/** The airplane has come to rest on the floor: he gets up and stands where it lies. */
-function standHimUp(player: PlayerState): void {
-  player.seated = false;
-  player.seatedAtTick = null;
-  player.onFloor = true;
-  player.verticalSpeed = 0;
-  player.horizontalSpeed = 0;
-  player.distanceWalked = 0;
 }

@@ -10,6 +10,9 @@ import tseslint from 'typescript-eslint';
  *           No Math.random, Date, performance, timers or I/O: randomness goes through sim.rng.
  * client -> may import phaser and @stickworld/sim through its package entry only, never deep paths.
  *
+ * Inside the sim, a feature never imports another feature's `state.ts` (AGENTS.md rule 10): what one
+ * feature reads of or does to another has a named function in the other's folder.
+ *
  * `__testing__` exports may only be imported by *.test.ts files.
  *
  * Pencil strokes (rule 12): in the client, only `render/strokes/` may make a Phaser object that draws
@@ -24,6 +27,10 @@ const CLIENT_PKG = group(['@stickworld/client', '@stickworld/client/*', '**/pack
 const NODE_BUILTINS = group(
   ['node:*', 'fs', 'fs/*', 'path', 'os', 'crypto', 'child_process', 'worker_threads', 'http', 'https', 'net', 'events', 'stream', 'util', 'url', 'timers', 'timers/*'],
   'The sim is headless and pure: no Node APIs in packages/sim.',
+);
+const OTHER_FEATURE_STATE = group(
+  ['../*/state'],
+  "A feature's slices are its own. Read or change another feature's state through the functions that feature exports for it (features/player/body.ts, features/inventory/held.ts), so a diff shows who changes whom.",
 );
 const SIM_DEEP = group(['@stickworld/sim/*', '**/packages/sim/**', '../**/sim/**'], 'Import the sim through its package entry (@stickworld/sim) so its public API stays explicit.');
 
@@ -88,6 +95,11 @@ export default defineConfig([
       ],
       'no-restricted-syntax': ['error', NEW_DATE],
     },
+  },
+  // Later blocks replace a rule's whole setting, so the features block repeats the sim's groups here.
+  {
+    files: ['packages/sim/src/features/**/*.ts'],
+    rules: restrictImports(PHASER, CLIENT_PKG, NODE_BUILTINS, OTHER_FEATURE_STATE),
   },
   {
     files: ['packages/client/**/*.ts'],

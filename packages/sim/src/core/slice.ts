@@ -17,11 +17,14 @@ export interface StateSlice<T> {
 }
 
 export interface SliceOptions {
-  /** Keep the value when a level starts or restarts. Default false. */
-  readonly carriesAcrossLevels?: boolean;
+  /**
+   * True to keep the value when a level starts or restarts, false to go back to `initialFor` each time. Every slice
+   * says which, so that the line that declares new state shows what a death does to it.
+   */
+  readonly carriesAcrossLevels: boolean;
 }
 
 /** Declares a slice of state. `key` must be unique across features; use the feature's name. */
-export function defineSlice<T>(key: string, initialFor: (level: Level) => T, { carriesAcrossLevels = false }: SliceOptions = {}): StateSlice<T> {
+export function defineSlice<T>(key: string, initialFor: (level: Level) => T, { carriesAcrossLevels }: SliceOptions): StateSlice<T> {
   return { key, initialFor, carriesAcrossLevels };
 }

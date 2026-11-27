@@ -7,7 +7,7 @@ import { recipeDef } from '../crafting/defs';
 import { giveItem } from '../inventory/give';
 import { holdsItem, selectItem } from '../inventory/held';
 import { hasFinishedLevel } from '../player';
-import { playerSlice } from '../player/state';
+import { whereHeIs } from '../player/body';
 import { LETTER, letterDef, type LetterDef } from './defs';
 import { fallenItemSlice, letterSlice, lettersReadSlice } from './state';
 
@@ -56,9 +56,9 @@ export const letterFeature: Feature = {
       fallen.ticksUntilItFalls = Math.round(LETTER.fallsAfter / sim.dt);
     } else if (fallen.ticksUntilItFalls > 0) {
       fallen.ticksUntilItFalls -= 1;
-    } else if (sim.stateOf(playerSlice).onFloor) {
+    } else if (whereHeIs(sim).onFloor) {
       // It comes down where he stands, so he sees it and has it at his feet. In the air he has no place for it yet: it waits for him to land.
-      const { x, y } = sim.stateOf(playerSlice);
+      const { x, y } = whereHeIs(sim);
       fallen.ticksUntilItFalls = null;
       fallen.inLevel = true;
       fallen.x = x;
@@ -132,7 +132,7 @@ function putAway(sim: Sim): void {
 
 /** True while he stands on the floor within reach of something that lies at `at`: the letter, or the item that fell. */
 function isWithinReach(sim: Sim, at: { readonly x: number }): boolean {
-  const player = sim.stateOf(playerSlice);
+  const player = whereHeIs(sim);
   return player.onFloor && Math.abs(player.x - at.x) <= LETTER.reach;
 }
 

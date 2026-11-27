@@ -1,5 +1,5 @@
 import type { Feature } from '../../core/feature';
-import { playerSlice } from '../player/state';
+import { whereHeIs } from '../player/body';
 import { notesSlice } from './state';
 
 /**
@@ -14,7 +14,7 @@ export const noteFeature: Feature = {
 
   update(sim) {
     const { rubbedOutAtTick } = sim.stateOf(notesSlice);
-    const { x, onFloor } = sim.stateOf(playerSlice);
+    const { x, onFloor } = whereHeIs(sim);
     (sim.levelDef.notes ?? []).forEach(({ rubbedOutPast }, index) => {
       const hasDoneIt = rubbedOutPast !== undefined && onFloor && x > rubbedOutPast;
       if (hasDoneIt && rubbedOutAtTick[index] === null) rubbedOutAtTick[index] = sim.tick;

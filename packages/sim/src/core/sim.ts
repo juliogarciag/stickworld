@@ -47,6 +47,10 @@ export class Sim implements SimHandle {
   readonly rng: Rng;
   private levelId: number;
   private slices: Record<string, unknown>;
+  /** True while `step` runs the features: a level is not started then, only asked for. */
+  private inATick = false;
+  /** What a feature asked for during the tick being run, or null. Always null between two ticks, so it is not game state. */
+  private askedDuringTick: LevelStartAsked | null = null;
 
   constructor({ features, start, snapshot }: SimOptions) {
     this.features = features;
@@ -89,12 +93,15 @@ export class Sim implements SimHandle {
   }
 
   /**
-   * Starts level `id`: every slice goes back to its initial value for that
-   * level, except slices declared to carry across levels, then every
-   * feature's `init` runs. Restarting a level after a death is
-   * `startLevel(sim.level)`.
+   * Starts level `id` now: every slice goes back to its initial value for
+   * that level, except slices declared to carry across levels, then every
+   * feature's `init` runs. For what sets a sim up between two ticks (a test,
+   * `createSim`). A feature asks with `startLevelAfterThisTick` instead: in
+   * the middle of a tick this throws, because the features later in the list
+   * would run the rest of the tick on a level that has only just begun.
    */
   startLevel(id: number): void {
+    if (this.inATick) throw new Error('a level cannot start in the middle of a tick: ask with startLevelAfterThisTick');
     const level = levelById(id);
     const previous = this.slices;
     this.levelId = level.id;
@@ -113,18 +120,51 @@ export class Sim implements SimHandle {
    * their initial values too. The seed, the rng and the tick count go on, so a recorded game still replays.
    */
   startOver(): void {
+    if (this.inATick) throw new Error('the game cannot start over in the middle of a tick: ask with startOverAfterThisTick');
     this.slices = {};
     this.startLevel(levels[0]!.id);
   }
 
+  /**
+   * Asks for level `id` to start once every feature has had this tick: how a feature restarts the level after a death
+   * (`sim.level`) or moves on to the next one. Until the tick ends every feature still sees the level as it was. When
+   * more than one thing is asked for in a tick, starting over beats another level, which beats the level being played
+   * again; of two different other levels the first asked for is kept.
+   */
+  startLevelAfterThisTick(id: number): void {
+    const asked: LevelStartAsked = { level: levelById(id).id, withNothingKept: false };
+    if (this.askedDuringTick === null || comesBefore(asked, this.askedDuringTick, this.levelId)) this.askedDuringTick = asked;
+    if (!this.inATick) this.startWhatWasAsked();
+  }
+
+  /** Asks for the game to start again from its first level with nothing kept, once every feature has had this tick. */
+  startOverAfterThisTick(): void {
+    this.askedDuringTick = { level: levels[0]!.id, withNothingKept: true };
+    if (!this.inATick) this.startWhatWasAsked();
+  }
+
   step(commands: readonly Command[] = []): void {
     const received: readonly unknown[] = Array.isArray(commands) ? commands : [];
-    for (const command of received) {
-      if (!isCommandShaped(command)) continue;
-      for (const feature of this.features) feature.handleCommand?.(this, command);
+    this.inATick = true;
+    try {
+      for (const command of received) {
+        if (!isCommandShaped(command)) continue;
+        for (const feature of this.features) feature.handleCommand?.(this, command);
+      }
+      for (const feature of this.features) feature.update?.(this);
+    } finally {
+      this.inATick = false;
     }
-    for (const feature of this.features) feature.update?.(this);
+    this.startWhatWasAsked();
     this.tick += 1;
+  }
+
+  private startWhatWasAsked(): void {
+    const asked = this.askedDuringTick;
+    this.askedDuringTick = null;
+    if (asked === null) return;
+    if (asked.withNothingKept) this.startOver();
+    else this.startLevel(asked.level);
   }
 
   snapshot(): SimSnapshot {
@@ -133,6 +173,18 @@ export class Sim implements SimHandle {
 }
 
 // ---- Helpers ----
+
+/** A level to start when the tick is over: `withNothingKept` is the game starting over, which resets the slices that carry too. */
+interface LevelStartAsked {
+  readonly level: number;
+  readonly withNothingKept: boolean;
+}
+
+/** True when `asked` is to be done instead of `other`, asked for earlier in the same tick on level `playing`. */
+function comesBefore(asked: LevelStartAsked, other: LevelStartAsked, playing: number): boolean {
+  if (other.withNothingKept) return false;
+  return asked.level !== playing && other.level === playing;
+}
 
 function assertUniqueSliceKeys(features: readonly Feature[]): void {
   const seen = new Set<string>();
