@@ -98,7 +98,10 @@ describe("'game/playAgain'", () => {
 const LAST_LEVEL = levels[levels.length - 1]!;
 const OFFERED_AFTER_TICKS = Math.round(GAME_END.playAgainAfter * TICK_RATE);
 
-/** A sim on `level` restored with the stick man standing at its flag, stepped once so the flag is reached. */
+/**
+ * A sim on `level` restored with the stick man standing at its flag, stepped once so the flag is
+ * reached.
+ */
 function createSimAtFlagOf(level: number): Sim {
   const fresh = new Sim({ features, start: { seed: 1, level } });
   const flagAt = findFlagPlacedIn(fresh.levelDef)!.position;

@@ -27,7 +27,10 @@ export function isGameOver(sim: Sim): boolean {
   return isLastLevel(sim.levelDef) && isFlagReached(sim);
 }
 
-/** True once the game has been over for long enough: the stick man is done cheering and walks about again, and `'game/playAgain'` is heard. Counted in whole ticks, as the pause after a flag is. */
+/**
+ * True once the game has been over for long enough: the stick man is done cheering and walks about
+ * again, and `'game/playAgain'` is heard. Counted in whole ticks, as the pause after a flag is.
+ */
 export function isPlayingAgainOffered(sim: Sim): boolean {
   const reachedAtTick = getTickFlagWasReached(sim);
   return (

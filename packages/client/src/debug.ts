@@ -50,7 +50,10 @@ import { PIXELS_PER_METRE } from './render/units';
 import { HUD_SCENE } from './scenes/HudScene';
 import { LEVEL_SCENE } from './scenes/LevelScene';
 
-/** What dev tooling and end-to-end checks can reach from the page. Dev builds only; listed in AGENTS.md. */
+/**
+ * What dev tooling and end-to-end checks can reach from the page. Dev builds only; listed in
+ * AGENTS.md.
+ */
 export interface GameDebugApi {
   /** The sim being played. A new object after `loadLevel`. */
   readonly sim: SimHandle;
@@ -61,43 +64,79 @@ export interface GameDebugApi {
   readonly pixelsPerMetre: number;
   /** The stick man's height in metres, as the sim's tuning has it. */
   readonly stickManHeight: number;
-  /** The stick man's width in metres, as the sim's tuning has it: how far the end of a floor line the stick man drops past is kept from the middle of it, half to each side. */
+  /**
+   * The stick man's width in metres, as the sim's tuning has it: how far the end of a floor line
+   * the stick man drops past is kept from the middle of it, half to each side.
+   */
   readonly stickManWidth: number;
-  /** The most real time one frame may give the sim, in seconds: what a longer frame took beyond it is dropped, not played. */
+  /**
+   * The most real time one frame may give the sim, in seconds: what a longer frame took beyond it
+   * is dropped, not played.
+   */
   readonly maxFrameSeconds: number;
   takeSnapshot(): SimSnapshot;
   hash(): string;
   /** The level camera right now, or undefined until the level scene runs. */
   getCamera(): CameraView | undefined;
-  /** The part of the level the level camera shows right now, in metres, or undefined until the level scene runs. */
+  /**
+   * The part of the level the level camera shows right now, in metres, or undefined until the level
+   * scene runs.
+   */
   getLevelInView(): MetresInView | undefined;
-  /** The HUD camera right now, or undefined until the HUD scene runs: its zoom does not follow the level camera's. */
+  /**
+   * The HUD camera right now, or undefined until the HUD scene runs: its zoom does not follow the
+   * level camera's.
+   */
   getHudCamera(): CameraView | undefined;
-  /** Where the right edge of the sheet being turned away is, as a share of the view's width from its left side, or null when no page is being turned. */
+  /**
+   * Where the right edge of the sheet being turned away is, as a share of the view's width from its
+   * left side, or null when no page is being turned.
+   */
   getPageTurn(): { edgeAt: number } | null;
   /** The notes on the level's sheet as the sim has them right now. */
   getNotes(): NoteView[];
-  /** How the game ends, as the sim has it right now: whether it is over, and whether playing again is offered. */
+  /**
+   * How the game ends, as the sim has it right now: whether it is over, and whether playing again
+   * is offered.
+   */
   getEnding(): GameView;
-  /** The stick man as the sim has it right now: where the stick man's feet are (metres) and what it is doing. */
+  /**
+   * The stick man as the sim has it right now: where the stick man's feet are (metres) and what it
+   * is doing.
+   */
   getStickMan(): StickManView;
   /** The level's flag as the sim has it right now, or undefined when the level has none. */
   getFlag(): FlagView | undefined;
   /** The level's checkpoint as the sim has it right now, or undefined when the level has none. */
   getCheckpoint(): CheckpointView | undefined;
-  /** Every item slot as the sim has it, with where the HUD draws its box on the page, in CSS pixels. Empty until the HUD scene runs. */
+  /**
+   * Every item slot as the sim has it, with where the HUD draws its box on the page, in CSS pixels.
+   * Empty until the HUD scene runs.
+   */
   getItemSlots(): ShownItemSlot[];
   /** The level's letter as the sim has it right now, or undefined when there is none to read. */
   getLetter(): LetterView | undefined;
-  /** The item that fell from the sky for the stick man who lost the stick man's, as the sim has it right now, or undefined when there is none. */
+  /**
+   * The item that fell from the sky for the stick man who lost the stick man's, as the sim has it
+   * right now, or undefined when there is none.
+   */
   getFallenItem(): FallenItemView | undefined;
-  /** What the stick man knows how to make as the sim has it right now: the recipes the stick man knows, and the one using the held item would make. */
+  /**
+   * What the stick man knows how to make as the sim has it right now: the recipes the stick man
+   * knows, and the one using the held item would make.
+   */
   getCrafting(): CraftingView;
   /** The airplane in the world as the sim has it right now, or undefined while there is none. */
   getAirplane(): AirplaneView | undefined;
-  /** What the stick man has still to be told about flying the airplane the stick man has, as the sim has it right now, or null. */
+  /**
+   * What the stick man has still to be told about flying the airplane the stick man has, as the sim
+   * has it right now, or null.
+   */
   getFlyingHint(): FlyingHint | null;
-  /** How the stick man walks, jumps and falls right now, as the sim has it: what the movement panel shows and changes. */
+  /**
+   * How the stick man walks, jumps and falls right now, as the sim has it: what the movement panel
+   * shows and changes.
+   */
   getMovementTuning(): MovementTuning;
   /** What using the held item would do right now, or null. */
   getItemUse(): ItemUseMeaning | null;
@@ -109,7 +148,9 @@ export interface GameDebugApi {
   loadLevel(level: number): void;
 }
 
-/** The camera as a check needs it: zoom, where it looks, and how big the view is in screen pixels. */
+/**
+ * The camera as a check needs it: zoom, where it looks, and how big the view is in screen pixels.
+ */
 export interface CameraView {
   readonly zoom: number;
   readonly scrollX: number;
@@ -193,7 +234,8 @@ export function exposeDebugApi(sources: {
         return [];
       }
       const seen = getWorldSeenBy(sources.game.scene.getScene(HUD_SCENE).cameras.main);
-      // World pixels to canvas pixels by the camera's zoom, canvas pixels to CSS pixels by the game's.
+      // World pixels to canvas pixels by the camera's zoom, canvas pixels to CSS pixels by the
+      // game's.
       const cssPixelsPerWorldPixel = seen.zoom * sources.game.scale.zoom;
       return getItemSlots(sources.loop.sim).map((itemSlot) => {
         const box = getItemSlotBox(itemSlot.slot, seen);

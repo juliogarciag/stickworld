@@ -14,12 +14,17 @@ import { buildKeysAndWords } from './keysAndWords';
  * decided here.
  */
 
-/** True once the flag that ends the game has been reached and has gone all the way up its stick: from then on the end is on the sheet, as much of it as is written so far. */
+/**
+ * True once the flag that ends the game has been reached and has gone all the way up its stick:
+ * from then on the end is on the sheet, as much of it as is written so far.
+ */
 export function isEndScreenShown(flag: FlagView | undefined): boolean {
   return flag !== undefined && flag.isFinalFlag && flag.isReached && flag.raised === 1;
 }
 
-/** How much of the end's words is written `seconds` after the pencil started on them, from 0 to 1. */
+/**
+ * How much of the end's words is written `seconds` after the pencil started on them, from 0 to 1.
+ */
 export function getEndScreenProgress(seconds: number): number {
   return Math.max(0, Math.min(1, seconds / END_SCREEN.writtenIn));
 }
@@ -32,8 +37,8 @@ export interface EndScreen {
 }
 
 /**
- * The strokes that write the end across the upper part of what the HUD camera sees, centred and never wider than the
- * view has room for, with the key that plays again and its words under them.
+ * The strokes that write the end across the upper part of what the HUD camera sees, centred and
+ * never wider than the view has room for, with the key that plays again and its words under them.
  */
 export function buildEndScreenStrokes(endScreen: EndScreen, seen: Rectangle): Stroke[] {
   const widthOfOne = buildWriting(END_SCREEN.words, {

@@ -70,13 +70,19 @@ describe('level 1', () => {
 
 // ---- Helpers ----
 
-/** Commands as a player gave them, each with the tick it arrived on, and how long the recording runs. */
+/**
+ * Commands as a player gave them, each with the tick it arrived on, and how long the recording
+ * runs.
+ */
 interface Recording {
   readonly commands: readonly { readonly atTick: number; readonly command: Command }[];
   readonly ticks: number;
 }
 
-/** Walk right, jump once on the way, keep walking: the stick man reaches the flag after about four seconds. It ends with the flag up, before the next level starts. */
+/**
+ * Walk right, jump once on the way, keep walking: the stick man reaches the flag after about four
+ * seconds. It ends with the flag up, before the next level starts.
+ */
 const WALK_TO_FLAG: Recording = {
   commands: [
     { atTick: 10, command: { type: 'player/walk', direction: 1 } },

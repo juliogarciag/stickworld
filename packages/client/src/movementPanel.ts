@@ -10,11 +10,12 @@ import GUI from 'lil-gui';
 import type { GameLoop } from './loop/GameLoop';
 
 /**
- * Dev builds only: a small panel in the top left corner to try other ways for the stick man to move while the game runs (ADR
- * 0006). A preset sets every knob at once; each knob then changes one number. What the panel shows is sent to the sim
- * as `'player/tuneMovement'`, which keeps it in its state: the panel decides nothing, and it sends it again whenever the
- * sim has other numbers (the game started over, or `loadLevel` made a new sim). What was chosen, and whether the panel
- * was open, are kept in this browser's storage for the next reload.
+ * Dev builds only: a small panel in the top left corner to try other ways for the stick man to move
+ * while the game runs (ADR 0006). A preset sets every knob at once; each knob then changes one
+ * number. What the panel shows is sent to the sim as `'player/tuneMovement'`, which keeps it in its
+ * state: the panel decides nothing, and it sends it again whenever the sim has other numbers (the
+ * game started over, or `loadLevel` made a new sim). What was chosen, and whether the panel was
+ * open, are kept in this browser's storage for the next reload.
  */
 export function showMovementPanel(loop: GameLoop): void {
   const kept = readKeptChoice();
@@ -23,7 +24,8 @@ export function showMovementPanel(loop: GameLoop): void {
     tuning: { ...MOVEMENT_PRESETS.current },
     isOpen: false,
   };
-  // The sim and tick the last send waits for: until that tick has run, the sim has not heard it, and sending again would pile up.
+  // The sim and tick the last send waits for: until that tick has run, the sim has not heard it,
+  // and sending again would pile up.
   let lastSent: { sim: SimHandle; tick: number } | undefined;
   const send = (): void => {
     loop.queueCommand({ type: 'player/tuneMovement', tuning: { ...chosen.tuning } });
@@ -34,10 +36,12 @@ export function showMovementPanel(loop: GameLoop): void {
   const panel = new GUI({ title: 'Movement (dev)', width: 280 });
   panel.domElement.style.left = '0';
   panel.domElement.style.right = 'auto';
-  // The game's keys are read from the window: pressed in the panel, they are the panel's and do not move the stick man. A key let
-  // go of in the panel still reaches the game, so that a key held for the game before is not held for ever.
+  // The game's keys are read from the window: pressed in the panel, they are the panel's and do not
+  // move the stick man. A key let go of in the panel still reaches the game, so that a key held for
+  // the game before is not held for ever.
   panel.domElement.addEventListener('keydown', (event) => event.stopPropagation());
-  // Once a change is made the keys are the game's again: a jump pressed right after choosing a preset is a jump.
+  // Once a change is made the keys are the game's again: a jump pressed right after choosing a
+  // preset is a jump.
   const giveKeysBack = (): void => {
     if (
       document.activeElement instanceof HTMLElement &&
@@ -46,7 +50,8 @@ export function showMovementPanel(loop: GameLoop): void {
       document.activeElement.blur();
     }
   };
-  // A clicked button (the panel's title, a button in it) would keep the keys otherwise: space would click it again.
+  // A clicked button (the panel's title, a button in it) would keep the keys otherwise: space would
+  // click it again.
   panel.domElement.addEventListener('click', (event) => {
     if (
       event.target instanceof HTMLButtonElement ||
@@ -81,7 +86,8 @@ export function showMovementPanel(loop: GameLoop): void {
       .onChange(send)
       .onFinishChange(giveKeysBack);
   }
-  // Choosing the preset already shown changes nothing in a dropdown: this puts its numbers back after knobs moved them.
+  // Choosing the preset already shown changes nothing in a dropdown: this puts its numbers back
+  // after knobs moved them.
   panel.add({ reset: () => usePreset(chosen.preset) }, 'reset').name('back to the preset');
   const copyTuningNumbers = (): void => {
     navigator.clipboard
@@ -125,8 +131,9 @@ interface Knob {
   readonly step: number;
 }
 
-// A new name when what `current` plays changes (#35, the 2 m jump): a choice kept under the old name could hold the old
-// jump's numbers under `current`, and would keep playing them as if they were the game's own.
+// A new name when what `current` plays changes (#35, the 2 m jump): a choice kept under the old
+// name could hold the old jump's numbers under `current`, and would keep playing them as if they
+// were the game's own.
 const STORAGE_KEY = 'stickworld.movementPanel.2';
 const RESEND_EVERY_MS = 250;
 
@@ -156,8 +163,9 @@ function isSameTuning(one: MovementTuning, other: MovementTuning): boolean {
 }
 
 /**
- * What was chosen before this reload, or undefined when nothing usable was kept. Storage is outside input: anything
- * that is not a known preset, or a number within a knob's limits, is replaced with what the preset says.
+ * What was chosen before this reload, or undefined when nothing usable was kept. Storage is outside
+ * input: anything that is not a known preset, or a number within a knob's limits, is replaced with
+ * what the preset says.
  */
 function readKeptChoice(): Choice | undefined {
   let text: string | null;
@@ -206,7 +214,8 @@ function keep(choice: Choice): void {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(choice));
   } catch {
-    // Storage may be full or blocked: the panel still works, it is only not kept for the next reload.
+    // Storage may be full or blocked: the panel still works, it is only not kept for the next
+    // reload.
   }
 }
 

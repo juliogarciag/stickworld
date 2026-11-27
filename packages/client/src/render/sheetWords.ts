@@ -13,9 +13,9 @@ import { convertToPixels } from './units';
  */
 
 /**
- * The level's number and name, "2. A GAP", above where the stick man starts, in world pixels: written stroke by stroke as the
- * sheet arrives, left for a few seconds and then rubbed out. `secondsOnSheet` is how long this sheet has been the
- * one being played.
+ * The level's number and name, "2. A GAP", above where the stick man starts, in world pixels:
+ * written stroke by stroke as the sheet arrives, left for a few seconds and then rubbed out.
+ * `secondsOnSheet` is how long this sheet has been the one being played.
  */
 export function buildLevelNameStrokes(level: Level, secondsOnSheet: number): readonly Stroke[] {
   if (
@@ -47,8 +47,9 @@ export function buildLevelNameStrokes(level: Level, secondsOnSheet: number): rea
 }
 
 /**
- * How far along the level's name is on a sheet that has been on top for `secondsOnTheSheet`. While it is `'notYet'`,
- * `'written'` or `'gone'` it is drawn the same from frame to frame; while it is being written or rubbed out it is not.
+ * How far along the level's name is on a sheet that has been on top for `secondsOnTheSheet`. While
+ * it is `'notYet'`, `'written'` or `'gone'` it is drawn the same from frame to frame; while it is
+ * being written or rubbed out it is not.
  */
 export function getLevelNameState(
   secondsOnSheet: number,
@@ -68,8 +69,9 @@ export function getLevelNameState(
 }
 
 /**
- * The page number in the bottom right corner of what the level's camera sees, in world pixels. It is as big on the
- * screen however far the camera has pulled back: `seen.zoom` against `zoomAtRest` says how much bigger to write it.
+ * The page number in the bottom right corner of what the level's camera sees, in world pixels. It
+ * is as big on the screen however far the camera has pulled back: `seen.zoom` against `zoomAtRest`
+ * says how much bigger to write it.
  */
 export function buildPageNumberStrokes(input: {
   page: number;
@@ -102,7 +104,10 @@ const LEVEL_NAME = {
   rubbedOutIn: 0.5,
 } as const;
 
-/** Sizes on the screen at rest, in the HUD's pixels: the page number is as far from its corner as the item slots are from theirs. */
+/**
+ * Sizes on the screen at rest, in the HUD's pixels: the page number is as far from its corner as
+ * the item slots are from theirs.
+ */
 const PAGE_NUMBER = { letterHeight: 46, margin: 56 } as const;
 
 export const __testing__ = { LEVEL_NAME, PAGE_NUMBER };

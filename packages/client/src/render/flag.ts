@@ -13,7 +13,10 @@ const FLAG = {
   loweredBy: 0.42,
 } as const;
 
-/** The flag as pencil strokes in world pixels: a stick, and a triangle of cloth that is higher up it the more `raised` the flag is. */
+/**
+ * The flag as pencil strokes in world pixels: a stick, and a triangle of cloth that is higher up it
+ * the more `raised` the flag is.
+ */
 export function buildFlagStrokes(flag: FlagView): Stroke[] {
   const top = flag.position.y - flag.height;
   const clothTop = top + flag.height * (FLAG.gapAtTop + FLAG.loweredBy * (1 - flag.raised));

@@ -38,7 +38,10 @@ export interface SheetFrame {
   readonly sim: SimHandle;
   /** How long ago the last frame was. */
   readonly seconds: number;
-  /** How long this sheet has been the one on top: what was written as it arrived is rubbed out a few seconds later. */
+  /**
+   * How long this sheet has been the one on top: what was written as it arrived is rubbed out a few
+   * seconds later.
+   */
   readonly secondsOnSheet: number;
 }
 
@@ -77,7 +80,10 @@ export class Sheet {
     this.stickMan = createStrokeLayer(scene);
   }
 
-  /** Takes everything off the sheet: its layers have nothing to draw, or to redraw as they boil, until it is drawn again. */
+  /**
+   * Takes everything off the sheet: its layers have nothing to draw, or to redraw as they boil,
+   * until it is drawn again.
+   */
   clear(): void {
     for (const layer of [
       this.written,
@@ -93,7 +99,10 @@ export class Sheet {
     }
   }
 
-  /** Draws the sheet as the scene's camera sees it right now. Call after moving the camera, every frame. */
+  /**
+   * Draws the sheet as the scene's camera sees it right now. Call after moving the camera, every
+   * frame.
+   */
   draw(frame: SheetFrame): void {
     const camera = this.scene.cameras.main;
     const level = getLevel(frame.sim);
@@ -105,11 +114,13 @@ export class Sheet {
     const airplane = this.airplaneShownFor(getAirplane(frame.sim), frame.seconds);
 
     this.paper.cover(camera);
-    // Writing that does not change is the same list every frame, which a layer does not draw anew; while some of it is being written or rubbed out it is made again each frame.
+    // Writing that does not change is the same list every frame, which a layer does not draw anew;
+    // while some of it is being written or rubbed out it is made again each frame.
     const levelName = getLevelNameState(frame.secondsOnSheet);
     const isWritingStill =
       areNotesStill(notes) && levelName !== 'beingWritten' && levelName !== 'beingRubbedOut';
-    // The notes first: a stroke's place in the list is what its wobble comes from, and the name's strokes come and go.
+    // The notes first: a stroke's place in the list is what its wobble comes from, and the name's
+    // strokes come and go.
     const buildWrittenStrokes = (): readonly Stroke[] => [
       ...buildNoteStrokes(notes, MOVE_KEY_NAMES),
       ...buildLevelNameStrokes(level, frame.secondsOnSheet),
@@ -138,7 +149,8 @@ export class Sheet {
     );
     this.airplane.show(airplane ? buildAirplaneStrokes(airplane) : []);
     const pose = this.poseFor(stickMan, frame.seconds, level.floor);
-    // Seated, the stick man tips with the airplane as it is drawn, about the point it is drawn turning about: its middle.
+    // Seated, the stick man tips with the airplane as it is drawn, about the point it is drawn
+    // turning about: its middle.
     this.stickMan.show(
       buildStickManStrokes(
         airplane

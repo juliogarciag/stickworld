@@ -30,7 +30,10 @@ export interface KeysAndWords {
   readonly sizes: KeySizes;
 }
 
-/** The strokes of the boxed keys and their words, with how wide all of it came out. For each key its box, then its name; the words last. */
+/**
+ * The strokes of the boxed keys and their words, with how wide all of it came out. For each key its
+ * box, then its name; the words last.
+ */
 export function buildKeysAndWords(keysAndWords: KeysAndWords): {
   strokes: Stroke[];
   width: number;

@@ -8,7 +8,10 @@ import type Phaser from 'phaser';
  */
 export const ACTION_KEY_NAMES = { useItem: 'J', interact: 'K' } as const;
 
-/** Hands `send` an 'item/use' each time the use key goes down in `scene`, and a 'world/interact' for each press of the interact key. A key held down counts once. */
+/**
+ * Hands `send` an 'item/use' each time the use key goes down in `scene`, and a 'world/interact' for
+ * each press of the interact key. A key held down counts once.
+ */
 export function sendActionCommands(scene: Phaser.Scene, send: (command: Command) => void): void {
   const keyboard = scene.input.keyboard;
   if (!keyboard) {

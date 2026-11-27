@@ -223,7 +223,8 @@ describe('dropping past the end of a floor line', () => {
   it("is pushed aside by the end as the stick man comes down beside it, a little every tick, until the stick man's whole width is clear of it", () => {
     const sim = createSimStandingAtEdge();
     const end = LEVEL.floor[0]!.start.x;
-    // A hop with a touch outward, three ticks long: the stick man comes down just past the end, straight.
+    // A hop with a touch outward, three ticks long: the stick man comes down just past the end,
+    // straight.
     sim.step([JUMP, LET_GO]);
     stepFor(sim, 3, [WALK_LEFT]);
     sim.step([STOP]);
@@ -252,7 +253,8 @@ describe('dropping past the end of a floor line', () => {
     const sim = createSim({ level: 2 });
     const farEnd = getLevelById(2).floor[1]!.start.x;
     sim.step([WALK_RIGHT]);
-    // Narrow at the stick man's feet, the end pushes the stick man back a little at a time; from the stick man's full width up it holds the stick man where it is.
+    // Narrow at the stick man's feet, the end pushes the stick man back a little at a time; from
+    // the stick man's full width up it holds the stick man where it is.
     while (getStickMan(sim).feet.y < PLAYER.fullWidthAbove) {
       sim.step();
     }
@@ -343,12 +345,16 @@ const DT = createSim({ level: 1 }).dt;
 const EARLY_TICKS = Math.round(PLAYER.jumpAskedEarlyWindow / DT);
 const LATE_TICKS = Math.round(PLAYER.jumpAskedLateWindow / DT);
 
-/** Enough different ways of pressing the keys that the stick man leaves every edge walking, drifting, steering back and jumping. */
+/**
+ * Enough different ways of pressing the keys that the stick man leaves every edge walking,
+ * drifting, steering back and jumping.
+ */
 const PATTERNS_PER_LEVEL = 240;
 
 /**
- * What the player presses on `tick` in pattern number `pattern`: the stick man sets off one way, and from some tick on changes
- * direction or jumps every few ticks. Worked out from the two numbers alone, so every run plays the same.
+ * What the player presses on `tick` in pattern number `pattern`: the stick man sets off one way,
+ * and from some tick on changes direction or jumps every few ticks. Worked out from the two numbers
+ * alone, so every run plays the same.
  */
 function getCommandsOfPattern(pattern: number, tick: number): Command[] {
   const setsOff = pattern % 2 === 0 ? WALK_RIGHT : WALK_LEFT;
@@ -364,7 +370,10 @@ function getCommandsOfPattern(pattern: number, tick: number): Command[] {
   return [[WALK_LEFT], [WALK_RIGHT], [STOP], [JUMP], [setsOff, JUMP]][turn]!;
 }
 
-/** The stick man's body as the tuning describes it, worked out here again so the test does not lean on the code it checks. */
+/**
+ * The stick man's body as the tuning describes it, worked out here again so the test does not lean
+ * on the code it checks.
+ */
 function getBodyHalfWidth(aboveFeet: number): number {
   if (aboveFeet <= 0 || aboveFeet >= STICK_MAN_HEIGHT) {
     return 0;
@@ -391,7 +400,9 @@ function createSimAboutToLand(ticks: number): SimHandle {
   return restoreSim(airborne[airborne.length - ticks]!);
 }
 
-/** True when the stick man lands and takes off again within `ticks` ticks, without another command. */
+/**
+ * True when the stick man lands and takes off again within `ticks` ticks, without another command.
+ */
 function doesJumpAgainWithin(sim: SimHandle, ticks: number): boolean {
   let hasLanded = false;
   for (let tick = 0; tick < ticks; tick += 1) {
@@ -408,7 +419,10 @@ function doesJumpAgainWithin(sim: SimHandle, ticks: number): boolean {
   return hasLanded && getStickMan(sim).action === 'jumping';
 }
 
-/** A sim in which the stick man has walked left off the start of the floor, this very tick, moving as `tuning` says. */
+/**
+ * A sim in which the stick man has walked left off the start of the floor, this very tick, moving
+ * as `tuning` says.
+ */
 function createSimJustWalkedOffEdge(tuning: MovementTuning = MOVEMENT_PRESETS.current): SimHandle {
   const sim = createSim({ level: 1 });
   sim.step([{ type: 'player/tuneMovement', tuning }, WALK_LEFT]);
@@ -419,7 +433,10 @@ function createSimJustWalkedOffEdge(tuning: MovementTuning = MOVEMENT_PRESETS.cu
   return sim;
 }
 
-/** A sim in which the stick man stands still on the last bit of floor before its start, having walked left to it. */
+/**
+ * A sim in which the stick man stands still on the last bit of floor before its start, having
+ * walked left to it.
+ */
 function createSimStandingAtEdge(): SimHandle {
   const sim = createSim({ level: 1 });
   sim.step([WALK_LEFT]);

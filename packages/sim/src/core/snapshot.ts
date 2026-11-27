@@ -13,7 +13,10 @@ export interface SimSnapshot {
   readonly slices: Readonly<Record<string, unknown>>;
 }
 
-/** A deep copy of plain JSON data. Anything that is not JSON (functions, Maps, undefined) is lost, which the snapshot tests catch. */
+/**
+ * A deep copy of plain JSON data. Anything that is not JSON (functions, Maps, undefined) is lost,
+ * which the snapshot tests catch.
+ */
 export function copyJson<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
 }

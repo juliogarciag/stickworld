@@ -23,7 +23,10 @@ export interface Rectangle {
   readonly height: number;
 }
 
-/** Where slot number `slot` (counted from 1) is drawn when the HUD camera sees `seen`: a row from the top right corner, the first slot in the corner and each next one to its left. */
+/**
+ * Where slot number `slot` (counted from 1) is drawn when the HUD camera sees `seen`: a row from
+ * the top right corner, the first slot in the corner and each next one to its left.
+ */
 export function getItemSlotBox(slot: number, seen: Rectangle): Rectangle {
   const rightOffset =
     SLOT_LAYOUT.margin + SLOT_LAYOUT.side + (slot - 1) * (SLOT_LAYOUT.side + SLOT_LAYOUT.spacing);
@@ -35,7 +38,10 @@ export function getItemSlotBox(slot: number, seen: Rectangle): Rectangle {
   };
 }
 
-/** The strokes that draw `slots` when the HUD camera sees `seen`. For each slot, in this order: its box, the item it holds, and last the second box when it is selected. */
+/**
+ * The strokes that draw `slots` when the HUD camera sees `seen`. For each slot, in this order: its
+ * box, the item it holds, and last the second box when it is selected.
+ */
 export function buildItemSlotStrokes(slots: readonly ItemSlot[], seen: Rectangle): Stroke[] {
   return slots.flatMap((itemSlot) => {
     const box = getItemSlotBox(itemSlot.slot, seen);
@@ -64,11 +70,16 @@ export function buildItemSlotStrokes(slots: readonly ItemSlot[], seen: Rectangle
 
 // ---- Helpers ----
 
-/** Sizes in the HUD camera's world pixels, which are the level's: the HUD is drawn at the level's zoom, so its pencil is the same weight. */
+/**
+ * Sizes in the HUD camera's world pixels, which are the level's: the HUD is drawn at the level's
+ * zoom, so its pencil is the same weight.
+ */
 const SLOT_LAYOUT = {
   /** From the corner of the screen to the first slot. */
   margin: 48,
-  /** A little larger than the box of a key in a prompt: it is there to be glanced at, not looked at. */
+  /**
+   * A little larger than the box of a key in a prompt: it is there to be glanced at, not looked at.
+   */
   side: 72,
   /** Between two slots. */
   spacing: 24,
@@ -78,7 +89,10 @@ const SLOT_LAYOUT = {
   selectedWeight: 1.5,
 } as const;
 
-/** A path in shares of a slot's box: (0, 0) is its top left corner and (1, 1) its bottom right. A point may lie outside. */
+/**
+ * A path in shares of a slot's box: (0, 0) is its top left corner and (1, 1) its bottom right. A
+ * point may lie outside.
+ */
 type UnitPath = readonly StrokePoint[];
 
 /** How each item looks in a slot, by its def id. */

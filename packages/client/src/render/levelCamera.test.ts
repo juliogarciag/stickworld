@@ -107,7 +107,8 @@ describe('getFramingWanted', () => {
       metresAcrossAtRest: 12,
     });
     expect(carrying.metresAhead).toBeGreaterThan(0);
-    // The far side is too far to show from here: the view is pulled back as far as it goes, and no further.
+    // The far side is too far to show from here: the view is pulled back as far as it goes, and no
+    // further.
     expect(carrying.metresAcross).toBe(FRAMING.mostMetresAcross);
 
     const overGap = {
@@ -120,7 +121,8 @@ describe('getFramingWanted', () => {
       GAP.end + FRAMING.nextLineMargin - 1e-9,
     );
 
-    // Over the far side there is no next line: the stick man is still shown where it is going, at the width the view has at rest.
+    // Over the far side there is no next line: the stick man is still shown where it is going, at
+    // the width the view has at rest.
     const overFarSide = { ...overGap, feet: { x: GAP.end + 2, y: -1 } };
     expect(
       getFramingWanted({ stickMan: overFarSide, floor: LEVEL_3, metresAcrossAtRest: 12 }),

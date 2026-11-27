@@ -126,7 +126,8 @@ describe('the stick man walking', () => {
         (stroke) => stroke.points,
       );
       const mirror = convertToPixels(WALKING.feet.x);
-      // The head is a circle drawn the same way round whichever way the stick man faces, so compare what it covers.
+      // The head is a circle drawn the same way round whichever way the stick man faces, so compare
+      // what it covers.
       expect(Math.min(...left.map((point) => point.x))).toBeCloseTo(
         2 * mirror - Math.max(...right.map((point) => point.x)),
         6,
@@ -769,7 +770,10 @@ const COMING_DOWN = {
 } as const;
 /** In the air because the stick man walked off an edge. */
 const FALLING = { ...COMING_DOWN, horizontalSpeed: 0, isFallingOffEdge: true } as const;
-/** A floor line that ends at `LINE_END`, with the stick man dropping on the open side of it, as close as the sim lets the stick man: half the stick man's width away. */
+/**
+ * A floor line that ends at `LINE_END`, with the stick man dropping on the open side of it, as
+ * close as the sim lets the stick man: half the stick man's width away.
+ */
 const LINE_END = 6;
 const FLOOR = [{ start: { x: 0, y: 0 }, end: { x: LINE_END, y: 0 } }];
 const LINE = [FLOOR[0]!.start, FLOOR[0]!.end] as const;
@@ -791,14 +795,20 @@ const DROPPING: StickManPose = {
   carrying: 0,
 };
 const BACK_ARM = 0;
-/** The stick man's feet from the line's height to well below it, in small steps: slower than the stick man ever falls, so every moment of the hold is looked at. */
+/**
+ * The stick man's feet from the line's height to well below it, in small steps: slower than the
+ * stick man ever falls, so every moment of the hold is looked at.
+ */
 const DROP_BESIDE_END = Array.from({ length: 80 }, (_, step) => ({
   x: BESIDE_END,
   y: step * 0.03,
 }));
 const makeWalk = (direction: -1 | 0 | 1): Command => ({ type: 'player/walk', direction });
 const JUMP: Command = { type: 'player/jump' };
-/** The keys, tick by tick, of the falls a player gets into: off either way, letting go, steering back, hopping at an edge, jumping short. */
+/**
+ * The keys, tick by tick, of the falls a player gets into: off either way, letting go, steering
+ * back, hopping at an edge, jumping short.
+ */
 const WAYS_TO_FALL: readonly ((tick: number) => Command[])[] = [
   (tick) => (tick === 0 ? [makeWalk(1)] : []),
   (tick) => (tick === 0 ? [makeWalk(-1)] : []),

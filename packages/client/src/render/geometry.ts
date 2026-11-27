@@ -37,7 +37,10 @@ function measureDistanceToLine(point: Point, [start, end]: Line): number {
   );
 }
 
-/** True when each line has its two ends on opposite sides of the other. Lines that only touch are caught by the distances. */
+/**
+ * True when each line has its two ends on opposite sides of the other. Lines that only touch are
+ * caught by the distances.
+ */
 function areLinesCrossing(one: Line, other: Line): boolean {
   const getSideOf = ([start, end]: Line, point: Point): number =>
     Math.sign((end.x - start.x) * (point.y - start.y) - (end.y - start.y) * (point.x - start.x));

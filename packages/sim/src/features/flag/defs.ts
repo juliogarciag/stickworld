@@ -25,8 +25,8 @@ export const flagDefs: readonly Def[] = [flagDef];
 /** What happens once a level is finished. */
 export const LEVEL_END = {
   /**
-   * How long the finished level stays on the paper before the next one starts, in seconds: the flag goes up and the stick man
-   * cheers for a moment under it. The last level stays.
+   * How long the finished level stays on the paper before the next one starts, in seconds: the flag
+   * goes up and the stick man cheers for a moment under it. The last level stays.
    */
   pauseBeforeNextLevel: 1.1,
 } as const;

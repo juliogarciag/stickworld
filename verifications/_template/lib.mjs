@@ -9,7 +9,10 @@ export const ROOT = path.resolve(HERE, '../..');
 export const PROOF = path.join(HERE, 'proof');
 mkdirSync(PROOF, { recursive: true });
 
-/** Writes a proof file. Absolute paths under the repo are relativised so proof is machine-independent. */
+/**
+ * Writes a proof file. Absolute paths under the repo are relativised so proof is
+ * machine-independent.
+ */
 export function writeProof(name, data) {
   const file = path.join(PROOF, name);
   const text = typeof data === 'string' ? data : JSON.stringify(data, null, 2) + '\n';
@@ -17,7 +20,10 @@ export function writeProof(name, data) {
   return file;
 }
 
-/** Starts a long-running command in its own process group, so `stop()` takes its children too, also when this script dies. */
+/**
+ * Starts a long-running command in its own process group, so `stop()` takes its children too, also
+ * when this script dies.
+ */
 export function start(command, args, options = {}) {
   stopEverythingOnExit();
   // No colours: the scripts look for plain text, such as a ready line, in what the command prints.
@@ -56,7 +62,10 @@ export async function waitForPort(port, timeoutMs = 20000) {
   );
 }
 
-/** Polls `read` until `until` holds for what it returned, and returns that. Throws on timeout, naming `label`. `options` is `{ read, until, timeoutMs }`, 8 seconds unless said. */
+/**
+ * Polls `read` until `until` holds for what it returned, and returns that. Throws on timeout,
+ * naming `label`. `options` is `{ read, until, timeoutMs }`, 8 seconds unless said.
+ */
 export async function waitFor(label, options) {
   const deadline = Date.now() + (options.timeoutMs ?? 8000);
   let last;
@@ -72,7 +81,10 @@ export async function waitFor(label, options) {
   );
 }
 
-/** The end of what a command printed, on one line and without stack frames: why a server did not start. */
+/**
+ * The end of what a command printed, on one line and without stack frames: why a server did not
+ * start.
+ */
 export function getLastLines(output) {
   const lines = output
     .split('\n')

@@ -49,7 +49,10 @@ describe('determinism', () => {
 
 const TICKS = 600;
 
-/** A recorded input: the player walking back and forth, jumping and steering, well-formed commands nobody owns, and garbage, which every feature must ignore without throwing. */
+/**
+ * A recorded input: the player walking back and forth, jumping and steering, well-formed commands
+ * nobody owns, and garbage, which every feature must ignore without throwing.
+ */
 function getCommandsAt(tick: number): Command[] {
   const garbage: unknown[] = [
     null,
@@ -80,7 +83,9 @@ const noiseSlice = defineSlice<Noise>('noise', () => ({ total: 0, draws: [] }), 
   isCarriedAcrossLevels: false,
 });
 
-/** A fixture feature: adds a random number every tick and the amount of every `noise/add` command. */
+/**
+ * A fixture feature: adds a random number every tick and the amount of every `noise/add` command.
+ */
 const noiseFeature: Feature = {
   name: 'noise',
   slices: [noiseSlice],

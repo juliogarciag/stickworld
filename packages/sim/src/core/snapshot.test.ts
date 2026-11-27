@@ -73,7 +73,10 @@ const walkerSlice = defineSlice<Walker>('walker', (level) => ({ x: level.start.x
 });
 const stepsSlice = defineSlice<number>('steps', () => 0, { isCarriedAcrossLevels: true });
 
-/** A fixture feature: walks a point left or right, turns on `walker/turn`, and counts its steps across levels. */
+/**
+ * A fixture feature: walks a point left or right, turns on `walker/turn`, and counts its steps
+ * across levels.
+ */
 const walkerFeature: Feature = {
   name: 'walker',
   slices: [walkerSlice, stepsSlice],

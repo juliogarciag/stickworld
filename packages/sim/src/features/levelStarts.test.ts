@@ -69,7 +69,10 @@ interface Seen {
   readonly hasReachedFlag: boolean;
 }
 
-/** A sim of the game's features with a last one that notes, every tick, what it sees after all the others have had theirs. */
+/**
+ * A sim of the game's features with a last one that notes, every tick, what it sees after all the
+ * others have had theirs.
+ */
 function createSimWithWitness(level: number): { sim: Sim; seen: Seen[] } {
   const seen: Seen[] = [];
   const witnessFeature: Feature = {

@@ -26,14 +26,16 @@ export class TurnedSheetScene extends Phaser.Scene {
     const camera = this.cameras.main;
     const turning = this.pageTurn.getTurningPage();
     camera.setVisible(turning !== undefined);
-    // Phaser only resizes a camera with the window while it sits at the canvas's corner, which this one does not during a turn: it is given the canvas's size every frame.
+    // Phaser only resizes a camera with the window while it sits at the canvas's corner, which this
+    // one does not during a turn: it is given the canvas's size every frame.
     const { width, height } = this.scale;
     if (!turning) {
       camera.setViewport(0, 0, width, height);
       this.sheet.clear();
       return;
     }
-    // The view itself moves across the canvas, and what it shows is cut off at its sides: the sheet's right edge is the view's.
+    // The view itself moves across the canvas, and what it shows is cut off at its sides: the
+    // sheet's right edge is the view's.
     camera.setViewport(Math.round((turning.edgeAt - 1) * width), 0, width, height);
     camera.setZoom(turning.camera.zoom);
     camera.setScroll(turning.camera.scrollX, turning.camera.scrollY);

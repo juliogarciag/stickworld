@@ -10,15 +10,19 @@ import type { Rectangle } from './itemSlots';
  * (`getLetter`); only where and how they are drawn is decided here.
  */
 
-/** A letter as it is held up: what it says, and the name of what reading it has taught the stick man, or null when it teaches nothing. */
+/**
+ * A letter as it is held up: what it says, and the name of what reading it has taught the stick
+ * man, or null when it teaches nothing.
+ */
 export interface LetterHeldUp {
   readonly text: string;
   readonly teaches: string | null;
 }
 
 /**
- * The sheet of the letter the stick man reads, centred near the top of what the HUD camera sees, as tall as what is on it
- * needs: its text and, a little apart under it, a line that says what the stick man has learned.
+ * The sheet of the letter the stick man reads, centred near the top of what the HUD camera sees, as
+ * tall as what is on it needs: its text and, a little apart under it, a line that says what the
+ * stick man has learned.
  */
 export function buildLetterSheetStrokes(letter: LetterHeldUp, seen: Rectangle): Stroke[] {
   const width = Math.min(SHEET.width, seen.width - 2 * SHEET.topMargin);
@@ -65,9 +69,14 @@ const SHEET = {
   letterHeight: 30,
   /** How far each corner of the sheet is off a true rectangle: it was cut by hand. */
   askew: 7,
-  /** From the bottom of the letter's text to the top of the line that says what the stick man learned. */
+  /**
+   * From the bottom of the letter's text to the top of the line that says what the stick man
+   * learned.
+   */
   learnedTextGap: 40,
-  /** What goes before the name of what the stick man learned. The HUD's own words: no def has them. */
+  /**
+   * What goes before the name of what the stick man learned. The HUD's own words: no def has them.
+   */
   learned: 'learned:',
 } as const;
 

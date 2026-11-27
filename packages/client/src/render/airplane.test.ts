@@ -74,7 +74,8 @@ describe('easeAirplanesOverTime', () => {
     const shownFor = easeAirplanesOverTime();
     shownFor(RESTING, FRAME);
     let flying = FLYING;
-    // The first frames turn its nose from level to where the sim points it; from then on it is exact.
+    // The first frames turn its nose from level to where the sim points it; from then on it is
+    // exact.
     for (let frame = 0; frame < 10; frame += 1) {
       expect(shownFor(flying, FRAME)!.position).toEqual(flying.position);
     }

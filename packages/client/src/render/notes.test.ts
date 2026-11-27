@@ -51,7 +51,8 @@ describe('buildNoteStrokes', () => {
     expect(countPointsLeft(NOTES.rubbedOutIn / 2)).toBeLessThan(countPointsLeft(0));
     expect(countPointsLeft(NOTES.rubbedOutIn / 2)).toBeGreaterThan(pointsOfName);
     expect(countPointsLeft(NOTES.rubbedOutIn)).toBe(pointsOfName);
-    // The strokes that are left keep their places in the list, so they are not drawn with another wobble.
+    // The strokes that are left keep their places in the list, so they are not drawn with another
+    // wobble.
     expect(
       buildNoteStrokes([NAME, { ...WALK, rubbedOutFor: NOTES.rubbedOutIn / 2 }], KEYS),
     ).toHaveLength(whole.length);

@@ -71,7 +71,8 @@ describe('the notes of a level', () => {
     expect(getStickMan(jumping)).toMatchObject({ action: 'walking', feet: { y: 0 } });
     expect(getStickMan(jumping).feet.x).toBeGreaterThan(gap.end);
 
-    // The stick man walks back into the gap: the level starts again, and the note the stick man had done is there again.
+    // The stick man walks back into the gap: the level starts again, and the note the stick man had
+    // done is there again.
     jumping.step([{ type: 'player/walk', direction: -1 }]);
     for (
       let tick = 0;

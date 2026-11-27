@@ -20,8 +20,9 @@ export class GameLoop {
   }
 
   /**
-   * Runs as many ticks as `deltaSeconds` of real time earns, and says how many ran. A scene hands it `getFrameSeconds`, which
-   * is capped already; the cap is given to `takeWholeTicks` all the same, so that no caller can make the sim run more.
+   * Runs as many ticks as `deltaSeconds` of real time earns, and says how many ran. A scene hands
+   * it `getFrameSeconds`, which is capped already; the cap is given to `takeWholeTicks` all the
+   * same, so that no caller can make the sim run more.
    */
   advanceBy(deltaSeconds: number): number {
     const { ticks, leftover } = takeWholeTicks({
@@ -32,7 +33,8 @@ export class GameLoop {
     });
     this.leftover = leftover;
     for (let tick = 0; tick < ticks; tick += 1) {
-      // The sim moves to the next level by itself, within one tick. The tick before is kept each time, so the sheet that was left can still be drawn: a snapshot is a few hundred bytes.
+      // The sim moves to the next level by itself, within one tick. The tick before is kept each
+      // time, so the sheet that was left can still be drawn: a snapshot is a few hundred bytes.
       const level = this.current.level;
       const tickBefore = this.current.takeSnapshot();
       this.current.step(this.pendingCommands);
@@ -45,8 +47,9 @@ export class GameLoop {
   }
 
   /**
-   * The level that gave way to another since this was last asked, as it was on its last tick, or undefined when none
-   * did. A sim of its own that is never stepped: it is for drawing the sheet that was left, once.
+   * The level that gave way to another since this was last asked, as it was on its last tick, or
+   * undefined when none did. A sim of its own that is never stepped: it is for drawing the sheet
+   * that was left, once.
    */
   takeFinishedLevel(): SimHandle | undefined {
     const finishedLevel = this.finishedLevel;
@@ -59,7 +62,10 @@ export class GameLoop {
     this.pendingCommands.push(command);
   }
 
-  /** Throws the current sim away and plays level `level` from its start, with the same seed. Dev tooling only: in play, the sim moves between levels itself. */
+  /**
+   * Throws the current sim away and plays level `level` from its start, with the same seed. Dev
+   * tooling only: in play, the sim moves between levels itself.
+   */
   playLevel(level: number): void {
     this.current = createSim({ level, seed: this.current.seed });
     this.pendingCommands = [];

@@ -37,8 +37,8 @@ export function buildLetterStrokes(letter: LetterView): Stroke[] {
 }
 
 /**
- * The sheet of paper that falls from the sky for the stick man who has lost its, as pencil strokes: swaying on its way down,
- * and lying on the floor once it is there, a corner of it turned up.
+ * The sheet of paper that falls from the sky for the stick man who has lost its, as pencil strokes:
+ * swaying on its way down, and lying on the floor once it is there, a corner of it turned up.
  */
 export function buildFallenPaperStrokes(fallenItem: FallenItemView): Stroke[] {
   // Paper comes down swinging from side to side, less and less as it nears the floor.
@@ -94,7 +94,9 @@ const SHEET = {
   height: 0.2,
   /** How far it is tipped where it lies, in radians. */
   lean: -0.05,
-  /** How far to each side it swings on the way down, in metres, and how far it rocks, in radians. */
+  /**
+   * How far to each side it swings on the way down, in metres, and how far it rocks, in radians.
+   */
   sway: 0.45,
   rock: 0.5,
   /** How many radians of swing it goes through for each metre it comes down. */

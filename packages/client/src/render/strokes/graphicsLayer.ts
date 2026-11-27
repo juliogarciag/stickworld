@@ -38,7 +38,8 @@ export function createGraphicsStrokeLayer(scene: Phaser.Scene): StrokeLayer {
   const draw = (): void => {
     const boilFrame = getBoilFrameAt(scene.time.now / 1000);
     const seen = getWorldSeenBy(scene.cameras.main);
-    // The view is part of it: points off screen are skipped, so a camera that moved needs a new drawing.
+    // The view is part of it: points off screen are skipped, so a camera that moved needs a new
+    // drawing.
     const next = {
       strokes,
       boilFrame,
@@ -96,7 +97,8 @@ export function createGraphicsStrokeLayer(scene: Phaser.Scene): StrokeLayer {
     scene.events.off(Phaser.Scenes.Events.SHUTDOWN, destroy);
     graphics.destroy();
   };
-  // Drawn just before Phaser renders, so a layer shown once still boils, and the camera is where the scene put it for this frame.
+  // Drawn just before Phaser renders, so a layer shown once still boils, and the camera is where
+  // the scene put it for this frame.
   scene.events.on(Phaser.Scenes.Events.PRE_RENDER, draw);
   scene.events.once(Phaser.Scenes.Events.SHUTDOWN, destroy);
 
@@ -115,5 +117,8 @@ let layersMade = 0;
 /** More strokes than a layer ever shows: keeps the numbering of two layers' strokes apart. */
 const STROKES_PER_LAYER = 4096;
 
-/** How far outside the view, in world pixels, a line is still drawn: a long line costs what is on screen, and no end of a piece shows at the edge. */
+/**
+ * How far outside the view, in world pixels, a line is still drawn: a long line costs what is on
+ * screen, and no end of a piece shows at the edge.
+ */
 const OFF_SCREEN_MARGIN = 200;

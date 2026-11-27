@@ -17,7 +17,10 @@ export interface HeldKeys {
   readonly isJumpHeld: boolean;
   /** True on the one frame a key that only ever jumps went down. */
   readonly isJumpPressed: boolean;
-  /** True on the one frame an up key went down: on the stick man's feet that is a jump too; seated, up steers and is not one. */
+  /**
+   * True on the one frame an up key went down: on the stick man's feet that is a jump too; seated,
+   * up steers and is not one.
+   */
   readonly isUpPressed: boolean;
 }
 
@@ -47,7 +50,8 @@ export function createKeysToCommands(): (now: { keys: HeldKeys; sim: SimHandle }
   const hasWalkChanged = createChangeDetector<WalkDirection>();
   const hasSteeringChanged = createChangeDetector<SteerDirection>();
   let wasJumpHeld = false;
-  // An up key held to steer the airplane is not a jump held once the stick man jumps out: it steered, and counts again only once let go of.
+  // An up key held to steer the airplane is not a jump held once the stick man jumps out: it
+  // steered, and counts again only once let go of.
   let wasUpHeldSinceSeated = false;
   return (input) => {
     const commands: Command[] = [];
@@ -94,7 +98,10 @@ export function getWalkDirectionHeld(keys: HeldKeys): WalkDirection {
   return keys.isLeftHeld ? -1 : 1;
 }
 
-/** Which way the keys say to steer the airplane's nose: 1 up, -1 down, neither when both or none are held. */
+/**
+ * Which way the keys say to steer the airplane's nose: 1 up, -1 down, neither when both or none are
+ * held.
+ */
 export function getSteerDirectionHeld(keys: HeldKeys): SteerDirection {
   if (keys.isUpHeld === keys.isDownHeld) {
     return 0;
@@ -105,8 +112,9 @@ export function getSteerDirectionHeld(keys: HeldKeys): SteerDirection {
 // ---- Helpers ----
 
 /**
- * Returns a function that says whether what the keys want is something the sim has not been told: it differs from what
- * the sim believes, or from what was asked last when that command is still waiting for the sim's next tick.
+ * Returns a function that says whether what the keys want is something the sim has not been told:
+ * it differs from what the sim believes, or from what was asked last when that command is still
+ * waiting for the sim's next tick.
  */
 function createChangeDetector<Wanted>(): (now: {
   wanted: Wanted;
@@ -115,8 +123,8 @@ function createChangeDetector<Wanted>(): (now: {
 }) => boolean {
   let lastAsked: { wanted: Wanted; sim: SimHandle; tick: number } | undefined;
   return (input) => {
-    // The last command may still be waiting for the sim's next tick. Until then the sim has not heard it,
-    // but it has been asked, and asking again would be a duplicate.
+    // The last command may still be waiting for the sim's next tick. Until then the sim has not
+    // heard it, but it has been asked, and asking again would be a duplicate.
     const isLastRequestPending =
       lastAsked !== undefined && lastAsked.sim === input.sim && lastAsked.tick === input.sim.tick;
     const alreadyAsked = isLastRequestPending && lastAsked ? lastAsked.wanted : input.believed;

@@ -16,7 +16,10 @@ export interface LetterView {
   readonly teaches: string | null;
 }
 
-/** The letter in the level being played, or undefined when there is none: the level has no letter, or the stick man has read it and put it away. */
+/**
+ * The letter in the level being played, or undefined when there is none: the level has no letter,
+ * or the stick man has read it and put it away.
+ */
 export function getLetter(handle: SimHandle): LetterView | undefined {
   if (!(handle instanceof Sim)) {
     throw new TypeError('not a sim made by createSim or restoreSim');
@@ -39,7 +42,10 @@ export function getLetter(handle: SimHandle): LetterView | undefined {
 export interface FallenItemView {
   /** Where it lies, or will lie once it has come down, in metres. */
   readonly position: Point;
-  /** How far above that it still is, in metres: 0 once it lies on the floor, where it can be picked up. */
+  /**
+   * How far above that it still is, in metres: 0 once it lies on the floor, where it can be picked
+   * up.
+   */
   readonly height: number;
   /** The def id of the item it is. */
   readonly itemDefId: number;

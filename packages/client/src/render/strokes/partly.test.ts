@@ -23,7 +23,8 @@ describe('getWrittenSoFar', () => {
         thickness: 2,
       },
     ]);
-    // Three quarters: both lines and the first two sides of the square, which is not a loop until the pencil is back.
+    // Three quarters: both lines and the first two sides of the square, which is not a loop until
+    // the pencil is back.
     const threeQuarters = getWrittenSoFar(TWO_LINES_AND_SQUARE, 0.75);
     expect(threeQuarters.slice(0, 2)).toEqual(TWO_LINES_AND_SQUARE.slice(0, 2));
     expect(threeQuarters[2]).toEqual({

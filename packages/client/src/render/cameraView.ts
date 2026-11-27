@@ -1,6 +1,8 @@
 import type Phaser from 'phaser';
 
-/** A rectangle of the world, in world pixels, with how many screen pixels one world pixel covers. */
+/**
+ * A rectangle of the world, in world pixels, with how many screen pixels one world pixel covers.
+ */
 export interface WorldRectangle {
   readonly x: number;
   readonly y: number;

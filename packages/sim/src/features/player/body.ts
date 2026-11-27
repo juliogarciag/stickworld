@@ -8,7 +8,11 @@ import { playerSlice, type PlayerState } from './state';
  * file decides which parts of the stick man's state that touches.
  */
 
-/** Where the stick man is and how: on the floor or in the air, seated or on the stick man's feet. Read-only, and live: it is the stick man's state itself, so it changes as the stick man does. Ask again after changing the stick man rather than keeping it. */
+/**
+ * Where the stick man is and how: on the floor or in the air, seated or on the stick man's feet.
+ * Read-only, and live: it is the stick man's state itself, so it changes as the stick man does. Ask
+ * again after changing the stick man rather than keeping it.
+ */
 export type PlayerBody = Readonly<
   Pick<PlayerState, 'x' | 'y' | 'facing' | 'isOnFloor' | 'isSeated'>
 >;
@@ -18,9 +22,10 @@ export function getPlayerBody(sim: Sim): PlayerBody {
 }
 
 /**
- * The stick man sits down in something that moves the stick man from now on (the airplane), at `seat` and looking the way it does. The stick man stops
- * where it was: no speed, no walk under way, and a jump asked for a moment before the stick man sat down was for the floor, so it
- * is forgotten and cannot throw the stick man out of the stick man's seat.
+ * The stick man sits down in something that moves the stick man from now on (the airplane), at
+ * `seat` and looking the way it does. The stick man stops where it was: no speed, no walk under
+ * way, and a jump asked for a moment before the stick man sat down was for the floor, so it is
+ * forgotten and cannot throw the stick man out of the stick man's seat.
  */
 export function seatPlayer(
   sim: Sim,
@@ -40,7 +45,10 @@ export function seatPlayer(
   player.y = seat.y;
 }
 
-/** Seated, the stick man is where its seat is: its underside is what the sim calls the stick man's feet. Nothing changes for the stick man on its feet. */
+/**
+ * Seated, the stick man is where its seat is: its underside is what the sim calls the stick man's
+ * feet. Nothing changes for the stick man on its feet.
+ */
 export function movePlayerWithSeat(
   sim: Sim,
   seat: { readonly x: number; readonly y: number },
@@ -53,7 +61,10 @@ export function movePlayerWithSeat(
   player.y = seat.y;
 }
 
-/** What the stick man sat in has come to rest on the floor: the stick man gets up and stands where it is, still. Nothing changes for the stick man on its feet. */
+/**
+ * What the stick man sat in has come to rest on the floor: the stick man gets up and stands where
+ * it is, still. Nothing changes for the stick man on its feet.
+ */
 export function standPlayerUp(sim: Sim): void {
   const player = sim.getStateOf(playerSlice);
   if (!player.isSeated) {
@@ -88,7 +99,10 @@ export function startPlayerAt(
   player.y = position.y;
 }
 
-/** The stick man holds something over its head with both hands from now on: the stick man's jump is the lower one and its arms are up. What it is belongs to the feature that says so. */
+/**
+ * The stick man holds something over its head with both hands from now on: the stick man's jump is
+ * the lower one and its arms are up. What it is belongs to the feature that says so.
+ */
 export function startCarrying(sim: Sim): void {
   sim.getStateOf(playerSlice).isCarrying = true;
 }

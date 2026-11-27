@@ -10,7 +10,10 @@ import { PENCIL } from '../render/strokes/pencil';
 
 export interface Written {
   readonly strokes: Stroke[];
-  /** How wide the widest line came out, and how tall all the lines are together, in the same pixels as `letterHeight`. */
+  /**
+   * How wide the widest line came out, and how tall all the lines are together, in the same pixels
+   * as `letterHeight`.
+   */
   readonly width: number;
   readonly height: number;
 }
@@ -20,7 +23,9 @@ export interface WritingPlace {
   readonly position: StrokePoint;
   /** How tall a capital is. */
   readonly letterHeight: number;
-  /** How wide a line may get before the next word starts a new one. Left out, it is all one line. */
+  /**
+   * How wide a line may get before the next word starts a new one. Left out, it is all one line.
+   */
   readonly lineWidth?: number;
 }
 
@@ -77,7 +82,10 @@ function measureWidth(line: string): number {
   );
 }
 
-/** `text` broken into lines no wider than `mostWidth` capital heights, at spaces. A single word wider than that keeps a line to itself. */
+/**
+ * `text` broken into lines no wider than `mostWidth` capital heights, at spaces. A single word
+ * wider than that keeps a line to itself.
+ */
 function wrapText(text: string, mostWidth: number): string[] {
   const lines: string[] = [];
   for (const word of text.split(/\s+/).filter((each) => each !== '')) {
@@ -95,7 +103,10 @@ function getGlyph(character: string): Glyph {
   return GLYPHS[character] ?? SPACE;
 }
 
-/** One letter from its strokes written as "x,y x,y | x,y x,y": (0, 0) is the top left of a capital and (0, 1) its foot. */
+/**
+ * One letter from its strokes written as "x,y x,y | x,y x,y": (0, 0) is the top left of a capital
+ * and (0, 1) its foot.
+ */
 function makeGlyph(width: number, strokes: string): Glyph {
   const paths = strokes.split('|').map((path) =>
     path

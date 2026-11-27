@@ -23,7 +23,10 @@ export class LevelScene extends Phaser.Scene {
   private getHeldKeys!: () => HeldKeys;
   private follow!: ReturnType<typeof followStickManWith>;
   private readonly commandsFor = createKeysToCommands();
-  /** The sheet on top and how long it has been: a new one when the sim is on another level, or is another sim. */
+  /**
+   * The sheet on top and how long it has been: a new one when the sim is on another level, or is
+   * another sim.
+   */
   private onTop: { sim: SimHandle; level: number; seconds: number } | undefined;
 
   constructor(
@@ -53,7 +56,8 @@ export class LevelScene extends Phaser.Scene {
 
     const camera = this.cameras.main;
     const finished = this.loop.takeFinishedLevel();
-    // The camera still looks at the level that was left: the sheet that is turned away is drawn as it was last seen.
+    // The camera still looks at the level that was left: the sheet that is turned away is drawn as
+    // it was last seen.
     if (finished) {
       this.pageTurn.start({
         sim: finished,

@@ -54,7 +54,8 @@ describe('a level asked for from inside a tick', () => {
     expect(sim.level).toBe(2);
     expect(sim.tick).toBe(2);
     expect(sim.getStateOf(ticksOnThisLevelSlice)).toBe(0);
-    // It starts in the tick that asked, before the tick count goes up: that is the tick a feature's `init` reads.
+    // It starts in the tick that asked, before the tick count goes up: that is the tick a feature's
+    // `init` reads.
     expect(sim.getStateOf(tickOfLastStartSlice)).toBe(1);
     sim.step();
     expect(sim.getStateOf(ticksOnThisLevelSlice)).toBe(1);
@@ -154,7 +155,8 @@ describe('a level asked for from inside a tick', () => {
       start: { seed: 1, level: 1 },
     });
     expect(() => sim.step([ask(2)])).toThrow('a bug in a feature');
-    // Neither the next tick nor a level asked for between two ticks finds the level 2 that was asked for then.
+    // Neither the next tick nor a level asked for between two ticks finds the level 2 that was
+    // asked for then.
     sim.startLevelAfterThisTick(1);
     expect(sim.level).toBe(1);
     sim.step();
@@ -229,7 +231,10 @@ const tickOfLastStartSlice = defineSlice<number>('tickOfLastStart', () => -1, {
   isCarriedAcrossLevels: false,
 });
 
-/** A fixture feature: counts its ticks on the level being played and the levels started since the game began or started over, and notes the tick its `init` last ran on. */
+/**
+ * A fixture feature: counts its ticks on the level being played and the levels started since the
+ * game began or started over, and notes the tick its `init` last ran on.
+ */
 const witnessFeature: Feature = {
   name: 'witness',
   slices: [ticksOnThisLevelSlice, levelsStartedSlice, tickOfLastStartSlice],
