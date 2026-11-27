@@ -40,7 +40,8 @@ export const playerFeature: Feature = {
       tuning?: unknown;
     };
     const player = sim.getStateOf(playerSlice);
-    if (type === 'player/walk' && isWalkDirection(direction)) {
+    const isWalkCommand = type === 'player/walk' && isWalkDirection(direction);
+    if (isWalkCommand) {
       player.walkDirection = direction;
     }
     if (type === 'player/jump') {
@@ -72,7 +73,8 @@ export const playerFeature: Feature = {
       // Under a floor line there is no room to stand up: the stick man cannot jump up through it,
       // so the jump is dropped too.
       const floorHeightAtPlayer = getFloorHeightAt(sim.levelDef.floor, player.x);
-      if (floorHeightAtPlayer !== undefined && player.y > floorHeightAtPlayer) {
+      const isUnderFloor = floorHeightAtPlayer !== undefined && player.y > floorHeightAtPlayer;
+      if (isUnderFloor) {
         player.ticksSinceJumpAsked = null;
       }
       if (player.ticksSinceJumpAsked === null) {
@@ -155,7 +157,8 @@ function isWalkDirection(value: unknown): value is WalkDirection {
  * everything else in it is left out.
  */
 function getValidTuningIn(tuning: unknown): Partial<MovementTuning> {
-  if (typeof tuning !== 'object' || tuning === null || Array.isArray(tuning)) {
+  const isPlainObject = typeof tuning === 'object' && tuning !== null && !Array.isArray(tuning);
+  if (!isPlainObject) {
     return {};
   }
   const valid: Partial<Record<keyof MovementTuning, number>> = {};
@@ -165,7 +168,9 @@ function getValidTuningIn(tuning: unknown): Partial<MovementTuning> {
     }
     const value: unknown = (tuning as Record<string, unknown>)[name];
     const { min, max } = MOVEMENT_TUNING_LIMITS[name];
-    if (typeof value === 'number' && Number.isFinite(value) && value >= min && value <= max) {
+    const isWithinLimits =
+      typeof value === 'number' && Number.isFinite(value) && value >= min && value <= max;
+    if (isWithinLimits) {
       valid[name] = value;
     }
   }
@@ -183,7 +188,8 @@ function jumpIfAskedAndAble(sim: Sim, player: PlayerState): void {
   const hasJustWalkedOff =
     player.ticksSinceWalkedOff !== null &&
     player.ticksSinceWalkedOff < countWholeTicksIn(PLAYER.jumpAskedLateWindow, sim.dt);
-  if (player.isOnFloor || hasJustWalkedOff) {
+  const canTakeOff = player.isOnFloor || hasJustWalkedOff;
+  if (canTakeOff) {
     const tuning = sim.getStateOf(movementTuningSlice);
     player.verticalSpeed = -Math.sqrt(
       2 * tuning.riseGravity * (player.isCarrying ? tuning.jumpHeightCarrying : tuning.jumpHeight),
@@ -207,7 +213,8 @@ function jumpIfAskedAndAble(sim: Sim, player: PlayerState): void {
 function cutRiseIfLetGo(player: PlayerState, tuning: MovementTuning): void {
   const isRisingFromJump =
     !player.isOnFloor && player.ticksSinceWalkedOff === null && player.verticalSpeed < 0;
-  if (!isRisingFromJump || player.isJumpHeld || player.isRiseCut) {
+  const shouldCutRise = isRisingFromJump && !player.isJumpHeld && !player.isRiseCut;
+  if (!shouldCutRise) {
     return;
   }
   player.verticalSpeed *= 1 - tuning.letGoCut;
@@ -261,7 +268,7 @@ function fallTo(
     floorHeight !== undefined &&
     player.y <= floorHeight &&
     y >= floorHeight;
-  if (!isLanding || floorHeight === undefined) {
+  if (!isLanding) {
     player.y = y;
     if (player.ticksSinceWalkedOff !== null) {
       player.ticksSinceWalkedOff += 1;
@@ -284,7 +291,8 @@ function getSpeedAfterSteering(
   speed: number,
   input: { direction: WalkDirection; tuning: MovementTuning; dt: number },
 ): number {
-  if (input.direction === 0 && input.tuning.airBraking === 0) {
+  const isDrifting = input.direction === 0 && input.tuning.airBraking === 0;
+  if (isDrifting) {
     return speed;
   }
   const mostChange =

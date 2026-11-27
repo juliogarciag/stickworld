@@ -44,7 +44,8 @@ function buildCanonicalJson(value: unknown): string {
   if (Array.isArray(value)) {
     return `[${value.map(buildCanonicalJson).join(',')}]`;
   }
-  if (typeof value === 'object' && value !== null) {
+  const isObject = typeof value === 'object' && value !== null;
+  if (isObject) {
     const entries = Object.entries(value as Record<string, unknown>)
       .filter(([, entry]) => entry !== undefined)
       .sort(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0));

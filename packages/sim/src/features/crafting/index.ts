@@ -21,7 +21,8 @@ export const craftingFeature: Feature = {
  */
 export function teachRecipe(sim: Sim, recipeDefId: number): void {
   const known = sim.getStateOf(knownRecipesSlice);
-  if (getRecipeDef(recipeDefId) && !known.includes(recipeDefId)) {
+  const isNewRecipe = getRecipeDef(recipeDefId) !== undefined && !known.includes(recipeDefId);
+  if (isNewRecipe) {
     known.push(recipeDefId);
   }
 }

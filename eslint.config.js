@@ -265,6 +265,22 @@ const NAMES_ARE_TERMS = [
   `Identifier[name=/(^|_)(${SENTENCE_WORDS.toUpperCase()})_|_(${SENTENCE_WORDS.toUpperCase()})$/]`,
 ].map((selector) => ({ selector, message: NOT_A_SENTENCE }));
 const NAMING = [...FUNCTIONS_ARE_VERBS, ...PARAMETERS_ARE_NAMED, ...NAMES_ARE_TERMS];
+/**
+ * A condition is read on one line too (AGENTS.md, "Conditions"): an `if` or a ternary tests one
+ * thing. Parts joined with `&&` or `||` go into a boolean constant first, whose name says what
+ * the parts mean together (`isRestartAtCheckpoint`). A loop's test is evaluated again on every
+ * pass, so it cannot be a constant and is not held to this.
+ */
+const NAME_THE_CONDITION =
+  'Name a condition joined with && or ||: put it in a boolean constant first (const isRestartAtCheckpoint = ...) and test the name.';
+const JOINED = 'LogicalExpression[operator=/^(&&|\\|\\|)$/]';
+const CONDITIONS_ARE_NAMED = [
+  `IfStatement > ${JOINED}.test`,
+  `IfStatement > UnaryExpression.test > ${JOINED}`,
+  `ConditionalExpression > ${JOINED}.test`,
+  `ConditionalExpression > UnaryExpression.test > ${JOINED}`,
+].map((selector) => ({ selector, message: NAME_THE_CONDITION }));
+const READABLE = [...NAMING, ...CONDITIONS_ARE_NAMED];
 /** Names that mean nothing without their owner or the line before. */
 const BARE_WORDS = [
   'at',
@@ -360,7 +376,7 @@ export default defineConfig([
           message: 'Non-deterministic. Use sim.tick instead.',
         },
       ],
-      'no-restricted-syntax': ['error', NEW_DATE, ...NAMING],
+      'no-restricted-syntax': ['error', NEW_DATE, ...READABLE],
     },
   },
   // Later blocks replace a rule's whole setting, so the features block repeats the sim's groups
@@ -371,24 +387,24 @@ export default defineConfig([
   },
   {
     files: ['packages/client/**/*.ts'],
-    rules: { ...restrictImports(SIM_DEEP), 'no-restricted-syntax': ['error', ...NAMING] },
+    rules: { ...restrictImports(SIM_DEEP), 'no-restricted-syntax': ['error', ...READABLE] },
   },
   {
     files: ['verifications/_template/**/*.mjs'],
-    rules: { 'no-restricted-syntax': ['error', ...NAMING] },
+    rules: { 'no-restricted-syntax': ['error', ...READABLE] },
   },
   // `__testing__` exports exist for tests only. Later blocks replace a rule's whole setting, so
   // each repeats what the blocks above set: NEW_DATE for the sim, and the verbs everywhere.
   {
     files: ['packages/sim/**/*.ts'],
     ignores: ['**/*.test.ts'],
-    rules: { 'no-restricted-syntax': ['error', NEW_DATE, TESTING_IMPORT, ...NAMING] },
+    rules: { 'no-restricted-syntax': ['error', NEW_DATE, TESTING_IMPORT, ...READABLE] },
   },
   {
     files: ['packages/client/**/*.ts'],
     ignores: ['**/*.test.ts'],
     rules: {
-      'no-restricted-syntax': ['error', TESTING_IMPORT, ...DRAWN_OUTSIDE_STROKES, ...NAMING],
+      'no-restricted-syntax': ['error', TESTING_IMPORT, ...DRAWN_OUTSIDE_STROKES, ...READABLE],
     },
   },
   {
@@ -398,6 +414,10 @@ export default defineConfig([
     ignores: ['verifications/*/**', '!verifications/_template/**'],
     rules: {
       curly: ['error', 'all'],
+      // The positive case is tested when there is an `else`, and a branch that ends the function
+      // returns, so what follows is not nested (AGENTS.md, "Conditions").
+      'no-negated-condition': 'error',
+      'no-else-return': ['error', { allowElseIf: false }],
       // Prettier does not wrap comments, so lint holds them to the same width as the code.
       'max-len': [
         'error',
@@ -421,6 +441,6 @@ export default defineConfig([
   {
     files: ['packages/client/src/render/strokes/**/*.ts'],
     ignores: ['**/*.test.ts'],
-    rules: { 'no-restricted-syntax': ['error', TESTING_IMPORT, ...NAMING] },
+    rules: { 'no-restricted-syntax': ['error', TESTING_IMPORT, ...READABLE] },
   },
 ]);

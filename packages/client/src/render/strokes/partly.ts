@@ -49,11 +49,13 @@ function keepBetween(strokes: readonly Stroke[], range: { start: number; end: nu
     const start = range.start * whole - before;
     const end = range.end * whole - before;
     before += length;
-    if (start <= 0 && end >= length) {
+    const isWholeStroke = start <= 0 && end >= length;
+    if (isWholeStroke) {
       return stroke;
     }
     // Sums of lengths are a rounding off: a piece shorter than this is no piece.
-    if (end <= SHORTEST_PIECE || start >= length - SHORTEST_PIECE) {
+    const isTooShort = end <= SHORTEST_PIECE || start >= length - SHORTEST_PIECE;
+    if (isTooShort) {
       return { points: [], thickness: stroke.thickness };
     }
     return {
@@ -68,9 +70,8 @@ const SHORTEST_PIECE = 1e-6;
 
 /** The path the pencil follows for `stroke`: a loop comes back to where it started. */
 function getPath(stroke: Stroke): readonly StrokePoint[] {
-  return stroke.isClosed && stroke.points.length > 2
-    ? [...stroke.points, stroke.points[0]!]
-    : stroke.points;
+  const isLoop = stroke.isClosed && stroke.points.length > 2;
+  return isLoop ? [...stroke.points, stroke.points[0]!] : stroke.points;
 }
 
 function measureLength(path: readonly StrokePoint[]): number {
@@ -96,7 +97,8 @@ function cutBetween(
       const share = length === 0 ? 0 : (distance - walked) / length;
       return { x: start.x + (end.x - start.x) * share, y: start.y + (end.y - start.y) * share };
     };
-    if (walked + length > range.start && walked < range.end) {
+    const isPieceInRange = walked + length > range.start && walked < range.end;
+    if (isPieceInRange) {
       if (cut.length === 0) {
         cut.push(getPointAlong(Math.max(range.start, walked)));
       }

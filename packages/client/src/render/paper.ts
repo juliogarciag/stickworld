@@ -224,7 +224,8 @@ function getPixelsOfTileWithin(tile: {
   const top = Math.max(0, Math.floor(tile.y - tile.radius));
   const right = Math.min(tile.size, Math.ceil(tile.x + tile.radius));
   const bottom = Math.min(tile.size, Math.ceil(tile.y + tile.radius));
-  if (right <= left || bottom <= top) {
+  const isEmpty = right <= left || bottom <= top;
+  if (isEmpty) {
     return undefined;
   }
   return { left, top, width: right - left, height: bottom - top };

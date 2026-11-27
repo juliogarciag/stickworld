@@ -30,7 +30,8 @@ export const itemFeature: Feature = {
 export function getItemUseNow(sim: Sim): ItemUse | undefined {
   // A letter the stick man reads fills the stick man's hands: it is put away by interacting, and
   // until then no item is used.
-  if (isFlagReached(sim) || isReadingLetter(sim)) {
+  const areHandsBusy = isFlagReached(sim) || isReadingLetter(sim);
+  if (areHandsBusy) {
     return undefined;
   }
   for (const answer of ANSWERS) {

@@ -290,7 +290,9 @@ describe('landing', () => {
         break;
       }
       expect(getFlag(sim)!.isReached).toBe(false);
-      if (Math.abs(feet.x - flag.position.x) <= flagDef.reach && feet.y > -flagDef.height) {
+      const isAtFlag =
+        Math.abs(feet.x - flag.position.x) <= flagDef.reach && feet.y > -flagDef.height;
+      if (isAtFlag) {
         hasPassedFlagSeated = true;
       }
     }

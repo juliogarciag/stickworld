@@ -53,7 +53,8 @@ export function findClearOfFloorEnds(
     const awayFromFloor = nearerEnd === start ? -1 : 1;
     const reach = getBodyReachAt(feet.y - nearerEnd.y);
     const x = nearerEnd.x + awayFromFloor * reach;
-    if (reach > 0 && (x - feet.x) * awayFromFloor > 0) {
+    const isBodyInsideFloorEnd = reach > 0 && (x - feet.x) * awayFromFloor > 0;
+    if (isBodyInsideFloorEnd) {
       return { x, awayFromFloor };
     }
   }
@@ -68,7 +69,8 @@ export function findClearOfFloorEnds(
  * The stick man is a controlled body with a simple outline, not a shape with physics.
  */
 function getBodyReachAt(aboveFeet: number): number {
-  if (aboveFeet <= 0 || aboveFeet >= STICK_MAN_HEIGHT) {
+  const isWithinBody = aboveFeet > 0 && aboveFeet < STICK_MAN_HEIGHT;
+  if (!isWithinBody) {
     return 0;
   }
   return (STICK_MAN_WIDTH / 2) * Math.min(1, aboveFeet / PLAYER.fullWidthAbove);

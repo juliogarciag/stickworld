@@ -247,7 +247,8 @@ function play(sim: SimHandle, recording: Recording): Played {
       recording.commands.filter((entry) => entry.atTick === tick).map((entry) => entry.command),
     );
     const { feet } = getStickMan(sim);
-    if (sim.level === 2 && feet.x > GAP.start && feet.x < GAP.end) {
+    const isOverGap = sim.level === 2 && feet.x > GAP.start && feet.x < GAP.end;
+    if (isOverGap) {
       overGap.push(feet);
     }
     deepest = Math.max(deepest, feet.y);
@@ -258,7 +259,8 @@ function play(sim: SimHandle, recording: Recording): Played {
     }
     previousX = feet.x;
     // The recording ends at the flag: a little later the next level starts.
-    if (sim.level === 2 && getFlag(sim)!.isReached) {
+    const hasFinishedLevel = sim.level === 2 && getFlag(sim)!.isReached;
+    if (hasFinishedLevel) {
       break;
     }
   }

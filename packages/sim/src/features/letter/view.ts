@@ -27,7 +27,8 @@ export function getLetter(handle: SimHandle): LetterView | undefined {
   const placed = findLetterPlacedIn(handle.levelDef);
   const def = placed && getLetterDef(placed.defId);
   const letter = handle.getStateOf(letterSlice);
-  if (!placed || !def || !letter.isInLevel) {
+  const isLetterShown = placed !== undefined && def !== undefined && letter.isInLevel;
+  if (!isLetterShown) {
     return undefined;
   }
   return {
@@ -59,7 +60,8 @@ export function getFallenItem(handle: SimHandle): FallenItemView | undefined {
   const placed = findLetterPlacedIn(handle.levelDef);
   const def = placed && getLetterDef(placed.defId);
   const fallen = handle.getStateOf(fallenItemSlice);
-  if (!placed || !def || !fallen.isInLevel) {
+  const isFallenItemShown = placed !== undefined && def !== undefined && fallen.isInLevel;
+  if (!isFallenItemShown) {
     return undefined;
   }
   return { position: { x: fallen.x, y: fallen.y }, height: fallen.height, itemDefId: def.gives };

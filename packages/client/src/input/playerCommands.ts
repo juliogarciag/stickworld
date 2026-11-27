@@ -82,7 +82,8 @@ export function createKeysToCommands(): (now: { keys: HeldKeys; sim: SimHandle }
     }
     wasUpHeldSinceSeated = input.keys.isUpHeld && (isSeated || wasUpHeldSinceSeated);
     const isJumpHeld = input.keys.isJumpHeld || (input.keys.isUpHeld && !wasUpHeldSinceSeated);
-    if (!isJumpHeld && (wasJumpHeld || isJumpRequested)) {
+    const hasLetGoOfJump = !isJumpHeld && (wasJumpHeld || isJumpRequested);
+    if (hasLetGoOfJump) {
       commands.push({ type: 'player/letGoOfJump' });
     }
     wasJumpHeld = isJumpHeld;
@@ -127,7 +128,8 @@ function createChangeDetector<Wanted>(): (now: {
     // heard it, but it has been asked, and asking again would be a duplicate.
     const isLastRequestPending =
       lastAsked !== undefined && lastAsked.sim === input.sim && lastAsked.tick === input.sim.tick;
-    const alreadyAsked = isLastRequestPending && lastAsked ? lastAsked.wanted : input.believed;
+    const pendingRequest = isLastRequestPending ? lastAsked : undefined;
+    const alreadyAsked = pendingRequest ? pendingRequest.wanted : input.believed;
     if (input.wanted === alreadyAsked) {
       return false;
     }

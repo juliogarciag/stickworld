@@ -209,7 +209,8 @@ describe('dropping past the end of a floor line', () => {
               getBodyHalfWidth(feet.y - end.y),
             );
             const isInside = feet.x > start.x - reach + 1e-9 && feet.x < end.x + reach - 1e-9;
-            if (reach > 0 && isInside) {
+            const isInsideFloorEnd = reach > 0 && isInside;
+            if (isInsideFloorEnd) {
               throw new Error(
                 `level ${level.id}, pattern ${pattern}, tick ${tick}: the stick man's feet at (${feet.x}, ${feet.y}) leave the floor from ${start.x} to ${end.x} inside its body`,
               );
@@ -363,7 +364,8 @@ function getCommandsOfPattern(pattern: number, tick: number): Command[] {
   }
   const every = 3 + (pattern % 7);
   const startsAt = 20 + ((pattern * 13) % 110);
-  if (tick < startsAt || (tick - startsAt) % every !== 0) {
+  const isJumpTick = tick >= startsAt && (tick - startsAt) % every === 0;
+  if (!isJumpTick) {
     return [];
   }
   const turn = (pattern * 31 + ((tick - startsAt) / every) * 17) % 5;
@@ -375,7 +377,8 @@ function getCommandsOfPattern(pattern: number, tick: number): Command[] {
  * on the code it checks.
  */
 function getBodyHalfWidth(aboveFeet: number): number {
-  if (aboveFeet <= 0 || aboveFeet >= STICK_MAN_HEIGHT) {
+  const isWithinBody = aboveFeet > 0 && aboveFeet < STICK_MAN_HEIGHT;
+  if (!isWithinBody) {
     return 0;
   }
   return (STICK_MAN_WIDTH / 2) * Math.min(1, aboveFeet / PLAYER.fullWidthAbove);

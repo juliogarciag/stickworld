@@ -475,7 +475,10 @@ function playFlight(
     sim.step(commands.filter((entry) => entry.atTick === tick).map((entry) => entry.command));
     const stickMan = getStickMan(sim);
     const airplane = getAirplane(sim);
-    if (stickMan.action !== 'seated' || !airplane) {
+    if (stickMan.action !== 'seated') {
+      return tick;
+    }
+    if (!airplane) {
       return tick;
     }
     seen({ airplane, stickMan });

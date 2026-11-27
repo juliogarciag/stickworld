@@ -19,7 +19,8 @@ interface DevicePixelWindow {
 /** The window measured in device pixels, as the canvas backing store must be. */
 function getWindowInDevicePixels(): DevicePixelWindow {
   const reported = window.devicePixelRatio;
-  const pixelRatio = Number.isFinite(reported) && reported > 0 ? reported : 1;
+  const isUsableRatio = Number.isFinite(reported) && reported > 0;
+  const pixelRatio = isUsableRatio ? reported : 1;
   return {
     width: Math.max(1, Math.round(window.innerWidth * pixelRatio)),
     height: Math.max(1, Math.round(window.innerHeight * pixelRatio)),
@@ -46,7 +47,8 @@ export function keepCanvasAtWindowSize(game: Phaser.Game): () => void {
     stopWatchingPixelRatio = watchPixelRatio(pixelRatio, fit);
     const zoom = 1 / pixelRatio;
     const hasSizeChanged = game.scale.width !== width || game.scale.height !== height;
-    if (!hasSizeChanged && game.scale.zoom === zoom) {
+    const isAlreadyFitted = !hasSizeChanged && game.scale.zoom === zoom;
+    if (isAlreadyFitted) {
       return;
     }
     if (hasSizeChanged) {
@@ -60,11 +62,12 @@ export function keepCanvasAtWindowSize(game: Phaser.Game): () => void {
   // The window event covers resizes and screen moves; watching the parent as
   // well catches a page laid out at 0x0 (hidden tab) that only gets its size later.
   const parent = game.scale.parent instanceof HTMLElement ? game.scale.parent : undefined;
-  const observer =
-    parent && typeof ResizeObserver !== 'undefined' ? new ResizeObserver(fit) : undefined;
+  const canObserveParent = parent !== undefined && typeof ResizeObserver !== 'undefined';
+  const observer = canObserveParent ? new ResizeObserver(fit) : undefined;
   const start = (): void => {
     window.addEventListener('resize', fit);
-    if (observer && parent) {
+    const isObservingParent = observer !== undefined && parent !== undefined;
+    if (isObservingParent) {
       observer.observe(parent);
     }
     fit();

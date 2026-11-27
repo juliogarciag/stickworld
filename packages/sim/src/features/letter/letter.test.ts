@@ -338,10 +338,13 @@ describe('a new sheet of paper', () => {
       sim.step(tick % 30 === 0 ? [{ type: 'player/jump' }] : []);
       const isAirborne = getStickMan(sim).action === 'jumping';
       // The tick it appears on, the stick man is on the floor.
-      if (!wasThere && getFallenItem(sim) && isAirborne) {
+      const hasAppearedMidAir = !wasThere && getFallenItem(sim) && isAirborne;
+      if (hasAppearedMidAir) {
         hasSeenStartMidAir = true;
       }
-      if (!getFallenItem(sim) && isAirborne && tick > LETTER.fallsAfter * TICK_RATE + 2) {
+      const isOverdueMidAir =
+        !getFallenItem(sim) && isAirborne && tick > LETTER.fallsAfter * TICK_RATE + 2;
+      if (isOverdueMidAir) {
         ticksAirborneAfterDue += 1;
       }
     }

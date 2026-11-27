@@ -108,6 +108,19 @@ A name is read on one line of a diff, on GitHub, by someone who cannot jump to w
 - Commands are named `'<feature>/<verb>'` and features by their domain noun (`player`, `inventory`, `airplane`), never by the ticket or the agent that made them.
 - Commands say what the player means, not which key was pressed: `'inventory/select'`, `'item/use'`, `'world/interact'`. The mapping from keys (1, J, K, arrows, space, Enter) to commands lives in `client/src/input/` only, and so does what a key is called on screen (`ACTION_KEY_NAMES`, `FLIGHT_KEY_NAMES`, `MOVE_KEY_NAMES`, `GAME_KEY_NAMES`). One key may mean two things only there, and only by what the sim says the stick man is doing: the up keys are a jump on the stick man's feet and the airplane's nose up while it is seated (`getStickMan(sim).action`), where only the jump key itself jumps the stick man out. Text in the sim's data (a letter, a note on a level) never names a key: a note says what it is `about`, and the client draws the keys for that beside it.
 
+**Conditions**
+
+A condition is read on one line of a diff too. The reader should learn what is being tested from a name, not by working out the logic.
+
+1. An `if` or a ternary tests one thing: a name, a call or a single comparison. Parts joined with `&&` or `||` go into a boolean constant first, and the constant's name says what the parts mean together (lint). `if (state.passedOnLevel === sim.level && checkpointPosition !== undefined)` becomes `const isRestartAtCheckpoint = ...; if (isRestartAtCheckpoint)`.
+2. Name the positive case and negate the name, not the parts: `const isValidSlot = ...; if (!isValidSlot) return;`, never `if (typeof slot !== 'number' || slot < 1 || ...)`.
+3. When there is an `else`, the `if` tests the positive case (lint, `no-negated-condition`).
+4. A branch that ends the function returns, and what follows is not nested in an `else` (lint, `no-else-return`).
+5. A chain of ternaries becomes a function with one `return` per case (review).
+6. A comment sits directly above the line it explains: above the constant when it explains the condition, above the statement when it explains what is done (review).
+
+A loop's test runs again on every pass, so it cannot be a constant and lint does not hold it to rule 1. TypeScript narrows a type through a named condition only when its parts are constants: copy a `let` or a field into a constant first (`const previous = shown;`).
+
 **Functions and exports**
 
 - A function with four or more arguments takes an options object with named fields instead: `takeWholeTicks({ leftover, deltaSeconds, dt, maxFrameSeconds })`. A leading subject such as `sim` may stay positional.

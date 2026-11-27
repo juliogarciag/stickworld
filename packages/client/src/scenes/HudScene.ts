@@ -95,13 +95,13 @@ export class HudScene extends Phaser.Scene {
     );
 
     const flag = getFlag(sim);
-    const endScreen =
-      isEndScreenShown(flag) && flag
-        ? {
-            shareWritten: getEndScreenProgress(flag.upFor),
-            playAgainKey: getGame(sim).isPlayAgainOffered ? GAME_KEY_NAMES.playAgain : null,
-          }
-        : null;
+    const finalFlag = isEndScreenShown(flag) ? flag : undefined;
+    const endScreen = finalFlag
+      ? {
+          shareWritten: getEndScreenProgress(finalFlag.upFor),
+          playAgainKey: getGame(sim).isPlayAgainOffered ? GAME_KEY_NAMES.playAgain : null,
+        }
+      : null;
     this.endScreen.show(
       this.getEndScreenStrokes(JSON.stringify([endScreen, seen]), () =>
         endScreen ? buildEndScreenStrokes(endScreen, seen) : [],

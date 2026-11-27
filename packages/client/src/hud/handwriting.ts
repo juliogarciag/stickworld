@@ -90,7 +90,8 @@ function wrapText(text: string, mostWidth: number): string[] {
   const lines: string[] = [];
   for (const word of text.split(/\s+/).filter((each) => each !== '')) {
     const last = lines[lines.length - 1];
-    if (last !== undefined && measureWidth(`${last} ${word}`) <= mostWidth) {
+    const canJoinLastLine = last !== undefined && measureWidth(`${last} ${word}`) <= mostWidth;
+    if (canJoinLastLine) {
       lines[lines.length - 1] = `${last} ${word}`;
     } else {
       lines.push(word);
