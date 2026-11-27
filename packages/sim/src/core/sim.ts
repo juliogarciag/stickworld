@@ -161,17 +161,19 @@ export class Sim implements SimHandle {
 
   step(commands: readonly Command[] = []): void {
     const received: readonly unknown[] = Array.isArray(commands) ? commands : [];
-    // Nothing is left over from a tick that threw after a feature had asked.
-    this.askedDuringTick = null;
     this.inATick = true;
+    let finished = false;
     try {
       for (const command of received) {
         if (!isCommandShaped(command)) continue;
         for (const feature of this.features) feature.handleCommand?.(this, command);
       }
       for (const feature of this.features) feature.update?.(this);
+      finished = true;
     } finally {
       this.inATick = false;
+      // Nothing is left over from a tick that threw after a feature had asked.
+      if (!finished) this.askedDuringTick = null;
     }
     this.startWhatWasAsked();
     this.tick += 1;

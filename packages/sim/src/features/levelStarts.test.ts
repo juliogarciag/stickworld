@@ -18,9 +18,14 @@ describe('a level started by the game itself', () => {
     const { sim, seen } = simWithAWitness(2);
     const { start } = levelById(2);
     sim.step([WALK_RIGHT]);
-    while (whereHeIs(sim).y <= PLAYER.fallBelowFloor - 1) sim.step();
-    // He is on his way down the gap, a moment from the end.
     let ticksUntilTheStart = 0;
+    while (whereHeIs(sim).y <= PLAYER.fallBelowFloor - 1) {
+      sim.step();
+      ticksUntilTheStart += 1;
+      expect(ticksUntilTheStart).toBeLessThan(3000);
+    }
+    // He is on his way down the gap, a moment from the end.
+    ticksUntilTheStart = 0;
     while (whereHeIs(sim).y !== start.y) {
       sim.step();
       ticksUntilTheStart += 1;

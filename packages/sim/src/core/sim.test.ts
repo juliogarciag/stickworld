@@ -98,15 +98,20 @@ describe('a level asked for from inside a tick', () => {
   });
 
   it('leaves nothing asked for behind when the tick throws after the asking', () => {
+    let hasThrown = false;
     const throwsOnceFeature: Feature = {
       name: 'throwsOnce',
-      update(sim) {
-        if (sim.tick === 0) throw new Error('a bug in a feature');
+      update() {
+        if (hasThrown) return;
+        hasThrown = true;
+        throw new Error('a bug in a feature');
       },
     };
     const sim = new Sim({ features: [askerFeature, throwsOnceFeature], start: { seed: 1, level: 1 } });
     expect(() => sim.step([ask(2)])).toThrow('a bug in a feature');
-    sim.tick = 1;
+    // Neither the next tick nor a level asked for between two ticks finds the level 2 that was asked for then.
+    sim.startLevelAfterThisTick(1);
+    expect(sim.level).toBe(1);
     sim.step();
     expect(sim.level).toBe(1);
   });
