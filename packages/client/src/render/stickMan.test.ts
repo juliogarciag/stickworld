@@ -14,7 +14,7 @@ describe('the stick man standing', () => {
     expect(strokes.filter((stroke) => !stroke.isClosed).map((stroke) => stroke.points.length)).toEqual([2, 3, 3, 3, 3]);
   });
 
-  it('has his feet on the floor and is as tall as the sim says he is', () => {
+  it("has the stick man's feet on the floor and is as tall as the sim says the stick man is", () => {
     const skeleton = getSkeleton(STANDING);
     for (const leg of skeleton.legs) expect(leg[2]!.y).toBeCloseTo(STANDING.feet.y, 6);
     const height = STANDING.feet.y - (skeleton.head.y - BODY.headRadius);
@@ -22,11 +22,11 @@ describe('the stick man standing', () => {
     expect(height).toBeLessThanOrEqual(STICK_MAN_HEIGHT);
   });
 
-  it('stands the same wherever his last walk cycle stopped', () => {
+  it("stands the same wherever the stick man's last walk cycle stopped", () => {
     expect(buildStickManStrokes({ ...STANDING, walkCycle: 0.7 })).toEqual(buildStickManStrokes(STANDING));
   });
 
-  it('is drawn in world pixels, where his feet are', () => {
+  it("is drawn in world pixels, where the stick man's feet are", () => {
     const points = buildStickManStrokes(STANDING).flatMap((stroke) => stroke.points);
     expect(Math.max(...points.map((point) => point.y))).toBeCloseTo(convertToPixels(STANDING.feet.y), 6);
     const xs = points.map((point) => point.x);
@@ -71,7 +71,7 @@ describe('the stick man walking', () => {
     expect(arms[1]![2]!.x).toBeGreaterThan(neck.x);
   });
 
-  it('keeps his planted foot where it is on the floor while he moves a cycle length per cycle', () => {
+  it("keeps the stick man's planted foot where it is on the floor while the stick man moves a cycle length per cycle", () => {
     const getPlantedAt = (walkCycle: number): number => getSkeleton({ ...WALKING, feet: { x: walkCycle * getWalkCycleLength(), y: 0 }, walkCycle }).legs[0]![2]!.x;
     const touchdown = getPlantedAt(0);
     for (let walkCycle = 0; walkCycle < 0.5; walkCycle += 0.02) expect(Math.abs(getPlantedAt(walkCycle) - touchdown)).toBeLessThan(0.02);
@@ -87,7 +87,7 @@ describe('the stick man walking', () => {
       const right = buildStickManStrokes({ ...WALKING, walkCycle, facing: 1 }).flatMap((stroke) => stroke.points);
       const left = buildStickManStrokes({ ...WALKING, walkCycle, facing: -1 }).flatMap((stroke) => stroke.points);
       const mirror = convertToPixels(WALKING.feet.x);
-      // The head is a circle drawn the same way round whichever way he faces, so compare what it covers.
+      // The head is a circle drawn the same way round whichever way the stick man faces, so compare what it covers.
       expect(Math.min(...left.map((point) => point.x))).toBeCloseTo(2 * mirror - Math.max(...right.map((point) => point.x)), 6);
       expect(Math.max(...left.map((point) => point.x))).toBeCloseTo(2 * mirror - Math.min(...right.map((point) => point.x)), 6);
       expect(left.map((point) => point.y)).toEqual(right.map((point) => point.y));
@@ -96,20 +96,20 @@ describe('the stick man walking', () => {
 });
 
 describe('the stick man jumping', () => {
-  it('has his lower foot exactly where the sim says his feet are, all the way up and down', () => {
+  it("has the stick man's lower foot exactly where the sim says the stick man's feet are, all the way up and down", () => {
     for (const rise of [1, 0.5, 0, -0.5, -1]) {
       const { legs } = getSkeleton({ ...JUMPING, rise });
       expect(Math.max(...legs.map((leg) => leg[2]!.y))).toBeCloseTo(JUMPING.feet.y, 6);
     }
   });
 
-  it('tucks his legs most at the top, and reaches for the floor with them on the way down', () => {
+  it("tucks the stick man's legs most at the top, and reaches for the floor with them on the way down", () => {
     const getHipAbove = (rise: number): number => JUMPING.feet.y - getSkeleton({ ...JUMPING, rise }).hip.y;
     expect(getHipAbove(0)).toBeLessThan(getHipAbove(1));
     expect(getHipAbove(1)).toBeLessThan(getHipAbove(-1));
   });
 
-  it('has his hands highest at the top, and lower again before he lands', () => {
+  it("has the stick man's hands highest at the top, and lower again before the stick man lands", () => {
     const getHandsAbove = (rise: number): number => {
       const { arms, neck } = getSkeleton({ ...JUMPING, rise });
       return neck.y - Math.min(...arms.map((arm) => arm[2]!.y));
@@ -118,7 +118,7 @@ describe('the stick man jumping', () => {
     expect(getHandsAbove(0)).toBeGreaterThan(getHandsAbove(-1));
   });
 
-  it('is standing when he is not in the air at all, and something in between on the way there', () => {
+  it('is standing when the stick man is not in the air at all, and something in between on the way there', () => {
     const getJointsAt = (airborneShare: number): number[] => buildStickManStrokes({ ...JUMPING, feet: STANDING.feet, airborneShare }).flatMap((stroke) => stroke.points.map((point) => point.y));
     expect(getJointsAt(0)).toEqual(buildStickManStrokes({ ...STANDING, action: 'jumping' }).flatMap((stroke) => stroke.points.map((point) => point.y)));
     expect(getJointsAt(0.5)).not.toEqual(getJointsAt(0));
@@ -130,14 +130,14 @@ describe('the stick man jumping', () => {
     expect(buildStickManStrokes(JUMPING)).not.toEqual(buildStickManStrokes({ ...WALKING, feet: JUMPING.feet }));
   });
 
-  it('comes from his walk when he jumps while walking', () => {
+  it("comes from the stick man's walk when the stick man jumps while walking", () => {
     const midStride = { ...JUMPING, isStriding: true, walkCycle: 0.3, airborneShare: 0 };
     expect(getSkeleton(midStride).legs).toEqual(getSkeleton({ ...WALKING, feet: JUMPING.feet, walkCycle: 0.3 }).legs);
   });
 });
 
 describe('the stick man landing', () => {
-  it('bends his knees with his feet still on the floor, deeper the harder into the landing he is', () => {
+  it("bends the stick man's knees with the stick man's feet still on the floor, deeper the harder into the landing the stick man is", () => {
     const getHipAbove = (landing: number): number => STANDING.feet.y - getSkeleton({ ...STANDING, landing }).hip.y;
     expect(getHipAbove(1)).toBeLessThan(getHipAbove(0.5));
     expect(getHipAbove(0.5)).toBeLessThan(getHipAbove(0));
@@ -146,7 +146,7 @@ describe('the stick man landing', () => {
 });
 
 describe('poses eased over time', () => {
-  it('gets into the jump over a few frames instead of at once, and never moves where he is', () => {
+  it('gets into the jump over a few frames instead of at once, and never moves where the stick man is', () => {
     const poseFor = easePosesOverTime();
     poseFor(ON_FLOOR, FRAME, NO_FLOOR);
     const first = poseFor(GOING_UP, FRAME, NO_FLOOR);
@@ -162,7 +162,7 @@ describe('poses eased over time', () => {
     expect(pose.airborneShare).toBe(1);
   });
 
-  it('takes the landing with a knee bend that eases out, while his limbs come back from the jump', () => {
+  it("takes the landing with a knee bend that eases out, while the stick man's limbs come back from the jump", () => {
     const poseFor = easePosesOverTime();
     poseFor(ON_FLOOR, FRAME, NO_FLOOR);
     for (let frame = 0; frame < 30; frame += 1) poseFor(COMING_DOWN, FRAME, NO_FLOOR);
@@ -177,7 +177,7 @@ describe('poses eased over time', () => {
     expect(pose).toEqual(getPose(ON_FLOOR));
   });
 
-  it('does not bend his knees when he was not coming down: a level that starts again just shows him standing', () => {
+  it("does not bend the stick man's knees when the stick man was not coming down: a level that starts again just shows the stick man standing", () => {
     const poseFor = easePosesOverTime();
     poseFor(ON_FLOOR, FRAME, NO_FLOOR);
     poseFor({ ...COMING_DOWN, feet: { x: -1, y: 6 } }, FRAME, NO_FLOOR);
@@ -186,7 +186,7 @@ describe('poses eased over time', () => {
 });
 
 describe('the stick man in a long fall', () => {
-  it('throws his arms up and out once he falls faster than a jump lands, and not before', () => {
+  it("throws the stick man's arms up and out once the stick man falls faster than a jump lands, and not before", () => {
     const getHandsAboveShoulders = (verticalSpeed: number): number => {
       const { arms } = getSkeleton(getPose({ ...FALLING, verticalSpeed }));
       return Math.min(...arms.map((arm) => arm[0]!.y - arm[2]!.y));
@@ -200,7 +200,7 @@ describe('the stick man in a long fall', () => {
     expect(arms[1]![2]!.x).toBeGreaterThan(neck.x + 0.3);
   });
 
-  it('starts just above the speed the game\'s held jump lands at, and is all the way in before his fastest fall', () => {
+  it("starts just above the speed the game's held jump lands at, and is all the way in before the stick man's fastest fall", () => {
     const { fallGravity, jumpHeight, fastestFall } = MOVEMENT_PRESETS.current;
     const landsAt = Math.sqrt(2 * fallGravity * jumpHeight);
     expect(BODY.longFallSpeed.start).toBeGreaterThan(landsAt);
@@ -208,13 +208,13 @@ describe('the stick man in a long fall', () => {
     expect(BODY.longFallSpeed.end).toBeLessThanOrEqual(fastestFall);
   });
 
-  it('is not what he does on the floor, however the sim has his speed', () => {
+  it("is not what the stick man does on the floor, however the sim has the stick man's speed", () => {
     expect(getPose({ ...ON_FLOOR, verticalSpeed: 20 }).longFall).toBe(0);
   });
 });
 
 describe('the stick man falling sideways', () => {
-  it('tips the way he drifts, more the faster he drifts against how fast he falls, and stays upright dropping straight', () => {
+  it('tips the way the stick man drifts, more the faster the stick man drifts against how fast the stick man falls, and stays upright dropping straight', () => {
     const getTiltAt = (horizontalSpeed: number, verticalSpeed: number): number => getPose({ ...FALLING, horizontalSpeed, verticalSpeed }).tilt;
     expect(getTiltAt(0, 4)).toBe(0);
     expect(getTiltAt(2, 4)).toBeGreaterThan(0);
@@ -224,7 +224,7 @@ describe('the stick man falling sideways', () => {
     expect(getTiltAt(2, 4)).toBeLessThanOrEqual(BODY.fallTilt);
   });
 
-  it('is upright on the floor, however fast he goes sideways', () => {
+  it('is upright on the floor, however fast the stick man goes sideways', () => {
     expect(getPose({ ...ON_FLOOR, action: 'walking', horizontalSpeed: 2 }).tilt).toBe(0);
   });
 
@@ -240,7 +240,7 @@ describe('the stick man falling sideways', () => {
     expect(getPose({ ...FALLING, horizontalSpeed: 2, verticalSpeed: 0.2 }).tilt).toBeLessThan(getPose({ ...FALLING, horizontalSpeed: 2, verticalSpeed: 2 }).tilt / 3);
   });
 
-  it('puts his head ahead of his hips and his feet behind them, with his lower foot still where the sim says', () => {
+  it("puts the stick man's head ahead of the stick man's hips and the stick man's feet behind them, with the stick man's lower foot still where the sim says", () => {
     for (const facing of [1, -1] as const) {
       const upright = getSkeleton({ ...JUMPING, rise: -1, facing });
       const tipped = getSkeleton({ ...JUMPING, rise: -1, facing, tilt: 0.3 });
@@ -250,7 +250,7 @@ describe('the stick man falling sideways', () => {
     }
   });
 
-  it('tips over a few frames, and comes back upright over a few once he has landed', () => {
+  it('tips over a few frames, and comes back upright over a few once the stick man has landed', () => {
     const poseFor = easePosesOverTime();
     const falling = { ...FALLING, horizontalSpeed: 2, verticalSpeed: 3 };
     poseFor(falling, FRAME, NO_FLOOR);
@@ -266,12 +266,12 @@ describe('the stick man falling sideways', () => {
 });
 
 describe('the stick man dropping past the end of a floor line', () => {
-  it('is left as he is when nothing of him is near a line', () => {
+  it('is left as the stick man is when nothing of the stick man is near a line', () => {
     const pose = { ...DROPPING, feet: { x: LINE_END + 2, y: 0.5 } };
     expect(keepOffFloor(pose, FLOOR)).toEqual(pose);
   });
 
-  it('never has an arm, his body or his head across the line, all the way down beside it', () => {
+  it("never has an arm, the stick man's body or the stick man's head across the line, all the way down beside it", () => {
     for (const facing of [1, -1] as const) {
       for (const feet of DROP_BESIDE_END) {
         const skeleton = getSkeleton(keepOffFloor({ ...DROPPING, facing, feet }, FLOOR));
@@ -296,7 +296,7 @@ describe('the stick man dropping past the end of a floor line', () => {
     }
   });
 
-  it('pushes the held arm further up as he drops, then lets it go once his shoulder is under the line', () => {
+  it("pushes the held arm further up as the stick man drops, then lets it go once the stick man's shoulder is under the line", () => {
     const lifts = DROP_BESIDE_END.map((feet) => keepOffFloor({ ...DROPPING, feet }, FLOOR).armsLifted[BACK_ARM]);
     const firstHeld = lifts.findIndex((lift) => lift > 0);
     const lastHeld = lifts.length - 1 - [...lifts].reverse().findIndex((lift) => lift > 0);
@@ -305,15 +305,15 @@ describe('the stick man dropping past the end of a floor line', () => {
     expect(lifts[lastHeld]).toBeGreaterThan(lifts[firstHeld]! + 0.3);
     expect(lifts.slice(lastHeld + 1).length).toBeGreaterThan(0);
     const shoulderWhenLetGo = getSkeleton({ ...DROPPING, feet: DROP_BESIDE_END[lastHeld + 1]! }).arms[BACK_ARM]![0]!;
-    // By then his arm reaches round the end of the line and under it.
+    // By then the stick man's arm reaches round the end of the line and under it.
     expect(shoulderWhenLetGo.y).toBeGreaterThan(LINE[0].y - BODY.upperArm);
   });
 
-  it('leaves the arm on the other side of him where it was', () => {
+  it('leaves the arm on the other side of the stick man where it was', () => {
     for (const feet of DROP_BESIDE_END) expect(keepOffFloor({ ...DROPPING, feet }, FLOOR).armsLifted[1 - BACK_ARM]).toBe(0);
   });
 
-  it('tips him less, or not at all, when tipping would put his head across a line', () => {
+  it("tips the stick man less, or not at all, when tipping would put the stick man's head across a line", () => {
     const towardsLine = { ...DROPPING, feet: { x: BESIDE_END, y: 1.5 }, tilt: -0.5 };
     const kept = keepOffFloor(towardsLine, FLOOR);
     expect(kept.tilt).toBeGreaterThan(towardsLine.tilt);
@@ -322,11 +322,11 @@ describe('the stick man dropping past the end of a floor line', () => {
     expect(keepOffFloor(awayFromLine, FLOOR).tilt).toBe(0.5);
   });
 
-  it('fits inside the width the sim keeps clear of a line: his head, with the room a pencil line takes', () => {
+  it("fits inside the width the sim keeps clear of a line: the stick man's head, with the room a pencil line takes", () => {
     expect(BODY.headRadius + LINE_CLEARANCE).toBeLessThan(STICK_MAN_WIDTH / 2);
   });
 
-  it('has nothing but his feet across a line in any fall the sim gives him, on every level, at one frame a tick and at one every three', () => {
+  it("has nothing but the stick man's feet across a line in any fall the sim gives the stick man, on every level, at one frame a tick and at one every three", () => {
     for (const level of levels) {
       for (const ticksPerFrame of [1, 3]) {
         for (const keys of WAYS_TO_FALL) {
@@ -369,7 +369,7 @@ describe('the stick man dropping past the end of a floor line', () => {
 });
 
 describe('the stick man cheering', () => {
-  it('stands with both hands up beside his head, higher than his neck', () => {
+  it("stands with both hands up beside the stick man's head, higher than the stick man's neck", () => {
     const { arms, legs, head } = getSkeleton({ ...STANDING, action: 'cheering' });
     for (const arm of arms) expect(arm[2]!.y).toBeLessThan(head.y);
     expect(arms[0]![2]!.x).toBeLessThan(head.x - BODY.headRadius);
@@ -378,8 +378,8 @@ describe('the stick man cheering', () => {
   });
 });
 
-describe('the stick man carrying something over his head', () => {
-  it('holds both hands up at the height of the top of him, one to each side, elbows out past his head', () => {
+describe('the stick man carrying something over its head', () => {
+  it("holds both hands up at the height of the top of the stick man, one to each side, elbows out past the stick man's head", () => {
     for (const pose of [STANDING, WALKING, { ...WALKING, walkCycle: 0.3 }, { ...STANDING, facing: -1 as const }]) {
       const { arms, head } = getSkeleton({ ...pose, carrying: 1 });
       const [back, front] = arms.map(([, elbow, hand]) => ({ elbow: elbow!, hand: hand! }));
@@ -390,11 +390,11 @@ describe('the stick man carrying something over his head', () => {
     }
   });
 
-  it('leaves his arms where they would be when he carries nothing', () => {
+  it("leaves the stick man's arms where they would be when the stick man carries nothing", () => {
     expect(getSkeleton({ ...WALKING, carrying: 0 })).toEqual(getSkeleton(WALKING));
   });
 
-  it('takes a moment to get his arms up when he lifts, and to bring them down again', () => {
+  it("takes a moment to get the stick man's arms up when the stick man lifts, and to bring them down again", () => {
     const poseFor = easePosesOverTime();
     poseFor(ON_FLOOR, FRAME, NO_FLOOR);
     const lifting = poseFor({ ...ON_FLOOR, isCarrying: true }, FRAME, NO_FLOOR);
@@ -408,7 +408,7 @@ describe('the stick man carrying something over his head', () => {
 });
 
 describe('the pose for what the sim says', () => {
-  it('keeps where he is, which way he faces and what he is doing', () => {
+  it('keeps where the stick man is, which way the stick man faces and what the stick man is doing', () => {
     expect(getPose(view)).toMatchObject({ feet: view.feet, facing: -1, action: 'walking' });
   });
 
@@ -417,7 +417,7 @@ describe('the pose for what the sim says', () => {
     expect(getPose({ ...view, distanceWalked: getWalkCycleLength() * 3.5 }).walkCycle).toBeCloseTo(0.5, 6);
   });
 
-  it('rises while he moves up and falls while he moves down, never past 1', () => {
+  it('rises while the stick man moves up and falls while the stick man moves down, never past 1', () => {
     expect(getPose({ ...view, verticalSpeed: -100 }).rise).toBe(1);
     expect(getPose({ ...view, verticalSpeed: 100 }).rise).toBe(-1);
     expect(getPose({ ...view, verticalSpeed: 0 }).rise).toBeCloseTo(0, 6);
@@ -426,7 +426,7 @@ describe('the pose for what the sim says', () => {
 });
 
 describe('seated in the airplane', () => {
-  it('sits on it: hips just above where the sim has him, knees up and feet out in front, head on top, well under his standing height', () => {
+  it('sits on it: hips just above where the sim has the stick man, knees up and feet out in front, head on top, well under its standing height', () => {
     for (const facing of [1, -1] as const) {
       const { head, neck, hip, legs, arms } = getSkeleton({ ...SEATED, facing });
       expect(hip.y).toBeLessThan(SEATED.feet.y);
@@ -434,14 +434,14 @@ describe('seated in the airplane', () => {
       expect(neck.y).toBeLessThan(hip.y);
       expect(head.y).toBeLessThan(neck.y);
       expect(SEATED.feet.y - head.y + BODY.headRadius).toBeLessThan(0.75 * STICK_MAN_HEIGHT);
-      // He leans into the flight.
+      // The stick man leans into the flight.
       expect((head.x - hip.x) * facing).toBeGreaterThan(0);
       for (const [top, knee, foot] of legs) {
         expect(top).toEqual(hip);
         expect((knee!.x - hip.x) * facing).toBeGreaterThan(0);
         expect(knee!.y).toBeLessThan(hip.y);
         expect((foot!.x - knee!.x) * facing).toBeGreaterThan(0);
-        // His feet rest on it, at about the height he sits at.
+        // The stick man's feet rest on it, at about the height the stick man sits at.
         expect(Math.abs(foot!.y - SEATED.feet.y)).toBeLessThan(0.1 * STICK_MAN_HEIGHT);
       }
       for (const [, , hand] of arms) {
@@ -452,7 +452,7 @@ describe('seated in the airplane', () => {
     }
   });
 
-  it('is the same man mirrored when he faces the other way', () => {
+  it('is the same man mirrored when the stick man faces the other way', () => {
     const right = getSkeleton({ ...SEATED, facing: 1 });
     const left = getSkeleton({ ...SEATED, facing: -1 });
     expect(left.head.x - SEATED.feet.x).toBeCloseTo(-(right.head.x - SEATED.feet.x), 9);
@@ -460,12 +460,12 @@ describe('seated in the airplane', () => {
     expect(left.legs[0]![2]!.x - SEATED.feet.x).toBeCloseTo(-(right.legs[0]![2]!.x - SEATED.feet.x), 9);
   });
 
-  it('tips with what he sits in, all of him, about the point it turns about', () => {
+  it('tips with what the stick man sits in, all of the stick man, about the point it turns about', () => {
     for (const facing of [1, -1] as const) {
       const level = getSkeleton({ ...SEATED, facing });
       const noseUp = getSkeleton(seatIn({ ...SEATED, facing }, { noseDown: -0.5, tipsAboutAbove: 0.17 }));
       const noseDown = getSkeleton(seatIn({ ...SEATED, facing }, { noseDown: 0.5, tipsAboutAbove: 0.17 }));
-      // Nose up he tips back, nose down he tips forward; his limbs keep their length.
+      // Nose up the stick man tips back, nose down it tips forward; its limbs keep their length.
       expect((noseUp.head.x - level.head.x) * facing).toBeLessThan(0);
       expect((noseDown.head.x - level.head.x) * facing).toBeGreaterThan(0);
       const pivot = { x: SEATED.feet.x, y: SEATED.feet.y - 0.17 };
@@ -496,7 +496,7 @@ describe('seated in the airplane', () => {
     expect(strokes[0]).toMatchObject({ isClosed: true });
   });
 
-  it('is not eased into or kept off the floor: seated, he is drawn where the airplane is from the first frame', () => {
+  it('is not eased into or kept off the floor: seated, the stick man is drawn where the airplane is from the first frame', () => {
     const poseFor = easePosesOverTime();
     poseFor(ON_FLOOR, FRAME, NO_FLOOR);
     const seated = { ...ON_FLOOR, action: 'seated' as const, feet: { x: ON_FLOOR.feet.x + 0.1, y: ON_FLOOR.feet.y } };
@@ -515,17 +515,17 @@ const view = { feet: { x: 3, y: 0.5 }, facing: -1, action: 'walking', distanceWa
 const ON_FLOOR = { feet: { x: 3, y: 0 }, facing: 1, action: 'standing', distanceWalked: 0, verticalSpeed: 0, horizontalSpeed: 0, isFallingOffEdge: false, walkDirectionAsked: 0, isCarrying: false } as const;
 const GOING_UP = { ...ON_FLOOR, feet: { x: 3, y: -0.2 }, action: 'jumping', verticalSpeed: -5 } as const;
 const COMING_DOWN = { ...ON_FLOOR, feet: { x: 3, y: -0.2 }, action: 'jumping', verticalSpeed: 4 } as const;
-/** In the air because he walked off an edge. */
+/** In the air because the stick man walked off an edge. */
 const FALLING = { ...COMING_DOWN, horizontalSpeed: 0, isFallingOffEdge: true } as const;
-/** A floor line that ends at `LINE_END`, with him dropping on the open side of it, as close as the sim lets him: half his width away. */
+/** A floor line that ends at `LINE_END`, with the stick man dropping on the open side of it, as close as the sim lets the stick man: half the stick man's width away. */
 const LINE_END = 6;
 const FLOOR = [{ start: { x: 0, y: 0 }, end: { x: LINE_END, y: 0 } }];
 const LINE = [FLOOR[0]!.start, FLOOR[0]!.end] as const;
-/** Coming down facing away from the line, so his back arm is the one over it. */
+/** Coming down facing away from the line, so the stick man's back arm is the one over it. */
 const BESIDE_END = LINE_END + STICK_MAN_WIDTH / 2;
 const DROPPING: StickManPose = { feet: { x: BESIDE_END, y: 0 }, facing: 1, action: 'jumping', walkCycle: 0, rise: -1, longFall: 0, isStriding: false, airborneShare: 1, landing: 0, tilt: 0, tipsAboutAbove: 0, armsLifted: [0, 0], carrying: 0 };
 const BACK_ARM = 0;
-/** His feet from the line's height to well below it, in small steps: slower than he ever falls, so every moment of the hold is looked at. */
+/** The stick man's feet from the line's height to well below it, in small steps: slower than the stick man ever falls, so every moment of the hold is looked at. */
 const DROP_BESIDE_END = Array.from({ length: 80 }, (_, step) => ({ x: BESIDE_END, y: step * 0.03 }));
 const makeWalk = (direction: -1 | 0 | 1): Command => ({ type: 'player/walk', direction });
 const JUMP: Command = { type: 'player/jump' };

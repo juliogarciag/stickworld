@@ -19,12 +19,12 @@
   },
   "walkedOn": {
     "feet": {
-      "x": 3.3199999999999985,
+      "x": 3.356666666666665,
       "y": 0
     },
     "facing": 1,
     "action": "walking",
-    "distanceWalked": 1.3199999999999985,
+    "distanceWalked": 1.3566666666666651,
     "verticalSpeed": 0,
     "horizontalSpeed": 2.2,
     "isFallingOffEdge": false,
@@ -32,7 +32,7 @@
     "isCarrying": false
   },
   "death": {
-    "frames": 318,
+    "frames": 320,
     "turnsSeen": 0,
     "levels": [
       3
@@ -42,8 +42,8 @@
     "watching": false
   },
   "flag": {
-    "frames": 305,
-    "turnsSeen": 31,
+    "frames": 332,
+    "turnsSeen": 34,
     "levels": [
       1,
       2
@@ -81,22 +81,22 @@
     {
       "name": "falling into the gap starts the same level again, and the tick count goes on",
       "pass": true,
-      "details": "level 3, tick 268 -> 278"
+      "details": "level 3, tick 266 -> 278"
     },
     {
-      "name": "he is back near where the level starts",
+      "name": "the stick man is back near where the level starts",
       "pass": true,
       "details": "x 2.00, start 2"
     },
     {
-      "name": "the key still held walks him on after the restart, without being pressed again",
+      "name": "the key still held walks the stick man on after the restart, without being pressed again",
       "pass": true,
-      "details": "walking, x 2.00 -> 3.32"
+      "details": "walking, x 2.00 -> 3.36"
     },
     {
       "name": "a death is not a page turn",
       "pass": true,
-      "details": "page turns seen in 318 frames: 0; levels: 3"
+      "details": "page turns seen in 320 frames: 0; levels: 3"
     },
     {
       "name": "reaching the flag starts the next level",
@@ -106,7 +106,7 @@
     {
       "name": "the page is turned between the two",
       "pass": true,
-      "details": "the turn was seen in 31 of 305 frames"
+      "details": "the turn was seen in 34 of 332 frames"
     },
     {
       "name": "the turn begins on the frame the level changes: the new level is never shown bare",
@@ -114,7 +114,7 @@
       "details": "frames on level 2 before the turn: 0"
     },
     {
-      "name": "he stands where level 2 starts",
+      "name": "the stick man stands where level 2 starts",
       "pass": true,
       "details": "x 2"
     },

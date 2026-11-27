@@ -6,13 +6,13 @@ import { AIRPLANE, FLIGHT } from './defs';
 import { airplaneSlice, type AirplaneState, hasBoardedSlice } from './state';
 
 /**
- * The airplane once it has left the edge: it glides with him seated in it,
- * falls when it is too slow or he has jumped out of it, and slides to a stop
+ * The airplane once it has left the edge: it glides with the stick man seated in it,
+ * falls when it is too slow or the stick man has jumped out of it, and slides to a stop
  * on the floor line it comes down on. The glide is an exchange of speed and
  * height (`FLIGHT`), plain arithmetic, no aerodynamics and no physics.
  */
 
-/** He sits down in the airplane where it rests and it leaves the edge, nose first. */
+/** The stick man sits down in the airplane where it rests and it leaves the edge, nose first. */
 export function boardAndLaunch(sim: Sim): void {
   const airplane = sim.getStateOf(airplaneSlice);
   sim.setStateOf(hasBoardedSlice, true);
@@ -24,11 +24,11 @@ export function boardAndLaunch(sim: Sim): void {
 
 /**
  * One tick of an airplane that is off the floor or sliding along it: where it goes, and what follows from where it got
- * to (he stands up, the level starts again, it is lost). Nothing happens to one that rests or is carried.
+ * to (the stick man stands up, the level starts again, it is lost). Nothing happens to one that rests or is carried.
  */
 export function moveOneTick(sim: Sim): void {
   const airplane = sim.getStateOf(airplaneSlice);
-  // He has jumped out: with nobody to steer it, it stops gliding and falls.
+  // The stick man has jumped out: with nobody to steer it, it stops gliding and falls.
   if (airplane.isFlying && !getPlayerBody(sim).isSeated) stopGliding(airplane);
 
   if (airplane.isFlying) glide(sim, airplane);
@@ -38,12 +38,12 @@ export function moveOneTick(sim: Sim): void {
   movePlayerWithSeat(sim, airplane);
   if (!airplane.isSliding && !airplane.isFlying && !airplane.isFalling) standPlayerUp(sim);
 
-  // Asked again: he may have stood up just now.
+  // Asked again: the stick man may have stood up just now.
   const { isSeated } = getPlayerBody(sim);
   const below = airplane.y - getLowestFloorHeight(sim.levelDef.floor);
-  // With him in it, falling out of sight starts the level again, and nothing of the airplane is left. Without him it is only lost.
+  // With the stick man in it, falling out of sight starts the level again, and nothing of the airplane is left. Without the stick man it is only lost.
   if (isSeated && below > FLIGHT.lostBelowFloor) sim.startLevelAfterThisTick(sim.level);
-  // As deep as he can fall himself: it is gone when he would be.
+  // As deep as the stick man can fall itself: it is gone when the stick man would be.
   else if (!isSeated && below > PLAYER.fallBelowFloor) sim.setStateOf(airplaneSlice, { ...airplaneSlice.getInitialFor(sim.levelDef), steering: airplane.steering });
 }
 

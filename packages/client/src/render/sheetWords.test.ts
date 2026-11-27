@@ -5,13 +5,13 @@ import { __testing__, getLevelNameState, buildLevelNameStrokes, buildPageNumberS
 import { convertToPixels } from './units';
 
 describe('the name of a level', () => {
-  it('is its number and name, written above where he starts, centred on him', () => {
+  it('is its number and name, written above where the stick man starts, centred on the stick man', () => {
     const strokes = buildLevelNameStrokes(LEVEL_2, WRITTEN_BY);
     expect(strokes).toHaveLength(buildWriting('2. A gap', { position: { x: 0, y: 0 }, letterHeight: 1 }).strokes.length);
     const points = strokes.flatMap((stroke) => stroke.points);
     const xs = points.map((point) => point.x);
     expect((Math.min(...xs) + Math.max(...xs)) / 2).toBeCloseTo(convertToPixels(LEVEL_2.start.x), 6);
-    // Above his head, with room to spare.
+    // Above the stick man's head, with room to spare.
     expect(Math.max(...points.map((point) => point.y))).toBeLessThan(convertToPixels(LEVEL_2.start.y - 3));
   });
 

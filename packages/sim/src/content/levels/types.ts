@@ -29,11 +29,11 @@ export interface Note {
   readonly position: Point;
   /** What it says. It never names a key: which keys there are is the client's business, and it draws them by what the note is `about`. */
   readonly words: string;
-  /** What he does that the note is about, when it is about something he does. */
+  /** What the stick man does that the note is about, when it is about something the stick man does. */
   readonly topic?: 'walking' | 'jumping';
   /** True for a note that is a title, the name of something, and not something to do. */
   readonly isTitle?: boolean;
-  /** It is rubbed out once he stands on the floor further right than this x: he has done what it says. Left out, it stays. */
+  /** It is rubbed out once the stick man stands on the floor further right than this x: the stick man has done what it says. Left out, it stays. */
   readonly rubbedOutPast?: number;
 }
 
@@ -46,10 +46,10 @@ export interface Level {
   /** Where the stick man's feet are when the level starts. */
   readonly start: Point;
   readonly placements: readonly Placement[];
-  /** The def id of the item the stick man is given when he reaches this level's flag (level 2's paper). Most levels give none. */
+  /** The def id of the item the stick man is given when it reaches this level's flag (level 2's paper). Most levels give none. */
   readonly flagGivesItem?: number;
   /** What is written on the sheet for the player. Most levels have none. */
   readonly notes?: readonly Note[];
-  /** Where the level's checkpoint stands on the floor, if it has one: he starts here after a death once he has stood past it (the `getCheckpoint` feature). */
+  /** Where the level's checkpoint stands on the floor, if it has one: the stick man starts here after a death once the stick man has stood past it (the `getCheckpoint` feature). */
   readonly checkpoint?: Point;
 }

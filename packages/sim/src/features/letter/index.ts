@@ -13,13 +13,13 @@ import { fallenItemSlice, letterSlice, lettersReadSlice } from './state';
 
 /**
  * The letter a level leaves on the floor. Interacting next to it reads it,
- * which teaches its recipe and puts the item the recipe is made from in his
+ * which teaches its recipe and puts the item the recipe is made from in the stick man's
  * hand; interacting again or walking away puts it away, and then it is gone:
- * what it taught he knows for good. What he can lose is the item. A level
- * that starts again for him who has read its letter and has nothing left of
- * what it was for gives him what its recipe makes at once. And whenever he
+ * what it taught the stick man knows for good. What the stick man can lose is the item. A level
+ * that starts again for the stick man who has read its letter and has nothing left of
+ * what it was for gives the stick man what its recipe makes at once. And whenever the stick man
  * loses everything it was for without dying, the item itself falls from the
- * sky to where he stands, and interacting next to it picks it up. So he can
+ * sky to where the stick man stands, and interacting next to it picks it up. So the stick man can
  * never be left without a way on.
  */
 export const letterFeature: Feature = {
@@ -31,10 +31,10 @@ export const letterFeature: Feature = {
     const def = placed && getLetterDef(placed.defId);
     if (!def) return;
     const hasReadLetter = sim.getStateOf(lettersReadSlice).includes(def.id);
-    // A letter he has read before does not lie there again when the level starts again.
+    // A letter the stick man has read before does not lie there again when the level starts again.
     sim.getStateOf(letterSlice).isInLevel = !hasReadLetter;
     if (!hasReadLetter || hasRecipeResult(sim, def)) return;
-    // He has learned what it teaches and lost what he made of it with the level: he starts again with that in his hand.
+    // The stick man has learned what it teaches and lost what the stick man made of it with the level: the stick man starts again with that in the stick man's hand.
     const made = getRecipeDef(def.teachesRecipe)?.makes ?? def.gives;
     if (giveItem(sim, made)) selectItem(sim, made);
   },
@@ -49,7 +49,7 @@ export const letterFeature: Feature = {
       fallen.height = Math.max(0, fallen.height - LETTER.fallSpeed * sim.dt);
       return;
     }
-    // The letter that still lies there gives it; with the flag reached he needs none.
+    // The letter that still lies there gives it; with the flag reached the stick man needs none.
     if (hasRecipeResult(sim, def) || sim.getStateOf(letterSlice).isInLevel || isFlagReached(sim)) {
       fallen.ticksUntilFall = null;
     } else if (fallen.ticksUntilFall === null) {
@@ -57,7 +57,7 @@ export const letterFeature: Feature = {
     } else if (fallen.ticksUntilFall > 0) {
       fallen.ticksUntilFall -= 1;
     } else if (getPlayerBody(sim).isOnFloor) {
-      // It comes down where he stands, so he sees it and has it at his feet. In the air he has no place for it yet: it waits for him to land.
+      // It comes down where the stick man stands, so the stick man sees it and has it at the stick man's feet. In the air the stick man has no place for it yet: it waits for the stick man to land.
       const { x, y } = getPlayerBody(sim);
       fallen.ticksUntilFall = null;
       fallen.isInLevel = true;
@@ -73,18 +73,18 @@ export function findLetterPlacedIn(level: Level): Placement | undefined {
   return level.placements.find((placement) => getLetterDef(placement.defId) !== undefined);
 }
 
-/** True while he reads a letter. */
+/** True while the stick man reads a letter. */
 export function isReadingLetter(sim: Sim): boolean {
   return sim.getStateOf(letterSlice).isBeingRead;
 }
 
-/** What interacting does while he reads a letter, for `features/world`: he puts it away, and the press does nothing else. */
+/** What interacting does while the stick man reads a letter, for `features/world`: the stick man puts it away, and the press does nothing else. */
 export function getLetterBeingRead(sim: Sim) {
   if (!sim.getStateOf(letterSlice).isBeingRead) return undefined;
   return { means: 'putLetterAway' as const, perform: () => putAway(sim) };
 }
 
-/** What interacting does next to a letter that lies on the floor, for `features/world`: he reads it. */
+/** What interacting does next to a letter that lies on the floor, for `features/world`: the stick man reads it. */
 export function getLetterInteraction(sim: Sim) {
   const placed = findLetterPlacedIn(sim.levelDef);
   const def = placed && getLetterDef(placed.defId);
@@ -98,13 +98,13 @@ export function getLetterInteraction(sim: Sim) {
       if (!lettersRead.includes(def.id)) lettersRead.push(def.id);
       teachRecipe(sim, def.teachesRecipe);
       if (!hasRecipeResult(sim, def)) giveItem(sim, def.gives);
-      // What the letter is about is in his hand when he looks up from it, so the key that uses it has a use at once.
+      // What the letter is about is in the stick man's hand when the stick man looks up from it, so the key that uses it has a use at once.
       selectItem(sim, def.gives);
     },
   };
 }
 
-/** What interacting does next to the item that fell from the sky, once it lies on the floor, for `features/world`: he picks it up, into his hand. */
+/** What interacting does next to the item that fell from the sky, once it lies on the floor, for `features/world`: the stick man picks it up, into the stick man's hand. */
 export function getFallenItemInteraction(sim: Sim) {
   const placed = findLetterPlacedIn(sim.levelDef);
   const def = placed && getLetterDef(placed.defId);
@@ -122,7 +122,7 @@ export function getFallenItemInteraction(sim: Sim) {
 
 // ---- Helpers ----
 
-/** He stops reading, and the letter he was reading is gone. Nothing changes when he is not reading. */
+/** The stick man stops reading, and the letter it was reading is gone. Nothing changes when the stick man is not reading. */
 function putAway(sim: Sim): void {
   const letter = sim.getStateOf(letterSlice);
   if (!letter.isBeingRead) return;
@@ -130,15 +130,15 @@ function putAway(sim: Sim): void {
   letter.isInLevel = false;
 }
 
-/** True while he stands on the floor within reach of something that lies at `position`: the letter, or the item that fell. */
+/** True while the stick man stands on the floor within reach of something that lies at `position`: the letter, or the item that fell. */
 function isWithinReach(sim: Sim, position: { readonly x: number }): boolean {
   const player = getPlayerBody(sim);
   return player.isOnFloor && Math.abs(player.x - position.x) <= LETTER.reach;
 }
 
 /**
- * True while he still has the item the letter gives, or what its recipe makes of that item. The only thing a recipe
- * makes that leaves his slots for the world is the airplane, so that is the one asked about here.
+ * True while the stick man still has the item the letter gives, or what its recipe makes of that item. The only thing a recipe
+ * makes that leaves the stick man's slots for the world is the airplane, so that is the one asked about here.
  */
 function hasRecipeResult(sim: Sim, def: LetterDef): boolean {
   const made = getRecipeDef(def.teachesRecipe)?.makes;

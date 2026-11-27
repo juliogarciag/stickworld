@@ -4,8 +4,8 @@ import { notesSlice } from './state';
 
 /**
  * The notes a level has written on its sheet (`notes` in the level's data):
- * what to do here. A note that says how far he has to get (`rubbedOutPast`)
- * is rubbed out once he stands on the floor past it, and is there again when
+ * what to do here. A note that says how far the stick man has to get (`rubbedOutPast`)
+ * is rubbed out once the stick man stands on the floor past it, and is there again when
  * the level starts again. What a note looks like is the view's.
  */
 export const noteFeature: Feature = {

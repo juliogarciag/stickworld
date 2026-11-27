@@ -1,0 +1,177 @@
+{
+  "afterDeath1": {
+    "man": {
+      "feet": {
+        "x": 7,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "standing",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "isFallingOffEdge": false,
+      "walkDirectionAsked": 0,
+      "isCarrying": false
+    },
+    "checkpoint": {
+      "position": {
+        "x": 7,
+        "y": 0
+      },
+      "isPassed": true
+    },
+    "level": 3,
+    "turning": false
+  },
+  "afterDeath2": {
+    "man": {
+      "feet": {
+        "x": 7,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "standing",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "isFallingOffEdge": false,
+      "walkDirectionAsked": 0,
+      "isCarrying": false
+    },
+    "checkpoint": {
+      "position": {
+        "x": 7,
+        "y": 0
+      },
+      "isPassed": true
+    },
+    "level": 3,
+    "turning": false
+  },
+  "level": {
+    "start": {
+      "x": 2,
+      "y": 0
+    },
+    "checkpoint": {
+      "position": {
+        "x": 7,
+        "y": 0
+      },
+      "isPassed": false
+    }
+  },
+  "afterDeathBefore": {
+    "man": {
+      "feet": {
+        "x": 2,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "standing",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "isFallingOffEdge": false,
+      "walkDirectionAsked": 0,
+      "isCarrying": false
+    },
+    "checkpoint": {
+      "position": {
+        "x": 7,
+        "y": 0
+      },
+      "isPassed": false
+    }
+  },
+  "before": {
+    "isPassed": false,
+    "position": {
+      "x": 7,
+      "y": 0
+    },
+    "seen": {
+      "left": -3.749999999999982,
+      "right": 15.450000000000019,
+      "top": -7.775999999999999,
+      "bottom": 3.024000000000001
+    },
+    "inView": true
+  },
+  "passedAt": 7.060000000000032,
+  "afresh": {
+    "man": {
+      "feet": {
+        "x": 2,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "standing",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "isFallingOffEdge": false,
+      "walkDirectionAsked": 0,
+      "isCarrying": false
+    },
+    "checkpoint": {
+      "position": {
+        "x": 7,
+        "y": 0
+      },
+      "isPassed": false
+    }
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "a level has a checkpoint",
+      "pass": true,
+      "details": "level 3"
+    },
+    {
+      "name": "it stands past the start and is not passed yet",
+      "pass": true,
+      "details": "{\"start\":{\"x\":2,\"y\":0},\"checkpoint\":{\"position\":{\"x\":7,\"y\":0},\"isPassed\":false}}"
+    },
+    {
+      "name": "a death before it starts the stick man at the start of the level",
+      "pass": true,
+      "details": "x 2"
+    },
+    {
+      "name": "the mark is in view before the stick man reaches it",
+      "pass": true,
+      "details": "{\"isPassed\":false,\"position\":{\"x\":7,\"y\":0},\"seen\":{\"left\":-3.749999999999982,\"right\":15.450000000000019,\"top\":-7.775999999999999,\"bottom\":3.024000000000001},\"inView\":true}"
+    },
+    {
+      "name": "it is passed as the stick man walks past it, not before",
+      "pass": true,
+      "details": "passed with the stick man's feet at x 7.060, the mark at 7"
+    },
+    {
+      "name": "death 1 past it starts the stick man at the checkpoint, standing, with no page turned",
+      "pass": true,
+      "details": "x 7, standing"
+    },
+    {
+      "name": "death 2 past it starts the stick man at the checkpoint, standing, with no page turned",
+      "pass": true,
+      "details": "x 7, standing"
+    },
+    {
+      "name": "the level loaded afresh starts the stick man at its start, the checkpoint not passed",
+      "pass": true,
+      "details": "x 2"
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

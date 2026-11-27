@@ -28,7 +28,7 @@ export const PENCIL = {
 } as const;
 
 /**
- * The coloured pencils, for the few lines that must stand out from the graphite: green for what he got right. Muted
+ * The coloured pencils, for the few lines that must stand out from the graphite: green for what the stick man got right. Muted
  * like a pencil, not a marker, so they still read as drawn on the paper.
  */
 export const COLOURED_PENCILS = {

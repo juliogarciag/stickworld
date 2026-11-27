@@ -10,7 +10,7 @@ export interface HeldKeys {
   readonly isJumpHeld: boolean;
   /** True on the one frame a key that only ever jumps went down. */
   readonly isJumpPressed: boolean;
-  /** True on the one frame an up key went down: on his feet that is a jump too; seated, up steers and is not one. */
+  /** True on the one frame an up key went down: on the stick man's feet that is a jump too; seated, up steers and is not one. */
   readonly isUpPressed: boolean;
 }
 
@@ -18,29 +18,29 @@ export interface HeldKeys {
  * Returns a function that turns what the keys say into the commands the sim
  * has not heard yet. Walking and steering are compared with what the sim
  * believes, not with what was sent last, so a key still held when a level
- * starts again walks him again. A command still waiting for the sim's next
+ * starts again walks the stick man again. A command still waiting for the sim's next
  * tick counts as heard: it is not sent twice, and a change of mind before
  * that tick is sent after it.
  *
- * The up keys are the one place a key means two things: a jump while he is on
- * his feet, the airplane's nose up while he is seated in it, where only the
- * jump key itself jumps him out. Which of the two he is doing is the sim's
+ * The up keys are the one place a key means two things: a jump while the stick man is on
+ * the stick man's feet, the airplane's nose up while the stick man is seated in it, where only the
+ * jump key itself jumps the stick man out. Which of the two the stick man is doing is the sim's
  * (`getStickMan`); what the sim does with either command is its own business.
  * What is read here is one tick old while a command waits: an up key pressed
- * in the moment he boards is still sent as a jump, and the sim drops a jump
- * that arrives on the tick he sits down.
+ * in the moment the stick man boards is still sent as a jump, and the sim drops a jump
+ * that arrives on the tick it sits down.
  *
  * Letting go of the jump is a command too: the sim cuts a rising jump short
  * by how much its tuning says, which in the game as it is ends the rise. It is
  * sent when the keys that were jumping are all up, and on the frame of a tap
- * that went down and up between two frames. An up key held since he was
- * seated steered the airplane and holds no jump after he jumps out of it.
+ * that went down and up between two frames. An up key held since the stick man was
+ * seated steered the airplane and holds no jump after the stick man jumps out of it.
  */
 export function createKeysToCommands(): (now: { keys: HeldKeys; sim: SimHandle }) => Command[] {
   const hasWalkChanged = createChangeDetector<WalkDirection>();
   const hasSteeringChanged = createChangeDetector<SteerDirection>();
   let wasJumpHeld = false;
-  // An up key held to steer the airplane is not a jump held once he jumps out: it steered, and counts again only once let go of.
+  // An up key held to steer the airplane is not a jump held once the stick man jumps out: it steered, and counts again only once let go of.
   let wasUpHeldSinceSeated = false;
   return (input) => {
     const commands: Command[] = [];

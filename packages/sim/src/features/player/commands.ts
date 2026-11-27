@@ -9,7 +9,7 @@ export interface WalkCommand {
   readonly direction: WalkDirection;
 }
 
-/** Jump now, or as soon as he can within the forgiveness windows. */
+/** Jump now, or as soon as the stick man can within the forgiveness windows. */
 export interface JumpCommand {
   readonly type: 'player/jump';
 }
@@ -20,7 +20,7 @@ export interface LetGoOfJumpCommand {
 }
 
 /**
- * Change how he walks, jumps and falls from now on: each number given replaces that one, the rest stay. Dev builds
+ * Change how the stick man walks, jumps and falls from now on: each number given replaces that one, the rest stay. Dev builds
  * only send it, from the movement panel; a value that is not a number within `MOVEMENT_TUNING_LIMITS` is ignored.
  */
 export interface TuneMovementCommand {

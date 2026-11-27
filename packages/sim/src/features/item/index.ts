@@ -23,7 +23,7 @@ export const itemFeature: Feature = {
 
 /** What `'item/use'` would do right now, with the function that does it, or undefined when it would do nothing. */
 export function getItemUseNow(sim: Sim): ItemUse | undefined {
-  // A letter he reads fills his hands: it is put away by interacting, and until then no item is used.
+  // A letter the stick man reads fills the stick man's hands: it is put away by interacting, and until then no item is used.
   if (isFlagReached(sim) || isReadingLetter(sim)) return undefined;
   for (const answer of ANSWERS) {
     const use = answer(sim);
@@ -37,5 +37,5 @@ const ANSWERS = [getCraftingUse, getAirplaneItemUse] as const;
 
 export type ItemUse = NonNullable<ReturnType<(typeof ANSWERS)[number]>>;
 
-/** What using the held item means: make the recipe he knows for it, or put the airplane on the floor. */
+/** What using the held item means: make the recipe the stick man knows for it, or put the airplane on the floor. */
 export type ItemUseMeaning = ItemUse['means'];

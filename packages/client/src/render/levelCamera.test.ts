@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { __testing__, type Followed } from './levelCamera';
 
 describe('getFramingWanted', () => {
-  it('is centred on him and as wide as at rest while he walks along the line, away from any edge', () => {
+  it('is centred on the stick man and as wide as at rest while the stick man walks along the line, away from any edge', () => {
     expect(getFramingWanted({ stickMan: makeStickManStandingAt(4), floor: LEVEL_3, metresAcrossAtRest: 19.2 })).toEqual({ metresAhead: 0, metresAcross: 19.2 });
     expect(getFramingWanted({ stickMan: makeStickManStandingAt(4), floor: LEVEL_3, metresAcrossAtRest: 12 })).toEqual({ metresAhead: 0, metresAcross: 12 });
   });
@@ -21,7 +21,7 @@ describe('getFramingWanted', () => {
     }
   });
 
-  it('is at an edge only on the floor, near the end of his line, facing it, with floor further on', () => {
+  it("is at an edge only on the floor, near the end of the stick man's line, facing it, with floor further on", () => {
     const atRest = { metresAhead: 0, metresAcross: 12 };
     const near = GAP.start - FRAMING.edgeDistance + 0.1;
     expect(getFramingWanted({ stickMan: makeStickManStandingAt(near), floor: LEVEL_3, metresAcrossAtRest: 12 }).metresAhead).toBeGreaterThan(0);
@@ -40,7 +40,7 @@ describe('getFramingWanted', () => {
     expect(GAP.end + 1 + metresAhead - metresAcross / 2).toBeLessThanOrEqual(GAP.start - FRAMING.nextLineMargin + 1e-9);
   });
 
-  it('looks ahead while he carries the airplane and while he is seated in it, wherever he is', () => {
+  it('looks ahead while the stick man carries the airplane and while the stick man is seated in it, wherever the stick man is', () => {
     const carrying = getFramingWanted({ stickMan: { ...makeStickManStandingAt(4), isCarrying: true }, floor: LEVEL_3, metresAcrossAtRest: 12 });
     expect(carrying.metresAhead).toBeGreaterThan(0);
     // The far side is too far to show from here: the view is pulled back as far as it goes, and no further.
@@ -50,7 +50,7 @@ describe('getFramingWanted', () => {
     const flying = getFramingWanted({ stickMan: overGap, floor: LEVEL_3, metresAcrossAtRest: 12 });
     expect(14 + flying.metresAhead + flying.metresAcross / 2).toBeGreaterThanOrEqual(GAP.end + FRAMING.nextLineMargin - 1e-9);
 
-    // Over the far side there is no next line: he is still shown where he is going, at the width the view has at rest.
+    // Over the far side there is no next line: the stick man is still shown where it is going, at the width the view has at rest.
     const overFarSide = { ...overGap, feet: { x: GAP.end + 2, y: -1 } };
     expect(getFramingWanted({ stickMan: overFarSide, floor: LEVEL_3, metresAcrossAtRest: 12 })).toEqual({ metresAhead: (0.5 - FRAMING.trailingViewShare) * 12, metresAcross: 12 });
   });
@@ -84,7 +84,7 @@ describe('easeTowards', () => {
 });
 
 describe('keepUpWith', () => {
-  it('is where his feet are at anything he does: walking, falling, and the airplane at its fastest', () => {
+  it("is where the stick man's feet are at anything the stick man does: walking, falling, and the airplane at its fastest", () => {
     for (const metresPerSecond of [2.2, 7.5, 11]) {
       const feetX = 10 + metresPerSecond / 60;
       expect(keepUpWith({ followedX: 10, feetX, seconds: 1 / 60 })).toBe(feetX);
@@ -92,7 +92,7 @@ describe('keepUpWith', () => {
     }
   });
 
-  it('takes a hop of his within one tick over a few frames, and ends exactly on him', () => {
+  it("takes a hop of the stick man's within one tick over a few frames, and ends exactly on the stick man", () => {
     let followedX = 9;
     const frames = [];
     for (let frame = 0; frame < 10 && followedX !== 9.9; frame += 1) {

@@ -16,7 +16,7 @@ describe('getPromptsFor', () => {
     expect(getPromptsFor({ ...KEYS, itemUse: null, interaction: 'board' })).toEqual([{ key: 'K', words: 'board the airplane' }]);
   });
 
-  it('names the keys that fly the airplane while he is seated in it, and only then', () => {
+  it('names the keys that fly the airplane while the stick man is seated in it, and only then', () => {
     expect(getPromptsFor({ ...KEYS, itemUse: null, interaction: null, isSeated: true })).toEqual([
       { key: '↑', words: 'climb' },
       { key: '↓', words: 'dive' },
@@ -24,7 +24,7 @@ describe('getPromptsFor', () => {
     ]);
   });
 
-  it('says first, in words with no key, that the airplane goes to the edge while he has still to be told', () => {
+  it('says first, in words with no key, that the airplane goes to the edge while the stick man has still to be told', () => {
     expect(getPromptsFor({ ...KEYS, itemUse: null, interaction: 'putDown', flyingHint: 'takeToEdge' })).toEqual([
       { key: null, words: 'take the airplane to the edge' },
       { key: 'K', words: 'put the airplane down' },
@@ -68,7 +68,7 @@ describe('buildPromptStrokes', () => {
     expect(Math.max(...two.flatMap((stroke) => stroke.points).map((point) => point.y))).toBe(Math.max(...points.map((point) => point.y)));
   });
 
-  it('writes words with no key as words alone, in a row of their own above the keys, starting where a key\'s box would', () => {
+  it("writes words with no key as words alone, in a row of their own above the keys, starting where a key's box would", () => {
     const hint = { key: null, words: 'take the airplane to the edge' };
     const alone = buildPromptStrokes([hint], CAMERA_SEES);
     expect(alone.some((stroke) => stroke.isClosed)).toBe(false);

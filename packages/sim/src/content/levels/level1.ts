@@ -2,10 +2,10 @@ import { FLAG_DEF_ID } from '../../features/flag/defs';
 import type { Level } from './types';
 
 /**
- * Level 1: the stick man walks until he finds the flag, a few metres to his
- * right. The floor ends a little behind him and a little past the flag. The
- * sheet has the game's name on it, and beside him a note about walking that
- * is rubbed out once he has.
+ * Level 1: the stick man walks until it finds the flag, a few metres to its
+ * right. The floor ends a little behind the stick man and a little past the flag. The
+ * sheet has the game's name on it, and beside the stick man a note about walking that
+ * is rubbed out once the stick man has.
  */
 export const level1: Level = {
   id: 1,

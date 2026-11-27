@@ -35,7 +35,7 @@ export function areNotesStill(notes: readonly NoteView[]): boolean {
 const NOTES = {
   /** How tall the capitals of a title are. */
   titleLetterHeight: convertToPixels(0.72),
-  /** A note about something he does: the boxes of its keys and its words. */
+  /** A note about something the stick man does: the boxes of its keys and its words. */
   keyed: { keySide: convertToPixels(0.52), keyPadding: convertToPixels(0.12), letterHeight: convertToPixels(0.27), keyGap: convertToPixels(0.2) },
   /** How long rubbing a note out takes. */
   rubbedOutIn: 0.45,

@@ -7,7 +7,7 @@ import { convertToPixels } from './units';
  * The paper airplane in the world as pencil strokes: a dart seen from the
  * side. Where it is, what is happening to it and where its nose points as it
  * flies come from the sim; how it is folded, how it gets from the floor to
- * his hands and how it noses down as it falls are decided here.
+ * the stick man's hands and how it noses down as it falls are decided here.
  */
 
 /** The airplane as it is drawn this frame. */
@@ -24,11 +24,11 @@ export interface ShownAirplane {
 /**
  * Returns a function to call every frame with the airplane as the sim has it
  * and the seconds since the last frame. It gives the airplane to draw: the
- * sim's, except that it takes a moment to get from the floor to over his head
+ * sim's, except that it takes a moment to get from the floor to over the stick man's head
  * and back, where the sim moves it in one tick, and that its nose takes a
  * moment to turn when the sim turns it at once (a stall, a landing). Once it
  * has caught up it is exactly where the sim says, and while it flies or lands
- * it always is: he sits in it. View detail only.
+ * it always is: the stick man sits in it. View detail only.
  */
 export function easeAirplanesOverTime(): (airplane: AirplaneView | undefined, seconds: number) => ShownAirplane | undefined {
   let shown: { position: Point; noseDown: number } | undefined;
@@ -93,7 +93,7 @@ const DART = {
 } as const;
 
 const HANDLING = {
-  /** How fast it goes between the floor and his hands, in metres per second. Faster than he walks, so it catches up with him and then stays exactly where the sim says. */
+  /** How fast it goes between the floor and the stick man's hands, in metres per second. Faster than the stick man walks, so it catches up with the stick man and then stays exactly where the sim says. */
   speed: 8,
   /** How far its nose goes down for each metre per second it falls, in radians, and the most it does. */
   noseDownPerSpeed: 0.16,

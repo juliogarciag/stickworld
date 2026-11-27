@@ -24,7 +24,7 @@ describe('levels', () => {
       }
     });
 
-    it('has no gap he is too wide to fall into: the two ends of a gap never push him at once', () => {
+    it('has no gap the stick man is too wide to fall into: the two ends of a gap never push the stick man at once', () => {
       for (let index = 1; index < level.floor.length; index += 1) {
         const gap = level.floor[index].start.x - level.floor[index - 1].end.x;
         if (gap > 0) expect(gap).toBeGreaterThan(STICK_MAN_WIDTH);
@@ -35,7 +35,7 @@ describe('levels', () => {
       expect(level.floor.some((segment) => segment.start.x <= level.start.x && level.start.x <= segment.end.x)).toBe(true);
     });
 
-    it('has its checkpoint, if it has one, on a floor line: started there, he must not fall', () => {
+    it('has its checkpoint, if it has one, on a floor line: started there, the stick man must not fall', () => {
       const { checkpoint } = level;
       if (!checkpoint) return;
       const segmentBelow = level.floor.find((segment) => segment.start.x <= checkpoint.x && checkpoint.x <= segment.end.x);

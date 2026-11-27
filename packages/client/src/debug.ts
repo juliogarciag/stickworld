@@ -21,7 +21,7 @@ export interface GameDebugApi {
   readonly pixelsPerMetre: number;
   /** The stick man's height in metres, as the sim's tuning has it. */
   readonly stickManHeight: number;
-  /** The stick man's width in metres, as the sim's tuning has it: how far the end of a floor line he drops past is kept from the middle of him, half to each side. */
+  /** The stick man's width in metres, as the sim's tuning has it: how far the end of a floor line the stick man drops past is kept from the middle of it, half to each side. */
   readonly stickManWidth: number;
   /** The most real time one frame may give the sim, in seconds: what a longer frame took beyond it is dropped, not played. */
   readonly maxFrameSeconds: number;
@@ -39,7 +39,7 @@ export interface GameDebugApi {
   getNotes(): NoteView[];
   /** How the game ends, as the sim has it right now: whether it is over, and whether playing again is offered. */
   getEnding(): GameView;
-  /** The stick man as the sim has him right now: where his feet are (metres) and what he is doing. */
+  /** The stick man as the sim has it right now: where the stick man's feet are (metres) and what it is doing. */
   getStickMan(): StickManView;
   /** The level's flag as the sim has it right now, or undefined when the level has none. */
   getFlag(): FlagView | undefined;
@@ -49,15 +49,15 @@ export interface GameDebugApi {
   getItemSlots(): ShownItemSlot[];
   /** The level's letter as the sim has it right now, or undefined when there is none to read. */
   getLetter(): LetterView | undefined;
-  /** The item that fell from the sky for him who lost his, as the sim has it right now, or undefined when there is none. */
+  /** The item that fell from the sky for the stick man who lost the stick man's, as the sim has it right now, or undefined when there is none. */
   getFallenItem(): FallenItemView | undefined;
-  /** What he knows how to make as the sim has it right now: the recipes he knows, and the one using the held item would make. */
+  /** What the stick man knows how to make as the sim has it right now: the recipes the stick man knows, and the one using the held item would make. */
   getCrafting(): CraftingView;
   /** The airplane in the world as the sim has it right now, or undefined while there is none. */
   getAirplane(): AirplaneView | undefined;
-  /** What he has still to be told about flying the airplane he has, as the sim has it right now, or null. */
+  /** What the stick man has still to be told about flying the airplane the stick man has, as the sim has it right now, or null. */
   getFlyingHint(): FlyingHint | null;
-  /** How he walks, jumps and falls right now, as the sim has it: what the movement panel shows and changes. */
+  /** How the stick man walks, jumps and falls right now, as the sim has it: what the movement panel shows and changes. */
   getMovementTuning(): MovementTuning;
   /** What using the held item would do right now, or null. */
   getItemUse(): ItemUseMeaning | null;

@@ -20,7 +20,7 @@ describe('the flag', () => {
     expect(levels.map((level) => getFlag(createSim({ level: level.id }))!.isFinalFlag)).toEqual(levels.map((_, index) => index === levels.length - 1));
   });
 
-  it('is reached the moment he comes within reach of the stick, and then goes up it', () => {
+  it('is reached the moment the stick man comes within reach of the stick, and then goes up it', () => {
     const sim = createSim({ level: 1 });
     sim.step([{ type: 'player/walk', direction: 1 }]);
     while (!getFlag(sim)!.isReached) sim.step();
@@ -35,7 +35,7 @@ describe('the flag', () => {
     expect(getFlag(sim)!.raised).toBe(1);
   });
 
-  it('is reached by jumping into it: it is taller than his jump', () => {
+  it("is reached by jumping into it: it is taller than the stick man's jump", () => {
     const sim = createSim({ level: 1 });
     sim.step([{ type: 'player/walk', direction: 1 }]);
     while (getFlag(sim)!.position.x - getStickMan(sim).feet.x > 0.6) sim.step();
@@ -46,7 +46,7 @@ describe('the flag', () => {
 });
 
 describe('every flag', () => {
-  it('stands over floor that goes on for its reach on both sides, so he cannot finish a level on his way off the paper', () => {
+  it("stands over floor that goes on for its reach on both sides, so the stick man cannot finish a level on the stick man's way off the paper", () => {
     for (const level of levels) {
       const placed = findFlagPlacedIn(level);
       if (!placed) continue;
@@ -64,7 +64,7 @@ describe('after the flag', () => {
     expect(findLevelToStartNow({ ...finished, ticksSinceReached: PAUSE_TICKS })).toBe(TWO_LEVELS[1]);
   });
 
-  it('the last level stays finished however long he waits', () => {
+  it('the last level stays finished however long the stick man waits', () => {
     expect(findLevelToStartNow({ levels: TWO_LEVELS, level: 2, dt: FIXED_DT, ticksSinceReached: PAUSE_TICKS * 100 })).toBeUndefined();
   });
 });

@@ -3,7 +3,7 @@ import { PENCIL } from '../render/strokes/pencil';
 
 /**
  * Words written in pencil: every letter is a few strokes, so text on the HUD
- * is drawn by the same pencil as everything else (ADR 0004). He prints in
+ * is drawn by the same pencil as everything else (ADR 0004). The stick man prints in
  * capitals; a character with no drawing leaves a space. View detail only:
  * what the words are comes from the sim's defs or from the HUD itself.
  */

@@ -31,7 +31,7 @@ describe('level 3', () => {
     expect(LETTER_AT.x - level3.start.x).toBeLessThan(STICK_MAN_HEIGHT);
   });
 
-  it('cannot be finished by jumping, whenever he takes off: he never stands past the gap, and the level starts again', () => {
+  it('cannot be finished by jumping, whenever the stick man takes off: the stick man never stands past the gap, and the level starts again', () => {
     for (let jumpAtTick = TICK_AT_EDGE - 40; jumpAtTick <= TICK_AT_EDGE + 12; jumpAtTick += 1) {
       const sim = createSim({ level: 3 });
       const { furthestStoodAt, hasRestarted } = playToEnd(sim, [WALK_RIGHT_AT_0, { atTick: jumpAtTick, command: { type: 'player/jump' } }]);
@@ -49,7 +49,7 @@ describe('level 3', () => {
     expect(hasRestarted).toBe(true);
   });
 
-  it('cannot be finished by jumping with the airplane over his head either: that jump is no longer than the other', () => {
+  it("cannot be finished by jumping with the airplane over the stick man's head either: that jump is no longer than the other", () => {
     for (let jumpAtTick = TICK_AT_EDGE - 40; jumpAtTick <= TICK_AT_EDGE + 12; jumpAtTick += 1) {
       const sim = createSim({ level: 3 });
       // Read, put away, select, open, fold, set down, lift: the letter gives the paper to a level 3 started on its own.
@@ -57,14 +57,14 @@ describe('level 3', () => {
       for (const command of [INTERACT, INTERACT, USE_ITEM, USE_ITEM, INTERACT]) sim.step([command]);
       walkTo(sim, level3.start.x);
       expect(getStickMan(sim).isCarrying).toBe(true);
-      // Back where the level starts him, so the walk to the edge takes as many ticks as it does from the start.
+      // Back where the level starts the stick man, so the walk to the edge takes as many ticks as it does from the start.
       const { furthestStoodAt, hasRestarted } = playToEnd(sim, [WALK_RIGHT_AT_0, { atTick: jumpAtTick, command: { type: 'player/jump' } }]);
       expect(furthestStoodAt, `jumping at tick ${jumpAtTick}`).toBeLessThanOrEqual(GAP.start);
       expect(hasRestarted, `jumping at tick ${jumpAtTick}`).toBe(true);
     }
   });
 
-  it('cannot be finished by walking: he falls into the gap and the level starts again', () => {
+  it('cannot be finished by walking: the stick man falls into the gap and the level starts again', () => {
     const sim = createSim({ level: 3 });
     const { furthestStoodAt, hasRestarted } = playToEnd(sim, [WALK_RIGHT_AT_0]);
     expect(furthestStoodAt).toBeLessThanOrEqual(GAP.start);
@@ -80,7 +80,7 @@ describe('level 3', () => {
     expect(getItemSlots(sim)[0]?.itemDefId).toBe(PAPER_ITEM_ID);
     expect(getLetter(sim)).toMatchObject({ position: LETTER_AT, isBeingRead: false });
 
-    // The paper alone has no use, in his hand or not: he has not learned what to make of it.
+    // The paper alone has no use, in the stick man's hand or not: the stick man has not learned what to make of it.
     expect(getItemSlots(sim)[0]?.isSelected).toBe(false);
     sim.step([SELECT_SLOT_1]);
     expect(getItemUse(sim)).toBeNull();
@@ -94,7 +94,7 @@ describe('level 3', () => {
     expect(getLetter(sim)).toMatchObject({ isBeingRead: true });
     expect(getLetter(sim)!.text.length).toBeGreaterThan(0);
     expect(getLetter(sim)!.teaches).toBe('paper airplane');
-    // Reading put the paper in his hand, and while he reads the only thing a key does is put the letter away.
+    // Reading put the paper in the stick man's hand, and while it reads the only thing a key does is put the letter away.
     expect(getItemSlots(sim)[0]).toMatchObject({ itemDefId: PAPER_ITEM_ID, isSelected: true });
     expect(getItemUse(sim)).toBeNull();
     expect(getInteraction(sim)).toBe('putLetterAway');
@@ -129,14 +129,14 @@ describe('level 3', () => {
     expect(airplane.position.x).toBeLessThan(GAP.start);
     expect(airplane.position.x + airplane.length / 2).toBeGreaterThan(GAP.start);
 
-    // It stays there, and he still stands on the floor.
+    // It stays there, and the stick man still stands on the floor.
     for (let tick = 0; tick < 120; tick += 1) sim.step();
     expect(getAirplane(sim)).toEqual(airplane);
     expect(getStickMan(sim).action).toBe('standing');
     expect(getLetter(sim)).toBeUndefined();
   });
 
-  it('is finished the intended way: he boards the airplane on the edge, climbs for a moment, glides across, lands and walks to the flag, which ends the game', () => {
+  it('is finished the intended way: the stick man boards the airplane on the edge, climbs for a moment, glides across, lands and walks to the flag, which ends the game', () => {
     const sim = createSim({ level: 3 });
     putAirplaneOnEdge(sim);
     expect(getInteraction(sim)).toBe('board');
@@ -149,7 +149,7 @@ describe('level 3', () => {
       highest = Math.max(highest, -flight.airplane.position.y);
     });
     expect(seatedTicks).toBeGreaterThan(TICK_RATE);
-    // He climbed above his own height on the way, and is now on his feet on the far side with the airplane next to him.
+    // The stick man climbed above its own height on the way, and is now on its feet on the far side with the airplane next to it.
     expect(highest).toBeGreaterThan(STICK_MAN_HEIGHT);
     expect(getStickMan(sim)).toMatchObject({ action: 'standing', feet: { y: 0 } });
     expect(getStickMan(sim).feet.x).toBeGreaterThan(GAP.end);
@@ -157,7 +157,7 @@ describe('level 3', () => {
     expect(getFlag(sim)).toMatchObject({ isReached: false, isFinalFlag: true });
 
     walkUntilFlagIsReached(sim);
-    // No level follows: the game is over. He stays where he is, cheering, until playing again is offered.
+    // No level follows: the game is over. The stick man stays where it is, cheering, until playing again is offered.
     const stoodAt = getStickMan(sim).feet;
     for (let tick = 0; tick < Math.round(GAME_END.playAgainAfter * TICK_RATE) - 5; tick += 1) sim.step([WALK_RIGHT_AT_0.command]);
     expect(sim.level).toBe(3);
@@ -166,7 +166,7 @@ describe('level 3', () => {
     expect(getGame(sim)).toEqual({ isOver: true, isPlayAgainOffered: false });
   });
 
-  it('is not a dead end: after the end he walks and jumps about on the far side, cannot leave it, and playing again starts the game over', () => {
+  it('is not a dead end: after the end the stick man walks and jumps about on the far side, cannot leave it, and playing again starts the game over', () => {
     const sim = createSim({ level: 3 });
     putAirplaneOnEdge(sim);
     sim.step([INTERACT]);
@@ -178,7 +178,7 @@ describe('level 3', () => {
     expect(getGame(sim)).toEqual({ isOver: true, isPlayAgainOffered: true });
     expect(getStickMan(sim).action).toBe('standing');
 
-    // Holding a walk key for as long as he likes, jumping all the way, he ends up at the end of the line and not past it.
+    // Holding a walk key for as long as the stick man likes, jumping all the way, the stick man ends up at the end of the line and not past it.
     const farSide = level3.floor[1]!;
     for (const [direction, end] of [[1, farSide.end.x], [-1, farSide.start.x]] as const) {
       sim.step([{ type: 'player/walk', direction }]);
@@ -194,7 +194,7 @@ describe('level 3', () => {
       expect(getFlag(sim)!.isReached).toBe(true);
     }
 
-    // Neither key has a use after the end: the airplane he came in stays where it lies.
+    // Neither key has a use after the end: the airplane the stick man came in stays where it lies.
     walkTo(sim, getAirplane(sim)!.position.x);
     expect(getInteraction(sim)).toBeNull();
     expect(getItemUse(sim)).toBeNull();
@@ -207,7 +207,7 @@ describe('level 3', () => {
     expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: null, isSelected: false }]);
     expect(getCrafting(sim).knownRecipes).toEqual([]);
     expect(getAirplane(sim)).toBeUndefined();
-    // The letter he read in the game before is not remembered: on level 3 it lies there again.
+    // The letter the stick man read in the game before is not remembered: on level 3 it lies there again.
     (sim as Sim).startLevel(3);
     expect(getLetter(sim)).toMatchObject({ isBeingRead: false });
     expect(getItemSlots(sim)[0]?.itemDefId).toBeNull();
@@ -218,7 +218,7 @@ describe('level 3', () => {
     expect(level3.checkpoint!.x).toBeLessThan(GAP.start);
   });
 
-  it('is tried again without the chores: after a flight is lost the level starts again with the airplane in his hand, and a retry is walk, set down, board', () => {
+  it("is tried again without the chores: after a flight is lost the level starts again with the airplane in the stick man's hand, and a retry is walk, set down, board", () => {
     const sim = createSim({ level: 3 });
     putAirplaneOnEdge(sim);
     sim.step([INTERACT]);
@@ -249,7 +249,7 @@ describe('level 3', () => {
     }
   });
 
-  it('cannot be finished by boarding and doing nothing: left alone the airplane sinks into the gap, he dies and the level starts again', () => {
+  it('cannot be finished by boarding and doing nothing: left alone the airplane sinks into the gap, the stick man dies and the level starts again', () => {
     const sim = createSim({ level: 3 });
     putAirplaneOnEdge(sim);
     sim.step([INTERACT]);
@@ -318,7 +318,7 @@ describe('level 3', () => {
     });
     expectLevelRestartedWithAirplaneInHand(lost);
 
-    // The same flight, but a moment before it would pass under the far edge he jumps out, holding the walk key towards it.
+    // The same flight, but a moment before it would pass under the far edge the stick man jumps out, holding the walk key towards it.
     const saved = createSim({ level: 3 });
     putAirplaneOnEdge(saved);
     saved.step([INTERACT]);
@@ -350,7 +350,7 @@ const INTERACT: Command = { type: 'world/interact' };
 const FLAG_AT = level3.placements.find((placement) => placement.defId === FLAG_DEF_ID)!.position;
 
 /**
- * How long he can hold the nose up from the moment he boards, in ticks, and cross with nothing more than letting go:
+ * How long the stick man can hold the nose up from the moment it boards, in ticks, and cross with nothing more than letting go:
  * every length from `from` to `to`. Shorter, the airplane sinks under the far edge; longer, it stalls over the gap.
  * The gap and the `FLIGHT` values are tuned together to keep this window; a change that narrows it fails here.
  */
@@ -361,7 +361,7 @@ function isOverFarSide(position: { readonly x: number; readonly y: number }): bo
   return position.x >= GAP.end && position.y < 0;
 }
 
-/** How long before the airplane would pass under the far edge he jumps out of it, in seconds: at the last moment. */
+/** How long before the airplane would pass under the far edge the stick man jumps out of it, in seconds: at the last moment. */
 const JUMPS_OUT_BEFORE_EDGE = 0.12;
 
 /** A recorded flight: the nose held up from the first tick after boarding for `ticks` ticks, then let go. */
@@ -373,8 +373,8 @@ function makeClimbFor(ticks: number): { atTick: number; command: Command }[] {
 }
 
 /**
- * Plays a recorded flight from the tick after boarding for as long as he is seated, and returns how many ticks that
- * was. `seen` is shown the airplane and him after every tick he was seated on.
+ * Plays a recorded flight from the tick after boarding for as long as the stick man is seated, and returns how many ticks that
+ * was. `seen` is shown the airplane and the stick man after every tick it was seated on.
  */
 function playFlight(
   sim: SimHandle,
@@ -400,7 +400,7 @@ function putAirplaneOnEdge(sim: SimHandle): void {
   expect(getAirplane(sim)).toMatchObject({ state: 'resting', isOnEdge: true });
 }
 
-/** He is back at the checkpoint, which every way to the gap goes past, with the airplane as the item in his hand, none in the world, the flag not reached, and neither a letter there nor a sheet of paper on its way. */
+/** The stick man is back at the checkpoint, which every way to the gap goes past, with the airplane as the item in the stick man's hand, none in the world, the flag not reached, and neither a letter there nor a sheet of paper on its way. */
 function expectLevelRestartedWithAirplaneInHand(sim: SimHandle): void {
   expect(sim.level).toBe(3);
   expect(getStickMan(sim)).toMatchObject({ action: 'standing', feet: level3.checkpoint });
@@ -414,10 +414,10 @@ function expectLevelRestartedWithAirplaneInHand(sim: SimHandle): void {
   }
 }
 
-/** The last tick on which he still stands on the first segment, walking right from the start. */
+/** The last tick on which the stick man still stands on the first segment, walking right from the start. */
 const TICK_AT_EDGE = Math.floor(((GAP.start - level3.start.x) / PLAYER.walkSpeed) * TICK_RATE) - 1;
 
-/** Plays the commands for long enough to walk to the gap and fall all the way down it. Says how far right he ever stood on the floor, and whether the level started again. */
+/** Plays the commands for long enough to walk to the gap and fall all the way down it. Says how far right the stick man ever stood on the floor, and whether the level started again. */
 function playToEnd(sim: SimHandle, commands: readonly { readonly atTick: number; readonly command: Command }[]): { furthestStoodAt: number; hasRestarted: boolean } {
   let furthestStoodAt = -Infinity;
   let hasRestarted = false;
@@ -425,7 +425,7 @@ function playToEnd(sim: SimHandle, commands: readonly { readonly atTick: number;
   for (let tick = 0; tick < TICK_AT_EDGE + 3 * TICK_RATE && !hasRestarted; tick += 1) {
     sim.step(commands.filter((entry) => entry.atTick === tick).map((entry) => entry.command));
     const { feet, action } = getStickMan(sim);
-    // He only ever goes back to where a level starts, without walking there, when the level starts again.
+    // The stick man only ever goes back to where a level starts, without walking there, when the level starts again.
     if (Math.abs(feet.x - previousX) > 1) hasRestarted = true;
     else if (action !== 'jumping') furthestStoodAt = Math.max(furthestStoodAt, feet.x);
     previousX = feet.x;
@@ -433,7 +433,7 @@ function playToEnd(sim: SimHandle, commands: readonly { readonly atTick: number;
   return { furthestStoodAt, hasRestarted };
 }
 
-/** Walks him to `x` and stops him there, within one tick's walk. */
+/** Walks the stick man to `x` and stops it there, within one tick's walk. */
 function walkTo(sim: SimHandle, x: number): void {
   const direction = x > getStickMan(sim).feet.x ? 1 : -1;
   sim.step([{ type: 'player/walk', direction }]);
@@ -441,7 +441,7 @@ function walkTo(sim: SimHandle, x: number): void {
   sim.step([{ type: 'player/walk', direction: 0 }]);
 }
 
-/** Walks him right from where he is until the tick the flag is reached, and lets go of the key. */
+/** Walks the stick man right from where it is until the tick the flag is reached, and lets go of the key. */
 function walkUntilFlagIsReached(sim: SimHandle): void {
   sim.step([WALK_RIGHT_AT_0.command]);
   for (let tick = 0; tick < 3000 && !getFlag(sim)!.isReached; tick += 1) sim.step();

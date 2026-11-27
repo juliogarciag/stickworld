@@ -6,41 +6,41 @@ import { PIXELS_PER_METRE, convertToPixels } from './units';
 
 /**
  * The stick man as pencil strokes: a head, a body, two arms and two legs,
- * worked out from code every frame. What he is doing and how far along comes
+ * worked out from code every frame. What the stick man is doing and how far along comes
  * from the sim; which way each limb points is decided here and nowhere else.
  */
 
 export interface StickManPose {
-  /** Where his feet are on the floor, in metres. Seated, the middle of the underside of what he sits in. */
+  /** Where the stick man's feet are on the floor, in metres. Seated, the middle of the underside of what the stick man sits in. */
   readonly feet: Point;
-  /** 1 when he looks right, -1 when he looks left. */
+  /** 1 when the stick man looks right, -1 when it looks left. */
   readonly facing: 1 | -1;
   readonly action: StickManView['action'];
-  /** How far along one walk cycle (two steps) he is, from 0 to 1; at 0 a foot has just come down in front of him. Only read when walking. */
+  /** How far along one walk cycle (two steps) the stick man is, from 0 to 1; at 0 a foot has just come down in front of the stick man. Only read when walking. */
   readonly walkCycle: number;
-  /** Which way a jump is going: 1 on the way up, 0 at the top, -1 on the way down. Only read while he is in the air at all. */
+  /** Which way a jump is going: 1 on the way up, 0 at the top, -1 on the way down. Only read while the stick man is in the air at all. */
   readonly rise: number;
-  /** Whether he would be walking if his feet were on the floor: what his limbs come from as he takes off and go back to as he lands. */
+  /** Whether the stick man would be walking if its feet were on the floor: what the stick man's limbs come from as it takes off and go back to as it lands. */
   readonly isStriding: boolean;
-  /** How far a fall has gone past the end of a jump, from 0 to 1: at 1 he falls with his arms thrown up and out. */
+  /** How far a fall has gone past the end of a jump, from 0 to 1: at 1 the stick man falls with its arms thrown up and out. */
   readonly longFall: number;
-  /** How far his limbs have gone from what they do on the floor to what they do in the air, from 0 to 1. */
+  /** How far the stick man's limbs have gone from what they do on the floor to what they do in the air, from 0 to 1. */
   readonly airborneShare: number;
-  /** How deep he is in the knee bend that takes a landing, from 0 to 1. */
+  /** How deep the stick man is in the knee bend that takes a landing, from 0 to 1. */
   readonly landing: number;
-  /** How far his body tips over as he falls sideways, in radians: positive to the right, 0 upright. Seated, how far what he sits in tips all of him. */
+  /** How far the stick man's body tips over as it falls sideways, in radians: positive to the right, 0 upright. Seated, how far what the stick man sits in tips all of it. */
   readonly tilt: number;
-  /** How far above `feet` the point is that a seated man tips about, in metres: the middle of what he sits in. Only read when seated. */
+  /** How far above `feet` the point is that a seated man tips about, in metres: the middle of what the stick man sits in. Only read when seated. */
   readonly tipsAboutAbove: number;
   /** How far each arm is lifted from where it would point, in radians, so that it rests on a floor line instead of crossing it. */
   readonly armsLifted: readonly [number, number];
-  /** How far his arms have gone up to hold something over his head, from 0 to 1. */
+  /** How far the stick man's arms have gone up to hold something over its head, from 0 to 1. */
   readonly carrying: number;
 }
 
 /**
- * The pose that shows the stick man as the sim has him this instant, with nothing eased: all the way in the air the
- * moment he jumps, tipped as far as his fall tips him. It does not know the floor: `keepOffFloor` does.
+ * The pose that shows the stick man as the sim has it this instant, with nothing eased: all the way in the air the
+ * moment the stick man jumps, tipped as far as its fall tips it. It does not know the floor: `keepOffFloor` does.
  */
 export function getPose(stickMan: StickManView): StickManPose {
   const { feet, facing, action, distanceWalked, verticalSpeed, walkDirectionAsked } = stickMan;
@@ -62,7 +62,7 @@ export function getPose(stickMan: StickManView): StickManPose {
 }
 
 /**
- * `pose` tipped with what he sits in: its nose `noseDown` radians down, turning about a point `tipsAboutAbove` metres
+ * `pose` tipped with what the stick man sits in: its nose `noseDown` radians down, turning about a point `tipsAboutAbove` metres
  * above its underside. The pose of a man who is not seated is returned as it is.
  */
 export function seatIn(pose: StickManPose, seat: { noseDown: number; tipsAboutAbove: number }): StickManPose {
@@ -71,9 +71,9 @@ export function seatIn(pose: StickManPose, seat: { noseDown: number; tipsAboutAb
 }
 
 /**
- * `pose` with nothing of him drawn across a floor line, for a body in the air. An arm that would cross a line is lifted
- * until it rests on it: as he drops the line pushes the arm further up, and once his shoulder is under the line the arm
- * is free again. `armsLiftedAtLeast` asks for arms no lower than that, for an arm that is on its way down. His body is tipped only as far as keeps his head, body and legs off the line; the sim keeps his head and body clear of it upright.
+ * `pose` with nothing of the stick man drawn across a floor line, for a body in the air. An arm that would cross a line is lifted
+ * until it rests on it: as the stick man drops the line pushes the arm further up, and once its shoulder is under the line the arm
+ * is free again. `armsLiftedAtLeast` asks for arms no lower than that, for an arm that is on its way down. The stick man's body is tipped only as far as keeps its head, body and legs off the line; the sim keeps the stick man's head and body clear of it upright.
  */
 export function keepOffFloor(pose: StickManPose, floor: readonly FloorSegment[], armsLiftedAtLeast: readonly [number, number] = [0, 0]): StickManPose {
   if (pose.action !== 'jumping') return pose;
@@ -84,15 +84,15 @@ export function keepOffFloor(pose: StickManPose, floor: readonly FloorSegment[],
 
 /**
  * Returns a function to call every frame with the stick man as the sim has
- * him, the seconds since the last frame and the level's floor. It gives the
- * pose to draw: the sim's, with his limbs taking a moment to get into a jump
- * and out of it, his knees giving as he lands, his body tipping into a fall
- * and his arms catching on the floor line he drops past. The sim jumps, lands
+ * it, the seconds since the last frame and the level's floor. It gives the
+ * pose to draw: the sim's, with the stick man's limbs taking a moment to get into a jump
+ * and out of it, the stick man's knees giving as the stick man lands, the stick man's body tipping into a fall
+ * and the stick man's arms catching on the floor line the stick man drops past. The sim jumps, lands
  * and bumps into things in one tick; a body does not. View detail only: where
- * he is never lags.
+ * the stick man is never lags.
  */
 export function easePosesOverTime(): (stickMan: StickManView, seconds: number, floor: readonly FloorSegment[]) => StickManPose {
-  // `tilt` is how far he would be tipped with no line in the way: what is shown may be less, and eases from this all the same.
+  // `tilt` is how far the stick man would be tipped with no line in the way: what is shown may be less, and eases from this all the same.
   let previous: { feet: Point; airborneShare: number; landing: number; isFalling: boolean; tilt: number; armsLifted: readonly [number, number]; carrying: number } | undefined;
   return (stickMan, seconds, floor) => {
     const pose = getPose(stickMan);
@@ -130,9 +130,9 @@ export function buildStickManStrokes(pose: StickManPose): Stroke[] {
 }
 
 /**
- * How far he travels in one walk cycle (two steps), in metres: the distance at
- * which his planted foot does not slide. It follows from his proportions, which
- * are view detail, so the sim does not know it: the sim says how far he has
+ * How far the stick man travels in one walk cycle (two steps), in metres: the distance at
+ * which the stick man's planted foot does not slide. It follows from the stick man's proportions, which
+ * are view detail, so the sim does not know it: the sim says how far the stick man has
  * walked and `getPose` works the cycle out from that.
  */
 export function getWalkCycleLength(): number {
@@ -141,7 +141,7 @@ export function getWalkCycleLength(): number {
 
 // ---- Helpers ----
 
-/** His proportions, as shares of his height, and how far his limbs swing, in radians. View detail only. */
+/** The stick man's proportions, as shares of its height, and how far its limbs swing, in radians. View detail only. */
 const BODY = {
   headRadius: 0.13 * STICK_MAN_HEIGHT,
   body: 0.3 * STICK_MAN_HEIGHT,
@@ -162,44 +162,44 @@ const BODY = {
   lean: 0.07,
   /**
    * The vertical speed, in metres per second, at which a jump looks fully on its way up or down: a little over half the
-   * speed a held jump takes off at (8.9 m/s for the 2 m jump), so he is in the pose of the top for the middle of it.
+   * speed a held jump takes off at (8.9 m/s for the 2 m jump), so the stick man is in the pose of the top for the middle of it.
    */
   speedOfFullRise: 4.8,
   /**
-   * Limbs in a jump. On the way up he has pushed off and his arms swing up; at the top his knees are tucked
-   * and his arms are highest; on the way down his legs reach for the floor and his arms come down. Between
+   * Limbs in a jump. On the way up the stick man has pushed off and its arms swing up; at the top the stick man's knees are tucked
+   * and its arms are highest; on the way down the stick man's legs reach for the floor and its arms come down. Between
    * two of them, something in between.
    */
   jumpingUp: { legs: [{ swing: 0.3, bend: 0.55 }, { swing: -0.35, bend: 0.45 }], arms: [{ swing: -0.55, bend: 0.3 }, { swing: 0.9, bend: 0.5 }], lean: 0.1 },
   apex: { legs: [{ swing: 0.75, bend: 1.3 }, { swing: 0.15, bend: 0.9 }], arms: [{ swing: -1.2, bend: 0.1 }, { swing: 1.7, bend: 0.35 }], lean: 0.03 },
   comingDown: { legs: [{ swing: 0.22, bend: 0.2 }, { swing: -0.16, bend: 0.2 }], arms: [{ swing: -0.9, bend: 0.1 }, { swing: 1.0, bend: 0.3 }], lean: -0.04 },
   /**
-   * A fall that goes on past where a jump would have landed: his arms are thrown up and out and his legs hang apart.
-   * He gets into it between these two falling speeds, in metres per second. The lower one is just above the speed a
+   * A fall that goes on past where a jump would have landed: the stick man's arms are thrown up and out and its legs hang apart.
+   * The stick man gets into it between these two falling speeds, in metres per second. The lower one is just above the speed a
    * held jump on level floor lands at (8.9 m/s for the 2 m jump), so no such jump ever shows it, and the higher one is
-   * his fastest fall (10 m/s), so a long fall gets all the way into it.
+   * the stick man's fastest fall (10 m/s), so a long fall gets all the way into it.
    */
   longFall: { legs: [{ swing: 0.3, bend: 0.35 }, { swing: -0.3, bend: 0.3 }], arms: [{ swing: -2.0, bend: -0.15 }, { swing: 2.05, bend: 0.2 }], lean: 0 },
   longFallSpeed: { start: 9, end: 10 },
-  /** Knees bent under him, feet where they were: how a landing is taken. `landingDepth` is how far into it the hardest landing goes. */
+  /** Knees bent under the stick man, feet where they were: how a landing is taken. `landingDepth` is how far into it the hardest landing goes. */
   landed: { legs: [{ swing: 0.5, bend: 1.0 }, { swing: 0.5, bend: 1.0 }], arms: [{ swing: -0.35, bend: 0.3 }, { swing: 0.5, bend: 0.5 }], lean: 0.12 },
   landingDepth: 0.55,
-  /** How far he tips over, in radians, falling as fast sideways as down would tip him all of it; see `getTiltOfFall`. */
+  /** How far the stick man tips over, in radians, falling as fast sideways as down would tip the stick man all of it; see `getTiltOfFall`. */
   fallTilt: 0.6,
-  /** The falling speed, in metres per second, from which a fall tips him as far as his sideways speed says. Below it he is still tipping over. */
+  /** The falling speed, in metres per second, from which a fall tips the stick man as far as its sideways speed says. Below it the stick man is still tipping over. */
   speedOfFullTilt: 2.5,
-  /** How much of his tilt his legs trail behind by, as a share of it. */
+  /** How much of the stick man's tilt the stick man's legs trail behind by, as a share of it. */
   legsTrailTilt: 0.5,
   /**
-   * Holding something over his head: each hand is at the height of the top of him, this far to its side, and each
-   * elbow out past his head on the way up. His arms reach what he carries, so they are drawn as long as that takes.
+   * Holding something over the stick man's head: each hand is at the height of the top of the stick man, this far to its side, and each
+   * elbow out past the stick man's head on the way up. The stick man's arms reach what it carries, so they are drawn as long as that takes.
    */
   carrying: { handOut: 0.14 * STICK_MAN_HEIGHT, elbowOut: 0.165 * STICK_MAN_HEIGHT, elbowUp: 0.8 * STICK_MAN_HEIGHT },
   /** Both arms up once the level is finished. */
   cheeringArm: { swing: 2.2, bend: 0.3 },
   /**
-   * Seated in the airplane: his hips on its fold, a little behind its middle, his knees up in front of him and his
-   * feet down on its nose, leaning into the flight with both hands on it in front of him.
+   * Seated in the airplane: the stick man's hips on its fold, a little behind its middle, the stick man's knees up in front of the stick man and the stick man's
+   * feet down on its nose, leaning into the flight with both hands on it in front of the stick man.
    */
   seated: {
     legs: [{ swing: 1.92, bend: 1.25 }, { swing: 1.77, bend: 0.95 }],
@@ -210,7 +210,7 @@ const BODY = {
   },
 } as const;
 
-/** How long his limbs take to get from one thing to the next, in seconds. View detail only. */
+/** How long the stick man's limbs take to get from one thing to the next, in seconds. View detail only. */
 const EASING = {
   /** From the floor into the jump. */
   takeoffSeconds: 0.14,
@@ -218,24 +218,24 @@ const EASING = {
   landingSeconds: 0.12,
   /** How long the knee bend of a landing lasts. */
   landing: 0.26,
-  /** How fast his body tips into a fall and back upright, in radians per second. */
+  /** How fast the stick man's body tips into a fall and back upright, in radians per second. */
   tiltPerSecond: 3,
   /** How fast an arm comes back down once the floor line has let go of it, in radians per second. */
   armComesDownPerSecond: 7,
-  /** How long his arms take to go up to hold something over his head, and to come down again. */
+  /** How long the stick man's arms take to go up to hold something over its head, and to come down again. */
   armsUpAndDown: 0.16,
 } as const;
 
-/** How close to a floor line his arms, body and head may be drawn, in metres: the two pencil lines touch and do not cross. */
+/** How close to a floor line the stick man's arms, body and head may be drawn, in metres: the two pencil lines touch and do not cross. */
 const LINE_CLEARANCE = PENCIL.thickness / PIXELS_PER_METRE;
 
 /** How far an arm is lifted at a time when looking for where it rests on a line, in radians. */
 const LIFT_STEP = 0.03;
 
-/** The shares of his tilt tried, in order, until his head and body are off every floor line. */
+/** The shares of the stick man's tilt tried, in order, until its head and body are off every floor line. */
 const TILT_SHARES = [1, 0.75, 0.5, 0.25, 0];
 
-/** How far in front of his hips a foot comes down, and how far behind it lifts off, in metres. */
+/** How far in front of the stick man's hips a foot comes down, and how far behind it lifts off, in metres. */
 const STEP_REACH = (BODY.thigh + BODY.shin) * Math.sin(BODY.thighSwing);
 
 interface Skeleton {
@@ -255,16 +255,16 @@ interface Limb {
 interface Limbs {
   readonly legs: readonly [Limb, Limb];
   readonly arms: readonly [Limb, Limb];
-  /** How far his body tips forward. */
+  /** How far the stick man's body tips forward. */
   readonly lean: number;
 }
 
-/** Every joint, in metres. The lower foot is where the sim says his feet are, so the hips rise and fall as he walks. */
+/** Every joint, in metres. The lower foot is where the sim says the stick man's feet are, so the hips rise and fall as it walks. */
 function getSkeleton(pose: StickManPose): Skeleton {
   if (pose.action === 'seated') return getSeatedSkeleton(pose);
   const { feet, facing, tilt } = pose;
   const posed = getLimbs(pose);
-  // Tipping over, his legs trail behind his body, and each arm is as far up as the floor line has pushed it.
+  // Tipping over, the stick man's legs trail behind the stick man's body, and each arm is as far up as the floor line has pushed it.
   const limbs = {
     ...posed,
     legs: posed.legs.map((leg) => ({ ...leg, swing: leg.swing - tilt * facing * BODY.legsTrailTilt })),
@@ -277,7 +277,7 @@ function getSkeleton(pose: StickManPose): Skeleton {
   const neck = { x: hip.x + Math.sin(lean) * BODY.body, y: hip.y - Math.cos(lean) * BODY.body };
   const head = { x: neck.x + Math.sin(lean) * BODY.headRadius, y: neck.y - Math.cos(lean) * BODY.headRadius };
   const shoulder = { x: neck.x - Math.sin(lean) * BODY.shoulderDrop, y: neck.y + Math.cos(lean) * BODY.shoulderDrop };
-  // What he carries takes his arms, whatever the rest of him does: each goes from where it would be to holding it up.
+  // What the stick man carries takes the stick man's arms, whatever the rest of the stick man does: each goes from where it would be to holding it up.
   const holdingUp = smooth(pose.carrying);
   const arms = limbs.arms.map((arm, index) => {
     const side = (index === 0 ? -1 : 1) * facing;
@@ -287,7 +287,7 @@ function getSkeleton(pose: StickManPose): Skeleton {
   return { head, neck, hip, arms, legs: limbs.legs.map((leg) => buildLegFrom(hip, leg, facing)) };
 }
 
-/** Every joint of a seated man, in metres: sat where the sim has him, then tipped with what he sits in. */
+/** Every joint of a seated man, in metres: sat where the sim has the stick man, then tipped with what it sits in. */
 function getSeatedSkeleton(pose: StickManPose): Skeleton {
   const { legs, arms, lean, hipsAbove, hipsBehind } = BODY.seated;
   const hip = { x: pose.feet.x - pose.facing * hipsBehind, y: pose.feet.y - hipsAbove };
@@ -318,9 +318,9 @@ function movePartWay(start: Point, end: Point, share: number): Point {
 }
 
 /**
- * How far a fall tips him over, in radians, positive to the right: in proportion to how fast he moves sideways against
- * how fast he falls. Dropping straight he stays upright; walking off an edge he tips forward as the fall takes hold,
- * and straightens as falling outweighs drifting. Only a fall off an edge tips him: a jump has its own poses, forward or back.
+ * How far a fall tips the stick man over, in radians, positive to the right: in proportion to how fast the stick man moves sideways against
+ * how fast it falls. Dropping straight the stick man stays upright; walking off an edge the stick man tips forward as the fall takes hold,
+ * and straightens as falling outweighs drifting. Only a fall off an edge tips the stick man: a jump has its own poses, forward or back.
  */
 function getTiltOfFall(stickMan: StickManView): number {
   if (!stickMan.isFallingOffEdge || stickMan.verticalSpeed <= 0) return 0;
@@ -347,21 +347,21 @@ function findMinArmLift(pose: StickManPose, input: { arm: 0 | 1; floor: readonly
   for (let lift = input.atLeast; lift <= straightUp; lift += LIFT_STEP) {
     if (isArmOffFloor(liftBy(lift), { arm: input.arm, floor: input.floor })) return lift;
   }
-  // No way up is clear, which no level's floor does to him: leave the arm as low as it was asked to be.
+  // No way up is clear, which no level's floor does to the stick man: leave the arm as low as it was asked to be.
   return input.atLeast;
 }
 
-/** Where every limb points for what he is doing: what he does on the floor, as far into a jump as he is, as deep in a landing as he is. */
+/** Where every limb points for what the stick man is doing: what the stick man does on the floor, as far into a jump as it is, as deep in a landing as it is. */
 function getLimbs(pose: StickManPose): Limbs {
   const { rise, longFall, airborneShare, landing } = pose;
   const midJumpLimbs = rise >= 0 ? blendBetween(BODY.apex, BODY.jumpingUp, rise) : blendBetween(BODY.apex, BODY.comingDown, -rise);
   const jumping = blendBetween(midJumpLimbs, BODY.longFall, smooth(longFall));
   const airborneLimbs = blendBetween(getLimbsOnFloor(pose), jumping, smooth(airborneShare));
-  // A landing is deepest the moment he touches down and eases out: fast at first, slow at the end.
+  // A landing is deepest the moment the stick man touches down and eases out: fast at first, slow at the end.
   return blendBetween(airborneLimbs, BODY.landed, BODY.landingDepth * landing * landing);
 }
 
-/** Where every limb points with his feet on the floor. */
+/** Where every limb points with the stick man's feet on the floor. */
 function getLimbsOnFloor(pose: StickManPose): Limbs {
   const standingLeg = { swing: 0, bend: BODY.restingKnee };
   if (pose.isStriding) {
@@ -372,7 +372,7 @@ function getLimbsOnFloor(pose: StickManPose): Limbs {
     const { swing, bend } = BODY.cheeringArm;
     return { legs: [standingLeg, standingLeg], arms: [{ swing: -swing, bend: -bend }, { swing, bend }], lean: 0 };
   }
-  // Standing, his arms hang a little apart: one behind him, one in front.
+  // Standing, the stick man's arms hang a little apart: one behind it, one in front.
   return { legs: [standingLeg, standingLeg], arms: [{ swing: -BODY.restingArm, bend: BODY.restingArm }, { swing: BODY.restingArm, bend: BODY.restingArm }], lean: 0 };
 }
 
@@ -394,7 +394,7 @@ function smooth(share: number): number {
 
 /**
  * A leg at `cycle` of the walk. For the first half of its cycle the foot is
- * planted: it goes back under him at the speed he goes forward, on a straight
+ * planted: it goes back under the stick man at the speed the stick man goes forward, on a straight
  * leg. For the second half the leg swings forward again with the knee bent.
  */
 function getWalkingLeg(cycle: number): Limb {
@@ -425,7 +425,7 @@ function buildArmFrom(shoulder: Point, limb: Limb, facing: 1 | -1): Point[] {
   return [shoulder, elbow, stepFrom(elbow, { angle: limb.swing + limb.bend, length: BODY.forearm, facing })];
 }
 
-/** The point `length` away from `from`, at `angle` from straight down, forward being the way he faces. */
+/** The point `length` away from `from`, at `angle` from straight down, forward being the way the stick man faces. */
 function stepFrom(start: Point, step: { angle: number; length: number; facing: 1 | -1 }): Point {
   return { x: start.x + Math.sin(step.angle) * step.length * step.facing, y: start.y + Math.cos(step.angle) * step.length };
 }

@@ -1,6 +1,6 @@
 /**
  * Uses the item in the selected slot. What that does depends on the item and
- * on what he knows: the paper is folded into what he has learned to make of
+ * on what the stick man knows: the paper is folded into what the stick man has learned to make of
  * it, the airplane is put on the floor. `getItemUseNow` (index.ts) says which.
  */
 export interface ItemUseCommand {

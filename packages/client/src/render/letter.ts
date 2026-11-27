@@ -5,7 +5,7 @@ import { convertToPixels } from './units';
 
 /**
  * The level's letter as pencil strokes: an envelope standing on the floor.
- * Nothing while he reads it: then it is in his hands, and the HUD shows what
+ * Nothing while the stick man reads it: then it is in the stick man's hands, and the HUD shows what
  * it says.
  */
 export function buildLetterStrokes(letter: LetterView): Stroke[] {
@@ -18,7 +18,7 @@ export function buildLetterStrokes(letter: LetterView): Stroke[] {
 }
 
 /**
- * The sheet of paper that falls from the sky for him who has lost his, as pencil strokes: swaying on its way down,
+ * The sheet of paper that falls from the sky for the stick man who has lost its, as pencil strokes: swaying on its way down,
  * and lying on the floor once it is there, a corner of it turned up.
  */
 export function buildFallenPaperStrokes(fallenItem: FallenItemView): Stroke[] {

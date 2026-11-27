@@ -13,7 +13,7 @@ describe('the checkpoint', () => {
     expect(getCheckpoint(createSimOn(1))).toBeUndefined();
   });
 
-  it('is passed on the tick he stands at or past it, and not before', () => {
+  it('is passed on the tick the stick man stands at or past it, and not before', () => {
     const sim = createSimOn(3);
     sim.step([WALK_RIGHT]);
     while (getStickMan(sim).feet.x < CHECKPOINT.x) {
@@ -33,7 +33,7 @@ describe('the checkpoint', () => {
     expect(getCheckpoint(oneStepShort)!.isPassed).toBe(false);
   });
 
-  it('is not passed in the air over it: he has to come down past it', () => {
+  it('is not passed in the air over it: the stick man has to come down past it', () => {
     const sim = createSimOn(3);
     sim.step([WALK_RIGHT]);
     while (getStickMan(sim).feet.x < CHECKPOINT.x - 0.3) sim.step();
@@ -42,19 +42,19 @@ describe('the checkpoint', () => {
       if (getStickMan(sim).feet.x >= CHECKPOINT.x) expect(getCheckpoint(sim)!.isPassed).toBe(false);
       sim.step();
     }
-    // The loop ends on the tick he lands, and that is the tick it is passed.
+    // The loop ends on the tick the stick man lands, and that is the tick it is passed.
     expect(getStickMan(sim).feet.x).toBeGreaterThan(CHECKPOINT.x);
     expect(getCheckpoint(sim)!.isPassed).toBe(true);
   });
 
-  it('starts him at the start of the level after a death before it', () => {
+  it('starts the stick man at the start of the level after a death before it', () => {
     const sim = createSimOn(3);
     walkOffPaper(sim, -1);
     expect(getCheckpoint(sim)!.isPassed).toBe(false);
     expect(getStickMan(sim)).toMatchObject({ action: 'standing', feet: level3.start });
   });
 
-  it('starts him at the checkpoint after a death past it, standing, and stays passed through any number of deaths', () => {
+  it('starts the stick man at the checkpoint after a death past it, standing, and stays passed through any number of deaths', () => {
     const sim = createSimOn(3);
     for (let death = 1; death <= 3; death += 1) {
       walkOffPaper(sim, 1);
@@ -63,7 +63,7 @@ describe('the checkpoint', () => {
     }
   });
 
-  it('is forgotten when another level starts: back on its own level later, he begins at the start', () => {
+  it('is forgotten when another level starts: back on its own level later, the stick man begins at the start', () => {
     const sim = createSimOn(3);
     walkOffPaper(sim, 1);
     sim.startLevel(1);
@@ -82,7 +82,7 @@ describe('the checkpoint', () => {
     expect(getStickMan(sim).feet).toEqual(level3.start);
   });
 
-  it('is kept by a snapshot: a restored game has it passed, and starts him there after a death', () => {
+  it('is kept by a snapshot: a restored game has it passed, and starts the stick man there after a death', () => {
     const sim = createSimOn(3);
     walkOffPaper(sim, 1);
     const restored = new Sim({ features, snapshot: sim.takeSnapshot() });
@@ -91,7 +91,7 @@ describe('the checkpoint', () => {
     expect(getStickMan(restored).feet).toEqual(CHECKPOINT);
   });
 
-  it('moves him only while a level is being started: the player refuses to be moved like that once it is under way', () => {
+  it('moves the stick man only while a level is being started: the player refuses to be moved like that once it is under way', () => {
     expect(() => startPlayerAt(createSimOn(3), CHECKPOINT)).toThrow(/init/);
   });
 
@@ -114,13 +114,13 @@ function createSimOn(level: number): Sim {
   return new Sim({ features, start: { seed: 1, level } });
 }
 
-/** A sim on level 3 with him standing still on the floor at `x`, as a snapshot has it. */
+/** A sim on level 3 with the stick man standing still on the floor at `x`, as a snapshot has it. */
 function createSimStandingAt(x: number): Sim {
   const before = createSimOn(3).takeSnapshot();
   return new Sim({ features, snapshot: { ...before, slices: { ...before.slices, player: { ...(before.slices.player as object), x } } } });
 }
 
-/** He walks off the paper to one side, falls, and the level has started again: he stands on the floor, still. */
+/** The stick man walks off the paper to one side, falls, and the level has started again: the stick man stands on the floor, still. */
 function walkOffPaper(sim: Sim, direction: 1 | -1): void {
   sim.step([{ type: 'player/walk', direction }]);
   let ticks = 0;

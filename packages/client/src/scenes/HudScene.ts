@@ -18,7 +18,7 @@ import { runEveryFrameAfterLevel } from './afterTheLevel';
 
 /**
  * What is shown over the sheet of paper and does not move with it: the item
- * slots, the letter he reads, what the keys would do right now, the words
+ * slots, the letter the stick man reads, what the keys would do right now, the words
  * that end the game with the key that plays it again, and the edge of a
  * sheet that is being turned away. It runs beside the level scene and is
  * drawn after it, above the paper's tooth, from the sim the level scene has

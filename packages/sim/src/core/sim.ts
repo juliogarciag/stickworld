@@ -185,7 +185,7 @@ export class Sim implements SimHandle {
   }
 
   private refuseDuringLevelStart(): void {
-    if (this.isLevelStartInProgress) throw new Error('a level is being started: a feature\'s init cannot start another, or ask for one');
+    if (this.isLevelStartInProgress) throw new Error("a level is being started: a feature's init cannot start another, or ask for one");
   }
 
   private startRequestedLevel(): void {

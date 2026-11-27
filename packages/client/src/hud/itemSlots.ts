@@ -4,14 +4,14 @@ import { PENCIL } from '../render/strokes/pencil';
 
 /**
  * The item slots, drawn in pencil in the top right corner of the screen, small,
- * out of the way of what is written on the sheet and of the letter he holds
+ * out of the way of what is written on the sheet and of the letter the stick man holds
  * up: a box per slot
  * with the item it holds inside, and a second, heavier
  * box around the selected one. What a slot holds and whether it is selected
  * are the sim's (`getItemSlots`); only where and how it is drawn is decided here.
  *
  * A slot has no number written under it: with one slot the key that selects
- * it is never needed, and a "1" under the box read as how many he has. When
+ * it is never needed, and a "1" under the box read as how many the stick man has. When
  * there are several slots, say which key is which some other way.
  */
 

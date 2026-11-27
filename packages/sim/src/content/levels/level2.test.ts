@@ -33,7 +33,7 @@ describe('level 2', () => {
     expect(getItemSlots(sim)[0]?.itemDefId).toBeNull();
   });
 
-  it('cannot be finished by walking: he falls into the gap, dies, and the level starts again', () => {
+  it('cannot be finished by walking: the stick man falls into the gap, dies, and the level starts again', () => {
     const sim = createSim({ level: 2 });
     const { overGap, deepest, restartedAtTick } = play(sim, WALK_INTO_GAP);
     expect(overGap.some((feet) => feet.y > FLOOR_Y)).toBe(true);
@@ -46,10 +46,10 @@ describe('level 2', () => {
     expect(getItemSlots(sim)[0]?.itemDefId).toBeNull();
   });
 
-  it('cannot be finished by steering across the gap in a fall: the far end of the gap stops him and he drops beside it', () => {
+  it('cannot be finished by steering across the gap in a fall: the far end of the gap stops the stick man and the stick man drops beside it', () => {
     const sim = createSim({ level: 2 });
     const { overGap, restartedAtTick } = play(sim, WALK_INTO_GAP);
-    // Stopped beside the far end until his head has dropped below it; then the held key takes him on under the floor.
+    // Stopped beside the far end until the stick man's head has dropped below it; then the held key takes the stick man on under the floor.
     const besideFarEnd = overGap.filter((feet) => Math.abs(feet.x - (GAP.end - STICK_MAN_WIDTH / 2)) < 1e-6);
     expect(besideFarEnd.length).toBeGreaterThan(5);
     expect(Math.min(...besideFarEnd.map((feet) => feet.y))).toBeGreaterThan(FLOOR_Y);
@@ -57,7 +57,7 @@ describe('level 2', () => {
     expect(getFlag(sim)!.isReached).toBe(false);
   });
 
-  it('cannot be finished by letting go of the key at the edge: he stops in the air and drops into the gap', () => {
+  it('cannot be finished by letting go of the key at the edge: the stick man stops in the air and drops into the gap', () => {
     const sim = createSim({ level: 2 });
     const { overGap, restartedAtTick } = play(sim, { commands: [WALK_RIGHT_AT_0, { atTick: TICK_PAST_EDGE, command: { type: 'player/walk', direction: 0 } }], ticks: 400 });
     expect(Math.max(...overGap.map((feet) => feet.x))).toBeLessThan(GAP.start + (GAP.end - GAP.start) / 2);
@@ -65,14 +65,14 @@ describe('level 2', () => {
     expect(getFlag(sim)!.isReached).toBe(false);
   });
 
-  it('cannot be finished by jumping too early: he lands before the gap and walks into it', () => {
+  it('cannot be finished by jumping too early: the stick man lands before the gap and walks into it', () => {
     const sim = createSim({ level: 2 });
     const { restartedAtTick } = play(sim, { commands: [WALK_RIGHT_AT_0, { atTick: 30, command: { type: 'player/jump' } }], ticks: 400 });
     expect(restartedAtTick).not.toBeNull();
     expect(getFlag(sim)!.isReached).toBe(false);
   });
 
-  it('has a gap a jump clears with room to spare: he need not take off at the very edge', () => {
+  it('has a gap a jump clears with room to spare: the stick man need not take off at the very edge', () => {
     const jumpSeconds = Math.sqrt((2 * PLAYER.jumpHeight) / PLAYER.riseGravity) + Math.sqrt((2 * PLAYER.jumpHeight) / PLAYER.fallGravity);
     const jumpLength = PLAYER.walkSpeed * jumpSeconds;
     expect(GAP.end - GAP.start).toBeLessThan(LARGEST_SHARE_OF_JUMP * jumpLength);
@@ -82,7 +82,7 @@ describe('level 2', () => {
     const sim = createSim({ level: 2 });
     const { restartedAtTick } = play(sim, WALK_INTO_GAP);
     expect(restartedAtTick).not.toBeNull();
-    // The death left him standing at the start, so the recording plays as it does on a fresh level.
+    // The death left the stick man standing at the start, so the recording plays as it does on a fresh level.
     expect(getStickMan(sim)).toMatchObject({ feet: level2.start, action: 'standing' });
     play(sim, JUMP_GAP);
     expect(getFlag(sim)!.isReached).toBe(true);
@@ -148,19 +148,19 @@ const LEVELS_WHOSE_FLAG_GIVES_ITEM = levels.filter((level) => level.flagGivesIte
 const LARGEST_SHARE_OF_JUMP = 0.8;
 
 /**
- * He is sent back to the start on the tick he passes the depth that kills,
- * so the deepest he is ever seen is up to one tick of falling short of it.
- * At that depth he has fallen `fallBelowFloor`, which gives his speed, unless he got to his fastest fall before.
+ * The stick man is sent back to the start on the tick the stick man passes the depth that kills,
+ * so the deepest the stick man is ever seen is up to one tick of falling short of it.
+ * At that depth the stick man has fallen `fallBelowFloor`, which gives the stick man's speed, unless it got to its fastest fall before.
  */
 const ONE_TICK_OF_FALL = Math.min(Math.sqrt(2 * PLAYER.fallGravity * PLAYER.fallBelowFloor), PLAYER.fastestFall) / TICK_RATE;
 
-/** The tick on which he is a quarter of the gap's width before its edge, walking right from the start: where a player would jump. */
+/** The tick on which the stick man is a quarter of the gap's width before its edge, walking right from the start: where a player would jump. */
 const TICK_NEAR_EDGE = Math.round(((GAP.start - 0.25 * (GAP.end - GAP.start) - level2.start.x) / PLAYER.walkSpeed) * TICK_RATE);
-/** The last tick on which he still stands on the first segment, walking right from the start. */
+/** The last tick on which the stick man still stands on the first segment, walking right from the start. */
 const TICK_AT_EDGE = Math.floor(((GAP.start - level2.start.x) / PLAYER.walkSpeed) * TICK_RATE) - 1;
-/** A few ticks later he has walked off it and is falling. */
+/** A few ticks later the stick man has walked off it and is falling. */
 const TICK_PAST_EDGE = TICK_AT_EDGE + 4;
-/** A second later he has landed and walked on, well short of the flag. */
+/** A second later the stick man has landed and walked on, well short of the flag. */
 const TICK_PAST_GAP = TICK_NEAR_EDGE + TICK_RATE;
 
 /** Walk right, jump just before the edge, keep walking to the flag. */
@@ -173,11 +173,11 @@ const JUMP_GAP: Recording = {
 const WALK_INTO_GAP: Recording = { commands: [WALK_RIGHT_AT_0], ticks: 400 };
 
 interface Played {
-  /** Where his feet were on every tick they were over the gap. */
+  /** Where the stick man's feet were on every tick they were over the gap. */
   readonly overGap: { x: number; y: number }[];
-  /** The lowest his feet got (y points down, so the largest y). */
+  /** The lowest the stick man's feet got (y points down, so the largest y). */
   readonly deepest: number;
-  /** The tick on which he was back at the level's start after having left it, or null. */
+  /** The tick on which the stick man was back at the level's start after having left it, or null. */
   readonly restartedAtTick: number | null;
 }
 
@@ -191,7 +191,7 @@ function play(sim: SimHandle, recording: Recording): Played {
     const { feet } = getStickMan(sim);
     if (sim.level === 2 && feet.x > GAP.start && feet.x < GAP.end) overGap.push(feet);
     deepest = Math.max(deepest, feet.y);
-    // He only ever goes back to where a level starts, without walking there, when the level starts again.
+    // The stick man only ever goes back to where a level starts, without walking there, when the level starts again.
     if (Math.abs(feet.x - previousX) > 1) restartedAtTick = tick;
     previousX = feet.x;
     // The recording ends at the flag: a little later the next level starts.

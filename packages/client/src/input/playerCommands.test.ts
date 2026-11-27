@@ -75,7 +75,7 @@ describe('keys to commands', () => {
     expect(createKeysToCommands()({ keys: { ...NOTHING, isJumpPressed: true }, sim })).toEqual([{ type: 'player/jump' }, { type: 'player/letGoOfJump' }]);
   });
 
-  it('takes an up key for a jump too while he is on his feet, and never steers then', () => {
+  it("takes an up key for a jump too while the stick man is on the stick man's feet, and never steers then", () => {
     const sim = createSim({ level: 1 });
     expect(createKeysToCommands()({ keys: { ...UP, isUpPressed: true }, sim })).toEqual([{ type: 'player/jump' }]);
     expect(createKeysToCommands()({ keys: UP, sim })).toEqual([]);
@@ -128,7 +128,7 @@ describe('keys to commands, seated in the airplane', () => {
     expect(createKeysToCommands()({ keys: { ...UP, isUpPressed: true, isJumpHeld: true, isJumpPressed: true }, sim })).toEqual([{ type: 'player/jump' }]);
   });
 
-  it('jumps him out with the jump key, and stops steering once he is out with the key still held', () => {
+  it('jumps the stick man out with the jump key, and stops steering once the stick man is out with the key still held', () => {
     const sim = createSimSeatedInAirplane();
     const commandsFor = createKeysToCommands();
     sim.step(commandsFor({ keys: UP, sim }));
@@ -140,7 +140,7 @@ describe('keys to commands, seated in the airplane', () => {
     expect(commandsFor({ keys: UP, sim })).toEqual([{ type: 'airplane/steer', direction: 0 }, { type: 'player/letGoOfJump' }]);
   });
 
-  it('does not take an up key held for steering as a jump held once he jumped out with the jump key', () => {
+  it('does not take an up key held for steering as a jump held once the stick man jumped out with the jump key', () => {
     const sim = createSimSeatedInAirplane();
     const commandsFor = createKeysToCommands();
     sim.step(commandsFor({ keys: UP, sim }));
@@ -148,7 +148,7 @@ describe('keys to commands, seated in the airplane', () => {
     expect(jumpingOut).toEqual([{ type: 'player/jump' }, { type: 'player/letGoOfJump' }]);
     sim.step(jumpingOut);
     expect(getStickMan(sim).action).toBe('jumping');
-    // Up still held, now on his feet: no jump is held, so nothing more is let go of; let go and pressed again, it is a jump.
+    // Up still held, now on the stick man's feet: no jump is held, so nothing more is let go of; let go and pressed again, it is a jump.
     expect(commandsFor({ keys: UP, sim })).toEqual([{ type: 'airplane/steer', direction: 0 }]);
     expect(commandsFor({ keys: NOTHING, sim })).toEqual([]);
     expect(commandsFor({ keys: { ...UP, isUpPressed: true }, sim })).toEqual([{ type: 'player/jump' }]);
@@ -189,7 +189,7 @@ function createSimSeatedInAirplane(): SimHandle {
   return sim;
 }
 
-/** Steps until he has fallen off the start of the floor and the level has started again. */
+/** Steps until the stick man has fallen off the start of the floor and the level has started again. */
 function walkOffPaper(sim: SimHandle): void {
   let hasFallen = false;
   for (let tick = 0; tick < 1200; tick += 1) {
@@ -197,5 +197,5 @@ function walkOffPaper(sim: SimHandle): void {
     if (getStickMan(sim).action === 'jumping') hasFallen = true;
     else if (hasFallen) return;
   }
-  throw new Error('he never fell off the paper');
+  throw new Error('the stick man never fell off the paper');
 }

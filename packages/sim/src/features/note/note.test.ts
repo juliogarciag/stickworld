@@ -17,7 +17,7 @@ describe('the notes of a level', () => {
     expect(getNotes(new Sim({ features, start: { seed: 1, level: 3 } }))).toEqual([]);
   });
 
-  it('about walking is rubbed out once he has walked past where it says, and not by standing, jumping on the spot or walking away from it', () => {
+  it('about walking is rubbed out once the stick man has walked past where it says, and not by standing, jumping on the spot or walking away from it', () => {
     const sim = new Sim({ features, start: { seed: 1, level: 1 } });
     const getWalkNote = (): ReturnType<typeof getNotes>[number] => getNotes(sim).find((note) => note.topic === 'walking')!;
     for (let tick = 0; tick < TICK_RATE; tick += 1) sim.step(tick === 5 ? [{ type: 'player/jump' }] : []);
@@ -29,7 +29,7 @@ describe('the notes of a level', () => {
     for (let tick = 0; tick < 10 * TICK_RATE && getWalkNote().rubbedOutFor === null; tick += 1) sim.step();
     expect(getStickMan(sim).feet.x).toBeGreaterThan(getWalkNote().rubbedOutPast!);
     expect(getStickMan(sim).feet.x).toBeLessThan(getWalkNote().rubbedOutPast! + 0.1);
-    // It stays rubbed out when he walks back, and how long ago it was goes on counting.
+    // It stays rubbed out when the stick man walks back, and how long ago it was goes on counting.
     sim.step([{ type: 'player/walk', direction: -1 }]);
     for (let tick = 0; tick < TICK_RATE; tick += 1) sim.step();
     expect(getWalkNote().rubbedOutFor).toBeCloseTo((TICK_RATE + 2) / TICK_RATE, 9);
@@ -37,7 +37,7 @@ describe('the notes of a level', () => {
     expect(getNotes(sim).find((note) => note.isTitle)!.rubbedOutFor).toBeNull();
   });
 
-  it('about jumping is still there while he is over the gap, is rubbed out when he lands past it, and is there again after a fall into it', () => {
+  it('about jumping is still there while the stick man is over the gap, is rubbed out when the stick man lands past it, and is there again after a fall into it', () => {
     const getJumpNote = (sim: Sim): ReturnType<typeof getNotes>[number] => getNotes(sim).find((note) => note.topic === 'jumping')!;
     const gap = { start: level2.floor[0]!.end.x, end: level2.floor[1]!.start.x };
 
@@ -57,7 +57,7 @@ describe('the notes of a level', () => {
     expect(getStickMan(jumping)).toMatchObject({ action: 'walking', feet: { y: 0 } });
     expect(getStickMan(jumping).feet.x).toBeGreaterThan(gap.end);
 
-    // He walks back into the gap: the level starts again, and the note he had done is there again.
+    // The stick man walks back into the gap: the level starts again, and the note the stick man had done is there again.
     jumping.step([{ type: 'player/walk', direction: -1 }]);
     for (let tick = 0; tick < 10 * TICK_RATE && getJumpNote(jumping).rubbedOutFor !== null; tick += 1) jumping.step();
     expect(getJumpNote(jumping).rubbedOutFor).toBeNull();
@@ -89,7 +89,7 @@ describe('every note', () => {
     expect(note.words).not.toMatch(/\b(key|press|arrow|space|enter|[b-z])\b|[←→↑↓]/i);
   });
 
-  it.each(notes)('%s is written above the floor, clear of his head, and what rubs it out can be done before the flag', (_, note, level) => {
+  it.each(notes)("%s is written above the floor, clear of the stick man's head, and what rubs it out can be done before the flag", (_, note, level) => {
     expect(getFloorHeightAt(level.floor, note.position.x)).toBeDefined();
     expect(note.position.y).toBeLessThan(-2);
     if (note.rubbedOutPast === undefined) return;

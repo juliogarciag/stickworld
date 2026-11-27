@@ -1,7 +1,7 @@
 import { defineSlice } from '../../core/slice';
 
 export interface CheckpointState {
-  /** The id of the level whose checkpoint he has stood past, or null while he has passed none. */
+  /** The id of the level whose checkpoint the stick man has stood past, or null while it has passed none. */
   passedOnLevel: number | null;
 }
 

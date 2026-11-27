@@ -40,7 +40,7 @@ export function watchPlayerKeys(scene: Phaser.Scene): () => HeldKeys {
   };
 }
 
-/** The keys that move him on his feet, as the player knows them: what a note on the sheet draws beside its words. */
+/** The keys that move the stick man on its feet, as the player knows them: what a note on the sheet draws beside its words. */
 export const MOVE_KEY_NAMES = { walking: ['←', '→'], jumping: ['↑'] } as const;
 
 /** The keys that fly the airplane, as the player knows them. */
