@@ -1,11 +1,11 @@
 import type { FloorSegment } from '../../content/levels/types';
 import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
-import { flagIsReached } from '../flag';
-import { playingAgainIsOffered } from '../game';
+import { isFlagReached } from '../flag';
+import { isPlayingAgainOffered } from '../game';
 import type { WalkDirection } from './commands';
 import { MOVEMENT_TUNING_LIMITS, PLAYER, type MovementTuning } from './defs';
-import { clearOfFloorEnds, floorHeightAt, keptOverTheLine, lowestFloorHeight } from './floor';
+import { findClearOfFloorEnds, getFloorHeightAt, keepOverTheLine, getLowestFloorHeight } from './floor';
 import { movementTuningSlice, playerSlice, type PlayerState } from './state';
 
 /**
@@ -30,37 +30,37 @@ export const playerFeature: Feature = {
 
   handleCommand(sim, command) {
     const { type, direction, tuning } = command as { type: string; direction?: unknown; tuning?: unknown };
-    const player = sim.stateOf(playerSlice);
+    const player = sim.getStateOf(playerSlice);
     if (type === 'player/walk' && isWalkDirection(direction)) player.walkDirection = direction;
     if (type === 'player/jump') {
       player.ticksSinceJumpAsked = 0;
       player.jumpHeld = true;
     }
     if (type === 'player/letGoOfJump') player.jumpHeld = false;
-    if (type === 'player/tuneMovement') sim.setStateOf(movementTuningSlice, { ...sim.stateOf(movementTuningSlice), ...validTuningIn(tuning) });
+    if (type === 'player/tuneMovement') sim.setStateOf(movementTuningSlice, { ...sim.getStateOf(movementTuningSlice), ...getValidTuningIn(tuning) });
   },
 
   update(sim) {
-    const player = sim.stateOf(playerSlice);
-    const tuning = sim.stateOf(movementTuningSlice);
+    const player = sim.getStateOf(playerSlice);
+    const tuning = sim.getStateOf(movementTuningSlice);
     if (player.seated) {
       // Seated he neither walks nor falls: what he sits in moves him. A jump stands him up in his seat, which is floor enough to take off from.
       // A jump that arrived on the tick he sat down was asked for before the player could see him seated: it is dropped, not a way out of the seat.
       if (player.seatedAtTick === sim.tick) player.ticksSinceJumpAsked = null;
       // Under a floor line there is no room to stand up: he cannot jump up through it, so the jump is dropped too.
-      const floorOverHim = floorHeightAt(sim.levelDef.floor, player.x);
+      const floorOverHim = getFloorHeightAt(sim.levelDef.floor, player.x);
       if (floorOverHim !== undefined && player.y > floorOverHim) player.ticksSinceJumpAsked = null;
       if (player.ticksSinceJumpAsked === null) return;
       player.seated = false;
       player.seatedAtTick = null;
       player.onFloor = true;
     }
-    const direction = walkDirectionNow(sim);
+    const direction = getWalkDirectionNow(sim);
     if (direction !== 0) player.facing = direction;
-    if (standsCheering(sim)) player.ticksSinceJumpAsked = null;
+    if (isStandingCheering(sim)) player.ticksSinceJumpAsked = null;
     // Only a fall that began by walking off an edge has momentum: on the floor and in a jump the keys move him at once.
     // A jump from the floor takes off with the speed the floor gives him this tick, so the speed comes first.
-    player.horizontalSpeed = isFallingOffAnEdge(player) ? speedAfterSteering(player.horizontalSpeed, { direction, tuning, dt: sim.dt }) : direction * tuning.walkSpeed;
+    player.horizontalSpeed = isFallingOffAnEdge(player) ? getSpeedAfterSteering(player.horizontalSpeed, { direction, tuning, dt: sim.dt }) : direction * tuning.walkSpeed;
     // The cut comes before the take-off: a jump let go of in the tick it takes off in still rises for that one tick, the shortest hop.
     cutRiseIfLetGo(player, tuning);
     jumpIfAskedAndAble(sim, player);
@@ -68,26 +68,26 @@ export const playerFeature: Feature = {
     const { floor } = sim.levelDef;
     const wantedX = player.x + player.horizontalSpeed * sim.dt;
     // After the end there is nothing left to lose: the ends of his line stop him.
-    const x = playingAgainIsOffered(sim) ? keptOverTheLine(floor, { from: player.x, to: wantedX }) : wantedX;
-    if (player.onFloor) walkTo(player, { x, floorHeight: floorHeightAt(floor, x), walking: direction !== 0 });
-    else fallTo(player, { x, floorHeight: floorHeightAt(floor, x), tuning, dt: sim.dt });
+    const x = isPlayingAgainOffered(sim) ? keepOverTheLine(floor, { from: player.x, to: wantedX }) : wantedX;
+    if (player.onFloor) walkTo(player, { x, floorHeight: getFloorHeightAt(floor, x), walking: direction !== 0 });
+    else fallTo(player, { x, floorHeight: getFloorHeightAt(floor, x), tuning, dt: sim.dt });
     if (!player.onFloor) slideOffFloorEnds(player, floor);
 
-    if (player.y > lowestFloorHeight(floor) + PLAYER.fallBelowFloor) sim.startLevelAfterThisTick(sim.level);
+    if (player.y > getLowestFloorHeight(floor) + PLAYER.fallBelowFloor) sim.startLevelAfterThisTick(sim.level);
   },
 };
 
 /** Which way he walks this tick: the way the player asked, or nowhere while he cheers under the flag. */
-export function walkDirectionNow(sim: Sim): WalkDirection {
-  return standsCheering(sim) ? 0 : sim.stateOf(playerSlice).walkDirection;
+export function getWalkDirectionNow(sim: Sim): WalkDirection {
+  return isStandingCheering(sim) ? 0 : sim.getStateOf(playerSlice).walkDirection;
 }
 
 /**
  * True while he stands under the flag he reached and the keys do not move him: until the next level starts, or on the
  * last level until playing again is offered.
  */
-export function standsCheering(sim: Sim): boolean {
-  return flagIsReached(sim) && !playingAgainIsOffered(sim);
+export function isStandingCheering(sim: Sim): boolean {
+  return isFlagReached(sim) && !isPlayingAgainOffered(sim);
 }
 
 /** True while he is in the air because he walked off an edge, and not because he jumped. */
@@ -102,7 +102,7 @@ function isWalkDirection(value: unknown): value is WalkDirection {
 }
 
 /** The numbers in `tuning` that are tuning he knows, each a number within its limits; everything else in it is left out. */
-function validTuningIn(tuning: unknown): Partial<MovementTuning> {
+function getValidTuningIn(tuning: unknown): Partial<MovementTuning> {
   if (typeof tuning !== 'object' || tuning === null || Array.isArray(tuning)) return {};
   const valid: Partial<Record<keyof MovementTuning, number>> = {};
   for (const name of Object.keys(MOVEMENT_TUNING_LIMITS) as (keyof MovementTuning)[]) {
@@ -117,15 +117,15 @@ function validTuningIn(tuning: unknown): Partial<MovementTuning> {
 /** Takes off when a jump is waiting and he is on the floor, or left it by an edge a moment ago. A jump that waited too long is forgotten. */
 function jumpIfAskedAndAble(sim: Sim, player: PlayerState): void {
   if (player.ticksSinceJumpAsked === null) return;
-  const walkedOffJustNow = player.ticksSinceWalkedOff !== null && player.ticksSinceWalkedOff < wholeTicksIn(PLAYER.jumpAskedLateWindow, sim.dt);
+  const walkedOffJustNow = player.ticksSinceWalkedOff !== null && player.ticksSinceWalkedOff < countWholeTicksIn(PLAYER.jumpAskedLateWindow, sim.dt);
   if (player.onFloor || walkedOffJustNow) {
-    const tuning = sim.stateOf(movementTuningSlice);
+    const tuning = sim.getStateOf(movementTuningSlice);
     player.verticalSpeed = -Math.sqrt(2 * tuning.riseGravity * (player.carrying ? tuning.jumpHeightCarrying : tuning.jumpHeight));
     player.riseCut = false;
     player.onFloor = false;
     player.ticksSinceWalkedOff = null;
     player.ticksSinceJumpAsked = null;
-  } else if (player.ticksSinceJumpAsked >= wholeTicksIn(PLAYER.jumpAskedEarlyWindow, sim.dt)) {
+  } else if (player.ticksSinceJumpAsked >= countWholeTicksIn(PLAYER.jumpAskedEarlyWindow, sim.dt)) {
     player.ticksSinceJumpAsked = null;
   } else {
     player.ticksSinceJumpAsked += 1;
@@ -183,7 +183,7 @@ function fallTo(player: PlayerState, { x, floorHeight, tuning, dt }: { x: number
  * His sideways speed a tick later in a fall off an edge: a little closer to walking the way a held key says, or with no
  * key held a little closer to still by `airBraking`. With an `airBraking` of 0 he drifts on as he was.
  */
-function speedAfterSteering(speed: number, { direction, tuning, dt }: { direction: WalkDirection; tuning: MovementTuning; dt: number }): number {
+function getSpeedAfterSteering(speed: number, { direction, tuning, dt }: { direction: WalkDirection; tuning: MovementTuning; dt: number }): number {
   if (direction === 0 && tuning.airBraking === 0) return speed;
   const mostChange = (direction === 0 ? tuning.airBraking : tuning.airSteering) * dt;
   const wanted = direction * tuning.walkSpeed;
@@ -194,12 +194,12 @@ function speedAfterSteering(speed: number, { direction, tuning, dt }: { directio
 
 /** In the air next to the end of a floor line: the end pushes him aside so his body and head clear it, and stops him if he was drifting into it. */
 function slideOffFloorEnds(player: PlayerState, floor: readonly FloorSegment[]): void {
-  const clear = clearOfFloorEnds(floor, player);
+  const clear = findClearOfFloorEnds(floor, player);
   if (!clear) return;
   player.x = clear.x;
   if (player.horizontalSpeed * clear.awayFromFloor < 0) player.horizontalSpeed = 0;
 }
 
-function wholeTicksIn(seconds: number, dt: number): number {
+function countWholeTicksIn(seconds: number, dt: number): number {
   return Math.round(seconds / dt);
 }

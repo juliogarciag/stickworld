@@ -21,6 +21,6 @@ import { worldFeature } from './world';
  * the stick man who carries it, so it comes after him. `game` only hears a
  * command, so where it comes decides nothing; `note` watches where he
  * stands, and comes after him so a note is rubbed out on the tick he gets there;
- * `checkpoint` does the same for its mark.
+ * `getCheckpoint` does the same for its mark.
  */
 export const features: readonly Feature[] = [gameFeature, playerFeature, flagFeature, inventoryFeature, itemFeature, worldFeature, craftingFeature, letterFeature, airplaneFeature, noteFeature, checkpointFeature];

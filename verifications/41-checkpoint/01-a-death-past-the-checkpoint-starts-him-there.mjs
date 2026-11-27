@@ -31,32 +31,32 @@ try {
   await page.goto(`http://localhost:${PORT}/`);
   await page.waitForFunction(() => window.__game && window.__game.sim.tick > 10, null, { timeout: 15000 });
 
-  const levelWithOne = await page.evaluate(() => window.__game.defs && [1, 2, 3].find((id) => (window.__game.loadLevel(id), window.__game.checkpoint() !== undefined)));
+  const levelWithOne = await page.evaluate(() => window.__game.defs && [1, 2, 3].find((id) => (window.__game.loadLevel(id), window.__game.getCheckpoint() !== undefined)));
   results.push(check('a level has a checkpoint', levelWithOne !== undefined, `level ${levelWithOne}`));
   await page.waitForFunction(() => window.__game.sim.tick > 30);
-  const level = await page.evaluate(() => ({ start: window.__game.level.start, checkpoint: window.__game.checkpoint() }));
+  const level = await page.evaluate(() => ({ start: window.__game.level.start, checkpoint: window.__game.getCheckpoint() }));
   results.push(check('it stands past the start and is not passed yet', level.checkpoint.at.x > level.start.x && level.checkpoint.passed === false, JSON.stringify(level)));
 
   // Before it: off the left end of the paper, and the level starts him at its start.
   await page.keyboard.down('ArrowLeft');
-  await page.waitForFunction(() => window.__game.stickMan().feet.y > 2, null, { timeout: 20000 });
+  await page.waitForFunction(() => window.__game.getStickMan().feet.y > 2, null, { timeout: 20000 });
   await page.keyboard.up('ArrowLeft');
-  await page.waitForFunction(() => window.__game.stickMan().feet.y === window.__game.level.start.y, null, { timeout: 10000 });
-  const afterDeathBefore = await page.evaluate(() => ({ man: window.__game.stickMan(), checkpoint: window.__game.checkpoint() }));
+  await page.waitForFunction(() => window.__game.getStickMan().feet.y === window.__game.level.start.y, null, { timeout: 10000 });
+  const afterDeathBefore = await page.evaluate(() => ({ man: window.__game.getStickMan(), checkpoint: window.__game.getCheckpoint() }));
   results.push(check('a death before it starts him at the start of the level', afterDeathBefore.man.feet.x === level.start.x && afterDeathBefore.checkpoint.passed === false, `x ${afterDeathBefore.man.feet.x}`));
 
   // He walks towards it: the mark comes into view unpassed, and is passed as he goes by.
   await page.keyboard.down('ArrowRight');
-  await page.waitForFunction(() => window.__game.stickMan().feet.x > window.__game.checkpoint().at.x - 1.2);
+  await page.waitForFunction(() => window.__game.getStickMan().feet.x > window.__game.getCheckpoint().at.x - 1.2);
   await page.keyboard.up('ArrowRight');
   await page.waitForTimeout(700);
   const before = await markOnScreen(page);
   await page.screenshot({ path: path.join(PROOF, '01-the-checkpoint-not-passed.png') });
   results.push(check('the mark is in view before he reaches it', before.inView && before.passed === false, JSON.stringify(before)));
   await page.keyboard.down('ArrowRight');
-  await page.waitForFunction(() => window.__game.checkpoint().passed, null, { timeout: 10000 });
-  const passedAt = await page.evaluate(() => window.__game.stickMan().feet.x);
-  await page.waitForFunction(() => window.__game.stickMan().feet.x > window.__game.checkpoint().at.x + 0.8);
+  await page.waitForFunction(() => window.__game.getCheckpoint().passed, null, { timeout: 10000 });
+  const passedAt = await page.evaluate(() => window.__game.getStickMan().feet.x);
+  await page.waitForFunction(() => window.__game.getStickMan().feet.x > window.__game.getCheckpoint().at.x + 0.8);
   await page.keyboard.up('ArrowRight');
   await page.waitForTimeout(700);
   await page.screenshot({ path: path.join(PROOF, '01-the-checkpoint-passed.png') });
@@ -66,12 +66,12 @@ try {
   // After it: into the gap, twice, and each time the level starts him at the mark.
   for (const death of [1, 2]) {
     await page.keyboard.down('ArrowRight');
-    await page.waitForFunction(() => window.__game.stickMan().feet.y > 2, null, { timeout: 20000 });
+    await page.waitForFunction(() => window.__game.getStickMan().feet.y > 2, null, { timeout: 20000 });
     if (death === 1) await page.screenshot({ path: path.join(PROOF, '01-falling-into-the-gap.png') });
     await page.keyboard.up('ArrowRight');
-    await page.waitForFunction(() => window.__game.stickMan().feet.y === window.__game.level.start.y, null, { timeout: 10000 });
+    await page.waitForFunction(() => window.__game.getStickMan().feet.y === window.__game.level.start.y, null, { timeout: 10000 });
     await page.waitForTimeout(300);
-    const after = await page.evaluate(() => ({ man: window.__game.stickMan(), checkpoint: window.__game.checkpoint(), level: window.__game.level.id, turning: window.__game.pageTurn() !== null }));
+    const after = await page.evaluate(() => ({ man: window.__game.getStickMan(), checkpoint: window.__game.getCheckpoint(), level: window.__game.level.id, turning: window.__game.getPageTurn() !== null }));
     results.push(check(`death ${death} past it starts him at the checkpoint, standing, with no page turned`, after.man.feet.x === level.checkpoint.at.x && after.man.action === 'standing' && after.checkpoint.passed && !after.turning && after.level === levelWithOne, `x ${after.man.feet.x}, ${after.man.action}`));
     if (death === 1) await page.screenshot({ path: path.join(PROOF, '01-back-at-the-checkpoint.png') });
     report[`afterDeath${death}`] = after;
@@ -80,7 +80,7 @@ try {
   // Loading the level afresh (a new game on it) knows nothing of it.
   await page.evaluate((id) => window.__game.loadLevel(id), levelWithOne);
   await page.waitForFunction(() => window.__game.sim.tick > 5);
-  const afresh = await page.evaluate(() => ({ man: window.__game.stickMan(), checkpoint: window.__game.checkpoint() }));
+  const afresh = await page.evaluate(() => ({ man: window.__game.getStickMan(), checkpoint: window.__game.getCheckpoint() }));
   results.push(check('the level loaded afresh starts him at its start, the checkpoint not passed', afresh.man.feet.x === level.start.x && afresh.checkpoint.passed === false, `x ${afresh.man.feet.x}`));
 
   results.push(check('no page errors', pageErrors.length === 0, pageErrors.join(' | ')));
@@ -101,8 +101,8 @@ process.exit(summarize(results) ? 0 : 1);
 /** Whether the level's camera shows the place the checkpoint stands at, and whether the sim has it passed. */
 function markOnScreen(page) {
   return page.evaluate(() => {
-    const { at, passed } = window.__game.checkpoint();
-    const seen = window.__game.levelInView();
+    const { at, passed } = window.__game.getCheckpoint();
+    const seen = window.__game.getLevelInView();
     return { passed, at, seen, inView: at.x > seen.left && at.x < seen.right && at.y > seen.top && at.y < seen.bottom };
   });
 }

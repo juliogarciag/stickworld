@@ -22,18 +22,18 @@ export function watchPlayerKeys(scene: Phaser.Scene): () => KeysNow {
   // A repeat is not a press: Phaser forgets held keys when the window loses focus, and a key still held
   // when it comes back would otherwise jump by itself.
   const pressed = { jump: false, up: false };
-  const notePresses = (keys: Phaser.Input.Keyboard.Key[], which: keyof typeof pressed): void => {
+  const recordPresses = (keys: Phaser.Input.Keyboard.Key[], which: keyof typeof pressed): void => {
     for (const key of keys) {
       key.on('down', (_key: Phaser.Input.Keyboard.Key, event: KeyboardEvent) => {
         if (!event.repeat) pressed[which] = true;
       });
     }
   };
-  notePresses(jump, 'jump');
-  notePresses(up, 'up');
-  const anyIsDown = (keys: Phaser.Input.Keyboard.Key[]): boolean => keys.some((key) => key.isDown);
+  recordPresses(jump, 'jump');
+  recordPresses(up, 'up');
+  const isAnyDown = (keys: Phaser.Input.Keyboard.Key[]): boolean => keys.some((key) => key.isDown);
   return () => {
-    const now = { leftHeld: anyIsDown(left), rightHeld: anyIsDown(right), upHeld: anyIsDown(up), downHeld: anyIsDown(down), jumpHeld: anyIsDown(jump), jumpPressed: pressed.jump, upPressed: pressed.up };
+    const now = { leftHeld: isAnyDown(left), rightHeld: isAnyDown(right), upHeld: isAnyDown(up), downHeld: isAnyDown(down), jumpHeld: isAnyDown(jump), jumpPressed: pressed.jump, upPressed: pressed.up };
     pressed.jump = false;
     pressed.up = false;
     return now;

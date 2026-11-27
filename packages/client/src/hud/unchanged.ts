@@ -5,7 +5,7 @@
  * is not made twice: a page of writing is drawn eight times a second, when it
  * boils, and not sixty.
  */
-export function keptWhileUnchanged<Made>(): (key: string, make: () => Made) => Made {
+export function keepWhileUnchanged<Made>(): (key: string, make: () => Made) => Made {
   let last: { key: string; made: Made } | undefined;
   return (key, make) => {
     if (!last || last.key !== key) last = { key, made: make() };

@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import type { PageTurn } from '../render/pageTurn';
-import { everyFrameAfterTheLevel } from './afterTheLevel';
+import { runEveryFrameAfterTheLevel } from './afterTheLevel';
 import { Sheet } from './Sheet';
 
 /**
@@ -19,12 +19,12 @@ export class TurnedSheetScene extends Phaser.Scene {
   create(): void {
     this.sheet = new Sheet(this);
     this.cameras.main.setVisible(false);
-    everyFrameAfterTheLevel(this, (seconds) => this.draw(seconds));
+    runEveryFrameAfterTheLevel(this, (seconds) => this.draw(seconds));
   }
 
   private draw(seconds: number): void {
     const camera = this.cameras.main;
-    const turning = this.pageTurn.now();
+    const turning = this.pageTurn.getTurningPage();
     camera.setVisible(turning !== undefined);
     // Phaser only resizes a camera with the window while it sits at the canvas's corner, which this one does not during a turn: it is given the canvas's size every frame.
     const { width, height } = this.scale;

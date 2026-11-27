@@ -1,18 +1,18 @@
-import { airplaneOf, checkpointOf, fallenItemOf, flagOf, letterOf, levelOf, notesOf, stickManOf, type SimHandle } from '@stickworld/sim';
+import { getAirplane, getCheckpoint, getFallenItem, getFlag, getLetter, getLevel, getNotes, getStickMan, type SimHandle } from '@stickworld/sim';
 import type Phaser from 'phaser';
-import { keptWhileUnchanged } from '../hud/unchanged';
+import { keepWhileUnchanged } from '../hud/unchanged';
 import { MOVE_KEY_NAMES } from '../input/playerKeys';
-import { airplanesEasedOverTime, airplaneStrokes, heightItTurnsAbout } from '../render/airplane';
-import { worldSeenBy } from '../render/cameraView';
-import { checkpointStrokes } from '../render/checkpoint';
-import { flagStrokes } from '../render/flag';
-import { floorStrokes } from '../render/floor';
-import { fallenPaperStrokes, letterStrokes } from '../render/letter';
-import { zoomAtRest } from '../render/levelCamera';
-import { notesAreStill, noteStrokes } from '../render/notes';
+import { easeAirplanesOverTime, buildAirplaneStrokes, getHeightItTurnsAbout } from '../render/airplane';
+import { getWorldSeenBy } from '../render/cameraView';
+import { buildCheckpointStrokes } from '../render/checkpoint';
+import { buildFlagStrokes } from '../render/flag';
+import { buildFloorStrokes } from '../render/floor';
+import { buildFallenPaperStrokes, buildLetterStrokes } from '../render/letter';
+import { getZoomAtRest } from '../render/levelCamera';
+import { areNotesStill, buildNoteStrokes } from '../render/notes';
 import { layPaper, type Paper } from '../render/paper';
-import { levelNameIs, levelNameStrokes, pageNumberStrokes } from '../render/sheetWords';
-import { posesEasedOverTime, seatedIn, stickManStrokes } from '../render/stickMan';
+import { getLevelNameState, buildLevelNameStrokes, buildPageNumberStrokes } from '../render/sheetWords';
+import { easePosesOverTime, seatIn, buildStickManStrokes } from '../render/stickMan';
 import { createStrokeLayer, type Stroke, type StrokeLayer } from '../render/strokes';
 
 /** The one empty list: a layer shown it again does not draw anew. */
@@ -46,10 +46,10 @@ export class Sheet {
   private readonly letter: StrokeLayer;
   private readonly airplane: StrokeLayer;
   private readonly stickMan: StrokeLayer;
-  private readonly poseFor = posesEasedOverTime();
-  private readonly airplaneShownFor = airplanesEasedOverTime();
-  private readonly strokesOfWhatIsWritten = keptWhileUnchanged<readonly Stroke[]>();
-  private readonly strokesOfThePageNumber = keptWhileUnchanged<Stroke[]>();
+  private readonly poseFor = easePosesOverTime();
+  private readonly airplaneShownFor = easeAirplanesOverTime();
+  private readonly strokesOfWhatIsWritten = keepWhileUnchanged<readonly Stroke[]>();
+  private readonly strokesOfThePageNumber = keepWhileUnchanged<Stroke[]>();
 
   constructor(private readonly scene: Phaser.Scene) {
     this.paper = layPaper(scene);
@@ -71,32 +71,32 @@ export class Sheet {
   /** Draws the sheet as the scene's camera sees it right now. Call after moving the camera, every frame. */
   draw({ sim, seconds, secondsOnTheSheet }: SheetNow): void {
     const camera = this.scene.cameras.main;
-    const level = levelOf(sim);
-    const stickMan = stickManOf(sim);
-    const flag = flagOf(sim);
-    const checkpoint = checkpointOf(sim);
-    const letter = letterOf(sim);
-    const notes = notesOf(sim);
-    const airplane = this.airplaneShownFor(airplaneOf(sim), seconds);
+    const level = getLevel(sim);
+    const stickMan = getStickMan(sim);
+    const flag = getFlag(sim);
+    const checkpoint = getCheckpoint(sim);
+    const letter = getLetter(sim);
+    const notes = getNotes(sim);
+    const airplane = this.airplaneShownFor(getAirplane(sim), seconds);
 
     this.paper.cover(camera);
     // Writing that does not change is the same list every frame, which a layer does not draw anew; while some of it is being written or rubbed out it is made again each frame.
-    const levelName = levelNameIs(secondsOnTheSheet);
-    const writingIsStill = notesAreStill(notes) && levelName !== 'beingWritten' && levelName !== 'beingRubbedOut';
+    const levelName = getLevelNameState(secondsOnTheSheet);
+    const writingIsStill = areNotesStill(notes) && levelName !== 'beingWritten' && levelName !== 'beingRubbedOut';
     // The notes first: a stroke's place in the list is what its wobble comes from, and the name's strokes come and go.
-    const whatIsWritten = (): readonly Stroke[] => [...noteStrokes(notes, MOVE_KEY_NAMES), ...levelNameStrokes(level, secondsOnTheSheet)];
-    this.written.show(writingIsStill ? this.strokesOfWhatIsWritten(JSON.stringify([level.id, notes.map((note) => note.rubbedOutFor !== null), levelName]), whatIsWritten) : whatIsWritten());
-    const seen = worldSeenBy(camera);
-    this.pageNumber.show(this.strokesOfThePageNumber(JSON.stringify([level.id, seen]), () => pageNumberStrokes({ page: level.id, seen, zoomAtRest: zoomAtRest(camera) })));
-    this.floor.show(floorStrokes(level));
-    this.flag.show(flag ? flagStrokes(flag) : []);
-    this.checkpoint.show(checkpoint ? checkpointStrokes(checkpoint) : []);
+    const buildWhatIsWritten = (): readonly Stroke[] => [...buildNoteStrokes(notes, MOVE_KEY_NAMES), ...buildLevelNameStrokes(level, secondsOnTheSheet)];
+    this.written.show(writingIsStill ? this.strokesOfWhatIsWritten(JSON.stringify([level.id, notes.map((note) => note.rubbedOutFor !== null), levelName]), buildWhatIsWritten) : buildWhatIsWritten());
+    const seen = getWorldSeenBy(camera);
+    this.pageNumber.show(this.strokesOfThePageNumber(JSON.stringify([level.id, seen]), () => buildPageNumberStrokes({ page: level.id, seen, zoomAtRest: getZoomAtRest(camera) })));
+    this.floor.show(buildFloorStrokes(level));
+    this.flag.show(flag ? buildFlagStrokes(flag) : []);
+    this.checkpoint.show(checkpoint ? buildCheckpointStrokes(checkpoint) : []);
     // One layer for both: the sheet only ever falls where a letter no longer lies.
-    const fallenItem = fallenItemOf(sim);
-    this.letter.show(letter ? letterStrokes(letter) : fallenItem ? fallenPaperStrokes(fallenItem) : []);
-    this.airplane.show(airplane ? airplaneStrokes(airplane) : []);
+    const fallenItem = getFallenItem(sim);
+    this.letter.show(letter ? buildLetterStrokes(letter) : fallenItem ? buildFallenPaperStrokes(fallenItem) : []);
+    this.airplane.show(airplane ? buildAirplaneStrokes(airplane) : []);
     const pose = this.poseFor(stickMan, seconds, level.floor);
     // Seated, he tips with the airplane as it is drawn, about the point it is drawn turning about: its middle.
-    this.stickMan.show(stickManStrokes(airplane ? seatedIn(pose, { noseDown: airplane.noseDown, tipsAboutAbove: heightItTurnsAbout(airplane) }) : pose));
+    this.stickMan.show(buildStickManStrokes(airplane ? seatIn(pose, { noseDown: airplane.noseDown, tipsAboutAbove: getHeightItTurnsAbout(airplane) }) : pose));
   }
 }

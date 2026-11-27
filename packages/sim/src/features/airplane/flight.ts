@@ -1,7 +1,7 @@
 import type { Sim } from '../../core/sim';
-import { moveHimWithHisSeat, seatHim, standHimUp, whereHeIs } from '../player/body';
+import { moveHimWithHisSeat, seatHim, standHimUp, getWhereHeIs } from '../player/body';
 import { PLAYER } from '../player/defs';
-import { floorHeightAt, lowestFloorHeight } from '../player/floor';
+import { getFloorHeightAt, getLowestFloorHeight } from '../player/floor';
 import { AIRPLANE, FLIGHT } from './defs';
 import { airplaneSlice, type AirplaneState, hasBoardedSlice } from './state';
 
@@ -14,7 +14,7 @@ import { airplaneSlice, type AirplaneState, hasBoardedSlice } from './state';
 
 /** He sits down in the airplane where it rests and it leaves the edge, nose first. */
 export function boardAndLaunch(sim: Sim): void {
-  const airplane = sim.stateOf(airplaneSlice);
+  const airplane = sim.getStateOf(airplaneSlice);
   sim.setStateOf(hasBoardedSlice, true);
   airplane.flying = true;
   airplane.speed = FLIGHT.launchSpeed;
@@ -27,9 +27,9 @@ export function boardAndLaunch(sim: Sim): void {
  * to (he stands up, the level starts again, it is lost). Nothing happens to one that rests or is carried.
  */
 export function moveOneTick(sim: Sim): void {
-  const airplane = sim.stateOf(airplaneSlice);
+  const airplane = sim.getStateOf(airplaneSlice);
   // He has jumped out: with nobody to steer it, it stops gliding and falls.
-  if (airplane.flying && !whereHeIs(sim).seated) stopGliding(airplane);
+  if (airplane.flying && !getWhereHeIs(sim).seated) stopGliding(airplane);
 
   if (airplane.flying) glide(sim, airplane);
   else if (airplane.falling) fall(sim, airplane);
@@ -39,12 +39,12 @@ export function moveOneTick(sim: Sim): void {
   if (!airplane.sliding && !airplane.flying && !airplane.falling) standHimUp(sim);
 
   // Asked again: he may have stood up just now.
-  const { seated } = whereHeIs(sim);
-  const below = airplane.y - lowestFloorHeight(sim.levelDef.floor);
+  const { seated } = getWhereHeIs(sim);
+  const below = airplane.y - getLowestFloorHeight(sim.levelDef.floor);
   // With him in it, falling out of sight starts the level again, and nothing of the airplane is left. Without him it is only lost.
   if (seated && below > FLIGHT.lostBelowFloor) sim.startLevelAfterThisTick(sim.level);
   // As deep as he can fall himself: it is gone when he would be.
-  else if (!seated && below > PLAYER.fallBelowFloor) sim.setStateOf(airplaneSlice, { ...airplaneSlice.initialFor(sim.levelDef), steering: airplane.steering });
+  else if (!seated && below > PLAYER.fallBelowFloor) sim.setStateOf(airplaneSlice, { ...airplaneSlice.getInitialFor(sim.levelDef), steering: airplane.steering });
 }
 
 /** It falls from here on, keeping the sideways and the downward part of the way it was going. Nothing changes for one that is not gliding. */
@@ -61,7 +61,7 @@ export function stopGliding(airplane: AirplaneState): void {
 
 /** One tick of the glide: the steer keys turn its nose, it goes where its nose points, and what it climbed or dived is paid for or paid back in speed. */
 function glide(sim: Sim, airplane: AirplaneState): void {
-  airplane.pitch = pitchAfterSteering(airplane.pitch, { steering: airplane.steering, dt: sim.dt });
+  airplane.pitch = getPitchAfterSteering(airplane.pitch, { steering: airplane.steering, dt: sim.dt });
   const climbed = airplane.speed * Math.sin(airplane.pitch) * sim.dt;
   const forward = airplane.speed * Math.cos(airplane.pitch) * sim.dt;
   const exchanged = climbed > 0 ? -climbed * FLIGHT.speedLostPerMetreClimbed : -climbed * FLIGHT.speedGainedPerMetreDived;
@@ -81,7 +81,7 @@ function fall(sim: Sim, airplane: AirplaneState): void {
 function slide(sim: Sim, airplane: AirplaneState): void {
   airplane.x += airplane.facing * airplane.speed * sim.dt;
   airplane.speed = Math.max(0, airplane.speed - FLIGHT.landingSlowdown * sim.dt);
-  if (floorHeightAt(sim.levelDef.floor, airplane.x) === undefined) {
+  if (getFloorHeightAt(sim.levelDef.floor, airplane.x) === undefined) {
     airplane.sliding = false;
     airplane.falling = true;
     airplane.verticalSpeed = 0;
@@ -96,7 +96,7 @@ function slide(sim: Sim, airplane: AirplaneState): void {
  * goes no higher than it is, and a glide ends there in a fall. Right for flat floors, which is all the levels have.
  */
 function comeDownOrMoveTo(sim: Sim, airplane: AirplaneState, to: { x: number; y: number }): boolean {
-  const floorHeight = floorHeightAt(sim.levelDef.floor, to.x);
+  const floorHeight = getFloorHeightAt(sim.levelDef.floor, to.x);
   const hitsFromBelow = floorHeight !== undefined && airplane.y > floorHeight && to.y <= floorHeight;
   if (hitsFromBelow) {
     stopGliding(airplane);
@@ -123,7 +123,7 @@ function comeDownOrMoveTo(sim: Sim, airplane: AirplaneState, to: { x: number; y:
 }
 
 /** Where its nose points a tick later: turned by the steer key that is held, or sinking back to where it rests when none is. */
-function pitchAfterSteering(pitch: number, { steering, dt }: { steering: -1 | 0 | 1; dt: number }): number {
+function getPitchAfterSteering(pitch: number, { steering, dt }: { steering: -1 | 0 | 1; dt: number }): number {
   if (steering !== 0) return Math.max(FLIGHT.steepestDive, Math.min(FLIGHT.steepestClimb, pitch + steering * FLIGHT.pitchRate * dt));
   const mostChange = FLIGHT.noseSinkRate * dt;
   if (Math.abs(FLIGHT.restingPitch - pitch) <= mostChange) return FLIGHT.restingPitch;

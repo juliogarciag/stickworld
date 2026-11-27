@@ -17,7 +17,7 @@ interface DevicePixelWindow {
 }
 
 /** The window measured in device pixels, as the canvas backing store must be. */
-function windowInDevicePixels(): DevicePixelWindow {
+function getWindowInDevicePixels(): DevicePixelWindow {
   const reported = window.devicePixelRatio;
   const pixelRatio = Number.isFinite(reported) && reported > 0 ? reported : 1;
   return {
@@ -28,8 +28,8 @@ function windowInDevicePixels(): DevicePixelWindow {
 }
 
 /** Scale config that opens the game at the window's size. Pair with `keepCanvasAtWindowSize`. */
-export function windowViewportConfig(): Phaser.Types.Core.ScaleConfig {
-  const { width, height, pixelRatio } = windowInDevicePixels();
+export function getWindowViewportConfig(): Phaser.Types.Core.ScaleConfig {
+  const { width, height, pixelRatio } = getWindowInDevicePixels();
   return { mode: Phaser.Scale.NONE, width, height, zoom: 1 / pixelRatio };
 }
 
@@ -41,7 +41,7 @@ export function keepCanvasAtWindowSize(game: Phaser.Game): () => void {
   let stopWatchingPixelRatio: (() => void) | undefined;
 
   const fit = (): void => {
-    const { width, height, pixelRatio } = windowInDevicePixels();
+    const { width, height, pixelRatio } = getWindowInDevicePixels();
     stopWatchingPixelRatio?.();
     stopWatchingPixelRatio = watchPixelRatio(pixelRatio, fit);
     const zoom = 1 / pixelRatio;

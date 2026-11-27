@@ -1,26 +1,26 @@
 import type { FlagView } from '@stickworld/sim';
 import type { Stroke } from '../render/strokes';
-import { writtenSoFar } from '../render/strokes/partly';
-import { written } from './handwriting';
+import { getWrittenSoFar } from '../render/strokes/partly';
+import { buildWriting } from './handwriting';
 import type { Rectangle } from './itemSlots';
-import { keysAndWords } from './keysAndWords';
+import { buildKeysAndWords } from './keysAndWords';
 
 /**
  * What the game writes across the sheet once it is over: "THE END", a
  * stroke at a time, and under it the key that plays it again once the sim
  * offers that. That it is over is the sim's: the flag he reached is the one
- * that ends the game (`flagOf`), and so is when playing again is heard
- * (`gameOf`). The words, their size and how fast they are written are
+ * that ends the game (`getFlag`), and so is when playing again is heard
+ * (`getGame`). The words, their size and how fast they are written are
  * decided here.
  */
 
 /** True once the flag that ends the game has been reached and has gone all the way up its stick: from then on the end is on the sheet, as much of it as is written so far. */
-export function theEndIsShown(flag: FlagView | undefined): boolean {
+export function isTheEndShown(flag: FlagView | undefined): boolean {
   return flag !== undefined && flag.endsTheGame && flag.reached && flag.raised === 1;
 }
 
 /** How much of the end's words is written `seconds` after the pencil started on them, from 0 to 1. */
-export function shareOfTheEndWritten(seconds: number): number {
+export function getShareOfTheEndWritten(seconds: number): number {
   return Math.max(0, Math.min(1, seconds / THE_END.writtenIn));
 }
 
@@ -35,15 +35,15 @@ export interface TheEnd {
  * The strokes that write the end across the upper part of what the HUD camera sees, centred and never wider than the
  * view has room for, with the key that plays again and its words under them.
  */
-export function theEndStrokes({ shareWritten, playAgainKey }: TheEnd, seen: Rectangle): Stroke[] {
-  const widthOfOne = written(THE_END.words, { at: { x: 0, y: 0 }, letterHeight: 1 }).width;
+export function buildTheEndStrokes({ shareWritten, playAgainKey }: TheEnd, seen: Rectangle): Stroke[] {
+  const widthOfOne = buildWriting(THE_END.words, { at: { x: 0, y: 0 }, letterHeight: 1 }).width;
   const letterHeight = Math.min(THE_END.letterHeight, (seen.width * THE_END.mostOfTheWidth) / widthOfOne);
   const top = seen.y + seen.height * THE_END.fromTheTop;
-  const words = written(THE_END.words, { at: { x: seen.x + (seen.width - widthOfOne * letterHeight) / 2, y: top }, letterHeight }).strokes;
-  if (playAgainKey === null) return [...writtenSoFar(words, shareWritten)];
+  const words = buildWriting(THE_END.words, { at: { x: seen.x + (seen.width - widthOfOne * letterHeight) / 2, y: top }, letterHeight }).strokes;
+  if (playAgainKey === null) return [...getWrittenSoFar(words, shareWritten)];
   const prompt = { keys: [playAgainKey], words: THE_END.playAgain, sizes: THE_END.prompt };
-  const { width } = keysAndWords({ ...prompt, at: { x: 0, y: 0 } });
-  return [...writtenSoFar(words, shareWritten), ...keysAndWords({ ...prompt, at: { x: seen.x + (seen.width - width) / 2, y: top + letterHeight + THE_END.aboveThePrompt } }).strokes];
+  const { width } = buildKeysAndWords({ ...prompt, at: { x: 0, y: 0 } });
+  return [...getWrittenSoFar(words, shareWritten), ...buildKeysAndWords({ ...prompt, at: { x: seen.x + (seen.width - width) / 2, y: top + letterHeight + THE_END.aboveThePrompt } }).strokes];
 }
 
 // ---- Helpers ----

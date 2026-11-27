@@ -1,9 +1,9 @@
 import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
-import { airplaneItemUse } from '../airplane';
-import { craftingUse } from '../crafting';
+import { getAirplaneItemUse } from '../airplane';
+import { getCraftingUse } from '../crafting';
 import { isReadingALetter } from '../letter';
-import { flagIsReached } from '../flag';
+import { isFlagReached } from '../flag';
 
 /**
  * Using the held item: one command, `'item/use'`, whose meaning depends on
@@ -17,14 +17,14 @@ export const itemFeature: Feature = {
 
   handleCommand(sim, command) {
     if (command.type !== 'item/use') return;
-    itemUseNow(sim)?.perform();
+    getItemUseNow(sim)?.perform();
   },
 };
 
 /** What `'item/use'` would do right now, with the function that does it, or undefined when it would do nothing. */
-export function itemUseNow(sim: Sim): ItemUse | undefined {
+export function getItemUseNow(sim: Sim): ItemUse | undefined {
   // A letter he reads fills his hands: it is put away by interacting, and until then no item is used.
-  if (flagIsReached(sim) || isReadingALetter(sim)) return undefined;
+  if (isFlagReached(sim) || isReadingALetter(sim)) return undefined;
   for (const answer of ANSWERS) {
     const use = answer(sim);
     if (use) return use;
@@ -33,7 +33,7 @@ export function itemUseNow(sim: Sim): ItemUse | undefined {
 }
 
 /** Every use an item has. No item has two yet, so the order decides nothing so far. */
-const ANSWERS = [craftingUse, airplaneItemUse] as const;
+const ANSWERS = [getCraftingUse, getAirplaneItemUse] as const;
 
 export type ItemUse = NonNullable<ReturnType<(typeof ANSWERS)[number]>>;
 

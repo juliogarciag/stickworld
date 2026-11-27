@@ -1,5 +1,5 @@
 import type { Feature } from '../../core/feature';
-import { flagIsReached } from '../flag';
+import { isFlagReached } from '../flag';
 import { giveItem } from './give';
 import { inventorySlice } from './state';
 
@@ -16,7 +16,7 @@ export const inventoryFeature: Feature = {
   handleCommand(sim, command) {
     if (command.type !== 'inventory/select') return;
     const { slot } = command as { slot?: unknown };
-    const inventory = sim.stateOf(inventorySlice);
+    const inventory = sim.getStateOf(inventorySlice);
     if (typeof slot !== 'number' || !Number.isInteger(slot) || slot < 1 || slot > inventory.slots.length) return;
     inventory.selectedSlot = inventory.selectedSlot === slot ? null : slot;
   },
@@ -25,6 +25,6 @@ export const inventoryFeature: Feature = {
     const { flagGivesItem } = sim.levelDef;
         // Asked every tick the flag stands reached: an item he already holds is not given twice. With every slot taken the
     // item is not given at all; no level can do that yet, and the one that can has to say what happens to it.
-    if (flagGivesItem !== undefined && flagIsReached(sim)) giveItem(sim, flagGivesItem);
+    if (flagGivesItem !== undefined && isFlagReached(sim)) giveItem(sim, flagGivesItem);
   },
 };

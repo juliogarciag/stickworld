@@ -1,19 +1,19 @@
 import type { FallenItemView, LetterView, Point } from '@stickworld/sim';
 import type { Stroke } from './strokes';
 import { PENCIL } from './strokes/pencil';
-import { toPixels } from './units';
+import { convertToPixels } from './units';
 
 /**
  * The level's letter as pencil strokes: an envelope standing on the floor.
  * Nothing while he reads it: then it is in his hands, and the HUD shows what
  * it says.
  */
-export function letterStrokes({ at, beingRead }: LetterView): Stroke[] {
+export function buildLetterStrokes({ at, beingRead }: LetterView): Stroke[] {
   if (beingRead) return [];
-  const corner = (across: number, up: number): Point => turnedAbout(at, { x: at.x + (across - 0.5) * ENVELOPE.width, y: at.y - up * ENVELOPE.height }, ENVELOPE.lean);
+  const getCorner = (across: number, up: number): Point => turnAbout(at, { x: at.x + (across - 0.5) * ENVELOPE.width, y: at.y - up * ENVELOPE.height }, ENVELOPE.lean);
   return [
-    { points: [corner(0, 0), corner(0, 1), corner(1, 1), corner(1, 0)].map(inPixels), thickness: PENCIL.thickness, closed: true },
-    { points: [corner(0, 1), corner(0.5, 0.42), corner(1, 1)].map(inPixels), thickness: PENCIL.thickness },
+    { points: [getCorner(0, 0), getCorner(0, 1), getCorner(1, 1), getCorner(1, 0)].map(convertPointToPixels), thickness: PENCIL.thickness, closed: true },
+    { points: [getCorner(0, 1), getCorner(0.5, 0.42), getCorner(1, 1)].map(convertPointToPixels), thickness: PENCIL.thickness },
   ];
 }
 
@@ -21,16 +21,16 @@ export function letterStrokes({ at, beingRead }: LetterView): Stroke[] {
  * The sheet of paper that falls from the sky for him who has lost his, as pencil strokes: swaying on its way down,
  * and lying on the floor once it is there, a corner of it turned up.
  */
-export function fallenPaperStrokes({ at, height }: FallenItemView): Stroke[] {
+export function buildFallenPaperStrokes({ at, height }: FallenItemView): Stroke[] {
   // Paper comes down swinging from side to side, less and less as it nears the floor.
   const swing = Math.min(1, height / SHEET.settlesBelow);
   const foot = { x: at.x + swing * SHEET.sway * Math.sin(height * SHEET.swaysPerMetre), y: at.y - height };
   const lean = SHEET.lean + swing * SHEET.rock * Math.cos(height * SHEET.swaysPerMetre);
   // Seen almost edge on as it lies: a sheet is wide and not tall.
-  const corner = (across: number, up: number): Point => turnedAbout(foot, { x: foot.x + (across - 0.5) * SHEET.width, y: foot.y - up * SHEET.height }, lean);
+  const getCorner = (across: number, up: number): Point => turnAbout(foot, { x: foot.x + (across - 0.5) * SHEET.width, y: foot.y - up * SHEET.height }, lean);
   return [
-    { points: [corner(0, 0), corner(0.12, 1), corner(0.8, 1), corner(1, 0.55), corner(0.92, 0)].map(inPixels), thickness: PENCIL.thickness, closed: true },
-    { points: [corner(0.8, 1), corner(0.82, 0.5), corner(1, 0.55)].map(inPixels), thickness: PENCIL.thickness * 0.7 },
+    { points: [getCorner(0, 0), getCorner(0.12, 1), getCorner(0.8, 1), getCorner(1, 0.55), getCorner(0.92, 0)].map(convertPointToPixels), thickness: PENCIL.thickness, closed: true },
+    { points: [getCorner(0.8, 1), getCorner(0.82, 0.5), getCorner(1, 0.55)].map(convertPointToPixels), thickness: PENCIL.thickness * 0.7 },
   ];
 }
 
@@ -59,10 +59,10 @@ const SHEET = {
   settlesBelow: 1.5,
 } as const;
 
-function turnedAbout(centre: Point, point: Point, angle: number): Point {
+function turnAbout(centre: Point, point: Point, angle: number): Point {
   const x = point.x - centre.x;
   const y = point.y - centre.y;
   return { x: centre.x + x * Math.cos(angle) - y * Math.sin(angle), y: centre.y + x * Math.sin(angle) + y * Math.cos(angle) };
 }
 
-const inPixels = (point: Point): Point => ({ x: toPixels(point.x), y: toPixels(point.y) });
+const convertPointToPixels = (point: Point): Point => ({ x: convertToPixels(point.x), y: convertToPixels(point.y) });

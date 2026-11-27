@@ -11,6 +11,6 @@ export const MAX_FRAME_SECONDS = 0.25;
  * alike: all of it, up to `MAX_FRAME_SECONDS`. What is written on a sheet over its first seconds would otherwise be
  * over within the one long frame that follows the making of the paper.
  */
-export function frameSeconds(deltaMs: number): number {
+export function getFrameSeconds(deltaMs: number): number {
   return Math.min(Math.max(deltaMs / 1000, 0), MAX_FRAME_SECONDS);
 }

@@ -5,4 +5,4 @@
  */
 export const PIXELS_PER_METRE = 100;
 
-export const toPixels = (metres: number): number => metres * PIXELS_PER_METRE;
+export const convertToPixels = (metres: number): number => metres * PIXELS_PER_METRE;

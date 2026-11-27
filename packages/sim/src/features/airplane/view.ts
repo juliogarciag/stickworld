@@ -2,7 +2,7 @@ import type { Point } from '../../content/levels/types';
 import { Sim, type SimHandle } from '../../core/sim';
 import type { SteerDirection } from './commands';
 import { AIRPLANE, FLIGHT } from './defs';
-import { hasYetToTakeItToAnEdge, isReadyToBoard, sitsOnAnEdge } from './index';
+import { hasYetToTakeItToAnEdge, isReadyToBoard, isSittingOnAnEdge } from './index';
 import { airplaneSlice } from './state';
 
 /** The airplane in the world as a view needs it. How it is folded and how it gets from the floor to his hands are the view's business. */
@@ -33,9 +33,9 @@ export interface AirplaneView {
 }
 
 /** The airplane in the world, or undefined while there is none: it is an item in his slot, or lost, or not made yet. */
-export function airplaneOf(handle: SimHandle): AirplaneView | undefined {
+export function getAirplane(handle: SimHandle): AirplaneView | undefined {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
-  const airplane = handle.stateOf(airplaneSlice);
+  const airplane = handle.getStateOf(airplaneSlice);
   if (!airplane.inWorld) return undefined;
   return {
     at: { x: airplane.x, y: airplane.y },
@@ -47,19 +47,19 @@ export function airplaneOf(handle: SimHandle): AirplaneView | undefined {
     speed: airplane.speed,
     pitch: airplane.pitch,
     stallSpeed: FLIGHT.stallSpeed,
-    onAnEdge: sitsOnAnEdge(handle),
+    onAnEdge: isSittingOnAnEdge(handle),
   };
 }
 
 /** Which way the sim believes the player wants to steer the airplane, whether or not he is flying one right now. */
-export function steeringAskedOf(handle: SimHandle): SteerDirection {
+export function getSteeringAsked(handle: SimHandle): SteerDirection {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
-  return handle.stateOf(airplaneSlice).steering;
+  return handle.getStateOf(airplaneSlice).steering;
 }
 
 /**
  * What he is told about the airplane he has before he has flown it, for a view that says so beside the keys:
- * `takeItToAnEdge` until it sits on an edge, then `readyToBoard` while it sits there, where the key boards it.
+ * `takeItToAnEdge` until it sits on an edge, then `createSimReadyToBoard` while it sits there, where the key boards it.
  */
 export type FlyingHint = 'takeItToAnEdge' | 'readyToBoard';
 
@@ -67,7 +67,7 @@ export type FlyingHint = 'takeItToAnEdge' | 'readyToBoard';
  * What he has still to be told about flying the airplane he has, or null when there is nothing to tell: that it has
  * to be taken to an edge, and once it sits on one that it is ready, until he has boarded one since the level started.
  */
-export function flyingHintOf(handle: SimHandle): FlyingHint | null {
+export function getFlyingHint(handle: SimHandle): FlyingHint | null {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
   if (hasYetToTakeItToAnEdge(handle)) return 'takeItToAnEdge';
   if (isReadyToBoard(handle)) return 'readyToBoard';

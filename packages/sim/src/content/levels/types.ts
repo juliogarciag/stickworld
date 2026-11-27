@@ -50,6 +50,6 @@ export interface Level {
   readonly flagGivesItem?: number;
   /** What is written on the sheet for the player. Most levels have none. */
   readonly notes?: readonly Note[];
-  /** Where the level's checkpoint stands on the floor, if it has one: he starts here after a death once he has stood past it (the `checkpoint` feature). */
+  /** Where the level's checkpoint stands on the floor, if it has one: he starts here after a death once he has stood past it (the `getCheckpoint` feature). */
   readonly checkpoint?: Point;
 }

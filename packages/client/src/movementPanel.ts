@@ -1,4 +1,4 @@
-import { MOVEMENT_PRESETS, MOVEMENT_TUNING_LIMITS, movementTuningOf, type MovementPresetName, type MovementTuning, type SimHandle } from '@stickworld/sim';
+import { MOVEMENT_PRESETS, MOVEMENT_TUNING_LIMITS, getMovementTuning, type MovementPresetName, type MovementTuning, type SimHandle } from '@stickworld/sim';
 import GUI from 'lil-gui';
 import type { GameLoop } from './loop/GameLoop';
 
@@ -10,7 +10,7 @@ import type { GameLoop } from './loop/GameLoop';
  * was open, are kept in this browser's storage for the next reload.
  */
 export function showMovementPanel(loop: GameLoop): void {
-  const kept = keptChoice();
+  const kept = readKeptChoice();
   const chosen: Choice = kept ?? { preset: 'current', tuning: { ...MOVEMENT_PRESETS.current }, open: false };
   // The sim and tick the last send waits for: until that tick has run, the sim has not heard it, and sending again would pile up.
   let lastSent: { sim: SimHandle; tick: number } | undefined;
@@ -68,7 +68,7 @@ export function showMovementPanel(loop: GameLoop): void {
   // The sim forgets the tuning when the game starts over, and a sim from `loadLevel` never had it.
   window.setInterval(() => {
     const lastIsStillWaiting = lastSent !== undefined && lastSent.sim === loop.sim && lastSent.tick === loop.sim.tick;
-    if (!lastIsStillWaiting && !sameTuning(movementTuningOf(loop.sim), chosen.tuning)) send();
+    if (!lastIsStillWaiting && !isSameTuning(getMovementTuning(loop.sim), chosen.tuning)) send();
   }, RESEND_EVERY_MS);
 }
 
@@ -105,7 +105,7 @@ const KNOBS: Record<keyof MovementTuning, Knob> = {
   jumpHeightCarrying: { label: 'jump carrying (m)', step: 0.05 },
 };
 
-function sameTuning(one: MovementTuning, other: MovementTuning): boolean {
+function isSameTuning(one: MovementTuning, other: MovementTuning): boolean {
   return (Object.keys(MOVEMENT_TUNING_LIMITS) as (keyof MovementTuning)[]).every((name) => one[name] === other[name]);
 }
 
@@ -113,18 +113,18 @@ function sameTuning(one: MovementTuning, other: MovementTuning): boolean {
  * What was chosen before this reload, or undefined when nothing usable was kept. Storage is outside input: anything
  * that is not a known preset, or a number within a knob's limits, is replaced with what the preset says.
  */
-function keptChoice(): Choice | undefined {
+function readKeptChoice(): Choice | undefined {
   let text: string | null;
   try {
     text = window.localStorage.getItem(STORAGE_KEY);
   } catch {
     return undefined;
   }
-  return choiceIn(text);
+  return readChoiceIn(text);
 }
 
-/** The choice `text` holds, as `keptChoice` reads it, or undefined when it holds none. */
-function choiceIn(text: string | null): Choice | undefined {
+/** The choice `text` holds, as `readKeptChoice` reads it, or undefined when it holds none. */
+function readChoiceIn(text: string | null): Choice | undefined {
   let stored: unknown;
   try {
     stored = JSON.parse(text ?? 'null');
@@ -152,4 +152,4 @@ function keep(choice: Choice): void {
   }
 }
 
-export const __testing__ = { choiceIn };
+export const __testing__ = { readChoiceIn };

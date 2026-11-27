@@ -11,7 +11,7 @@ export interface CheckpointView {
 }
 
 /** The checkpoint of the level being played, or undefined for a level without one. */
-export function checkpointOf(handle: SimHandle): CheckpointView | undefined {
+export function getCheckpoint(handle: SimHandle): CheckpointView | undefined {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
   const { checkpoint: at } = handle.levelDef;
   return at && { at, passed: hasPassedCheckpoint(handle) };

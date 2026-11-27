@@ -1,7 +1,7 @@
 import type { Point } from '../../content/levels/types';
 import { Sim, type SimHandle } from '../../core/sim';
 import { flagDef } from './defs';
-import { flagPlacedIn, isTheLastLevel, secondsSinceFlagReached } from './index';
+import { findFlagPlacedIn, isTheLastLevel, getSecondsSinceFlagReached } from './index';
 import { flagSlice } from './state';
 
 /** The level's flag as a view needs it. */
@@ -21,10 +21,10 @@ export interface FlagView {
 }
 
 /** The flag of the level being played, or undefined when the level has none. */
-export function flagOf(handle: SimHandle): FlagView | undefined {
+export function getFlag(handle: SimHandle): FlagView | undefined {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
-  const placed = flagPlacedIn(handle.levelDef);
+  const placed = findFlagPlacedIn(handle.levelDef);
   if (!placed) return undefined;
-  const reachedFor = secondsSinceFlagReached(handle) ?? 0;
-  return { at: placed.at, height: flagDef.height, reached: handle.stateOf(flagSlice).reachedAtTick !== null, upFor: Math.max(0, reachedFor - flagDef.raiseSeconds), raised: Math.min(1, reachedFor / flagDef.raiseSeconds), endsTheGame: isTheLastLevel(handle.levelDef) };
+  const reachedFor = getSecondsSinceFlagReached(handle) ?? 0;
+  return { at: placed.at, height: flagDef.height, reached: handle.getStateOf(flagSlice).reachedAtTick !== null, upFor: Math.max(0, reachedFor - flagDef.raiseSeconds), raised: Math.min(1, reachedFor / flagDef.raiseSeconds), endsTheGame: isTheLastLevel(handle.levelDef) };
 }

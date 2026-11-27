@@ -3,7 +3,7 @@ import { STICK_MAN_HEIGHT, STICK_MAN_WIDTH } from '../../content/tuning';
 import { PLAYER } from './defs';
 
 /** How high the floor is at `x`, or undefined over a gap or past the floor's ends. */
-export function floorHeightAt(floor: readonly FloorSegment[], x: number): number | undefined {
+export function getFloorHeightAt(floor: readonly FloorSegment[], x: number): number | undefined {
   const segment = floor.find(({ from, to }) => from.x <= x && x <= to.x);
   if (!segment) return undefined;
   const { from, to } = segment;
@@ -14,14 +14,14 @@ export function floorHeightAt(floor: readonly FloorSegment[], x: number): number
  * Where a step from `from` towards `to` ends when the ends of the floor line under `from` stop it: `to`, or the end of
  * the line less half his width. `to` itself when there is no line under `from`.
  */
-export function keptOverTheLine(floor: readonly FloorSegment[], { from, to }: { readonly from: number; readonly to: number }): number {
+export function keepOverTheLine(floor: readonly FloorSegment[], { from, to }: { readonly from: number; readonly to: number }): number {
   const line = floor.find((segment) => segment.from.x <= from && from <= segment.to.x);
   if (!line) return to;
   return Math.max(line.from.x + STICK_MAN_WIDTH / 2, Math.min(line.to.x - STICK_MAN_WIDTH / 2, to));
 }
 
 /** The y of the floor's lowest point (y points down, so the largest). */
-export function lowestFloorHeight(floor: readonly FloorSegment[]): number {
+export function getLowestFloorHeight(floor: readonly FloorSegment[]): number {
   return Math.max(...floor.flatMap(({ from, to }) => [from.y, to.y]));
 }
 
@@ -30,11 +30,11 @@ export function lowestFloorHeight(floor: readonly FloorSegment[]): number {
  * already. `awayFromFloor` is the side the end pushed him to: 1 to the right, -1 to the left. Right for flat floors with
  * gaps wider than he is, which is all the levels have: each segment pushes by the height of its nearer end.
  */
-export function clearOfFloorEnds(floor: readonly FloorSegment[], feet: { readonly x: number; readonly y: number }): { x: number; awayFromFloor: 1 | -1 } | undefined {
+export function findClearOfFloorEnds(floor: readonly FloorSegment[], feet: { readonly x: number; readonly y: number }): { x: number; awayFromFloor: 1 | -1 } | undefined {
   for (const { from, to } of floor) {
     const nearerEnd = feet.x < (from.x + to.x) / 2 ? from : to;
     const awayFromFloor = nearerEnd === from ? -1 : 1;
-    const reach = bodyReachAt(feet.y - nearerEnd.y);
+    const reach = getBodyReachAt(feet.y - nearerEnd.y);
     const x = nearerEnd.x + awayFromFloor * reach;
     if (reach > 0 && (x - feet.x) * awayFromFloor > 0) return { x, awayFromFloor };
   }
@@ -47,7 +47,7 @@ export function clearOfFloorEnds(floor: readonly FloorSegment[], feet: { readonl
  * How far to each side of his feet his body reaches, `aboveFeet` metres above them: nothing at his feet, widening to
  * half his width, and nothing again above his head. He is a controlled body with a simple outline, not a shape with physics.
  */
-function bodyReachAt(aboveFeet: number): number {
+function getBodyReachAt(aboveFeet: number): number {
   if (aboveFeet <= 0 || aboveFeet >= STICK_MAN_HEIGHT) return 0;
   return (STICK_MAN_WIDTH / 2) * Math.min(1, aboveFeet / PLAYER.fullWidthAbove);
 }

@@ -1,5 +1,5 @@
 import { Sim, type SimHandle } from '../../core/sim';
-import { gameIsOver, playingAgainIsOffered } from './index';
+import { isGameOver, isPlayingAgainOffered } from './index';
 
 /** The game as a whole, as a view needs it. */
 export interface GameView {
@@ -9,7 +9,7 @@ export interface GameView {
   readonly playingAgainOffered: boolean;
 }
 
-export function gameOf(handle: SimHandle): GameView {
+export function getGame(handle: SimHandle): GameView {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
-  return { over: gameIsOver(handle), playingAgainOffered: playingAgainIsOffered(handle) };
+  return { over: isGameOver(handle), playingAgainOffered: isPlayingAgainOffered(handle) };
 }

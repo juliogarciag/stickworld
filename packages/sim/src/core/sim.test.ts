@@ -18,7 +18,7 @@ describe('Sim.step', () => {
     const received: unknown[] = [null, undefined, 1, 'x', [], { type: 3 }, { kind: 'x' }, { type: 'recorder/keep' }];
     sim.step(received as Command[]);
     sim.step('not an array' as unknown as Command[]);
-    expect(sim.snapshot().slices.recorder).toEqual(['recorder/keep']);
+    expect(sim.takeSnapshot().slices.recorder).toEqual(['recorder/keep']);
     expect(sim.tick).toBe(2);
   });
 
@@ -38,16 +38,16 @@ describe('a level asked for from inside a tick', () => {
     sim.step([ask(2)]);
     expect(sim.level).toBe(2);
     expect(sim.tick).toBe(2);
-    expect(sim.stateOf(ticksOnThisLevelSlice)).toBe(0);
+    expect(sim.getStateOf(ticksOnThisLevelSlice)).toBe(0);
     // It starts in the tick that asked, before the tick count goes up: that is the tick a feature's `init` reads.
-    expect(sim.stateOf(tickOfLastStartSlice)).toBe(1);
+    expect(sim.getStateOf(tickOfLastStartSlice)).toBe(1);
     sim.step();
-    expect(sim.stateOf(ticksOnThisLevelSlice)).toBe(1);
+    expect(sim.getStateOf(ticksOnThisLevelSlice)).toBe(1);
   });
 
   it('shows the features after the one that asked the level as it was, not one that has only just begun', () => {
     const seen: { level: number; ticksOnThisLevel: number }[] = [];
-    const spyFeature: Feature = { name: 'spy', update: (sim) => void seen.push({ level: sim.level, ticksOnThisLevel: sim.stateOf(ticksOnThisLevelSlice) }) };
+    const spyFeature: Feature = { name: 'spy', update: (sim) => void seen.push({ level: sim.level, ticksOnThisLevel: sim.getStateOf(ticksOnThisLevelSlice) }) };
     const sim = new Sim({ features: [askerFeature, witnessFeature, spyFeature], start: { seed: 1, level: 1 } });
     sim.step();
     sim.step([ask(2)]);
@@ -74,15 +74,15 @@ describe('a level asked for from inside a tick', () => {
     const sim = new Sim({ features: [askerFeature, witnessFeature], start: { seed: 1, level: 1 } });
     sim.step([ask(1), ask(2), ask(1)]);
     // Once when the sim was made, once for the level that started.
-    expect(sim.stateOf(levelsStartedSlice)).toBe(2);
+    expect(sim.getStateOf(levelsStartedSlice)).toBe(2);
   });
 
   it('keeps what carries across levels for a level, and gives it back for starting over', () => {
     const sim = new Sim({ features: [askerFeature, witnessFeature], start: { seed: 1, level: 1 } });
     sim.step([ask(1)]);
-    expect(sim.stateOf(levelsStartedSlice)).toBe(2);
+    expect(sim.getStateOf(levelsStartedSlice)).toBe(2);
     sim.step([askToStartOver()]);
-    expect(sim.stateOf(levelsStartedSlice)).toBe(1);
+    expect(sim.getStateOf(levelsStartedSlice)).toBe(1);
     expect(sim.level).toBe(1);
     expect(sim.tick).toBe(2);
   });
@@ -170,10 +170,10 @@ const witnessFeature: Feature = {
   slices: [ticksOnThisLevelSlice, levelsStartedSlice, tickOfLastStartSlice],
   init(sim) {
     sim.setStateOf(tickOfLastStartSlice, sim.tick);
-    sim.setStateOf(levelsStartedSlice, sim.stateOf(levelsStartedSlice) + 1);
+    sim.setStateOf(levelsStartedSlice, sim.getStateOf(levelsStartedSlice) + 1);
   },
   update(sim) {
-    sim.setStateOf(ticksOnThisLevelSlice, sim.stateOf(ticksOnThisLevelSlice) + 1);
+    sim.setStateOf(ticksOnThisLevelSlice, sim.getStateOf(ticksOnThisLevelSlice) + 1);
   },
 };
 
@@ -183,6 +183,6 @@ const recorderFeature: Feature = {
   name: 'recorder',
   slices: [recorderSlice],
   handleCommand(sim, command) {
-    sim.stateOf(recorderSlice).push((command as { type: string }).type);
+    sim.getStateOf(recorderSlice).push((command as { type: string }).type);
   },
 };
