@@ -4,14 +4,14 @@ import { PENCIL } from '../render/strokes/pencil';
 
 /**
  * The item slots, drawn in pencil in the top right corner of the screen, small,
- * out of the way of what is written on the sheet and of the letter he holds
+ * out of the way of what is written on the sheet and of the letter the stick man holds
  * up: a box per slot
  * with the item it holds inside, and a second, heavier
  * box around the selected one. What a slot holds and whether it is selected
- * are the sim's (`itemSlotsOf`); only where and how it is drawn is decided here.
+ * are the sim's (`getItemSlots`); only where and how it is drawn is decided here.
  *
  * A slot has no number written under it: with one slot the key that selects
- * it is never needed, and a "1" under the box read as how many he has. When
+ * it is never needed, and a "1" under the box read as how many the stick man has. When
  * there are several slots, say which key is which some other way.
  */
 
@@ -23,32 +23,63 @@ export interface Rectangle {
   readonly height: number;
 }
 
-/** Where slot number `slot` (counted from 1) is drawn when the HUD camera sees `seen`: a row from the top right corner, the first slot in the corner and each next one to its left. */
-export function itemSlotBox(slot: number, seen: Rectangle): Rectangle {
-  const fromTheRight = SLOT_LAYOUT.margin + SLOT_LAYOUT.side + (slot - 1) * (SLOT_LAYOUT.side + SLOT_LAYOUT.spacing);
-  return { x: seen.x + seen.width - fromTheRight, y: seen.y + SLOT_LAYOUT.margin, width: SLOT_LAYOUT.side, height: SLOT_LAYOUT.side };
+/**
+ * Where slot number `slot` (counted from 1) is drawn when the HUD camera sees `seen`: a row from
+ * the top right corner, the first slot in the corner and each next one to its left.
+ */
+export function getItemSlotBox(slot: number, seen: Rectangle): Rectangle {
+  const rightOffset =
+    SLOT_LAYOUT.margin + SLOT_LAYOUT.side + (slot - 1) * (SLOT_LAYOUT.side + SLOT_LAYOUT.spacing);
+  return {
+    x: seen.x + seen.width - rightOffset,
+    y: seen.y + SLOT_LAYOUT.margin,
+    width: SLOT_LAYOUT.side,
+    height: SLOT_LAYOUT.side,
+  };
 }
 
-/** The strokes that draw `slots` when the HUD camera sees `seen`. For each slot, in this order: its box, the item it holds, and last the second box when it is selected. */
-export function itemSlotStrokes(slots: readonly ItemSlot[], seen: Rectangle): Stroke[] {
-  return slots.flatMap(({ slot, itemDefId, selected }) => {
-    const box = itemSlotBox(slot, seen);
-    const drawnIn = (shape: UnitPath): Stroke => ({ points: shape.map((point) => pointIn(box, point)), thickness: PENCIL.thickness });
+/**
+ * The strokes that draw `slots` when the HUD camera sees `seen`. For each slot, in this order: its
+ * box, the item it holds, and last the second box when it is selected.
+ */
+export function buildItemSlotStrokes(slots: readonly ItemSlot[], seen: Rectangle): Stroke[] {
+  return slots.flatMap((itemSlot) => {
+    const box = getItemSlotBox(itemSlot.slot, seen);
+    const buildStrokeIn = (shape: UnitPath): Stroke => ({
+      points: shape.map((point) => getPointIn(box, point)),
+      thickness: PENCIL.thickness,
+    });
     return [
-      { points: cornersOf(box), thickness: PENCIL.thickness, closed: true },
-      ...(itemDefId === null ? [] : (ITEM_DRAWINGS[itemDefId] ?? UNKNOWN_ITEM)).map(drawnIn),
-      ...(selected ? [{ points: cornersOf(grownBy(box, SLOT_LAYOUT.selectedOutset)), thickness: PENCIL.thickness * SLOT_LAYOUT.selectedWeight, closed: true }] : []),
+      { points: getCorners(box), thickness: PENCIL.thickness, isClosed: true },
+      ...(itemSlot.itemDefId === null
+        ? []
+        : (ITEM_DRAWINGS[itemSlot.itemDefId] ?? UNKNOWN_ITEM)
+      ).map(buildStrokeIn),
+      ...(itemSlot.isSelected
+        ? [
+            {
+              points: getCorners(growBy(box, SLOT_LAYOUT.selectedOutset)),
+              thickness: PENCIL.thickness * SLOT_LAYOUT.selectedWeight,
+              isClosed: true,
+            },
+          ]
+        : []),
     ];
   });
 }
 
 // ---- Helpers ----
 
-/** Sizes in the HUD camera's world pixels, which are the level's: the HUD is drawn at the level's zoom, so its pencil is the same weight. */
+/**
+ * Sizes in the HUD camera's world pixels, which are the level's: the HUD is drawn at the level's
+ * zoom, so its pencil is the same weight.
+ */
 const SLOT_LAYOUT = {
   /** From the corner of the screen to the first slot. */
   margin: 48,
-  /** A little larger than the box of a key in a prompt: it is there to be glanced at, not looked at. */
+  /**
+   * A little larger than the box of a key in a prompt: it is there to be glanced at, not looked at.
+   */
   side: 72,
   /** Between two slots. */
   spacing: 24,
@@ -58,7 +89,10 @@ const SLOT_LAYOUT = {
   selectedWeight: 1.5,
 } as const;
 
-/** A path in shares of a slot's box: (0, 0) is its top left corner and (1, 1) its bottom right. A point may lie outside. */
+/**
+ * A path in shares of a slot's box: (0, 0) is its top left corner and (1, 1) its bottom right. A
+ * point may lie outside.
+ */
 type UnitPath = readonly StrokePoint[];
 
 /** How each item looks in a slot, by its def id. */
@@ -107,20 +141,25 @@ const UNKNOWN_ITEM: readonly UnitPath[] = [
   ],
 ];
 
-function pointIn(box: Rectangle, share: StrokePoint): StrokePoint {
+function getPointIn(box: Rectangle, share: StrokePoint): StrokePoint {
   return { x: box.x + share.x * box.width, y: box.y + share.y * box.height };
 }
 
 /** The four corners of `box`, starting at the top left, the way a hand draws a square. */
-function cornersOf({ x, y, width, height }: Rectangle): StrokePoint[] {
+function getCorners(rectangle: Rectangle): StrokePoint[] {
   return [
-    { x, y },
-    { x: x + width, y },
-    { x: x + width, y: y + height },
-    { x, y: y + height },
+    { x: rectangle.x, y: rectangle.y },
+    { x: rectangle.x + rectangle.width, y: rectangle.y },
+    { x: rectangle.x + rectangle.width, y: rectangle.y + rectangle.height },
+    { x: rectangle.x, y: rectangle.y + rectangle.height },
   ];
 }
 
-function grownBy({ x, y, width, height }: Rectangle, outset: number): Rectangle {
-  return { x: x - outset, y: y - outset, width: width + 2 * outset, height: height + 2 * outset };
+function growBy(rectangle: Rectangle, outset: number): Rectangle {
+  return {
+    x: rectangle.x - outset,
+    y: rectangle.y - outset,
+    width: rectangle.width + 2 * outset,
+    height: rectangle.height + 2 * outset,
+  };
 }

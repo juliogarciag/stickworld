@@ -1,15 +1,15 @@
 import type { FlyingHint, InteractionMeaning, ItemUseMeaning } from '@stickworld/sim';
 import type { ColouredPencil, Stroke } from '../render/strokes';
 import type { Rectangle } from './itemSlots';
-import { keysAndWords } from './keysAndWords';
+import { buildKeysAndWords } from './keysAndWords';
 
 /**
  * What the keys would do right now, written in a corner of the screen: the
  * key in a box and a word or two beside it. A key that would do nothing is
- * not shown. Above them, in words alone, what he has still to be told: that
+ * not shown. Above them, in words alone, what the stick man has still to be told: that
  * the airplane goes to the edge, and in green once it is there that it is
- * ready (`flyingHintOf`). What each action key would do is the sim's (`itemUseOf`,
- * `interactionOf`), and so is whether he is seated in the airplane, where the
+ * ready (`getFlyingHint`). What each action key would do is the sim's (`getItemUse`,
+ * `getInteraction`), and so is whether the stick man is seated in the airplane, where the
  * keys that fly it are shown; the words and where they are drawn are decided here.
  */
 
@@ -18,11 +18,14 @@ export interface Prompt {
   /** The key's name as the player knows it, or null for words with no key. */
   readonly key: string | null;
   readonly words: string;
-  /** The coloured pencil the prompt is written in, or absent for graphite: green for the airplane that is ready. */
+  /**
+   * The coloured pencil the prompt is written in, or absent for graphite: green for the airplane
+   * that is ready.
+   */
   readonly colour?: ColouredPencil;
 }
 
-export interface KeysWouldDo {
+export interface PromptInput {
   /** What using the held item would do, and the name of the key that does it. */
   readonly itemUse: ItemUseMeaning | null;
   /** The name of what using the held item would make, or null when it would make nothing. */
@@ -31,41 +34,74 @@ export interface KeysWouldDo {
   /** What interacting with the world would do, and the name of the key that does it. */
   readonly interaction: InteractionMeaning | null;
   readonly interactKey: string;
-  /** True while he is seated in the airplane, and the names of the keys that fly it. */
-  readonly seated: boolean;
+  /** True while the stick man is seated in the airplane, and the names of the keys that fly it. */
+  readonly isSeated: boolean;
   readonly flightKeys: { readonly climb: string; readonly dive: string; readonly jumpOut: string };
-  /** What he has still to be told about flying the airplane he has, or null (`flyingHintOf`). */
+  /**
+   * What the stick man has still to be told about flying the airplane it has, or null
+   * (`getFlyingHint`).
+   */
   readonly flyingHint: FlyingHint | null;
 }
 
 /**
- * The prompts to show: first what he has still to be told, in words alone; then the item key and the interact key,
- * each only when it would do something; then the keys that fly the airplane while he is seated in it.
+ * The prompts to show: first what the stick man has still to be told, in words alone; then the item
+ * key and the interact key, each only when it would do something; then the keys that fly the
+ * airplane while the stick man is seated in it.
  */
-export function promptsFor({ itemUse, wouldMake, useItemKey, interaction, interactKey, seated, flightKeys, flyingHint }: KeysWouldDo): Prompt[] {
+export function getPromptsFor(input: PromptInput): Prompt[] {
   return [
-    ...(flyingHint === null ? [] : [FLYING_HINTS[flyingHint]]),
-    ...(itemUse === null ? [] : [{ key: useItemKey, words: ITEM_USE_WORDS[itemUse](wouldMake) }]),
-    ...(interaction === null ? [] : [{ key: interactKey, words: INTERACTION_WORDS[interaction] }]),
-    ...(seated ? [{ key: flightKeys.climb, words: FLIGHT_WORDS.climb }, { key: flightKeys.dive, words: FLIGHT_WORDS.dive }, { key: flightKeys.jumpOut, words: FLIGHT_WORDS.jumpOut }] : []),
+    ...(input.flyingHint === null ? [] : [FLYING_HINTS[input.flyingHint]]),
+    ...(input.itemUse === null
+      ? []
+      : [{ key: input.useItemKey, words: ITEM_USE_WORDS[input.itemUse](input.wouldMake) }]),
+    ...(input.interaction === null
+      ? []
+      : [{ key: input.interactKey, words: INTERACTION_WORDS[input.interaction] }]),
+    ...(input.isSeated
+      ? [
+          { key: input.flightKeys.climb, words: FLIGHT_WORDS.climb },
+          { key: input.flightKeys.dive, words: FLIGHT_WORDS.dive },
+          { key: input.flightKeys.jumpOut, words: FLIGHT_WORDS.jumpOut },
+        ]
+      : []),
   ];
 }
 
-/** The strokes that draw `prompts` in the bottom left corner of what the HUD camera sees, one above the other. */
-export function promptStrokes(prompts: readonly Prompt[], seen: Rectangle): Stroke[] {
-  return prompts.flatMap(({ key, words, colour }, index) => {
-    const fromTheBottom = prompts.length - 1 - index;
-    const at = { x: seen.x + PROMPTS.margin, y: seen.y + seen.height - PROMPTS.margin - PROMPTS.keySide - fromTheBottom * PROMPTS.rowHeight };
-    const { strokes } = keysAndWords({ keys: key === null ? [] : [key], words, at, sizes: PROMPTS });
-    return colour === undefined ? strokes : strokes.map((stroke) => ({ ...stroke, colour }));
+/**
+ * The strokes that draw `prompts` in the bottom left corner of what the HUD camera sees, one above
+ * the other.
+ */
+export function buildPromptStrokes(prompts: readonly Prompt[], seen: Rectangle): Stroke[] {
+  return prompts.flatMap((prompt, index) => {
+    const indexFromBottom = prompts.length - 1 - index;
+    const position = {
+      x: seen.x + PROMPTS.margin,
+      y:
+        seen.y +
+        seen.height -
+        PROMPTS.margin -
+        PROMPTS.keySide -
+        indexFromBottom * PROMPTS.rowHeight,
+    };
+    const { strokes } = buildKeysAndWords({
+      keys: prompt.key === null ? [] : [prompt.key],
+      words: prompt.words,
+      position,
+      sizes: PROMPTS,
+    });
+    return prompt.colour === undefined
+      ? strokes
+      : strokes.map((stroke) => ({ ...stroke, colour: prompt.colour }));
   });
 }
 
 // ---- Helpers ----
 
 /**
- * The HUD's own words for what a key would do. Each names the thing it is done to: "it" would be the letter in one
- * prompt and the airplane in the next. Everything he makes so far is folded paper, so making is called folding.
+ * The HUD's own words for what a key would do. Each names the thing it is done to: "it" would be
+ * the letter in one prompt and the airplane in the next. Everything the stick man makes so far is
+ * folded paper, so making is called folding.
  */
 const ITEM_USE_WORDS: Readonly<Record<ItemUseMeaning, (wouldMake: string | null) => string>> = {
   craft: (wouldMake) => (wouldMake === null ? 'fold it' : `fold a ${wouldMake}`),
@@ -82,11 +118,12 @@ const INTERACTION_WORDS: Readonly<Record<InteractionMeaning, string>> = {
 };
 
 /**
- * What he is told about the airplane before he has flown it, in words with no key: where to take it, then, in green,
- * that he got it there. The keys under it say which one boards it.
+ * What the stick man is told about the airplane before the stick man has flown it, in words with no
+ * key: where to take it, then, in green, that the stick man got it there. The keys under it say
+ * which one boards it.
  */
 const FLYING_HINTS: Readonly<Record<FlyingHint, Prompt>> = {
-  takeItToAnEdge: { key: null, words: 'take the airplane to the edge' },
+  takeToEdge: { key: null, words: 'take the airplane to the edge' },
   readyToBoard: { key: null, words: 'the airplane is ready', colour: 'green' },
 };
 
@@ -97,9 +134,9 @@ const PROMPTS = {
   /** From the corner of the screen, as far as the item slots are from theirs. */
   margin: 56,
   keySide: 58,
-  insideTheKey: 14,
+  keyPadding: 14,
   letterHeight: 28,
-  besideTheKey: 24,
+  keyGap: 24,
   /** From the top of one prompt to the top of the next. */
   rowHeight: 80,
 } as const;

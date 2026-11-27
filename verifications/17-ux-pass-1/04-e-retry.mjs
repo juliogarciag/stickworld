@@ -44,14 +44,14 @@ await verify({ name: '04-e-retry', port: 5917, cwd: ROOT }, async ({ size, open,
   const prompts = { x: 0, y: size.height * 0.75, width: size.width * 0.8, height: size.height * 0.25 };
   const inkWithTheHint = await game.inkIn(prompts);
   await game.shot('e-told-to-take-the-airplane-to-the-edge');
-  expect('nothing is said about the edge until he has an airplane', beforeTheFold.flyingHint === null && folded.flyingHint === 'takeItToAnEdge');
+  expect('nothing is said about the edge until he has an airplane', beforeTheFold.flyingHint === null && folded.flyingHint === 'takeToEdge');
   const carried = await putTheCarriedAirplaneOnTheEdge(game);
   await game.seconds(0.3);
   const onTheEdge = await game.state();
   const edgeSpot = onTheEdge.stickMan.feet.x;
   const inkOnTheEdge = await game.inkIn(prompts);
   report.hint = { inkOfThePromptsWithIt: inkWithTheHint, inkOfThePromptsOnTheEdge: inkOnTheEdge };
-  expect('carrying it, he is told in the prompts to take the airplane to the edge: a line of words above the key', carrying.flyingHint === 'takeItToAnEdge' && carrying.interaction === 'putDown' && inkWithTheHint > inkOnTheEdge * 1.5, `${inkWithTheHint} pixels of pencil in the prompts' corner with it, ${inkOnTheEdge} once it sits on the edge and only "board the airplane" is left`);
+  expect('carrying it, he is told in the prompts to take the airplane to the edge: a line of words above the key', carrying.flyingHint === 'takeToEdge' && carrying.interaction === 'putDown' && inkWithTheHint > inkOnTheEdge * 1.5, `${inkWithTheHint} pixels of pencil in the prompts' corner with it, ${inkOnTheEdge} once it sits on the edge and only "board the airplane" is left`);
   expect('once it sits on the edge the line is gone and K boards it', carried && onTheEdge.interaction === 'board' && onTheEdge.flyingHint === null);
   await game.seconds(0.5);
   await fly(game, 0);
@@ -68,7 +68,7 @@ await verify({ name: '04-e-retry', port: 5917, cwd: ROOT }, async ({ size, open,
   const noLetterFell = await game.state();
   await game.tap('j');
   const setDown = await game.state();
-  expect('after the lost flight he is told again to take the airplane to the edge, until it sits on one', restarted.flyingHint === 'takeItToAnEdge' && noLetterFell.flyingHint === 'takeItToAnEdge' && setDown.flyingHint === null);
+  expect('after the lost flight he is told again to take the airplane to the edge, until it sits on one', restarted.flyingHint === 'takeToEdge' && noLetterFell.flyingHint === 'takeToEdge' && setDown.flyingHint === null);
   await game.shot('e-retry-airplane-set-down-on-the-edge');
   await game.tap('k');
   const seated = await game.state();

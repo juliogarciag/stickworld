@@ -2,59 +2,103 @@ import type { Point } from '../../content/levels/types';
 import { Sim, type SimHandle } from '../../core/sim';
 import type { WalkDirection } from './commands';
 import type { MovementTuning } from './defs';
-import { isFallingOffAnEdge, standsCheering, walkDirectionNow } from './index';
+import { isFallingOffEdge, isStandingCheering, getWalkDirectionNow } from './index';
 import { movementTuningSlice, playerSlice } from './state';
 
-/** The stick man as a view needs him: where he is and what he is doing. Which way each limb points is the view's business. */
+/**
+ * The stick man as a view needs it: where the stick man is and what it is doing. Which way each
+ * limb points is the view's business.
+ */
 export interface StickManView {
-  /** Where his feet are, in metres. */
+  /** Where the stick man's feet are, in metres. */
   readonly feet: Point;
-  /** 1 when he looks right, -1 when he looks left. */
+  /** 1 when the stick man looks right, -1 when it looks left. */
   readonly facing: 1 | -1;
   /**
-   * `jumping` is any time his feet are off the floor and he is not seated; `cheering` is standing on the floor under
-   * the flag he reached, which on the last level ends when playing again is offered; `seated` is sitting in the airplane, and then `feet` is the middle of its underside.
+   * `jumping` is any time the stick man's feet are off the floor and it is not seated; `cheering`
+   * is standing on the floor under the flag the stick man reached, which on the last level ends
+   * when playing again is offered; `seated` is sitting in the airplane, and then `feet` is the
+   * middle of its underside.
    */
   readonly action: 'standing' | 'walking' | 'jumping' | 'cheering' | 'seated';
-  /** Metres walked on the floor since he last stood still or landed: how far along his walk he is. */
+  /**
+   * Metres walked on the floor since the stick man last stood still or landed: how far along the
+   * stick man's walk it is.
+   */
   readonly distanceWalked: number;
-  /** Metres per second, positive when he falls: how far along a jump he is. 0 on the floor. */
+  /**
+   * Metres per second, positive when the stick man falls: how far along a jump the stick man is. 0
+   * on the floor.
+   */
   readonly verticalSpeed: number;
-  /** Metres per second, positive to the right: how fast he went sideways this tick, walking, jumping or drifting as he falls off an edge. On the tick he lands it is still the speed he came down with. */
+  /**
+   * Metres per second, positive to the right: how fast the stick man went sideways this tick,
+   * walking, jumping or drifting as it falls off an edge. On the tick the stick man lands it is
+   * still the speed the stick man came down with.
+   */
   readonly horizontalSpeed: number;
-  /** True while he is in the air because he walked off an edge, and not because he jumped: the fall that has momentum. */
-  readonly fallingOffAnEdge: boolean;
-  /** Which way the sim believes the player wants to walk, whether or not he can right now. */
+  /**
+   * True while the stick man is in the air because it walked off an edge, and not because it
+   * jumped: the fall that has momentum.
+   */
+  readonly isFallingOffEdge: boolean;
+  /**
+   * Which way the sim believes the player wants to walk, whether or not the stick man can right
+   * now.
+   */
   readonly walkDirectionAsked: WalkDirection;
-  /** True while he holds something over his head with both hands (the airplane, as `airplaneOf` has it). */
-  readonly carrying: boolean;
+  /**
+   * True while the stick man holds something over the stick man's head with both hands (the
+   * airplane, as `getAirplane` has it).
+   */
+  readonly isCarrying: boolean;
 }
 
-export function stickManOf(handle: SimHandle): StickManView {
-  const sim = simBehind(handle);
-  const player = sim.stateOf(playerSlice);
+export function getStickMan(handle: SimHandle): StickManView {
+  const sim = getSimBehind(handle);
+  const player = sim.getStateOf(playerSlice);
   return {
     feet: { x: player.x, y: player.y },
     facing: player.facing,
-    action: player.seated ? 'seated' : !player.onFloor ? 'jumping' : standsCheering(sim) ? 'cheering' : walkDirectionNow(sim) !== 0 ? 'walking' : 'standing',
+    action: getAction(sim),
     distanceWalked: player.distanceWalked,
     verticalSpeed: player.verticalSpeed,
     horizontalSpeed: player.horizontalSpeed,
-    fallingOffAnEdge: isFallingOffAnEdge(player),
+    isFallingOffEdge: isFallingOffEdge(player),
     walkDirectionAsked: player.walkDirection,
-    carrying: player.carrying,
+    isCarrying: player.isCarrying,
   };
 }
 
-/** How he walks, jumps and falls right now: what the movement panel of a dev build shows and changes. */
-export function movementTuningOf(handle: SimHandle): MovementTuning {
-  return { ...simBehind(handle).stateOf(movementTuningSlice) };
+/**
+ * How the stick man walks, jumps and falls right now: what the movement panel of a dev build shows
+ * and changes.
+ */
+export function getMovementTuning(handle: SimHandle): MovementTuning {
+  return { ...getSimBehind(handle).getStateOf(movementTuningSlice) };
 }
 
 // ---- Helpers ----
 
+/** What the stick man is doing right now. Anything in the air counts as jumping. */
+function getAction(sim: Sim): StickManView['action'] {
+  const player = sim.getStateOf(playerSlice);
+  if (player.isSeated) {
+    return 'seated';
+  }
+  if (!player.isOnFloor) {
+    return 'jumping';
+  }
+  if (isStandingCheering(sim)) {
+    return 'cheering';
+  }
+  return getWalkDirectionNow(sim) === 0 ? 'standing' : 'walking';
+}
+
 /** Every SimHandle is a Sim: `createSim` and `restoreSim` are the only ways to get one. */
-function simBehind(handle: SimHandle): Sim {
-  if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
+function getSimBehind(handle: SimHandle): Sim {
+  if (!(handle instanceof Sim)) {
+    throw new TypeError('not a sim made by createSim or restoreSim');
+  }
   return handle;
 }

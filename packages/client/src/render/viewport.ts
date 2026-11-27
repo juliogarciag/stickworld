@@ -17,9 +17,10 @@ interface DevicePixelWindow {
 }
 
 /** The window measured in device pixels, as the canvas backing store must be. */
-function windowInDevicePixels(): DevicePixelWindow {
+function getWindowInDevicePixels(): DevicePixelWindow {
   const reported = window.devicePixelRatio;
-  const pixelRatio = Number.isFinite(reported) && reported > 0 ? reported : 1;
+  const isUsableRatio = Number.isFinite(reported) && reported > 0;
+  const pixelRatio = isUsableRatio ? reported : 1;
   return {
     width: Math.max(1, Math.round(window.innerWidth * pixelRatio)),
     height: Math.max(1, Math.round(window.innerHeight * pixelRatio)),
@@ -28,8 +29,8 @@ function windowInDevicePixels(): DevicePixelWindow {
 }
 
 /** Scale config that opens the game at the window's size. Pair with `keepCanvasAtWindowSize`. */
-export function windowViewportConfig(): Phaser.Types.Core.ScaleConfig {
-  const { width, height, pixelRatio } = windowInDevicePixels();
+export function getWindowViewportConfig(): Phaser.Types.Core.ScaleConfig {
+  const { width, height, pixelRatio } = getWindowInDevicePixels();
   return { mode: Phaser.Scale.NONE, width, height, zoom: 1 / pixelRatio };
 }
 
@@ -41,13 +42,18 @@ export function keepCanvasAtWindowSize(game: Phaser.Game): () => void {
   let stopWatchingPixelRatio: (() => void) | undefined;
 
   const fit = (): void => {
-    const { width, height, pixelRatio } = windowInDevicePixels();
+    const { width, height, pixelRatio } = getWindowInDevicePixels();
     stopWatchingPixelRatio?.();
     stopWatchingPixelRatio = watchPixelRatio(pixelRatio, fit);
     const zoom = 1 / pixelRatio;
-    const sizeChanged = game.scale.width !== width || game.scale.height !== height;
-    if (!sizeChanged && game.scale.zoom === zoom) return;
-    if (sizeChanged) game.scale.resize(width, height);
+    const hasSizeChanged = game.scale.width !== width || game.scale.height !== height;
+    const isAlreadyFitted = !hasSizeChanged && game.scale.zoom === zoom;
+    if (isAlreadyFitted) {
+      return;
+    }
+    if (hasSizeChanged) {
+      game.scale.resize(width, height);
+    }
     // Always after the resize: `setZoom` is what writes the canvas CSS size from the
     // game size; `resize` alone leaves it stale once the zoom is 1.
     game.scale.setZoom(zoom);
@@ -56,14 +62,21 @@ export function keepCanvasAtWindowSize(game: Phaser.Game): () => void {
   // The window event covers resizes and screen moves; watching the parent as
   // well catches a page laid out at 0x0 (hidden tab) that only gets its size later.
   const parent = game.scale.parent instanceof HTMLElement ? game.scale.parent : undefined;
-  const observer = parent && typeof ResizeObserver !== 'undefined' ? new ResizeObserver(fit) : undefined;
+  const canObserveParent = parent !== undefined && typeof ResizeObserver !== 'undefined';
+  const observer = canObserveParent ? new ResizeObserver(fit) : undefined;
   const start = (): void => {
     window.addEventListener('resize', fit);
-    if (observer && parent) observer.observe(parent);
+    const isObservingParent = observer !== undefined && parent !== undefined;
+    if (isObservingParent) {
+      observer.observe(parent);
+    }
     fit();
   };
-  if (game.isBooted) start();
-  else game.events.once(Phaser.Core.Events.READY, start);
+  if (game.isBooted) {
+    start();
+  } else {
+    game.events.once(Phaser.Core.Events.READY, start);
+  }
 
   return () => {
     observer?.disconnect();
@@ -72,7 +85,10 @@ export function keepCanvasAtWindowSize(game: Phaser.Game): () => void {
   };
 }
 
-/** Calls `onChange` once the pixel ratio stops being `pixelRatio`; the browser fires no resize event for that. Returns a function that stops. */
+/**
+ * Calls `onChange` once the pixel ratio stops being `pixelRatio`; the browser fires no resize event
+ * for that. Returns a function that stops.
+ */
 function watchPixelRatio(pixelRatio: number, onChange: () => void): () => void {
   const query = window.matchMedia(`(resolution: ${pixelRatio}dppx)`);
   query.addEventListener('change', onChange, { once: true });

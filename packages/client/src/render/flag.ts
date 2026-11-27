@@ -1,7 +1,7 @@
 import type { FlagView } from '@stickworld/sim';
 import type { Stroke } from './strokes';
 import { PENCIL } from './strokes/pencil';
-import { toPixels } from './units';
+import { convertToPixels } from './units';
 
 /** The flag's shape, as shares of the stick's height. View detail only. */
 const FLAG = {
@@ -13,21 +13,33 @@ const FLAG = {
   loweredBy: 0.42,
 } as const;
 
-/** The flag as pencil strokes in world pixels: a stick, and a triangle of cloth that is higher up it the more `raised` the flag is. */
-export function flagStrokes({ at, height, raised }: FlagView): Stroke[] {
-  const top = at.y - height;
-  const clothTop = top + height * (FLAG.gapAtTop + FLAG.loweredBy * (1 - raised));
+/**
+ * The flag as pencil strokes in world pixels: a stick, and a triangle of cloth that is higher up it
+ * the more `raised` the flag is.
+ */
+export function buildFlagStrokes(flag: FlagView): Stroke[] {
+  const top = flag.position.y - flag.height;
+  const clothTop = top + flag.height * (FLAG.gapAtTop + FLAG.loweredBy * (1 - flag.raised));
   const cloth = [
-    { x: at.x, y: clothTop },
-    { x: at.x + height * FLAG.clothLength, y: clothTop + (height * FLAG.clothHeight) / 2 },
-    { x: at.x, y: clothTop + height * FLAG.clothHeight },
+    { x: flag.position.x, y: clothTop },
+    {
+      x: flag.position.x + flag.height * FLAG.clothLength,
+      y: clothTop + (flag.height * FLAG.clothHeight) / 2,
+    },
+    { x: flag.position.x, y: clothTop + flag.height * FLAG.clothHeight },
   ];
   return [
-    { points: [at, { x: at.x, y: top }].map(inPixels), thickness: PENCIL.thickness },
-    { points: cloth.map(inPixels), thickness: PENCIL.thickness, closed: true },
+    {
+      points: [flag.position, { x: flag.position.x, y: top }].map(convertPointToPixels),
+      thickness: PENCIL.thickness,
+    },
+    { points: cloth.map(convertPointToPixels), thickness: PENCIL.thickness, isClosed: true },
   ];
 }
 
 // ---- Helpers ----
 
-const inPixels = (point: { x: number; y: number }): { x: number; y: number } => ({ x: toPixels(point.x), y: toPixels(point.y) });
+const convertPointToPixels = (point: { x: number; y: number }): { x: number; y: number } => ({
+  x: convertToPixels(point.x),
+  y: convertToPixels(point.y),
+});

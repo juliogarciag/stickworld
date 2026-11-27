@@ -13,8 +13,11 @@ export interface SimSnapshot {
   readonly slices: Readonly<Record<string, unknown>>;
 }
 
-/** A deep copy of plain JSON data. Anything that is not JSON (functions, Maps, undefined) is lost, which the snapshot tests catch. */
-export function copyOfJson<T>(value: T): T {
+/**
+ * A deep copy of plain JSON data. Anything that is not JSON (functions, Maps, undefined) is lost,
+ * which the snapshot tests catch.
+ */
+export function copyJson<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
 }
 
@@ -24,7 +27,7 @@ export function copyOfJson<T>(value: T): T {
  * tests and by `window.__game.hash()`.
  */
 export function hashSnapshot(snapshot: SimSnapshot): string {
-  const text = canonicalJson(snapshot);
+  const text = buildCanonicalJson(snapshot);
   // FNV-1a, 32 bits.
   let hash = 0x811c9dc5;
   for (let index = 0; index < text.length; index += 1) {
@@ -37,13 +40,16 @@ export function hashSnapshot(snapshot: SimSnapshot): string {
 // ---- Helpers ----
 
 /** JSON with every object's keys sorted, so two equal values always print the same. */
-function canonicalJson(value: unknown): string {
-  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(',')}]`;
-  if (typeof value === 'object' && value !== null) {
+function buildCanonicalJson(value: unknown): string {
+  if (Array.isArray(value)) {
+    return `[${value.map(buildCanonicalJson).join(',')}]`;
+  }
+  const isObject = typeof value === 'object' && value !== null;
+  if (isObject) {
     const entries = Object.entries(value as Record<string, unknown>)
       .filter(([, entry]) => entry !== undefined)
       .sort(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0));
-    return `{${entries.map(([key, entry]) => `${JSON.stringify(key)}:${canonicalJson(entry)}`).join(',')}}`;
+    return `{${entries.map(([key, entry]) => `${JSON.stringify(key)}:${buildCanonicalJson(entry)}`).join(',')}}`;
   }
   return JSON.stringify(value);
 }

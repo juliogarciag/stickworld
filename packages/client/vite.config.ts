@@ -5,12 +5,12 @@ import { defineConfig } from 'vitest/config';
 // free port starting at 5173. Only the shell environment is read here: Vite
 // does not load .env files while evaluating this config.
 const requested = Number.parseInt(process.env.PORT ?? '', 10);
-const pinned = Number.isInteger(requested) && requested > 0;
-const port = pinned ? requested : 5173;
+const isPinned = Number.isInteger(requested) && requested > 0;
+const port = isPinned ? requested : 5173;
 
 export default defineConfig({
-  server: { port, strictPort: pinned },
-  preview: { port, strictPort: pinned },
+  server: { port, strictPort: isPinned },
+  preview: { port, strictPort: isPinned },
   test: {
     name: 'client',
     environment: 'node',

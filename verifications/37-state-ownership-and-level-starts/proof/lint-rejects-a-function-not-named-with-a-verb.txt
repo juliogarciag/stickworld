@@ -1,0 +1,8 @@
+
+<repo>/packages/sim/src/proofOfTheVerbRule.ts
+  1:8   error  A function's name starts with a verb from VERBS in eslint.config.js (getFlag, buildFlagStrokes, isFlagReached). Rename it, or add the verb to the list  no-restricted-syntax
+  5:28  error  A function's name starts with a verb from VERBS in eslint.config.js (getFlag, buildFlagStrokes, isFlagReached). Rename it, or add the verb to the list  no-restricted-syntax
+  8:3   error  A function's name starts with a verb from VERBS in eslint.config.js (getFlag, buildFlagStrokes, isFlagReached). Rename it, or add the verb to the list  no-restricted-syntax
+
+✖ 3 problems (3 errors, 0 warnings)
+

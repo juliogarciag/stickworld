@@ -7,12 +7,18 @@ export interface ItemSlot {
   readonly slot: number;
   /** The def id of the item in the slot, or null when it is empty. */
   readonly itemDefId: number | null;
-  readonly selected: boolean;
+  readonly isSelected: boolean;
 }
 
 /** Every item slot the stick man has, in order, with what it holds and whether it is selected. */
-export function itemSlotsOf(handle: SimHandle): ItemSlot[] {
-  if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
-  const { slots, selectedSlot } = handle.stateOf(inventorySlice);
-  return slots.map((itemDefId, index) => ({ slot: index + 1, itemDefId, selected: selectedSlot === index + 1 }));
+export function getItemSlots(handle: SimHandle): ItemSlot[] {
+  if (!(handle instanceof Sim)) {
+    throw new TypeError('not a sim made by createSim or restoreSim');
+  }
+  const { slots, selectedSlot } = handle.getStateOf(inventorySlice);
+  return slots.map((itemDefId, index) => ({
+    slot: index + 1,
+    itemDefId,
+    isSelected: selectedSlot === index + 1,
+  }));
 }

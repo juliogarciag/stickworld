@@ -10,8 +10,8 @@ export interface CreateSimOptions {
 }
 
 /** A sim running every registered feature, at the start of `level`. */
-export function createSim({ level, seed = 1 }: CreateSimOptions): SimHandle {
-  return new Sim({ features, start: { seed, level } });
+export function createSim(options: CreateSimOptions): SimHandle {
+  return new Sim({ features, start: { seed: options.seed ?? 1, level: options.level } });
 }
 
 /** A sim that continues from `snapshot` exactly as the sim it was taken from would have. */

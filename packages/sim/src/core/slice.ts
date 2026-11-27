@@ -11,17 +11,28 @@ import type { Level } from '../content/levels/types';
 export interface StateSlice<T> {
   readonly key: string;
   /** The value this slice holds when a level starts. */
-  initialFor(level: Level): T;
-  /** True when starting or restarting a level keeps this slice's value instead of resetting it (the paper the player keeps from level 2). */
-  readonly carriesAcrossLevels: boolean;
+  getInitialFor(level: Level): T;
+  /**
+   * True when starting or restarting a level keeps this slice's value instead of resetting it (the
+   * paper the player keeps from level 2).
+   */
+  readonly isCarriedAcrossLevels: boolean;
 }
 
 export interface SliceOptions {
-  /** Keep the value when a level starts or restarts. Default false. */
-  readonly carriesAcrossLevels?: boolean;
+  /**
+   * True to keep the value when a level starts or restarts, false to go back to `getInitialFor`
+   * each time. Every slice says which, so that the line that declares new state shows what a death
+   * does to it.
+   */
+  readonly isCarriedAcrossLevels: boolean;
 }
 
 /** Declares a slice of state. `key` must be unique across features; use the feature's name. */
-export function defineSlice<T>(key: string, initialFor: (level: Level) => T, { carriesAcrossLevels = false }: SliceOptions = {}): StateSlice<T> {
-  return { key, initialFor, carriesAcrossLevels };
+export function defineSlice<T>(
+  key: string,
+  initialFor: (level: Level) => T,
+  options: SliceOptions,
+): StateSlice<T> {
+  return { key, getInitialFor: initialFor, isCarriedAcrossLevels: options.isCarriedAcrossLevels };
 }

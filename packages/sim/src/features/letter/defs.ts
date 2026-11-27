@@ -3,16 +3,24 @@ import { PAPER_AIRPLANE_RECIPE_ID } from '../crafting/defs';
 import { PAPER_ITEM_ID } from '../inventory/defs';
 
 /**
- * Letters: what a level leaves on the floor for him to read. Ids 300-399 are
+ * Letters: what a level leaves on the floor for the stick man to read. Ids 300-399 are
  * this feature's block in content/defs.ts. A new letter is a new entry here,
  * placed in a level by its id.
  */
 export interface LetterDef extends Def {
-  /** What it says: what to do, not how. It never names a key (which keys there are is the client's business), and what the keys do is shown beside them as it becomes possible. */
+  /**
+   * What it says: what to do, not how. It never names a key (which keys there are is the client's
+   * business), and what the keys do is shown beside them as it becomes possible.
+   */
   readonly text: string;
   /** The def id of the recipe that reading it teaches. */
   readonly teachesRecipe: number;
-  /** The def id of the item that reading it gives him when he has neither that item nor what the recipe makes of it. It is also what falls from the sky, where he stands, for him who has read it and lost both; a level that starts again for him gives what the recipe makes instead. */
+  /**
+   * The def id of the item that reading it gives the stick man when the stick man has neither that
+   * item nor what the recipe makes of it. It is also what falls from the sky, where the stick man
+   * stands, for the stick man who has read it and lost both; a level that starts again for the
+   * stick man gives what the recipe makes instead.
+   */
   readonly gives: number;
 }
 
@@ -30,15 +38,24 @@ export const letterDefs: readonly LetterDef[] = [
 ];
 
 /** The letter with this id, or undefined if none has it. */
-export function letterDef(id: number): LetterDef | undefined {
+export function getLetterDef(id: number): LetterDef | undefined {
   return letterDefs.find((def) => def.id === id);
 }
 
-/** How letters behave, and the item that falls from the sky in place of one he has read. Metres and seconds. */
+/**
+ * How letters behave, and the item that falls from the sky in place of one the stick man has read.
+ * Metres and seconds.
+ */
 export const LETTER = {
-  /** How close to it his feet have to be to read it, to go on reading, and to pick up the item that fell there. */
+  /**
+   * How close to it the stick man's feet have to be to read it, to go on reading, and to pick up
+   * the item that fell there.
+   */
   reach: 0.8,
-  /** How long after he has lost everything it was for, and is still alive, the item starts to fall. */
+  /**
+   * How long after the stick man has lost everything it was for, and is still alive, the item
+   * starts to fall.
+   */
   fallsAfter: 0.6,
   /** How high above the floor it starts: above the top of the screen. */
   fallsFromHeight: 8.5,
