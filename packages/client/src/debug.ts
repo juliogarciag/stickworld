@@ -1,5 +1,5 @@
-import type { AirplaneView, Command, CraftingView, Def, FallenItemView, FlagView, FlyingHint, GameView, InteractionMeaning, ItemSlot, ItemUseMeaning, LetterView, Level, MovementTuning, NoteView, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
-import { airplaneOf, craftingOf, defs, fallenItemOf, flagOf, flyingHintOf, gameOf, hashSnapshot, interactionOf, itemSlotsOf, itemUseOf, letterOf, levelOf, movementTuningOf, notesOf, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf } from '@stickworld/sim';
+import type { AirplaneView, CheckpointView, Command, CraftingView, Def, FallenItemView, FlagView, FlyingHint, GameView, InteractionMeaning, ItemSlot, ItemUseMeaning, LetterView, Level, MovementTuning, NoteView, SimHandle, SimSnapshot, StickManView } from '@stickworld/sim';
+import { airplaneOf, checkpointOf, craftingOf, defs, fallenItemOf, flagOf, flyingHintOf, gameOf, hashSnapshot, interactionOf, itemSlotsOf, itemUseOf, letterOf, levelOf, movementTuningOf, notesOf, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, stickManOf } from '@stickworld/sim';
 import type Phaser from 'phaser';
 import { itemSlotBox, type Rectangle } from './hud/itemSlots';
 import { MAX_FRAME_SECONDS } from './loop/frameSeconds';
@@ -43,6 +43,8 @@ export interface GameDebugApi {
   stickMan(): StickManView;
   /** The level's flag as the sim has it right now, or undefined when the level has none. */
   flag(): FlagView | undefined;
+  /** The level's checkpoint as the sim has it right now, or undefined when the level has none. */
+  checkpoint(): CheckpointView | undefined;
   /** Every item slot as the sim has it, with where the HUD draws its box on the page, in CSS pixels. Empty until the HUD scene runs. */
   itemSlots(): ShownItemSlot[];
   /** The level's letter as the sim has it right now, or undefined when there is none to read. */
@@ -131,6 +133,7 @@ export function exposeDebugApi({ loop, game, pageTurn }: { loop: GameLoop; game:
     ending: () => gameOf(loop.sim),
     stickMan: () => stickManOf(loop.sim),
     flag: () => flagOf(loop.sim),
+    checkpoint: () => checkpointOf(loop.sim),
     itemSlots: () => {
       if (!game.scene.isActive(HUD_SCENE)) return [];
       const seen = worldSeenBy(game.scene.getScene(HUD_SCENE).cameras.main);

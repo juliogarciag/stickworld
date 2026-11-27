@@ -1,9 +1,10 @@
-import { airplaneOf, fallenItemOf, flagOf, letterOf, levelOf, notesOf, stickManOf, type SimHandle } from '@stickworld/sim';
+import { airplaneOf, checkpointOf, fallenItemOf, flagOf, letterOf, levelOf, notesOf, stickManOf, type SimHandle } from '@stickworld/sim';
 import type Phaser from 'phaser';
 import { keptWhileUnchanged } from '../hud/unchanged';
 import { MOVE_KEY_NAMES } from '../input/playerKeys';
 import { airplanesEasedOverTime, airplaneStrokes, heightItTurnsAbout } from '../render/airplane';
 import { worldSeenBy } from '../render/cameraView';
+import { checkpointStrokes } from '../render/checkpoint';
 import { flagStrokes } from '../render/flag';
 import { floorStrokes } from '../render/floor';
 import { fallenPaperStrokes, letterStrokes } from '../render/letter';
@@ -30,7 +31,7 @@ export interface SheetNow {
 /**
  * One sheet of paper with a level drawn on it, in a scene of its own camera:
  * the paper, what is written on it (the level's name, its notes, the page
- * number), the floor line, the flag, the letter or the sheet of paper that
+ * number), the floor line, the flag, the checkpoint, the letter or the sheet of paper that
  * fell in its place, the airplane and the stick
  * man, each as the sim it is shown says it is. The level being played is one
  * of these, and so is the sheet that is turned away when a level is finished.
@@ -41,6 +42,7 @@ export class Sheet {
   private readonly pageNumber: StrokeLayer;
   private readonly floor: StrokeLayer;
   private readonly flag: StrokeLayer;
+  private readonly checkpoint: StrokeLayer;
   private readonly letter: StrokeLayer;
   private readonly airplane: StrokeLayer;
   private readonly stickMan: StrokeLayer;
@@ -55,6 +57,7 @@ export class Sheet {
     this.pageNumber = createStrokeLayer(scene);
     this.floor = createStrokeLayer(scene);
     this.flag = createStrokeLayer(scene);
+    this.checkpoint = createStrokeLayer(scene);
     this.letter = createStrokeLayer(scene);
     this.airplane = createStrokeLayer(scene);
     this.stickMan = createStrokeLayer(scene);
@@ -62,7 +65,7 @@ export class Sheet {
 
   /** Takes everything off the sheet: its layers have nothing to draw, or to redraw as they boil, until it is drawn again. */
   clear(): void {
-    for (const layer of [this.written, this.pageNumber, this.floor, this.flag, this.letter, this.airplane, this.stickMan]) layer.show(NOTHING);
+    for (const layer of [this.written, this.pageNumber, this.floor, this.flag, this.checkpoint, this.letter, this.airplane, this.stickMan]) layer.show(NOTHING);
   }
 
   /** Draws the sheet as the scene's camera sees it right now. Call after moving the camera, every frame. */
@@ -71,6 +74,7 @@ export class Sheet {
     const level = levelOf(sim);
     const stickMan = stickManOf(sim);
     const flag = flagOf(sim);
+    const checkpoint = checkpointOf(sim);
     const letter = letterOf(sim);
     const notes = notesOf(sim);
     const airplane = this.airplaneShownFor(airplaneOf(sim), seconds);
@@ -86,6 +90,7 @@ export class Sheet {
     this.pageNumber.show(this.strokesOfThePageNumber(JSON.stringify([level.id, seen]), () => pageNumberStrokes({ page: level.id, seen, zoomAtRest: zoomAtRest(camera) })));
     this.floor.show(floorStrokes(level));
     this.flag.show(flag ? flagStrokes(flag) : []);
+    this.checkpoint.show(checkpoint ? checkpointStrokes(checkpoint) : []);
     // One layer for both: the sheet only ever falls where a letter no longer lies.
     const fallenItem = fallenItemOf(sim);
     this.letter.show(letter ? letterStrokes(letter) : fallenItem ? fallenPaperStrokes(fallenItem) : []);
