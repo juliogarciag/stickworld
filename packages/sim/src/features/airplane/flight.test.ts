@@ -250,7 +250,7 @@ describe('a floor line', () => {
       sim.step();
     }
     expect(highest).toBeGreaterThan(0);
-    expect(stickManOf(sim)).toMatchObject({ action: 'standing', feet: level3.start });
+    expect(stickManOf(sim)).toMatchObject({ action: 'standing', feet: level3.checkpoint });
     expect(airplaneOf(sim)).toBeUndefined();
   });
 
@@ -265,7 +265,7 @@ describe('a floor line', () => {
       sim.step([{ type: 'player/walk', direction: 1 }, JUMP]);
       expect(stickManOf(sim).action).not.toBe('jumping');
     }
-    expect(stickManOf(sim)).toMatchObject({ feet: level3.start });
+    expect(stickManOf(sim)).toMatchObject({ feet: level3.checkpoint });
     expect(flagOf(sim)!.reached).toBe(false);
     expect(airplaneOf(sim)).toBeUndefined();
   });
@@ -281,7 +281,7 @@ describe('a floor line', () => {
     ];
     const states = collapsed(flown(sim, lateLanding).map((airplane) => airplane.state));
     expect(states.slice(-2)).toEqual(['landing', 'falling']);
-    expect(stickManOf(sim)).toMatchObject({ action: 'standing', feet: level3.start });
+    expect(stickManOf(sim)).toMatchObject({ action: 'standing', feet: level3.checkpoint });
     expect(airplaneOf(sim)).toBeUndefined();
   });
 });
@@ -305,7 +305,7 @@ describe('jumping out', () => {
 
     // No walk key held: he comes straight down into the gap, the level starts again and the airplane that flew on is gone.
     for (let tick = 0; tick < 5 * TICK_RATE && stickManOf(sim).action === 'jumping'; tick += 1) sim.step();
-    expect(stickManOf(sim)).toMatchObject({ action: 'standing', feet: level3.start });
+    expect(stickManOf(sim)).toMatchObject({ action: 'standing', feet: level3.checkpoint });
     expect(airplaneOf(sim)).toBeUndefined();
   });
 
@@ -348,7 +348,7 @@ describe('falling while flying', () => {
     }
     expect(deepest).toBeGreaterThan(FLIGHT.lostBelowFloor - 0.2);
     expect(deepest).toBeLessThanOrEqual(FLIGHT.lostBelowFloor);
-    expect(stickManOf(sim)).toMatchObject({ action: 'standing', feet: level3.start });
+    expect(stickManOf(sim)).toMatchObject({ action: 'standing', feet: level3.checkpoint });
     expect(sim.level).toBe(3);
     expect(airplaneOf(sim)).toBeUndefined();
     // He has read the letter, so he starts again with a new airplane in his hand and no letter has to fall.

@@ -21,6 +21,8 @@ export const level3: Level = {
     { from: { x: 19, y: 0 }, to: { x: 27, y: 0 } },
   ],
   start: { x: 2, y: 0 },
+  // Past the letter and short of where the airplane is set down: a retry begins a few steps from the edge.
+  checkpoint: { x: 7, y: 0 },
   placements: [
     { defId: AIRPLANE_LETTER_ID, at: { x: 3.6, y: 0 } },
     { defId: FLAG_DEF_ID, at: { x: 24, y: 0 } },

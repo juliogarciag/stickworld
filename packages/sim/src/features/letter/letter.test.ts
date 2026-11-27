@@ -8,6 +8,7 @@ import { features } from '..';
 import { hasAirplane } from '../airplane';
 import { AIRPLANE } from '../airplane/defs';
 import { airplaneOf } from '../airplane/view';
+import { checkpointOf } from '../checkpoint/view';
 import { recipeDef } from '../crafting/defs';
 import { craftingOf } from '../crafting/view';
 import { AIRPLANE_ITEM_ID, isItemDefId, PAPER_ITEM_ID } from '../inventory/defs';
@@ -97,8 +98,10 @@ describe('a level that starts again', () => {
     for (const [way, die] of WAYS_TO_DIE_WITHOUT_THE_AIRPLANE) {
       const sim = holdingTheAirplane();
       die(sim);
-      for (let tick = 0; tick < 20 * TICK_RATE && (airplaneOf(sim) || !sameSpot(stickManOf(sim).feet, level3.start)); tick += 1) sim.step();
-      expect(stickManOf(sim).feet, way).toEqual(level3.start);
+      // Some of these ways go past the level's checkpoint before he dies and some do not: either the level starts him at its start, or there.
+      const backWhereTheLevelStartsHim = (): boolean => sameSpot(stickManOf(sim).feet, checkpointOf(sim)!.passed ? level3.checkpoint! : level3.start);
+      for (let tick = 0; tick < 20 * TICK_RATE && (airplaneOf(sim) || !backWhereTheLevelStartsHim()); tick += 1) sim.step();
+      expect(backWhereTheLevelStartsHim(), way).toBe(true);
       expect(airplaneOf(sim), way).toBeUndefined();
       expect(itemSlotsOf(sim), way).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, selected: true }]);
       for (let tick = 0; tick < 5 * TICK_RATE; tick += 1) {
@@ -120,8 +123,8 @@ describe('a level that starts again', () => {
     for (let tick = 0; tick < 20 * TICK_RATE && !fallenItemOf(sim); tick += 1) sim.step();
     expect(fallenItemOf(sim)!.height).toBeGreaterThan(0);
     sim.step([{ type: 'player/walk', direction: 1 }]);
-    for (let tick = 0; tick < 5 * TICK_RATE && !sameSpot(stickManOf(sim).feet, level3.start); tick += 1) sim.step();
-    expect(stickManOf(sim).feet).toEqual(level3.start);
+    for (let tick = 0; tick < 5 * TICK_RATE && !sameSpot(stickManOf(sim).feet, level3.checkpoint!); tick += 1) sim.step();
+    expect(stickManOf(sim).feet).toEqual(level3.checkpoint);
     expect(letterOf(sim)).toBeUndefined();
     expect(fallenItemOf(sim)).toBeUndefined();
     expect(itemSlotsOf(sim)).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, selected: true }]);

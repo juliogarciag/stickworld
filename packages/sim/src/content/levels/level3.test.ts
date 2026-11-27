@@ -69,7 +69,7 @@ describe('level 3', () => {
     const { furthestStoodAt, restarted } = playToTheEnd(sim, [WALK_RIGHT_AT_0]);
     expect(furthestStoodAt).toBeLessThanOrEqual(GAP.from);
     expect(restarted).toBe(true);
-    expect(stickManOf(sim).feet).toEqual(level3.start);
+    expect(stickManOf(sim).feet).toEqual(level3.checkpoint);
   });
 
   it('is played as far as the edge: read the letter, fold the paper, set the airplane down, lift it, carry it and put it down on the edge', () => {
@@ -398,7 +398,7 @@ function putTheAirplaneOnTheEdge(sim: SimHandle): void {
 /** He is back at the start with the airplane as the item in his hand, none in the world, the flag not reached, and neither a letter there nor a sheet of paper on its way. */
 function expectTheLevelToHaveStartedAgainWithTheAirplaneInHisHand(sim: SimHandle): void {
   expect(sim.level).toBe(3);
-  expect(stickManOf(sim)).toMatchObject({ action: 'standing', feet: level3.start });
+  expect(stickManOf(sim)).toMatchObject({ action: 'standing', feet: level3.checkpoint });
   expect(airplaneOf(sim)).toBeUndefined();
   expect(itemSlotsOf(sim)).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, selected: true }]);
   expect(flagOf(sim)!.reached).toBe(false);

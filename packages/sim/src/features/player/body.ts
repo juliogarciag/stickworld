@@ -55,6 +55,17 @@ export function standHimUp(sim: Sim): void {
   player.distanceWalked = 0;
 }
 
+/**
+ * The level begins with him standing here instead of where the level's data starts him (a checkpoint he has passed).
+ * For a feature's `init` only: it moves a stick man who has just been set up, and leaves everything else about him as a
+ * level's start has it.
+ */
+export function beginHimAt(sim: Sim, at: { readonly x: number; readonly y: number }): void {
+  const player = sim.stateOf(playerSlice);
+  player.x = at.x;
+  player.y = at.y;
+}
+
 /** He holds something over his head with both hands from now on: his jump is the lower one and his arms are up. What it is belongs to the feature that says so. */
 export function startCarrying(sim: Sim): void {
   sim.stateOf(playerSlice).carrying = true;

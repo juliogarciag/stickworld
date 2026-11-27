@@ -34,3 +34,4 @@ export { airplaneOf, flyingHintOf, steeringAskedOf, type AirplaneView, type Flyi
 export type { GameCommand, GamePlayAgainCommand } from './features/game/commands';
 export { gameOf, type GameView } from './features/game/view';
 export { notesOf, type NoteView } from './features/note/view';
+export { checkpointOf, type CheckpointView } from './features/checkpoint/view';
