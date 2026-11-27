@@ -10,7 +10,17 @@ import type { HeldKeys } from './playerCommands';
  */
 export function watchPlayerKeys(scene: Phaser.Scene): () => HeldKeys {
   const keyboard = scene.input.keyboard;
-  if (!keyboard) return () => ({ isLeftHeld: false, isRightHeld: false, isUpHeld: false, isDownHeld: false, isJumpHeld: false, isJumpPressed: false, isUpPressed: false });
+  if (!keyboard) {
+    return () => ({
+      isLeftHeld: false,
+      isRightHeld: false,
+      isUpHeld: false,
+      isDownHeld: false,
+      isJumpHeld: false,
+      isJumpPressed: false,
+      isUpPressed: false,
+    });
+  }
   const { KeyCodes } = Phaser.Input.Keyboard;
   const left = [keyboard.addKey(KeyCodes.LEFT), keyboard.addKey(KeyCodes.A)];
   const right = [keyboard.addKey(KeyCodes.RIGHT), keyboard.addKey(KeyCodes.D)];
@@ -22,10 +32,15 @@ export function watchPlayerKeys(scene: Phaser.Scene): () => HeldKeys {
   // A repeat is not a press: Phaser forgets held keys when the window loses focus, and a key still held
   // when it comes back would otherwise jump by itself.
   const pressed = { jump: false, up: false };
-  const recordPresses = (keys: Phaser.Input.Keyboard.Key[], pressedKey: keyof typeof pressed): void => {
+  const recordPresses = (
+    keys: Phaser.Input.Keyboard.Key[],
+    pressedKey: keyof typeof pressed,
+  ): void => {
     for (const key of keys) {
       key.on('down', (_key: Phaser.Input.Keyboard.Key, event: KeyboardEvent) => {
-        if (!event.repeat) pressed[pressedKey] = true;
+        if (!event.repeat) {
+          pressed[pressedKey] = true;
+        }
       });
     }
   };
@@ -33,7 +48,15 @@ export function watchPlayerKeys(scene: Phaser.Scene): () => HeldKeys {
   recordPresses(up, 'up');
   const isAnyDown = (keys: Phaser.Input.Keyboard.Key[]): boolean => keys.some((key) => key.isDown);
   return () => {
-    const now = { isLeftHeld: isAnyDown(left), isRightHeld: isAnyDown(right), isUpHeld: isAnyDown(up), isDownHeld: isAnyDown(down), isJumpHeld: isAnyDown(jump), isJumpPressed: pressed.jump, isUpPressed: pressed.up };
+    const now = {
+      isLeftHeld: isAnyDown(left),
+      isRightHeld: isAnyDown(right),
+      isUpHeld: isAnyDown(up),
+      isDownHeld: isAnyDown(down),
+      isJumpHeld: isAnyDown(jump),
+      isJumpPressed: pressed.jump,
+      isUpPressed: pressed.up,
+    };
     pressed.jump = false;
     pressed.up = false;
     return now;

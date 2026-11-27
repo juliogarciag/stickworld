@@ -9,6 +9,10 @@ export const levels: readonly Level[] = [level1, level2, level3];
 /** The level with this id. Throws for an id no level has: asking for a level that does not exist is a bug in the caller. */
 export function getLevelById(id: number): Level {
   const level = levels.find((candidate) => candidate.id === id);
-  if (!level) throw new RangeError(`no level ${id}; the levels are ${levels.map((candidate) => candidate.id).join(', ')}`);
+  if (!level) {
+    throw new RangeError(
+      `no level ${id}; the levels are ${levels.map((candidate) => candidate.id).join(', ')}`,
+    );
+  }
   return level;
 }

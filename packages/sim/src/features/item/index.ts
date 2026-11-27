@@ -16,7 +16,9 @@ export const itemFeature: Feature = {
   name: 'item',
 
   handleCommand(sim, command) {
-    if (command.type !== 'item/use') return;
+    if (command.type !== 'item/use') {
+      return;
+    }
     getItemUseNow(sim)?.perform();
   },
 };
@@ -24,10 +26,14 @@ export const itemFeature: Feature = {
 /** What `'item/use'` would do right now, with the function that does it, or undefined when it would do nothing. */
 export function getItemUseNow(sim: Sim): ItemUse | undefined {
   // A letter the stick man reads fills the stick man's hands: it is put away by interacting, and until then no item is used.
-  if (isFlagReached(sim) || isReadingLetter(sim)) return undefined;
+  if (isFlagReached(sim) || isReadingLetter(sim)) {
+    return undefined;
+  }
   for (const answer of ANSWERS) {
     const use = answer(sim);
-    if (use) return use;
+    if (use) {
+      return use;
+    }
   }
   return undefined;
 }

@@ -34,11 +34,21 @@ export function buildWriting(text: string, place: WritingPlace): Written {
       const glyph = getGlyph(character);
       const left = x;
       x += glyph.width + WRITING.betweenLetters;
-      return glyph.paths.map((path) => ({ points: path.map((point) => ({ x: place.position.x + (left + point.x) * place.letterHeight, y: place.position.y + (lineIndex * WRITING.lineHeight + point.y) * place.letterHeight })), thickness }));
+      return glyph.paths.map((path) => ({
+        points: path.map((point) => ({
+          x: place.position.x + (left + point.x) * place.letterHeight,
+          y: place.position.y + (lineIndex * WRITING.lineHeight + point.y) * place.letterHeight,
+        })),
+        thickness,
+      }));
     });
   });
   const widest = Math.max(0, ...lines.map(measureWidth));
-  return { strokes, width: widest * place.letterHeight, height: (Math.max(0, lines.length - 1) * WRITING.lineHeight + 1) * place.letterHeight };
+  return {
+    strokes,
+    width: widest * place.letterHeight,
+    height: (Math.max(0, lines.length - 1) * WRITING.lineHeight + 1) * place.letterHeight,
+  };
 }
 
 // ---- Helpers ----
@@ -61,7 +71,10 @@ interface Glyph {
 /** How wide `line` is written, in capital heights. */
 function measureWidth(line: string): number {
   const letters = [...line];
-  return letters.reduce((width, character) => width + getGlyph(character).width, 0) + Math.max(0, letters.length - 1) * WRITING.betweenLetters;
+  return (
+    letters.reduce((width, character) => width + getGlyph(character).width, 0) +
+    Math.max(0, letters.length - 1) * WRITING.betweenLetters
+  );
 }
 
 /** `text` broken into lines no wider than `mostWidth` capital heights, at spaces. A single word wider than that keeps a line to itself. */
@@ -69,8 +82,11 @@ function wrapText(text: string, mostWidth: number): string[] {
   const lines: string[] = [];
   for (const word of text.split(/\s+/).filter((each) => each !== '')) {
     const last = lines[lines.length - 1];
-    if (last !== undefined && measureWidth(`${last} ${word}`) <= mostWidth) lines[lines.length - 1] = `${last} ${word}`;
-    else lines.push(word);
+    if (last !== undefined && measureWidth(`${last} ${word}`) <= mostWidth) {
+      lines[lines.length - 1] = `${last} ${word}`;
+    } else {
+      lines.push(word);
+    }
   }
   return lines;
 }
@@ -117,7 +133,10 @@ const GLYPHS: Readonly<Record<string, Glyph>> = {
   P: makeGlyph(0.58, BOWL),
   Q: makeGlyph(0.62, `${ROUND} | .36,.72 .62,1.04`),
   R: makeGlyph(0.6, `${BOWL} | .3,.54 .6,1`),
-  S: makeGlyph(0.58, '.56,.14 .4,0 .16,0 0,.14 0,.34 .14,.48 .44,.54 .58,.68 .58,.86 .42,1 .16,1 0,.86'),
+  S: makeGlyph(
+    0.58,
+    '.56,.14 .4,0 .16,0 0,.14 0,.34 .14,.48 .44,.54 .58,.68 .58,.86 .42,1 .16,1 0,.86',
+  ),
   T: makeGlyph(0.6, '0,0 .6,0 | .3,0 .3,1'),
   U: makeGlyph(0.6, '0,0 0,.8 .18,1 .42,1 .6,.8 .6,0'),
   V: makeGlyph(0.6, '0,0 .3,1 .6,0'),
@@ -128,12 +147,18 @@ const GLYPHS: Readonly<Record<string, Glyph>> = {
   '0': makeGlyph(0.6, ROUND),
   '1': makeGlyph(0.3, '0,.2 .2,0 .2,1'),
   '2': makeGlyph(0.6, '0,.18 .16,0 .42,0 .58,.18 .58,.4 0,1 .6,1'),
-  '3': makeGlyph(0.6, '0,.1 .2,0 .42,0 .58,.14 .58,.36 .4,.48 .2,.48 | .4,.48 .6,.62 .6,.86 .42,1 .18,1 0,.88'),
+  '3': makeGlyph(
+    0.6,
+    '0,.1 .2,0 .42,0 .58,.14 .58,.36 .4,.48 .2,.48 | .4,.48 .6,.62 .6,.86 .42,1 .18,1 0,.88',
+  ),
   '4': makeGlyph(0.6, '.45,1 .45,0 0,.68 .6,.68'),
   '5': makeGlyph(0.58, '.56,0 .06,0 0,.45 .36,.42 .58,.58 .58,.84 .4,1 .16,1 0,.88'),
   '6': makeGlyph(0.6, '.5,0 .22,.1 0,.45 0,.82 .18,1 .42,1 .6,.84 .6,.62 .42,.46 .18,.46 0,.6'),
   '7': makeGlyph(0.6, '0,0 .6,0 .22,1'),
-  '8': makeGlyph(0.6, '.3,.48 .1,.4 .04,.2 .2,0 .4,0 .56,.2 .5,.4 .3,.48 .06,.62 0,.84 .18,1 .42,1 .6,.84 .54,.62 .3,.48'),
+  '8': makeGlyph(
+    0.6,
+    '.3,.48 .1,.4 .04,.2 .2,0 .4,0 .56,.2 .5,.4 .3,.48 .06,.62 0,.84 .18,1 .42,1 .6,.84 .54,.62 .3,.48',
+  ),
   '9': makeGlyph(0.6, '.6,.4 .42,.54 .18,.54 0,.38 0,.16 .18,0 .42,0 .6,.16 .6,.55 .38,.9 .1,1'),
   '.': makeGlyph(0.1, '.03,.9 .07,1'),
   ',': makeGlyph(0.12, '.1,.88 .02,1.14'),

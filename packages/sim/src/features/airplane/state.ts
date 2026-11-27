@@ -28,7 +28,26 @@ export interface AirplaneState {
 }
 
 /** It starts each level out of the world: an airplane left on the floor is gone when the level starts again. */
-export const airplaneSlice = defineSlice<AirplaneState>('airplane', () => ({ isInWorld: false, x: 0, y: 0, facing: 1, isCarried: false, isFalling: false, verticalSpeed: 0, isFlying: false, isSliding: false, speed: 0, pitch: 0, steering: 0 }), { isCarriedAcrossLevels: false });
+export const airplaneSlice = defineSlice<AirplaneState>(
+  'airplane',
+  () => ({
+    isInWorld: false,
+    x: 0,
+    y: 0,
+    facing: 1,
+    isCarried: false,
+    isFalling: false,
+    verticalSpeed: 0,
+    isFlying: false,
+    isSliding: false,
+    speed: 0,
+    pitch: 0,
+    steering: 0,
+  }),
+  { isCarriedAcrossLevels: false },
+);
 
 /** True once the stick man has boarded an airplane since the level started: the stick man has found where one is boarded from, and is not told. It is false again when the level starts again, as a note is there again: one who fell may need telling a second time. */
-export const hasBoardedSlice = defineSlice<boolean>('hasBoarded', () => false, { isCarriedAcrossLevels: false });
+export const hasBoardedSlice = defineSlice<boolean>('hasBoarded', () => false, {
+  isCarriedAcrossLevels: false,
+});

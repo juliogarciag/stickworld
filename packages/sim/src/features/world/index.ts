@@ -16,23 +16,34 @@ export const worldFeature: Feature = {
   name: 'world',
 
   handleCommand(sim, command) {
-    if (command.type !== 'world/interact') return;
+    if (command.type !== 'world/interact') {
+      return;
+    }
     getInteractionNow(sim)?.perform();
   },
 };
 
 /** What `'world/interact'` would do right now, with the function that does it, or undefined when there is nothing to interact with. */
 export function getInteractionNow(sim: Sim): Interaction | undefined {
-  if (isFlagReached(sim)) return undefined;
+  if (isFlagReached(sim)) {
+    return undefined;
+  }
   for (const answer of ANSWERS) {
     const interaction = answer(sim);
-    if (interaction) return interaction;
+    if (interaction) {
+      return interaction;
+    }
   }
   return undefined;
 }
 
 /** Every interaction there is, most pressing first: the letter the stick man reads is put away, then what it has in its hands comes before what lies next to it. */
-const ANSWERS = [getLetterBeingRead, getAirplaneInteraction, getLetterInteraction, getFallenItemInteraction] as const;
+const ANSWERS = [
+  getLetterBeingRead,
+  getAirplaneInteraction,
+  getLetterInteraction,
+  getFallenItemInteraction,
+] as const;
 
 export type Interaction = NonNullable<ReturnType<(typeof ANSWERS)[number]>>;
 

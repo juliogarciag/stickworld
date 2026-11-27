@@ -46,8 +46,12 @@ export function keepCanvasAtWindowSize(game: Phaser.Game): () => void {
     stopWatchingPixelRatio = watchPixelRatio(pixelRatio, fit);
     const zoom = 1 / pixelRatio;
     const hasSizeChanged = game.scale.width !== width || game.scale.height !== height;
-    if (!hasSizeChanged && game.scale.zoom === zoom) return;
-    if (hasSizeChanged) game.scale.resize(width, height);
+    if (!hasSizeChanged && game.scale.zoom === zoom) {
+      return;
+    }
+    if (hasSizeChanged) {
+      game.scale.resize(width, height);
+    }
     // Always after the resize: `setZoom` is what writes the canvas CSS size from the
     // game size; `resize` alone leaves it stale once the zoom is 1.
     game.scale.setZoom(zoom);
@@ -56,14 +60,20 @@ export function keepCanvasAtWindowSize(game: Phaser.Game): () => void {
   // The window event covers resizes and screen moves; watching the parent as
   // well catches a page laid out at 0x0 (hidden tab) that only gets its size later.
   const parent = game.scale.parent instanceof HTMLElement ? game.scale.parent : undefined;
-  const observer = parent && typeof ResizeObserver !== 'undefined' ? new ResizeObserver(fit) : undefined;
+  const observer =
+    parent && typeof ResizeObserver !== 'undefined' ? new ResizeObserver(fit) : undefined;
   const start = (): void => {
     window.addEventListener('resize', fit);
-    if (observer && parent) observer.observe(parent);
+    if (observer && parent) {
+      observer.observe(parent);
+    }
     fit();
   };
-  if (game.isBooted) start();
-  else game.events.once(Phaser.Core.Events.READY, start);
+  if (game.isBooted) {
+    start();
+  } else {
+    game.events.once(Phaser.Core.Events.READY, start);
+  }
 
   return () => {
     observer?.disconnect();

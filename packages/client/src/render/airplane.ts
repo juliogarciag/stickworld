@@ -30,7 +30,10 @@ export interface ShownAirplane {
  * has caught up it is exactly where the sim says, and while it flies or lands
  * it always is: the stick man sits in it. View detail only.
  */
-export function easeAirplanesOverTime(): (airplane: AirplaneView | undefined, seconds: number) => ShownAirplane | undefined {
+export function easeAirplanesOverTime(): (
+  airplane: AirplaneView | undefined,
+  seconds: number,
+) => ShownAirplane | undefined {
   let shown: { position: Point; noseDown: number } | undefined;
   return (airplane, seconds) => {
     if (!airplane) {
@@ -44,11 +47,23 @@ export function easeAirplanesOverTime(): (airplane: AirplaneView | undefined, se
       const isInHands = airplane.state === 'resting' || airplane.state === 'carried';
       // Handled, it follows at its own pace; falling, it also keeps up with however fast it falls; flying and landing it is where the sim says.
       const reach = seconds * (HANDLING.speed + airplane.speed + Math.abs(airplane.verticalSpeed));
-      const position = isInHands || airplane.state === 'falling' ? moveTowards(shown.position, airplane.position, reach) : airplane.position;
+      const position =
+        isInHands || airplane.state === 'falling'
+          ? moveTowards(shown.position, airplane.position, reach)
+          : airplane.position;
       const turn = seconds * HANDLING.noseTurnRate;
-      shown = { position, noseDown: shown.noseDown + Math.max(-turn, Math.min(turn, noseDown - shown.noseDown)) };
+      shown = {
+        position,
+        noseDown: shown.noseDown + Math.max(-turn, Math.min(turn, noseDown - shown.noseDown)),
+      };
     }
-    return { position: shown.position, facing: airplane.facing, length: airplane.length, height: airplane.height, noseDown: shown.noseDown };
+    return {
+      position: shown.position,
+      facing: airplane.facing,
+      length: airplane.length,
+      height: airplane.height,
+      noseDown: shown.noseDown,
+    };
   };
 }
 
@@ -59,16 +74,29 @@ export function getPivotHeight(airplane: { height: number }): number {
 
 /** The strokes that draw the airplane, in world pixels: its outline, and the fold along its middle. */
 export function buildAirplaneStrokes(airplane: ShownAirplane): Stroke[] {
-  const middle = { x: airplane.position.x, y: airplane.position.y - getPivotHeight({ height: airplane.height }) };
+  const middle = {
+    x: airplane.position.x,
+    y: airplane.position.y - getPivotHeight({ height: airplane.height }),
+  };
   const getPartAt = (offset: { distanceAlong: number; up: number }): Point => {
-    const flat = { x: airplane.position.x + airplane.facing * offset.distanceAlong * airplane.length, y: airplane.position.y - offset.up * airplane.height };
+    const flat = {
+      x: airplane.position.x + airplane.facing * offset.distanceAlong * airplane.length,
+      y: airplane.position.y - offset.up * airplane.height,
+    };
     const angle = airplane.facing * airplane.noseDown;
     const x = flat.x - middle.x;
     const y = flat.y - middle.y;
-    return { x: convertToPixels(middle.x + x * Math.cos(angle) - y * Math.sin(angle)), y: convertToPixels(middle.y + x * Math.sin(angle) + y * Math.cos(angle)) };
+    return {
+      x: convertToPixels(middle.x + x * Math.cos(angle) - y * Math.sin(angle)),
+      y: convertToPixels(middle.y + x * Math.sin(angle) + y * Math.cos(angle)),
+    };
   };
   return [
-    { points: [DART.nose, DART.tailTop, DART.fold, DART.keel].map(getPartAt), thickness: PENCIL.thickness, isClosed: true },
+    {
+      points: [DART.nose, DART.tailTop, DART.fold, DART.keel].map(getPartAt),
+      thickness: PENCIL.thickness,
+      isClosed: true,
+    },
     { points: [DART.nose, DART.fold].map(getPartAt), thickness: PENCIL.thickness },
   ];
 }
@@ -77,8 +105,12 @@ export function buildAirplaneStrokes(airplane: ShownAirplane): Stroke[] {
 
 /** Where its nose points for what it is doing, in radians down: where the sim points it while it flies, further down the faster it falls, level otherwise. */
 function getNoseDown(airplane: AirplaneView): number {
-  if (airplane.state === 'flying') return -airplane.pitch;
-  if (airplane.state === 'falling') return Math.min(HANDLING.mostNoseDown, airplane.verticalSpeed * HANDLING.noseDownPerSpeed);
+  if (airplane.state === 'flying') {
+    return -airplane.pitch;
+  }
+  if (airplane.state === 'falling') {
+    return Math.min(HANDLING.mostNoseDown, airplane.verticalSpeed * HANDLING.noseDownPerSpeed);
+  }
   return 0;
 }
 
@@ -105,6 +137,11 @@ const HANDLING = {
 /** `from` moved towards `to` by at most `step`: `to` itself when it is within reach. */
 function moveTowards(start: Point, end: Point, step: number): Point {
   const distance = Math.hypot(end.x - start.x, end.y - start.y);
-  if (distance <= step) return end;
-  return { x: start.x + ((end.x - start.x) * step) / distance, y: start.y + ((end.y - start.y) * step) / distance };
+  if (distance <= step) {
+    return end;
+  }
+  return {
+    x: start.x + ((end.x - start.x) * step) / distance,
+    y: start.y + ((end.y - start.y) * step) / distance,
+  };
 }

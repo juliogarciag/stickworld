@@ -11,7 +11,13 @@ import { getItemSlots } from './view';
 describe('inventory', () => {
   it('starts with every slot empty and none selected', () => {
     const sim = createSimOnLevel(1);
-    expect(getItemSlots(sim)).toEqual(Array.from({ length: ITEM_SLOT_COUNT }, (_, index) => ({ slot: index + 1, itemDefId: null, isSelected: false })));
+    expect(getItemSlots(sim)).toEqual(
+      Array.from({ length: ITEM_SLOT_COUNT }, (_, index) => ({
+        slot: index + 1,
+        itemDefId: null,
+        isSelected: false,
+      })),
+    );
   });
 
   it('holds the paper in slot 1 once it is given, and the paper is a def', () => {
@@ -48,12 +54,15 @@ describe('inventory', () => {
     expect(getItemSlots(sim)[0]).toEqual({ slot: 1, itemDefId: null, isSelected: true });
   });
 
-  it.each([0, -1, 1.5, ITEM_SLOT_COUNT + 1, Number.NaN, Infinity, '1', null, undefined, {}, [1]])('ignores a select for slot %j', (slot) => {
-    const sim = createSimOnLevel(1);
-    const before = sim.takeSnapshot().slices;
-    sim.step([{ type: 'inventory/select', slot } as unknown as Command]);
-    expect(sim.takeSnapshot().slices).toEqual(before);
-  });
+  it.each([0, -1, 1.5, ITEM_SLOT_COUNT + 1, Number.NaN, Infinity, '1', null, undefined, {}, [1]])(
+    'ignores a select for slot %j',
+    (slot) => {
+      const sim = createSimOnLevel(1);
+      const before = sim.takeSnapshot().slices;
+      sim.step([{ type: 'inventory/select', slot } as unknown as Command]);
+      expect(sim.takeSnapshot().slices).toEqual(before);
+    },
+  );
 
   it('keeps what the stick man holds and what is selected when a level restarts and when the next one starts', () => {
     const sim = createSimOnLevel(1);

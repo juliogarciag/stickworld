@@ -31,20 +31,47 @@ export interface KeysAndWords {
 }
 
 /** The strokes of the boxed keys and their words, with how wide all of it came out. For each key its box, then its name; the words last. */
-export function buildKeysAndWords(keysAndWords: KeysAndWords): { strokes: Stroke[]; width: number } {
+export function buildKeysAndWords(keysAndWords: KeysAndWords): {
+  strokes: Stroke[];
+  width: number;
+} {
   const strokes: Stroke[] = [];
-  const letterTop = keysAndWords.position.y + (keysAndWords.sizes.keySide - keysAndWords.sizes.letterHeight) / 2;
+  const letterTop =
+    keysAndWords.position.y + (keysAndWords.sizes.keySide - keysAndWords.sizes.letterHeight) / 2;
   let x = keysAndWords.position.x;
   for (const key of keysAndWords.keys) {
-    const name = buildWriting(key, { position: { x: 0, y: 0 }, letterHeight: keysAndWords.sizes.letterHeight });
-    const box = { x, y: keysAndWords.position.y, width: Math.max(keysAndWords.sizes.keySide, name.width + 2 * keysAndWords.sizes.keyPadding), height: keysAndWords.sizes.keySide };
+    const name = buildWriting(key, {
+      position: { x: 0, y: 0 },
+      letterHeight: keysAndWords.sizes.letterHeight,
+    });
+    const box = {
+      x,
+      y: keysAndWords.position.y,
+      width: Math.max(keysAndWords.sizes.keySide, name.width + 2 * keysAndWords.sizes.keyPadding),
+      height: keysAndWords.sizes.keySide,
+    };
     strokes.push(
-      { points: [{ x: box.x, y: box.y }, { x: box.x + box.width, y: box.y }, { x: box.x + box.width, y: box.y + box.height }, { x: box.x, y: box.y + box.height }], thickness: Math.min(PENCIL.thickness, keysAndWords.sizes.keySide * BOX_THICKNESS), isClosed: true },
-      ...buildWriting(key, { position: { x: box.x + (box.width - name.width) / 2, y: letterTop }, letterHeight: keysAndWords.sizes.letterHeight }).strokes,
+      {
+        points: [
+          { x: box.x, y: box.y },
+          { x: box.x + box.width, y: box.y },
+          { x: box.x + box.width, y: box.y + box.height },
+          { x: box.x, y: box.y + box.height },
+        ],
+        thickness: Math.min(PENCIL.thickness, keysAndWords.sizes.keySide * BOX_THICKNESS),
+        isClosed: true,
+      },
+      ...buildWriting(key, {
+        position: { x: box.x + (box.width - name.width) / 2, y: letterTop },
+        letterHeight: keysAndWords.sizes.letterHeight,
+      }).strokes,
     );
     x += box.width + keysAndWords.sizes.keyGap;
   }
-  const said = buildWriting(keysAndWords.words, { position: { x, y: letterTop }, letterHeight: keysAndWords.sizes.letterHeight });
+  const said = buildWriting(keysAndWords.words, {
+    position: { x, y: letterTop },
+    letterHeight: keysAndWords.sizes.letterHeight,
+  });
   strokes.push(...said.strokes);
   return { strokes, width: x + said.width - keysAndWords.position.x };
 }

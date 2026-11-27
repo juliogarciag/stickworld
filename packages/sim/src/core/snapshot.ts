@@ -38,7 +38,9 @@ export function hashSnapshot(snapshot: SimSnapshot): string {
 
 /** JSON with every object's keys sorted, so two equal values always print the same. */
 function buildCanonicalJson(value: unknown): string {
-  if (Array.isArray(value)) return `[${value.map(buildCanonicalJson).join(',')}]`;
+  if (Array.isArray(value)) {
+    return `[${value.map(buildCanonicalJson).join(',')}]`;
+  }
   if (typeof value === 'object' && value !== null) {
     const entries = Object.entries(value as Record<string, unknown>)
       .filter(([, entry]) => entry !== undefined)

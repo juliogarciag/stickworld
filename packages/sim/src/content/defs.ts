@@ -37,7 +37,9 @@ export function getDef(id: number): Def | undefined {
 function assertUniqueIds(list: readonly Def[]): void {
   const seen = new Set<number>();
   for (const def of list) {
-    if (seen.has(def.id)) throw new Error(`two defs claim id ${def.id}`);
+    if (seen.has(def.id)) {
+      throw new Error(`two defs claim id ${def.id}`);
+    }
     seen.add(def.id);
   }
 }

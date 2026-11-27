@@ -26,15 +26,27 @@ export function buildCheckpointStrokes(checkpoint: CheckpointView): Stroke[] {
     { x: middle.x - reach, y: middle.y },
   ];
   const strokes: Stroke[] = [
-    { points: [base, { x: base.x, y: base.y - pegHeight }].map(convertPointToPixels), thickness: PENCIL.thickness },
+    {
+      points: [base, { x: base.x, y: base.y - pegHeight }].map(convertPointToPixels),
+      thickness: PENCIL.thickness,
+    },
     { points: diamond.map(convertPointToPixels), thickness: PENCIL.thickness, isClosed: true },
   ];
-  if (!checkpoint.isPassed) return strokes;
+  if (!checkpoint.isPassed) {
+    return strokes;
+  }
   const lowest = { x: base.x, y: middle.y - reach - tickAbove };
-  const tick = [{ x: lowest.x - tickShortArm, y: lowest.y - tickShortArm }, lowest, { x: lowest.x + tickLongArm, y: lowest.y - tickLongArm }];
+  const tick = [
+    { x: lowest.x - tickShortArm, y: lowest.y - tickShortArm },
+    lowest,
+    { x: lowest.x + tickLongArm, y: lowest.y - tickLongArm },
+  ];
   return [...strokes, { points: tick.map(convertPointToPixels), thickness: PENCIL.thickness }];
 }
 
 // ---- Helpers ----
 
-const convertPointToPixels = (point: { x: number; y: number }): { x: number; y: number } => ({ x: convertToPixels(point.x), y: convertToPixels(point.y) });
+const convertPointToPixels = (point: { x: number; y: number }): { x: number; y: number } => ({
+  x: convertToPixels(point.x),
+  y: convertToPixels(point.y),
+});

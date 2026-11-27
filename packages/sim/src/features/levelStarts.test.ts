@@ -50,7 +50,10 @@ describe('a level started by the game itself', () => {
     }
     expect(seen[seen.length - 1]).toMatchObject({ level: 1, hasReachedFlag: true });
     expect(getTickFlagWasReached(sim)).toBeNull();
-    expect(getPlayerBody(sim)).toMatchObject({ x: getLevelById(2).start.x, y: getLevelById(2).start.y });
+    expect(getPlayerBody(sim)).toMatchObject({
+      x: getLevelById(2).start.x,
+      y: getLevelById(2).start.y,
+    });
     sim.step();
     expect(seen[seen.length - 1]).toMatchObject({ level: 2, hasReachedFlag: false });
   });
@@ -71,7 +74,15 @@ function createSimWithWitness(level: number): { sim: Sim; seen: Seen[] } {
   const seen: Seen[] = [];
   const witnessFeature: Feature = {
     name: 'witness',
-    update: (sim) => void seen.push({ level: sim.level, y: getPlayerBody(sim).y, hasReachedFlag: getTickFlagWasReached(sim) !== null }),
+    update: (sim) =>
+      void seen.push({
+        level: sim.level,
+        y: getPlayerBody(sim).y,
+        hasReachedFlag: getTickFlagWasReached(sim) !== null,
+      }),
   };
-  return { sim: new Sim({ features: [...features, witnessFeature], start: { seed: 1, level } }), seen };
+  return {
+    sim: new Sim({ features: [...features, witnessFeature], start: { seed: 1, level } }),
+    seen,
+  };
 }

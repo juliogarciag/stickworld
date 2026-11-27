@@ -19,16 +19,23 @@ export const checkpointFeature: Feature = {
     const checkpointPosition = sim.levelDef.checkpoint;
     // The slice survives every level start, so that a death keeps the checkpoint. It also survives the start of a
     // different level, so a checkpoint passed on another level is cleared here.
-    if (state.passedOnLevel !== sim.level || !checkpointPosition) state.passedOnLevel = null;
-    else startPlayerAt(sim, checkpointPosition);
+    if (state.passedOnLevel !== sim.level || !checkpointPosition) {
+      state.passedOnLevel = null;
+    } else {
+      startPlayerAt(sim, checkpointPosition);
+    }
   },
 
   update(sim) {
     const checkpointPosition = sim.levelDef.checkpoint;
-    if (!checkpointPosition || hasPassedCheckpoint(sim)) return;
+    if (!checkpointPosition || hasPassedCheckpoint(sim)) {
+      return;
+    }
     const player = getPlayerBody(sim);
     // Only standing on the floor counts: flying or jumping over the checkpoint does not pass it.
-    if (player.isOnFloor && player.x >= checkpointPosition.x) sim.getStateOf(checkpointSlice).passedOnLevel = sim.level;
+    if (player.isOnFloor && player.x >= checkpointPosition.x) {
+      sim.getStateOf(checkpointSlice).passedOnLevel = sim.level;
+    }
   },
 };
 

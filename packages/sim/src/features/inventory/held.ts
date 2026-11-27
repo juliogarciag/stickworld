@@ -23,7 +23,9 @@ export function isHoldingItem(sim: Sim, itemDefId: number): boolean {
 export function selectItem(sim: Sim, itemDefId: number): boolean {
   const inventory = sim.getStateOf(inventorySlice);
   const index = inventory.slots.indexOf(itemDefId);
-  if (index === -1) return false;
+  if (index === -1) {
+    return false;
+  }
   inventory.selectedSlot = index + 1;
   return true;
 }
@@ -34,7 +36,9 @@ export function selectItem(sim: Sim, itemDefId: number): boolean {
  */
 export function replaceSelectedItem(sim: Sim, itemDefId: number | null): boolean {
   const { slots, selectedSlot } = sim.getStateOf(inventorySlice);
-  if (selectedSlot === null || (itemDefId !== null && !isItemDefId(itemDefId))) return false;
+  if (selectedSlot === null || (itemDefId !== null && !isItemDefId(itemDefId))) {
+    return false;
+  }
   slots[selectedSlot - 1] = itemDefId;
   return true;
 }

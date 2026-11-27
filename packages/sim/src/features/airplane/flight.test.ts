@@ -31,7 +31,12 @@ describe('boarding', () => {
     expect(airplane.speed).toBeCloseTo(FLIGHT.launchSpeed, 0);
     expect(airplane.position.x).toBeGreaterThan(resting.position.x);
     expect(airplane.position.y).toBeLessThan(resting.position.y);
-    expect(getStickMan(sim)).toMatchObject({ action: 'seated', feet: airplane.position, facing: 1, isCarrying: false });
+    expect(getStickMan(sim)).toMatchObject({
+      action: 'seated',
+      feet: airplane.position,
+      facing: 1,
+      isCarrying: false,
+    });
     expect(getInteraction(sim)).toBeNull();
   });
 
@@ -43,19 +48,28 @@ describe('boarding', () => {
     for (let tick = 0; tick < 30; tick += 1) {
       sim.step();
       const airplane = getAirplane(sim)!;
-      expect(getStickMan(sim)).toMatchObject({ action: 'seated', feet: airplane.position, facing: 1 });
+      expect(getStickMan(sim)).toMatchObject({
+        action: 'seated',
+        feet: airplane.position,
+        facing: 1,
+      });
       expect(airplane.position.x).toBeGreaterThan(previousX);
       previousX = airplane.position.x;
     }
   });
 
   it('is not undone by a jump that arrives on the same tick, before or after the interaction: the stick man stays seated', () => {
-    for (const commands of [[INTERACT, JUMP], [JUMP, INTERACT]]) {
+    for (const commands of [
+      [INTERACT, JUMP],
+      [JUMP, INTERACT],
+    ]) {
       const sim = createSimReadyToBoard();
       sim.step(commands);
       expect(getStickMan(sim).action).toBe('seated');
       expect(getAirplane(sim)!.state).toBe('flying');
-      for (let tick = 0; tick < 10; tick += 1) sim.step();
+      for (let tick = 0; tick < 10; tick += 1) {
+        sim.step();
+      }
       expect(getStickMan(sim).action).toBe('seated');
       // The next jump is the stick man's own: it takes the stick man out.
       sim.step([JUMP]);
@@ -81,23 +95,33 @@ describe('the glide', () => {
     const before = getAirplane(sim)!;
     const ticks = 20;
     sim.step([STEER_UP]);
-    for (let tick = 1; tick < ticks; tick += 1) sim.step();
+    for (let tick = 1; tick < ticks; tick += 1) {
+      sim.step();
+    }
     const after = getAirplane(sim)!;
     const climbed = before.position.y - after.position.y;
     expect(climbed).toBeGreaterThan(0.5);
-    expect(before.speed - after.speed).toBeCloseTo(climbed * FLIGHT.speedLostPerMetreClimbed + (ticks / TICK_RATE) * FLIGHT.speedLostPerSecond, 6);
+    expect(before.speed - after.speed).toBeCloseTo(
+      climbed * FLIGHT.speedLostPerMetreClimbed + (ticks / TICK_RATE) * FLIGHT.speedLostPerSecond,
+      6,
+    );
   });
 
   it('gives speed back for every metre dived, less than the climb cost', () => {
     const sim = createSimFlyingHighNoseDown();
     const before = getAirplane(sim)!;
     const ticks = 15;
-    for (let tick = 0; tick < ticks; tick += 1) sim.step();
+    for (let tick = 0; tick < ticks; tick += 1) {
+      sim.step();
+    }
     const after = getAirplane(sim)!;
     const dived = after.position.y - before.position.y;
     expect(dived).toBeGreaterThan(0.2);
     expect(after.speed).toBeGreaterThan(before.speed);
-    expect(after.speed - before.speed).toBeCloseTo(dived * FLIGHT.speedGainedPerMetreDived - (ticks / TICK_RATE) * FLIGHT.speedLostPerSecond, 6);
+    expect(after.speed - before.speed).toBeCloseTo(
+      dived * FLIGHT.speedGainedPerMetreDived - (ticks / TICK_RATE) * FLIGHT.speedLostPerSecond,
+      6,
+    );
     expect(FLIGHT.speedGainedPerMetreDived).toBeLessThan(FLIGHT.speedLostPerMetreClimbed);
   });
 
@@ -108,8 +132,14 @@ describe('the glide', () => {
     sim.step([STEER_UP]);
     const after = getAirplane(sim)!;
     expect(after.pitch).toBeCloseTo(before.pitch + FLIGHT.pitchRate / TICK_RATE, 9);
-    expect(after.position.x - before.position.x).toBeCloseTo((before.speed * Math.cos(after.pitch)) / TICK_RATE, 9);
-    expect(before.position.y - after.position.y).toBeCloseTo((before.speed * Math.sin(after.pitch)) / TICK_RATE, 9);
+    expect(after.position.x - before.position.x).toBeCloseTo(
+      (before.speed * Math.cos(after.pitch)) / TICK_RATE,
+      9,
+    );
+    expect(before.position.y - after.position.y).toBeCloseTo(
+      (before.speed * Math.sin(after.pitch)) / TICK_RATE,
+      9,
+    );
   });
 
   it('turns its nose no further than the steepest climb and the steepest dive', () => {
@@ -122,7 +152,9 @@ describe('the glide', () => {
     const diving = createSimReadyToBoard();
     diving.step([INTERACT]);
     diving.step([STEER_DOWN]);
-    expect(Math.min(...recordDuringFlight(diving, (airplane) => airplane.pitch))).toBe(FLIGHT.steepestDive);
+    expect(Math.min(...recordDuringFlight(diving, (airplane) => airplane.pitch))).toBe(
+      FLIGHT.steepestDive,
+    );
   });
 
   it('left alone, sinks its nose to where it rests and glides down from there', () => {
@@ -138,7 +170,9 @@ describe('the glide', () => {
     const sim = createSimReadyToBoard();
     sim.step([INTERACT]);
     sim.step([STEER_DOWN]);
-    expect(Math.max(...recordDuringFlight(sim, (airplane) => airplane.speed))).toBeLessThanOrEqual(FLIGHT.fastestSpeed);
+    expect(Math.max(...recordDuringFlight(sim, (airplane) => airplane.speed))).toBeLessThanOrEqual(
+      FLIGHT.fastestSpeed,
+    );
   });
 
   it('stalls below the stall speed: it stops flying and falls, with the stick man still in it', () => {
@@ -158,7 +192,10 @@ describe('the glide', () => {
       sim.step([tick % 2 === 0 ? STEER_UP : STEER_DOWN]);
       const airplane = getAirplane(sim)!;
       expect(airplane.state).toBe('falling');
-      expect(airplane.verticalSpeed - previous.verticalSpeed).toBeCloseTo(AIRPLANE.gravity / TICK_RATE, 9);
+      expect(airplane.verticalSpeed - previous.verticalSpeed).toBeCloseTo(
+        AIRPLANE.gravity / TICK_RATE,
+        9,
+      );
       expect(getStickMan(sim)).toMatchObject({ action: 'seated', feet: airplane.position });
       previous = airplane;
     }
@@ -170,7 +207,13 @@ describe("'airplane/steer'", () => {
     const sim = createSimReadyToBoard();
     sim.step([STEER_UP]);
     expect(getSteeringAsked(sim)).toBe(1);
-    const malformed = [{ type: 'airplane/steer' }, { type: 'airplane/steer', direction: 2 }, { type: 'airplane/steer', direction: 'up' }, { type: 'airplane/steer', direction: null }, { type: 'airplane/steer', direction: 0.5 }];
+    const malformed = [
+      { type: 'airplane/steer' },
+      { type: 'airplane/steer', direction: 2 },
+      { type: 'airplane/steer', direction: 'up' },
+      { type: 'airplane/steer', direction: null },
+      { type: 'airplane/steer', direction: 0.5 },
+    ];
     for (const command of malformed) {
       sim.step([command as unknown as Command]);
       expect(getSteeringAsked(sim)).toBe(1);
@@ -185,7 +228,9 @@ describe("'airplane/steer'", () => {
     const sim = createSimReadyToBoard();
     const resting = getAirplane(sim);
     sim.step([STEER_UP]);
-    for (let tick = 0; tick < 30; tick += 1) sim.step();
+    for (let tick = 0; tick < 30; tick += 1) {
+      sim.step();
+    }
     expect(getAirplane(sim)).toEqual(resting);
     expect(getStickMan(sim).action).toBe('standing');
   });
@@ -199,7 +244,13 @@ describe('landing', () => {
     expect(collapseRepeats(states)).toEqual(['flying', 'landing', 'resting']);
 
     const airplane = getAirplane(sim)!;
-    expect(airplane).toMatchObject({ state: 'resting', speed: 0, pitch: 0, verticalSpeed: 0, position: { y: 0 } });
+    expect(airplane).toMatchObject({
+      state: 'resting',
+      speed: 0,
+      pitch: 0,
+      verticalSpeed: 0,
+      position: { y: 0 },
+    });
     expect(airplane.position.x).toBeGreaterThan(FAR_SIDE);
     expect(getStickMan(sim)).toMatchObject({ action: 'standing', feet: airplane.position });
     // It is an airplane on the floor like any other: the stick man can lift it again.
@@ -209,10 +260,15 @@ describe('landing', () => {
   it('loses its speed by the tuning value while it slides, with the stick man still seated', () => {
     const sim = createSimReadyToBoard();
     sim.step([INTERACT]);
-    const sliding = recordFlight(sim, FLIGHT_THAT_CROSSES).filter((airplane) => airplane.state === 'landing');
+    const sliding = recordFlight(sim, FLIGHT_THAT_CROSSES).filter(
+      (airplane) => airplane.state === 'landing',
+    );
     expect(sliding.length).toBeGreaterThan(5);
     for (let index = 1; index < sliding.length; index += 1) {
-      expect(sliding[index - 1]!.speed - sliding[index]!.speed).toBeCloseTo(FLIGHT.landingSlowdown / TICK_RATE, 9);
+      expect(sliding[index - 1]!.speed - sliding[index]!.speed).toBeCloseTo(
+        FLIGHT.landingSlowdown / TICK_RATE,
+        9,
+      );
       expect(sliding[index]!.position.y).toBe(0);
     }
   });
@@ -222,12 +278,21 @@ describe('landing', () => {
     sim.step([INTERACT]);
     const flag = findFlagPlacedIn(level3)!;
     let hasPassedFlagSeated = false;
-    for (const command of [STEER_UP, ...Array.from({ length: 41 }, () => undefined), STEER_LEVEL, ...Array.from({ length: 400 }, () => undefined)]) {
+    for (const command of [
+      STEER_UP,
+      ...Array.from({ length: 41 }, () => undefined),
+      STEER_LEVEL,
+      ...Array.from({ length: 400 }, () => undefined),
+    ]) {
       sim.step(command ? [command] : []);
       const { action, feet } = getStickMan(sim);
-      if (action !== 'seated') break;
+      if (action !== 'seated') {
+        break;
+      }
       expect(getFlag(sim)!.isReached).toBe(false);
-      if (Math.abs(feet.x - flag.position.x) <= flagDef.reach && feet.y > -flagDef.height) hasPassedFlagSeated = true;
+      if (Math.abs(feet.x - flag.position.x) <= flagDef.reach && feet.y > -flagDef.height) {
+        hasPassedFlagSeated = true;
+      }
     }
     expect(hasPassedFlagSeated).toBe(true);
     expect(getStickMan(sim).action).toBe('standing');
@@ -241,7 +306,9 @@ describe('a floor line', () => {
     const sim = createSimReadyToBoard();
     sim.step([INTERACT]);
     // Left alone it sinks under the far line; then the nose is held up.
-    for (let tick = 0; tick < 600 && getAirplane(sim)!.position.x < FAR_SIDE; tick += 1) sim.step();
+    for (let tick = 0; tick < 600 && getAirplane(sim)!.position.x < FAR_SIDE; tick += 1) {
+      sim.step();
+    }
     expect(getAirplane(sim)!.position.y).toBeGreaterThan(0);
     sim.step([STEER_UP]);
     let highest = Infinity;
@@ -259,7 +326,9 @@ describe('a floor line', () => {
     sim.step([INTERACT]);
     // A climb too short to cross: it passes under the far edge.
     sim.step([STEER_UP]);
-    for (let tick = 1; tick < 600 && getAirplane(sim)!.position.x < FAR_SIDE + 0.5; tick += 1) sim.step(tick === 14 ? [STEER_LEVEL] : []);
+    for (let tick = 1; tick < 600 && getAirplane(sim)!.position.x < FAR_SIDE + 0.5; tick += 1) {
+      sim.step(tick === 14 ? [STEER_LEVEL] : []);
+    }
     expect(getAirplane(sim)!.position.y).toBeGreaterThan(0);
     for (let tick = 0; tick < 10 * TICK_RATE && getStickMan(sim).action === 'seated'; tick += 1) {
       sim.step([{ type: 'player/walk', direction: 1 }, JUMP]);
@@ -279,7 +348,9 @@ describe('a floor line', () => {
       { atTick: 95, command: STEER_UP },
       { atTick: 125, command: STEER_LEVEL },
     ];
-    const states = collapseRepeats(recordFlight(sim, lateLanding).map((airplane) => airplane.state));
+    const states = collapseRepeats(
+      recordFlight(sim, lateLanding).map((airplane) => airplane.state),
+    );
     expect(states.slice(-2)).toEqual(['landing', 'falling']);
     expect(getStickMan(sim)).toMatchObject({ action: 'standing', feet: level3.checkpoint });
     expect(getAirplane(sim)).toBeUndefined();
@@ -290,12 +361,17 @@ describe('jumping out', () => {
   it("stands the stick man up and jumps the stick man out of the stick man's seat; the airplane falls on without the stick man", () => {
     const sim = createSimReadyToBoard();
     sim.step([INTERACT]);
-    for (let tick = 0; tick < 25; tick += 1) sim.step();
+    for (let tick = 0; tick < 25; tick += 1) {
+      sim.step();
+    }
     const seatedAt = getStickMan(sim).feet;
     const flying = getAirplane(sim)!;
     sim.step([{ type: 'player/jump' }]);
     expect(getStickMan(sim)).toMatchObject({ action: 'jumping', isFallingOffEdge: false });
-    expect(getStickMan(sim).verticalSpeed).toBeCloseTo(-Math.sqrt(2 * PLAYER.riseGravity * PLAYER.jumpHeight) + PLAYER.riseGravity / TICK_RATE, 9);
+    expect(getStickMan(sim).verticalSpeed).toBeCloseTo(
+      -Math.sqrt(2 * PLAYER.riseGravity * PLAYER.jumpHeight) + PLAYER.riseGravity / TICK_RATE,
+      9,
+    );
     expect(getStickMan(sim).feet.y).toBeLessThan(seatedAt.y);
     const unmanned = getAirplane(sim)!;
     expect(unmanned.state).toBe('falling');
@@ -304,7 +380,9 @@ describe('jumping out', () => {
     expect(unmanned.position.x).toBeGreaterThan(flying.position.x);
 
     // No walk key held: the stick man comes straight down into the gap, the level starts again and the airplane that flew on is gone.
-    for (let tick = 0; tick < 5 * TICK_RATE && getStickMan(sim).action === 'jumping'; tick += 1) sim.step();
+    for (let tick = 0; tick < 5 * TICK_RATE && getStickMan(sim).action === 'jumping'; tick += 1) {
+      sim.step();
+    }
     expect(getStickMan(sim)).toMatchObject({ action: 'standing', feet: level3.checkpoint });
     expect(getAirplane(sim)).toBeUndefined();
   });
@@ -313,7 +391,9 @@ describe('jumping out', () => {
     const sim = createSimReadyToBoard();
     sim.step([INTERACT]);
     sim.step([{ type: 'player/walk', direction: -1 }, { type: 'player/jump' }]);
-    for (let tick = 0; tick < 12 * TICK_RATE && !getFallenItem(sim); tick += 1) sim.step();
+    for (let tick = 0; tick < 12 * TICK_RATE && !getFallenItem(sim); tick += 1) {
+      sim.step();
+    }
     expect(getStickMan(sim).feet.x).toBeLessThanOrEqual(EDGE);
     expect(hasAirplane(sim)).toBe(false);
     expect(getFallenItem(sim)!.height).toBeGreaterThan(0);
@@ -323,10 +403,14 @@ describe('jumping out', () => {
     const sim = createSimReadyToBoard();
     sim.step([INTERACT]);
     sim.step([STEER_UP]);
-    for (let tick = 1; tick < 500 && getAirplane(sim)!.position.x < FAR_SIDE + 1; tick += 1) sim.step(tick === 30 ? [STEER_LEVEL] : []);
+    for (let tick = 1; tick < 500 && getAirplane(sim)!.position.x < FAR_SIDE + 1; tick += 1) {
+      sim.step(tick === 30 ? [STEER_LEVEL] : []);
+    }
     expect(getAirplane(sim)!.state).toBe('flying');
     sim.step([{ type: 'player/jump' }]);
-    for (let tick = 0; tick < 3 * TICK_RATE; tick += 1) sim.step();
+    for (let tick = 0; tick < 3 * TICK_RATE; tick += 1) {
+      sim.step();
+    }
     expect(getAirplane(sim)).toMatchObject({ state: 'resting', position: { y: 0 }, speed: 0 });
     expect(getAirplane(sim)!.position.x).toBeGreaterThan(FAR_SIDE);
     expect(getStickMan(sim)).toMatchObject({ action: 'standing', feet: { y: 0 } });
@@ -353,7 +437,9 @@ describe('falling while flying', () => {
     expect(getAirplane(sim)).toBeUndefined();
     // The stick man has read the letter, so it starts again with a new airplane in its hand and no letter has to fall.
     expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, isSelected: true }]);
-    for (let tick = 0; tick < Math.round(LETTER.fallsAfter * TICK_RATE) + 2; tick += 1) sim.step();
+    for (let tick = 0; tick < Math.round(LETTER.fallsAfter * TICK_RATE) + 2; tick += 1) {
+      sim.step();
+    }
     expect(getFallenItem(sim)).toBeUndefined();
   });
 });
@@ -363,7 +449,9 @@ describe('a flight', () => {
     const sim = createSimReadyToBoard();
     sim.step([INTERACT]);
     sim.step([STEER_UP]);
-    for (let tick = 0; tick < 20; tick += 1) sim.step();
+    for (let tick = 0; tick < 20; tick += 1) {
+      sim.step();
+    }
     const restored = new Sim({ features, snapshot: sim.takeSnapshot() });
     for (let tick = 0; tick < 200; tick += 1) {
       const commands = tick === 10 ? [STEER_LEVEL] : [];
@@ -415,20 +503,29 @@ function createSimFlyingHighNoseDown(): Sim {
   const sim = createSimReadyToBoard();
   sim.step([INTERACT]);
   sim.step([STEER_UP]);
-  for (let tick = 0; tick < 30; tick += 1) sim.step();
+  for (let tick = 0; tick < 30; tick += 1) {
+    sim.step();
+  }
   sim.step([STEER_DOWN]);
-  for (let tick = 0; tick < 200 && getAirplane(sim)!.pitch >= 0; tick += 1) sim.step();
+  for (let tick = 0; tick < 200 && getAirplane(sim)!.pitch >= 0; tick += 1) {
+    sim.step();
+  }
   expect(getAirplane(sim)).toMatchObject({ state: 'flying' });
   expect(getAirplane(sim)!.position.y).toBeLessThan(-1);
   return sim;
 }
 
 /** Steps the sim for as long as the airplane flies, and gives what `read` made of it on every one of those ticks. */
-function recordDuringFlight<Read>(sim: Sim, read: (airplane: NonNullable<ReturnType<typeof getAirplane>>) => Read): Read[] {
+function recordDuringFlight<Read>(
+  sim: Sim,
+  read: (airplane: NonNullable<ReturnType<typeof getAirplane>>) => Read,
+): Read[] {
   const readings: Read[] = [];
   for (let tick = 0; tick < 20 * TICK_RATE; tick += 1) {
     const airplane = getAirplane(sim);
-    if (airplane?.state !== 'flying') break;
+    if (airplane?.state !== 'flying') {
+      break;
+    }
     readings.push(read(airplane));
     sim.step();
   }
@@ -436,14 +533,21 @@ function recordDuringFlight<Read>(sim: Sim, read: (airplane: NonNullable<ReturnT
 }
 
 /** Plays `commands` from the tick after boarding until the airplane rests or is gone, and gives the airplane as it was after every tick. */
-function recordFlight(sim: Sim, commands: readonly { readonly atTick: number; readonly command: Command }[]): NonNullable<ReturnType<typeof getAirplane>>[] {
+function recordFlight(
+  sim: Sim,
+  commands: readonly { readonly atTick: number; readonly command: Command }[],
+): NonNullable<ReturnType<typeof getAirplane>>[] {
   const airplanes: NonNullable<ReturnType<typeof getAirplane>>[] = [];
   for (let tick = 0; tick < 20 * TICK_RATE; tick += 1) {
     sim.step(commands.filter((entry) => entry.atTick === tick).map((entry) => entry.command));
     const airplane = getAirplane(sim);
-    if (!airplane) break;
+    if (!airplane) {
+      break;
+    }
     airplanes.push(airplane);
-    if (airplane.state === 'resting') break;
+    if (airplane.state === 'resting') {
+      break;
+    }
   }
   return airplanes;
 }
@@ -457,6 +561,8 @@ function collapseRepeats<State>(states: readonly State[]): State[] {
 function walkTo(sim: Sim, x: number): void {
   const direction = x > getStickMan(sim).feet.x ? 1 : -1;
   sim.step([{ type: 'player/walk', direction }]);
-  for (let tick = 0; tick < 3000 && (x - getStickMan(sim).feet.x) * direction > 0; tick += 1) sim.step();
+  for (let tick = 0; tick < 3000 && (x - getStickMan(sim).feet.x) * direction > 0; tick += 1) {
+    sim.step();
+  }
   sim.step([{ type: 'player/walk', direction: 0 }]);
 }

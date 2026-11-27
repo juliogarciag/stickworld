@@ -9,11 +9,30 @@ import { convertToPixels } from './units';
  * it says.
  */
 export function buildLetterStrokes(letter: LetterView): Stroke[] {
-  if (letter.isBeingRead) return [];
-  const getCorner = (across: number, up: number): Point => turnAbout(letter.position, { x: letter.position.x + (across - 0.5) * ENVELOPE.width, y: letter.position.y - up * ENVELOPE.height }, ENVELOPE.lean);
+  if (letter.isBeingRead) {
+    return [];
+  }
+  const getCorner = (across: number, up: number): Point =>
+    turnAbout(
+      letter.position,
+      {
+        x: letter.position.x + (across - 0.5) * ENVELOPE.width,
+        y: letter.position.y - up * ENVELOPE.height,
+      },
+      ENVELOPE.lean,
+    );
   return [
-    { points: [getCorner(0, 0), getCorner(0, 1), getCorner(1, 1), getCorner(1, 0)].map(convertPointToPixels), thickness: PENCIL.thickness, isClosed: true },
-    { points: [getCorner(0, 1), getCorner(0.5, 0.42), getCorner(1, 1)].map(convertPointToPixels), thickness: PENCIL.thickness },
+    {
+      points: [getCorner(0, 0), getCorner(0, 1), getCorner(1, 1), getCorner(1, 0)].map(
+        convertPointToPixels,
+      ),
+      thickness: PENCIL.thickness,
+      isClosed: true,
+    },
+    {
+      points: [getCorner(0, 1), getCorner(0.5, 0.42), getCorner(1, 1)].map(convertPointToPixels),
+      thickness: PENCIL.thickness,
+    },
   ];
 }
 
@@ -24,13 +43,38 @@ export function buildLetterStrokes(letter: LetterView): Stroke[] {
 export function buildFallenPaperStrokes(fallenItem: FallenItemView): Stroke[] {
   // Paper comes down swinging from side to side, less and less as it nears the floor.
   const swing = Math.min(1, fallenItem.height / SHEET.settlesBelow);
-  const foot = { x: fallenItem.position.x + swing * SHEET.sway * Math.sin(fallenItem.height * SHEET.swaysPerMetre), y: fallenItem.position.y - fallenItem.height };
+  const foot = {
+    x:
+      fallenItem.position.x +
+      swing * SHEET.sway * Math.sin(fallenItem.height * SHEET.swaysPerMetre),
+    y: fallenItem.position.y - fallenItem.height,
+  };
   const lean = SHEET.lean + swing * SHEET.rock * Math.cos(fallenItem.height * SHEET.swaysPerMetre);
   // Seen almost edge on as it lies: a sheet is wide and not tall.
-  const getCorner = (across: number, up: number): Point => turnAbout(foot, { x: foot.x + (across - 0.5) * SHEET.width, y: foot.y - up * SHEET.height }, lean);
+  const getCorner = (across: number, up: number): Point =>
+    turnAbout(
+      foot,
+      { x: foot.x + (across - 0.5) * SHEET.width, y: foot.y - up * SHEET.height },
+      lean,
+    );
   return [
-    { points: [getCorner(0, 0), getCorner(0.12, 1), getCorner(0.8, 1), getCorner(1, 0.55), getCorner(0.92, 0)].map(convertPointToPixels), thickness: PENCIL.thickness, isClosed: true },
-    { points: [getCorner(0.8, 1), getCorner(0.82, 0.5), getCorner(1, 0.55)].map(convertPointToPixels), thickness: PENCIL.thickness * 0.7 },
+    {
+      points: [
+        getCorner(0, 0),
+        getCorner(0.12, 1),
+        getCorner(0.8, 1),
+        getCorner(1, 0.55),
+        getCorner(0.92, 0),
+      ].map(convertPointToPixels),
+      thickness: PENCIL.thickness,
+      isClosed: true,
+    },
+    {
+      points: [getCorner(0.8, 1), getCorner(0.82, 0.5), getCorner(1, 0.55)].map(
+        convertPointToPixels,
+      ),
+      thickness: PENCIL.thickness * 0.7,
+    },
   ];
 }
 
@@ -62,7 +106,13 @@ const SHEET = {
 function turnAbout(centre: Point, point: Point, angle: number): Point {
   const x = point.x - centre.x;
   const y = point.y - centre.y;
-  return { x: centre.x + x * Math.cos(angle) - y * Math.sin(angle), y: centre.y + x * Math.sin(angle) + y * Math.cos(angle) };
+  return {
+    x: centre.x + x * Math.cos(angle) - y * Math.sin(angle),
+    y: centre.y + x * Math.sin(angle) + y * Math.cos(angle),
+  };
 }
 
-const convertPointToPixels = (point: Point): Point => ({ x: convertToPixels(point.x), y: convertToPixels(point.y) });
+const convertPointToPixels = (point: Point): Point => ({
+  x: convertToPixels(point.x),
+  y: convertToPixels(point.y),
+});

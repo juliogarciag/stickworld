@@ -9,7 +9,9 @@ import { playerSlice, type PlayerState } from './state';
  */
 
 /** Where the stick man is and how: on the floor or in the air, seated or on the stick man's feet. Read-only, and live: it is the stick man's state itself, so it changes as the stick man does. Ask again after changing the stick man rather than keeping it. */
-export type PlayerBody = Readonly<Pick<PlayerState, 'x' | 'y' | 'facing' | 'isOnFloor' | 'isSeated'>>;
+export type PlayerBody = Readonly<
+  Pick<PlayerState, 'x' | 'y' | 'facing' | 'isOnFloor' | 'isSeated'>
+>;
 
 export function getPlayerBody(sim: Sim): PlayerBody {
   return sim.getStateOf(playerSlice);
@@ -20,7 +22,10 @@ export function getPlayerBody(sim: Sim): PlayerBody {
  * where it was: no speed, no walk under way, and a jump asked for a moment before the stick man sat down was for the floor, so it
  * is forgotten and cannot throw the stick man out of the stick man's seat.
  */
-export function seatPlayer(sim: Sim, seat: { readonly x: number; readonly y: number; readonly facing: 1 | -1 }): void {
+export function seatPlayer(
+  sim: Sim,
+  seat: { readonly x: number; readonly y: number; readonly facing: 1 | -1 },
+): void {
   const player = sim.getStateOf(playerSlice);
   player.isSeated = true;
   player.seatedAtTick = sim.tick;
@@ -36,9 +41,14 @@ export function seatPlayer(sim: Sim, seat: { readonly x: number; readonly y: num
 }
 
 /** Seated, the stick man is where its seat is: its underside is what the sim calls the stick man's feet. Nothing changes for the stick man on its feet. */
-export function movePlayerWithSeat(sim: Sim, seat: { readonly x: number; readonly y: number }): void {
+export function movePlayerWithSeat(
+  sim: Sim,
+  seat: { readonly x: number; readonly y: number },
+): void {
   const player = sim.getStateOf(playerSlice);
-  if (!player.isSeated) return;
+  if (!player.isSeated) {
+    return;
+  }
   player.x = seat.x;
   player.y = seat.y;
 }
@@ -46,7 +56,9 @@ export function movePlayerWithSeat(sim: Sim, seat: { readonly x: number; readonl
 /** What the stick man sat in has come to rest on the floor: the stick man gets up and stands where it is, still. Nothing changes for the stick man on its feet. */
 export function standPlayerUp(sim: Sim): void {
   const player = sim.getStateOf(playerSlice);
-  if (!player.isSeated) return;
+  if (!player.isSeated) {
+    return;
+  }
   player.isSeated = false;
   player.seatedAtTick = null;
   player.isOnFloor = true;
@@ -61,8 +73,15 @@ export function standPlayerUp(sim: Sim): void {
  * set up standing still, so changing the position is all that is needed.
  * In the middle of a level the speed and the seat would be left as they were, so it throws.
  */
-export function startPlayerAt(sim: Sim, position: { readonly x: number; readonly y: number }): void {
-  if (!sim.isStartingLevel) throw new Error("startPlayerAt may only be called from a feature's init, while a level is being started");
+export function startPlayerAt(
+  sim: Sim,
+  position: { readonly x: number; readonly y: number },
+): void {
+  if (!sim.isStartingLevel) {
+    throw new Error(
+      "startPlayerAt may only be called from a feature's init, while a level is being started",
+    );
+  }
   const player = sim.getStateOf(playerSlice);
   player.x = position.x;
   player.y = position.y;

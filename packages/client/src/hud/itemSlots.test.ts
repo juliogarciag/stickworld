@@ -16,7 +16,10 @@ describe('buildItemSlotStrokes', () => {
 
   it('draws the paper inside the box of the slot that holds it', () => {
     const empty = buildItemSlotStrokes([EMPTY_SLOT], CAMERA_SEES);
-    const withPaper = buildItemSlotStrokes([{ ...EMPTY_SLOT, itemDefId: PAPER_ITEM_ID }], CAMERA_SEES);
+    const withPaper = buildItemSlotStrokes(
+      [{ ...EMPTY_SLOT, itemDefId: PAPER_ITEM_ID }],
+      CAMERA_SEES,
+    );
     const paper = withPaper.slice(empty.length);
     expect(paper.length).toBeGreaterThan(0);
     const box = getItemSlotBox(1, CAMERA_SEES);
@@ -29,7 +32,9 @@ describe('buildItemSlotStrokes', () => {
   });
 
   it('shows an item it has no drawing for, so a held item never looks like an empty slot', () => {
-    expect(buildItemSlotStrokes([{ ...EMPTY_SLOT, itemDefId: 987654 }], CAMERA_SEES).length).toBeGreaterThan(buildItemSlotStrokes([EMPTY_SLOT], CAMERA_SEES).length);
+    expect(
+      buildItemSlotStrokes([{ ...EMPTY_SLOT, itemDefId: 987654 }], CAMERA_SEES).length,
+    ).toBeGreaterThan(buildItemSlotStrokes([EMPTY_SLOT], CAMERA_SEES).length);
   });
 
   it('draws a second, heavier box around the selected slot', () => {
@@ -48,8 +53,13 @@ describe('buildItemSlotStrokes', () => {
     const moved = { ...CAMERA_SEES, x: 500, y: -300 };
     const first = getItemSlotBox(1, moved);
     const second = getItemSlotBox(2, moved);
-    const measureFromRight = (box: { x: number; width: number }, seen: typeof CAMERA_SEES): number => seen.x + seen.width - (box.x + box.width);
-    expect(measureFromRight(first, moved)).toBe(measureFromRight(getItemSlotBox(1, CAMERA_SEES), CAMERA_SEES));
+    const measureFromRight = (
+      box: { x: number; width: number },
+      seen: typeof CAMERA_SEES,
+    ): number => seen.x + seen.width - (box.x + box.width);
+    expect(measureFromRight(first, moved)).toBe(
+      measureFromRight(getItemSlotBox(1, CAMERA_SEES), CAMERA_SEES),
+    );
     expect(first.y - moved.y).toBe(getItemSlotBox(1, CAMERA_SEES).y - CAMERA_SEES.y);
     expect(measureFromRight(first, moved)).toBeGreaterThan(0);
     expect(first.x).toBeGreaterThan(moved.x + moved.width * 0.9);
@@ -59,15 +69,25 @@ describe('buildItemSlotStrokes', () => {
     expect(second.y).toBe(first.y);
     // On a narrow view it is the same distance from the right side.
     const narrow = { ...CAMERA_SEES, width: 1200 };
-    expect(measureFromRight(getItemSlotBox(1, narrow), narrow)).toBe(measureFromRight(first, moved));
+    expect(measureFromRight(getItemSlotBox(1, narrow), narrow)).toBe(
+      measureFromRight(first, moved),
+    );
   });
 
   it('is small and clear of the letter the stick man holds up, on the narrowest view the HUD has', () => {
     const narrow = { ...CAMERA_SEES, width: 1200 };
     const box = getItemSlotBox(1, narrow);
     expect(box.width).toBeLessThan(80);
-    const sheet = buildLetterSheetStrokes({ text: 'A sheet of paper can fly. Fold it into an airplane and carry it to the edge.', teaches: 'paper airplane' }, narrow);
-    const rightOfSheet = Math.max(...sheet.flatMap((stroke) => stroke.points).map((point) => point.x));
+    const sheet = buildLetterSheetStrokes(
+      {
+        text: 'A sheet of paper can fly. Fold it into an airplane and carry it to the edge.',
+        teaches: 'paper airplane',
+      },
+      narrow,
+    );
+    const rightOfSheet = Math.max(
+      ...sheet.flatMap((stroke) => stroke.points).map((point) => point.x),
+    );
     const selected = buildItemSlotStrokes([{ ...EMPTY_SLOT, isSelected: true }], narrow);
     expect(Math.min(...getPoints(selected).map((point) => point.x))).toBeGreaterThan(rightOfSheet);
   });

@@ -24,7 +24,12 @@ export class GameLoop {
    * is capped already; the cap is given to `takeWholeTicks` all the same, so that no caller can make the sim run more.
    */
   advanceBy(deltaSeconds: number): number {
-    const { ticks, leftover } = takeWholeTicks({ leftover: this.leftover, deltaSeconds, dt: this.current.dt, maxFrameSeconds: MAX_FRAME_SECONDS });
+    const { ticks, leftover } = takeWholeTicks({
+      leftover: this.leftover,
+      deltaSeconds,
+      dt: this.current.dt,
+      maxFrameSeconds: MAX_FRAME_SECONDS,
+    });
     this.leftover = leftover;
     for (let tick = 0; tick < ticks; tick += 1) {
       // The sim moves to the next level by itself, within one tick. The tick before is kept each time, so the sheet that was left can still be drawn: a snapshot is a few hundred bytes.
@@ -32,7 +37,9 @@ export class GameLoop {
       const tickBefore = this.current.takeSnapshot();
       this.current.step(this.pendingCommands);
       this.pendingCommands = [];
-      if (this.current.level !== level) this.finishedLevel = restoreSim(tickBefore);
+      if (this.current.level !== level) {
+        this.finishedLevel = restoreSim(tickBefore);
+      }
     }
     return ticks;
   }

@@ -6,7 +6,10 @@ import { convertToPixels } from './units';
 describe('the checkpoint', () => {
   it('is a peg at the position the sim gives, with a closed diamond on top of the peg', () => {
     const [peg, diamond] = buildCheckpointStrokes(NOT_PASSED);
-    expect(peg!.points[0]).toEqual({ x: convertToPixels(NOT_PASSED.position.x), y: convertToPixels(NOT_PASSED.position.y) });
+    expect(peg!.points[0]).toEqual({
+      x: convertToPixels(NOT_PASSED.position.x),
+      y: convertToPixels(NOT_PASSED.position.y),
+    });
     expect(peg!.points[1]!.x).toBe(convertToPixels(NOT_PASSED.position.x));
     expect(peg!.points[1]!.y).toBeLessThan(convertToPixels(NOT_PASSED.position.y));
     expect(diamond!.isClosed).toBe(true);
@@ -27,7 +30,9 @@ describe('the checkpoint', () => {
 
   it('has no stroke below the floor', () => {
     for (const stroke of buildCheckpointStrokes({ ...NOT_PASSED, isPassed: true })) {
-      for (const point of stroke.points) expect(point.y).toBeLessThanOrEqual(convertToPixels(NOT_PASSED.position.y));
+      for (const point of stroke.points) {
+        expect(point.y).toBeLessThanOrEqual(convertToPixels(NOT_PASSED.position.y));
+      }
     }
   });
 });

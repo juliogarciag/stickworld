@@ -18,5 +18,11 @@ export function getWorldSeenBy(camera: Phaser.Cameras.Scene2D.Camera): WorldRect
   const { zoom } = camera;
   const width = camera.width / zoom;
   const height = camera.height / zoom;
-  return { x: camera.scrollX + (camera.width - width) / 2, y: camera.scrollY + (camera.height - height) / 2, width, height, zoom };
+  return {
+    x: camera.scrollX + (camera.width - width) / 2,
+    y: camera.scrollY + (camera.height - height) / 2,
+    width,
+    height,
+    zoom,
+  };
 }

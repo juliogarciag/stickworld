@@ -36,7 +36,15 @@ export function getStickMan(handle: SimHandle): StickManView {
   return {
     feet: { x: player.x, y: player.y },
     facing: player.facing,
-    action: player.isSeated ? 'seated' : !player.isOnFloor ? 'jumping' : isStandingCheering(sim) ? 'cheering' : getWalkDirectionNow(sim) !== 0 ? 'walking' : 'standing',
+    action: player.isSeated
+      ? 'seated'
+      : !player.isOnFloor
+        ? 'jumping'
+        : isStandingCheering(sim)
+          ? 'cheering'
+          : getWalkDirectionNow(sim) !== 0
+            ? 'walking'
+            : 'standing',
     distanceWalked: player.distanceWalked,
     verticalSpeed: player.verticalSpeed,
     horizontalSpeed: player.horizontalSpeed,
@@ -55,6 +63,8 @@ export function getMovementTuning(handle: SimHandle): MovementTuning {
 
 /** Every SimHandle is a Sim: `createSim` and `restoreSim` are the only ways to get one. */
 function getSimBehind(handle: SimHandle): Sim {
-  if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
+  if (!(handle instanceof Sim)) {
+    throw new TypeError('not a sim made by createSim or restoreSim');
+  }
   return handle;
 }

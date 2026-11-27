@@ -14,6 +14,8 @@ export const GAME_KEY_NAMES = { playAgain: 'ENTER' } as const;
  */
 export function sendGameCommands(scene: Phaser.Scene, send: (command: Command) => void): void {
   scene.input.keyboard?.on(`keydown-${GAME_KEY_NAMES.playAgain}`, (event: KeyboardEvent) => {
-    if (!event.repeat) send({ type: 'game/playAgain' });
+    if (!event.repeat) {
+      send({ type: 'game/playAgain' });
+    }
   });
 }

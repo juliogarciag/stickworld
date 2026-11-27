@@ -20,7 +20,13 @@ describe('buildFloorStrokes', () => {
   });
 
   it('leaves a gap between two segments undrawn', () => {
-    const strokes = buildFloorStrokes({ id: 99, name: 'gap', floor: [makeSegment(0, 4), makeSegment(6, 9)], start: { x: 1, y: 0 }, placements: [] });
+    const strokes = buildFloorStrokes({
+      id: 99,
+      name: 'gap',
+      floor: [makeSegment(0, 4), makeSegment(6, 9)],
+      start: { x: 1, y: 0 },
+      placements: [],
+    });
     expect(strokes.map((stroke) => stroke.points.map((point) => point.x))).toEqual([
       [convertToPixels(0), convertToPixels(4)],
       [convertToPixels(6), convertToPixels(9)],

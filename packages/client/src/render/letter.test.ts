@@ -53,7 +53,12 @@ describe('buildFallenPaperStrokes', () => {
 
 // ---- Helpers ----
 
-const LETTER: LetterView = { position: { x: 3.6, y: 0 }, isBeingRead: false, text: 'A letter.', teaches: null };
+const LETTER: LetterView = {
+  position: { x: 3.6, y: 0 },
+  isBeingRead: false,
+  text: 'A letter.',
+  teaches: null,
+};
 const LYING: FallenItemView = { position: { x: 3.6, y: 0 }, height: 0, itemDefId: 200 };
 
 /** The rectangle `strokes` cover, in metres. */
@@ -61,5 +66,10 @@ function getBounds(strokes: readonly Stroke[]) {
   const points = strokes.flatMap((stroke) => stroke.points);
   const xs = points.map((point) => point.x / PIXELS_PER_METRE);
   const ys = points.map((point) => point.y / PIXELS_PER_METRE);
-  return { left: Math.min(...xs), right: Math.max(...xs), top: Math.min(...ys), bottom: Math.max(...ys) };
+  return {
+    left: Math.min(...xs),
+    right: Math.max(...xs),
+    top: Math.min(...ys),
+    bottom: Math.max(...ys),
+  };
 }

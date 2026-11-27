@@ -1,4 +1,14 @@
-import { getAirplane, getCheckpoint, getFallenItem, getFlag, getLetter, getLevel, getNotes, getStickMan, type SimHandle } from '@stickworld/sim';
+import {
+  getAirplane,
+  getCheckpoint,
+  getFallenItem,
+  getFlag,
+  getLetter,
+  getLevel,
+  getNotes,
+  getStickMan,
+  type SimHandle,
+} from '@stickworld/sim';
 import type Phaser from 'phaser';
 import { keepUntilChanged } from '../hud/unchanged';
 import { MOVE_KEY_NAMES } from '../input/playerKeys';
@@ -11,7 +21,11 @@ import { buildFallenPaperStrokes, buildLetterStrokes } from '../render/letter';
 import { getZoomAtRest } from '../render/levelCamera';
 import { areNotesStill, buildNoteStrokes } from '../render/notes';
 import { layPaper, type Paper } from '../render/paper';
-import { getLevelNameState, buildLevelNameStrokes, buildPageNumberStrokes } from '../render/sheetWords';
+import {
+  getLevelNameState,
+  buildLevelNameStrokes,
+  buildPageNumberStrokes,
+} from '../render/sheetWords';
 import { easePosesOverTime, seatIn, buildStickManStrokes } from '../render/stickMan';
 import { createStrokeLayer, type Stroke, type StrokeLayer } from '../render/strokes';
 
@@ -65,7 +79,18 @@ export class Sheet {
 
   /** Takes everything off the sheet: its layers have nothing to draw, or to redraw as they boil, until it is drawn again. */
   clear(): void {
-    for (const layer of [this.written, this.pageNumber, this.floor, this.flag, this.checkpoint, this.letter, this.airplane, this.stickMan]) layer.show(NOTHING);
+    for (const layer of [
+      this.written,
+      this.pageNumber,
+      this.floor,
+      this.flag,
+      this.checkpoint,
+      this.letter,
+      this.airplane,
+      this.stickMan,
+    ]) {
+      layer.show(NOTHING);
+    }
   }
 
   /** Draws the sheet as the scene's camera sees it right now. Call after moving the camera, every frame. */
@@ -82,21 +107,44 @@ export class Sheet {
     this.paper.cover(camera);
     // Writing that does not change is the same list every frame, which a layer does not draw anew; while some of it is being written or rubbed out it is made again each frame.
     const levelName = getLevelNameState(frame.secondsOnSheet);
-    const isWritingStill = areNotesStill(notes) && levelName !== 'beingWritten' && levelName !== 'beingRubbedOut';
+    const isWritingStill =
+      areNotesStill(notes) && levelName !== 'beingWritten' && levelName !== 'beingRubbedOut';
     // The notes first: a stroke's place in the list is what its wobble comes from, and the name's strokes come and go.
-    const buildWrittenStrokes = (): readonly Stroke[] => [...buildNoteStrokes(notes, MOVE_KEY_NAMES), ...buildLevelNameStrokes(level, frame.secondsOnSheet)];
-    this.written.show(isWritingStill ? this.getWrittenStrokes(JSON.stringify([level.id, notes.map((note) => note.rubbedOutFor !== null), levelName]), buildWrittenStrokes) : buildWrittenStrokes());
+    const buildWrittenStrokes = (): readonly Stroke[] => [
+      ...buildNoteStrokes(notes, MOVE_KEY_NAMES),
+      ...buildLevelNameStrokes(level, frame.secondsOnSheet),
+    ];
+    this.written.show(
+      isWritingStill
+        ? this.getWrittenStrokes(
+            JSON.stringify([level.id, notes.map((note) => note.rubbedOutFor !== null), levelName]),
+            buildWrittenStrokes,
+          )
+        : buildWrittenStrokes(),
+    );
     const seen = getWorldSeenBy(camera);
-    this.pageNumber.show(this.getPageNumberStrokes(JSON.stringify([level.id, seen]), () => buildPageNumberStrokes({ page: level.id, seen, zoomAtRest: getZoomAtRest(camera) })));
+    this.pageNumber.show(
+      this.getPageNumberStrokes(JSON.stringify([level.id, seen]), () =>
+        buildPageNumberStrokes({ page: level.id, seen, zoomAtRest: getZoomAtRest(camera) }),
+      ),
+    );
     this.floor.show(buildFloorStrokes(level));
     this.flag.show(flag ? buildFlagStrokes(flag) : []);
     this.checkpoint.show(checkpoint ? buildCheckpointStrokes(checkpoint) : []);
     // One layer for both: the sheet only ever falls where a letter no longer lies.
     const fallenItem = getFallenItem(frame.sim);
-    this.letter.show(letter ? buildLetterStrokes(letter) : fallenItem ? buildFallenPaperStrokes(fallenItem) : []);
+    this.letter.show(
+      letter ? buildLetterStrokes(letter) : fallenItem ? buildFallenPaperStrokes(fallenItem) : [],
+    );
     this.airplane.show(airplane ? buildAirplaneStrokes(airplane) : []);
     const pose = this.poseFor(stickMan, frame.seconds, level.floor);
     // Seated, the stick man tips with the airplane as it is drawn, about the point it is drawn turning about: its middle.
-    this.stickMan.show(buildStickManStrokes(airplane ? seatIn(pose, { noseDown: airplane.noseDown, tipsAboutAbove: getPivotHeight(airplane) }) : pose));
+    this.stickMan.show(
+      buildStickManStrokes(
+        airplane
+          ? seatIn(pose, { noseDown: airplane.noseDown, tipsAboutAbove: getPivotHeight(airplane) })
+          : pose,
+      ),
+    );
   }
 }

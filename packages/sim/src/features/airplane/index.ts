@@ -28,12 +28,16 @@ export const airplaneFeature: Feature = {
 
   handleCommand(sim, command) {
     const { type, direction } = command as { type: string; direction?: unknown };
-    if (type === 'airplane/steer' && isSteerDirection(direction)) sim.getStateOf(airplaneSlice).steering = direction;
+    if (type === 'airplane/steer' && isSteerDirection(direction)) {
+      sim.getStateOf(airplaneSlice).steering = direction;
+    }
   },
 
   update(sim) {
     const airplane = sim.getStateOf(airplaneSlice);
-    if (!airplane.isInWorld) return;
+    if (!airplane.isInWorld) {
+      return;
+    }
     const player = getPlayerBody(sim);
     const floorLevel = getLowestFloorHeight(sim.levelDef.floor);
     if (airplane.isCarried) {
@@ -60,10 +64,20 @@ export function hasAirplane(sim: Sim): boolean {
  */
 export function isSittingOnEdge(sim: Sim): boolean {
   const airplane = sim.getStateOf(airplaneSlice);
-  if (!airplane.isInWorld || airplane.isCarried || airplane.isFalling || airplane.isFlying || airplane.isSliding) return false;
+  if (
+    !airplane.isInWorld ||
+    airplane.isCarried ||
+    airplane.isFalling ||
+    airplane.isFlying ||
+    airplane.isSliding
+  ) {
+    return false;
+  }
   const { floor } = sim.levelDef;
   const nose = airplane.x + (airplane.facing * AIRPLANE.length) / 2;
-  const hasFloorAhead = floor.some((segment) => (airplane.facing === 1 ? segment.start.x > nose : segment.end.x < nose));
+  const hasFloorAhead = floor.some((segment) =>
+    airplane.facing === 1 ? segment.start.x > nose : segment.end.x < nose,
+  );
   return getFloorHeightAt(floor, nose) === undefined && hasFloorAhead;
 }
 
@@ -74,8 +88,11 @@ export function isSittingOnEdge(sim: Sim): boolean {
  */
 export function hasYetToReachEdge(sim: Sim): boolean {
   const airplane = sim.getStateOf(airplaneSlice);
-  const isInFlight = airplane.isInWorld && (airplane.isFlying || airplane.isFalling || airplane.isSliding);
-  if (sim.getStateOf(hasBoardedSlice) || !hasAirplane(sim) || isInFlight || isSittingOnEdge(sim)) return false;
+  const isInFlight =
+    airplane.isInWorld && (airplane.isFlying || airplane.isFalling || airplane.isSliding);
+  if (sim.getStateOf(hasBoardedSlice) || !hasAirplane(sim) || isInFlight || isSittingOnEdge(sim)) {
+    return false;
+  }
   const { floor } = sim.levelDef;
   return floor.some((line) => floor.some((other) => other.start.x > line.end.x));
 }
@@ -87,8 +104,13 @@ export function isReadyToBoard(sim: Sim): boolean {
 
 /** What using the held item does when it is the airplane, for `features/item`: it is put on the floor in front of the stick man. */
 export function getAirplaneItemUse(sim: Sim) {
-  const canPlace = getSelectedItem(sim) === AIRPLANE_ITEM_ID && getPlayerBody(sim).isOnFloor && !sim.getStateOf(airplaneSlice).isInWorld;
-  if (!canPlace) return undefined;
+  const canPlace =
+    getSelectedItem(sim) === AIRPLANE_ITEM_ID &&
+    getPlayerBody(sim).isOnFloor &&
+    !sim.getStateOf(airplaneSlice).isInWorld;
+  if (!canPlace) {
+    return undefined;
+  }
   return {
     means: 'place' as const,
     perform: () => {
@@ -105,10 +127,24 @@ export function getAirplaneItemUse(sim: Sim) {
 export function getAirplaneInteraction(sim: Sim) {
   const airplane = sim.getStateOf(airplaneSlice);
   const player = getPlayerBody(sim);
-  if (!airplane.isInWorld || airplane.isFalling || airplane.isFlying || airplane.isSliding || !player.isOnFloor) return undefined;
-  if (airplane.isCarried) return { means: 'putDown' as const, perform: () => putDownInFront(sim) };
-  if (Math.abs(player.x - airplane.x) > AIRPLANE.reach) return undefined;
-  if (isSittingOnEdge(sim)) return { means: 'board' as const, perform: () => boardAndLaunch(sim) };
+  if (
+    !airplane.isInWorld ||
+    airplane.isFalling ||
+    airplane.isFlying ||
+    airplane.isSliding ||
+    !player.isOnFloor
+  ) {
+    return undefined;
+  }
+  if (airplane.isCarried) {
+    return { means: 'putDown' as const, perform: () => putDownInFront(sim) };
+  }
+  if (Math.abs(player.x - airplane.x) > AIRPLANE.reach) {
+    return undefined;
+  }
+  if (isSittingOnEdge(sim)) {
+    return { means: 'board' as const, perform: () => boardAndLaunch(sim) };
+  }
   return {
     means: 'lift' as const,
     perform: () => {
@@ -163,12 +199,19 @@ function letFall(airplane: AirplaneState): void {
  * falls. It rests where it is put when there is floor under its middle. A little past the end of the line the stick man put it
  * down from, it is pulled back to sit on that edge; it is never pulled on to the far side of a gap.
  */
-function findRestingPlace(floor: readonly FloorSegment[], airplane: { middle: number; facing: 1 | -1 }): number | undefined {
-  if (getFloorHeightAt(floor, airplane.middle) !== undefined) return airplane.middle;
+function findRestingPlace(
+  floor: readonly FloorSegment[],
+  airplane: { middle: number; facing: 1 | -1 },
+): number | undefined {
+  if (getFloorHeightAt(floor, airplane.middle) !== undefined) {
+    return airplane.middle;
+  }
   for (const segment of floor) {
     const edgeX = airplane.facing === 1 ? segment.end.x : segment.start.x;
     const overhang = (airplane.middle - edgeX) * airplane.facing;
-    if (overhang > 0 && overhang <= AIRPLANE.edgeOverhangTolerance) return edgeX - airplane.facing * AIRPLANE.edgeInset;
+    if (overhang > 0 && overhang <= AIRPLANE.edgeOverhangTolerance) {
+      return edgeX - airplane.facing * AIRPLANE.edgeInset;
+    }
   }
   return undefined;
 }

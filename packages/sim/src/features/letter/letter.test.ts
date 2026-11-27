@@ -23,7 +23,12 @@ import { getFallenItem, getLetter } from './view';
 describe('reading the letter', () => {
   it('lies on the floor where the level places it, and is read only from within reach', () => {
     const sim = createSimOnLevel3WithPaper();
-    expect(getLetter(sim)).toEqual({ position: LETTER_AT, isBeingRead: false, text: letterDefs[0]!.text, teaches: 'paper airplane' });
+    expect(getLetter(sim)).toEqual({
+      position: LETTER_AT,
+      isBeingRead: false,
+      text: letterDefs[0]!.text,
+      teaches: 'paper airplane',
+    });
     walkTo(sim, LETTER_AT.x + LETTER.reach + 0.3);
     expect(getInteraction(sim)).toBeNull();
     sim.step([INTERACT]);
@@ -64,7 +69,9 @@ describe('reading the letter', () => {
     readLetter(walking);
     walking.step([{ type: 'player/walk', direction: 1 }]);
     expect(getLetter(walking)!.isBeingRead).toBe(true);
-    for (let tick = 0; tick < TICK_RATE; tick += 1) walking.step();
+    for (let tick = 0; tick < TICK_RATE; tick += 1) {
+      walking.step();
+    }
     expect(getLetter(walking)).toBeUndefined();
 
     const jumping = createSimOnLevel3WithPaper();
@@ -99,11 +106,23 @@ describe('a level that starts again', () => {
       const sim = createSimHoldingAirplane();
       die(sim);
       // Some of these ways to die pass the level's checkpoint first and some do not, so the level restarts either at the checkpoint or at its start.
-      const isBackAtLevelStart = (): boolean => isSameSpot(getStickMan(sim).feet, getCheckpoint(sim)!.isPassed ? level3.checkpoint! : level3.start);
-      for (let tick = 0; tick < 20 * TICK_RATE && (getAirplane(sim) || !isBackAtLevelStart()); tick += 1) sim.step();
+      const isBackAtLevelStart = (): boolean =>
+        isSameSpot(
+          getStickMan(sim).feet,
+          getCheckpoint(sim)!.isPassed ? level3.checkpoint! : level3.start,
+        );
+      for (
+        let tick = 0;
+        tick < 20 * TICK_RATE && (getAirplane(sim) || !isBackAtLevelStart());
+        tick += 1
+      ) {
+        sim.step();
+      }
       expect(isBackAtLevelStart(), way).toBe(true);
       expect(getAirplane(sim), way).toBeUndefined();
-      expect(getItemSlots(sim), way).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, isSelected: true }]);
+      expect(getItemSlots(sim), way).toEqual([
+        { slot: 1, itemDefId: AIRPLANE_ITEM_ID, isSelected: true },
+      ]);
       for (let tick = 0; tick < 5 * TICK_RATE; tick += 1) {
         sim.step();
         expect(getLetter(sim), way).toBeUndefined();
@@ -120,10 +139,18 @@ describe('a level that starts again', () => {
 
     const sim = createSimHoldingAirplane();
     WAYS_TO_LOSE_AIRPLANE_AND_LIVE[0]![1](sim);
-    for (let tick = 0; tick < 20 * TICK_RATE && !getFallenItem(sim); tick += 1) sim.step();
+    for (let tick = 0; tick < 20 * TICK_RATE && !getFallenItem(sim); tick += 1) {
+      sim.step();
+    }
     expect(getFallenItem(sim)!.height).toBeGreaterThan(0);
     sim.step([{ type: 'player/walk', direction: 1 }]);
-    for (let tick = 0; tick < 5 * TICK_RATE && !isSameSpot(getStickMan(sim).feet, level3.checkpoint!); tick += 1) sim.step();
+    for (
+      let tick = 0;
+      tick < 5 * TICK_RATE && !isSameSpot(getStickMan(sim).feet, level3.checkpoint!);
+      tick += 1
+    ) {
+      sim.step();
+    }
     expect(getStickMan(sim).feet).toEqual(level3.checkpoint);
     expect(getLetter(sim)).toBeUndefined();
     expect(getFallenItem(sim)).toBeUndefined();
@@ -142,11 +169,15 @@ describe('a level that starts again', () => {
     const withPaper = createSimOnLevel3WithPaper();
     readLetter(withPaper);
     withPaper.startLevel(withPaper.level);
-    expect(getItemSlots(withPaper)).toEqual([{ slot: 1, itemDefId: PAPER_ITEM_ID, isSelected: true }]);
+    expect(getItemSlots(withPaper)).toEqual([
+      { slot: 1, itemDefId: PAPER_ITEM_ID, isSelected: true },
+    ]);
 
     const withAirplane = createSimHoldingAirplane();
     withAirplane.startLevel(withAirplane.level);
-    expect(getItemSlots(withAirplane)).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, isSelected: true }]);
+    expect(getItemSlots(withAirplane)).toEqual([
+      { slot: 1, itemDefId: AIRPLANE_ITEM_ID, isSelected: true },
+    ]);
   });
 });
 
@@ -155,18 +186,26 @@ describe('a new sheet of paper', () => {
     for (const [, lose] of WAYS_TO_LOSE_AIRPLANE_AND_LIVE) {
       const sim = createSimHoldingAirplane();
       lose(sim);
-      for (let tick = 0; tick < 20 * TICK_RATE && hasAirplane(sim); tick += 1) sim.step();
+      for (let tick = 0; tick < 20 * TICK_RATE && hasAirplane(sim); tick += 1) {
+        sim.step();
+      }
       expect(hasAirplane(sim)).toBe(false);
       expect(getItemSlots(sim)[0]?.itemDefId).toBeNull();
       expect(getFallenItem(sim)).toBeUndefined();
 
       // Nothing at first, then a sheet high above the place, coming down, and at last lying there. It is the paper, and no letter.
-      for (let tick = 0; tick < TICK_RATE && !getFallenItem(sim); tick += 1) sim.step();
+      for (let tick = 0; tick < TICK_RATE && !getFallenItem(sim); tick += 1) {
+        sim.step();
+      }
       const heights: number[] = [];
       // The stick man lost it at the edge, far from where the letter lay: the sheet comes to the stick man.
       const stoodAt = getStickMan(sim).feet;
       expect(stoodAt.x).toBeGreaterThan(LETTER_AT.x + 3);
-      for (let tick = 0; tick < 20 * TICK_RATE && (heights.length === 0 || getFallenItem(sim)!.height !== 0); tick += 1) {
+      for (
+        let tick = 0;
+        tick < 20 * TICK_RATE && (heights.length === 0 || getFallenItem(sim)!.height !== 0);
+        tick += 1
+      ) {
         const fallen = getFallenItem(sim)!;
         heights.push(fallen.height);
         expect(fallen).toMatchObject({ position: stoodAt, itemDefId: PAPER_ITEM_ID });
@@ -207,11 +246,19 @@ describe('a new sheet of paper', () => {
   it('is in the snapshot: restored on its way down, it lands and is picked up the same', () => {
     const sim = createSimHoldingAirplane();
     WAYS_TO_LOSE_AIRPLANE_AND_LIVE[0]![1](sim);
-    for (let tick = 0; tick < 20 * TICK_RATE && !getFallenItem(sim); tick += 1) sim.step();
-    for (let tick = 0; tick < 20; tick += 1) sim.step();
+    for (let tick = 0; tick < 20 * TICK_RATE && !getFallenItem(sim); tick += 1) {
+      sim.step();
+    }
+    for (let tick = 0; tick < 20; tick += 1) {
+      sim.step();
+    }
     const restored = new Sim({ features, snapshot: sim.takeSnapshot() });
     expect(getFallenItem(restored)).toEqual(getFallenItem(sim));
-    for (const each of [sim, restored]) for (let tick = 0; tick < 5 * TICK_RATE; tick += 1) each.step();
+    for (const each of [sim, restored]) {
+      for (let tick = 0; tick < 5 * TICK_RATE; tick += 1) {
+        each.step();
+      }
+    }
     expect(restored.takeSnapshot()).toEqual(sim.takeSnapshot());
     expect(getFallenItem(restored)!.height).toBe(0);
   });
@@ -219,9 +266,21 @@ describe('a new sheet of paper', () => {
   it('does not fall once the flag is reached: the stick man who jumped out near the far side and lost the airplane needs none', () => {
     const sim = createSimHoldingAirplane();
     const snapshot = sim.takeSnapshot();
-    const flagAt = level3.placements.find((placement) => findLetterPlacedIn(level3) !== placement)!.position;
+    const flagAt = level3.placements.find(
+      (placement) => findLetterPlacedIn(level3) !== placement,
+    )!.position;
     // Put next to the flag with nothing in the stick man's slot: the next tick reaches it.
-    const atFlag = new Sim({ features, snapshot: { ...snapshot, slices: { ...snapshot.slices, inventory: { slots: [null], selectedSlot: 1 }, player: { ...(snapshot.slices.player as object), x: flagAt.x, y: flagAt.y } } } });
+    const atFlag = new Sim({
+      features,
+      snapshot: {
+        ...snapshot,
+        slices: {
+          ...snapshot.slices,
+          inventory: { slots: [null], selectedSlot: 1 },
+          player: { ...(snapshot.slices.player as object), x: flagAt.x, y: flagAt.y },
+        },
+      },
+    });
     for (let tick = 0; tick < 10 * TICK_RATE; tick += 1) {
       atFlag.step();
       expect(getFallenItem(atFlag)).toBeUndefined();
@@ -232,7 +291,9 @@ describe('a new sheet of paper', () => {
   it('cannot be picked up while it is still coming down, nor from out of reach once it lies there', () => {
     const sim = createSimHoldingAirplane();
     WAYS_TO_LOSE_AIRPLANE_AND_LIVE[0]![1](sim);
-    for (let tick = 0; tick < 20 * TICK_RATE && !getFallenItem(sim); tick += 1) sim.step();
+    for (let tick = 0; tick < 20 * TICK_RATE && !getFallenItem(sim); tick += 1) {
+      sim.step();
+    }
     for (let tick = 0; tick < 20 * TICK_RATE && getFallenItem(sim)!.height > 0; tick += 1) {
       expect(getInteraction(sim)).toBeNull();
       sim.step([INTERACT]);
@@ -250,12 +311,18 @@ describe('a new sheet of paper', () => {
 
   it('waits for the stick man to land: one the stick man lost in the air gets its sheet where the stick man comes down, never over a gap', () => {
     const sim = createSimHoldingAirplane();
-    for (const command of [USE_ITEM, INTERACT]) sim.step([command]);
+    for (const command of [USE_ITEM, INTERACT]) {
+      sim.step([command]);
+    }
     walkTo(sim, EDGE - 1);
     sim.step([{ type: 'player/jump' }]);
-    for (let tick = 0; tick < 3; tick += 1) sim.step();
+    for (let tick = 0; tick < 3; tick += 1) {
+      sim.step();
+    }
     // In the air the stick man puts nothing down: the stick man lands, and then sets it down past the edge to lose it.
-    for (let tick = 0; tick < TICK_RATE; tick += 1) sim.step();
+    for (let tick = 0; tick < TICK_RATE; tick += 1) {
+      sim.step();
+    }
     walkTo(sim, EDGE - 0.2);
     sim.step([INTERACT]);
     sim.step([{ type: 'player/jump' }]);
@@ -266,15 +333,21 @@ describe('a new sheet of paper', () => {
       sim.step(tick % 30 === 0 ? [{ type: 'player/jump' }] : []);
       const isAirborne = getStickMan(sim).action === 'jumping';
       // The tick it appears on, the stick man is on the floor.
-      if (!wasThere && getFallenItem(sim) && isAirborne) hasSeenStartMidAir = true;
-      if (!getFallenItem(sim) && isAirborne && tick > LETTER.fallsAfter * TICK_RATE + 2) ticksAirborneAfterDue += 1;
+      if (!wasThere && getFallenItem(sim) && isAirborne) {
+        hasSeenStartMidAir = true;
+      }
+      if (!getFallenItem(sim) && isAirborne && tick > LETTER.fallsAfter * TICK_RATE + 2) {
+        ticksAirborneAfterDue += 1;
+      }
     }
     // It was due while the stick man was in a jump, and did wait.
     expect(ticksAirborneAfterDue).toBeGreaterThan(0);
     expect(hasSeenStartMidAir).toBe(false);
     const fellAt = getFallenItem(sim)!.position;
     expect(fellAt.y).toBe(0);
-    expect(level3.floor.some((segment) => segment.start.x <= fellAt.x && fellAt.x <= segment.end.x)).toBe(true);
+    expect(
+      level3.floor.some((segment) => segment.start.x <= fellAt.x && fellAt.x <= segment.end.x),
+    ).toBe(true);
   });
 
   it("does not fall while the airplane is anywhere: in the stick man's slot, on the floor or over its head", () => {
@@ -295,18 +368,34 @@ describe('a new sheet of paper', () => {
 });
 
 describe('every letter', () => {
-  it.each(letterDefs.map((def) => [def.name, def] as const))('%s says something, teaches a recipe made from the item it gives', (_, def) => {
-    expect(def.text.trim().length).toBeGreaterThan(0);
-    expect(isItemDefId(def.gives)).toBe(true);
-    expect(getRecipeDef(def.teachesRecipe)?.madeFrom).toBe(def.gives);
-  });
+  it.each(letterDefs.map((def) => [def.name, def] as const))(
+    '%s says something, teaches a recipe made from the item it gives',
+    (_, def) => {
+      expect(def.text.trim().length).toBeGreaterThan(0);
+      expect(isItemDefId(def.gives)).toBe(true);
+      expect(getRecipeDef(def.teachesRecipe)?.madeFrom).toBe(def.gives);
+    },
+  );
 
-  it.each(levels.map((level) => [level.id, level] as const))('level %i places at most one letter, over the floor', (_, level) => {
-    const letters = level.placements.filter((placement) => letterDefs.some((def) => def.id === placement.defId));
-    expect(letters.length).toBeLessThanOrEqual(1);
-    const placed = findLetterPlacedIn(level);
-    if (placed) expect(level.floor.some((segment) => segment.start.x <= placed.position.x - LETTER.reach && placed.position.x + LETTER.reach <= segment.end.x)).toBe(true);
-  });
+  it.each(levels.map((level) => [level.id, level] as const))(
+    'level %i places at most one letter, over the floor',
+    (_, level) => {
+      const letters = level.placements.filter((placement) =>
+        letterDefs.some((def) => def.id === placement.defId),
+      );
+      expect(letters.length).toBeLessThanOrEqual(1);
+      const placed = findLetterPlacedIn(level);
+      if (placed) {
+        expect(
+          level.floor.some(
+            (segment) =>
+              segment.start.x <= placed.position.x - LETTER.reach &&
+              placed.position.x + LETTER.reach <= segment.end.x,
+          ),
+        ).toBe(true);
+      }
+    },
+  );
 });
 
 // ---- Helpers ----
@@ -366,7 +455,9 @@ const WAYS_TO_DIE_WITHOUT_AIRPLANE: readonly (readonly [string, (sim: Sim) => vo
       walkTo(sim, EDGE - AIRPLANE.putDownAhead - 0.2);
       sim.step([INTERACT]);
       sim.step([INTERACT]);
-      for (let tick = 0; tick < 20; tick += 1) sim.step();
+      for (let tick = 0; tick < 20; tick += 1) {
+        sim.step();
+      }
       sim.step([{ type: 'player/jump' }]);
       expect(getStickMan(sim).action).toBe('jumping');
     },
@@ -400,7 +491,9 @@ function readLetter(sim: Sim): void {
 function createSimHoldingAirplane(): Sim {
   const sim = createSimOnLevel3WithPaper();
   readLetter(sim);
-  for (const command of [INTERACT, USE_ITEM]) sim.step([command]);
+  for (const command of [INTERACT, USE_ITEM]) {
+    sim.step([command]);
+  }
   expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, isSelected: true }]);
   return sim;
 }
@@ -409,6 +502,8 @@ function createSimHoldingAirplane(): Sim {
 function walkTo(sim: Sim, x: number): void {
   const direction = x > getStickMan(sim).feet.x ? 1 : -1;
   sim.step([{ type: 'player/walk', direction }]);
-  for (let tick = 0; tick < 3000 && (x - getStickMan(sim).feet.x) * direction > 0; tick += 1) sim.step();
+  for (let tick = 0; tick < 3000 && (x - getStickMan(sim).feet.x) * direction > 0; tick += 1) {
+    sim.step();
+  }
   sim.step([{ type: 'player/walk', direction: 0 }]);
 }

@@ -65,7 +65,9 @@ export class Sim implements SimHandle {
       this.slices = copyJson({ ...options.snapshot.slices });
       return;
     }
-    if (!options.start) throw new TypeError('a sim needs either a start or a snapshot');
+    if (!options.start) {
+      throw new TypeError('a sim needs either a start or a snapshot');
+    }
     this.seed = options.start.seed;
     this.tick = 0;
     this.rng = createRng(options.start.seed);
@@ -90,7 +92,9 @@ export class Sim implements SimHandle {
 
   /** The live value of a slice. Features read and change their state through this. */
   getStateOf<T>(slice: StateSlice<T>): T {
-    if (!(slice.key in this.slices)) throw new Error(`no slice "${slice.key}": is its feature registered in features/index.ts?`);
+    if (!(slice.key in this.slices)) {
+      throw new Error(`no slice "${slice.key}": is its feature registered in features/index.ts?`);
+    }
     return this.slices[slice.key] as T;
   }
 
@@ -108,7 +112,11 @@ export class Sim implements SimHandle {
    * would run the rest of the tick on a level that has only just begun.
    */
   startLevel(id: number): void {
-    if (this.isInTick) throw new Error('a level cannot start in the middle of a tick: ask with startLevelAfterThisTick');
+    if (this.isInTick) {
+      throw new Error(
+        'a level cannot start in the middle of a tick: ask with startLevelAfterThisTick',
+      );
+    }
     this.refuseDuringLevelStart();
     const level = getLevelById(id);
     const previous = this.slices;
@@ -122,7 +130,9 @@ export class Sim implements SimHandle {
     }
     this.isLevelStartInProgress = true;
     try {
-      for (const feature of this.features) feature.init?.(this);
+      for (const feature of this.features) {
+        feature.init?.(this);
+      }
     } finally {
       this.isLevelStartInProgress = false;
     }
@@ -133,7 +143,11 @@ export class Sim implements SimHandle {
    * their initial values too. The seed, the rng and the tick count go on, so a recorded game still replays.
    */
   startOver(): void {
-    if (this.isInTick) throw new Error('the game cannot start over in the middle of a tick: ask with startOverAfterThisTick');
+    if (this.isInTick) {
+      throw new Error(
+        'the game cannot start over in the middle of a tick: ask with startOverAfterThisTick',
+      );
+    }
     this.refuseDuringLevelStart();
     this.slices = {};
     this.startLevel(levels[0]!.id);
@@ -149,8 +163,15 @@ export class Sim implements SimHandle {
   startLevelAfterThisTick(id: number): void {
     this.refuseDuringLevelStart();
     const asked: LevelStartRequest = { level: getLevelById(id).id, shouldKeepNothing: false };
-    if (this.requestedDuringTick === null || shouldComeBefore(asked, this.requestedDuringTick, this.levelId)) this.requestedDuringTick = asked;
-    if (!this.isInTick) this.startRequestedLevel();
+    if (
+      this.requestedDuringTick === null ||
+      shouldComeBefore(asked, this.requestedDuringTick, this.levelId)
+    ) {
+      this.requestedDuringTick = asked;
+    }
+    if (!this.isInTick) {
+      this.startRequestedLevel();
+    }
   }
 
   /**
@@ -161,7 +182,9 @@ export class Sim implements SimHandle {
   startOverAfterThisTick(): void {
     this.refuseDuringLevelStart();
     this.requestedDuringTick = { level: levels[0]!.id, shouldKeepNothing: true };
-    if (!this.isInTick) this.startRequestedLevel();
+    if (!this.isInTick) {
+      this.startRequestedLevel();
+    }
   }
 
   step(commands: readonly Command[] = []): void {
@@ -170,34 +193,57 @@ export class Sim implements SimHandle {
     let isFinished = false;
     try {
       for (const command of received) {
-        if (!isCommandShaped(command)) continue;
-        for (const feature of this.features) feature.handleCommand?.(this, command);
+        if (!isCommandShaped(command)) {
+          continue;
+        }
+        for (const feature of this.features) {
+          feature.handleCommand?.(this, command);
+        }
       }
-      for (const feature of this.features) feature.update?.(this);
+      for (const feature of this.features) {
+        feature.update?.(this);
+      }
       isFinished = true;
     } finally {
       this.isInTick = false;
       // Nothing is left over from a tick that threw after a feature had asked.
-      if (!isFinished) this.requestedDuringTick = null;
+      if (!isFinished) {
+        this.requestedDuringTick = null;
+      }
     }
     this.startRequestedLevel();
     this.tick += 1;
   }
 
   private refuseDuringLevelStart(): void {
-    if (this.isLevelStartInProgress) throw new Error("a level is being started: a feature's init cannot start another, or ask for one");
+    if (this.isLevelStartInProgress) {
+      throw new Error(
+        "a level is being started: a feature's init cannot start another, or ask for one",
+      );
+    }
   }
 
   private startRequestedLevel(): void {
     const asked = this.requestedDuringTick;
     this.requestedDuringTick = null;
-    if (asked === null) return;
-    if (asked.shouldKeepNothing) this.startOver();
-    else this.startLevel(asked.level);
+    if (asked === null) {
+      return;
+    }
+    if (asked.shouldKeepNothing) {
+      this.startOver();
+    } else {
+      this.startLevel(asked.level);
+    }
   }
 
   takeSnapshot(): SimSnapshot {
-    return copyJson({ seed: this.seed, tick: this.tick, level: this.levelId, rngState: this.rng.getState(), slices: this.slices });
+    return copyJson({
+      seed: this.seed,
+      tick: this.tick,
+      level: this.levelId,
+      rngState: this.rng.getState(),
+      slices: this.slices,
+    });
   }
 }
 
@@ -210,8 +256,14 @@ interface LevelStartRequest {
 }
 
 /** True when `asked` is to be done instead of `other`, asked for earlier in the same tick on level `playing`. */
-function shouldComeBefore(asked: LevelStartRequest, other: LevelStartRequest, playing: number): boolean {
-  if (other.shouldKeepNothing) return false;
+function shouldComeBefore(
+  asked: LevelStartRequest,
+  other: LevelStartRequest,
+  playing: number,
+): boolean {
+  if (other.shouldKeepNothing) {
+    return false;
+  }
   return asked.level !== playing && other.level === playing;
 }
 
@@ -219,7 +271,9 @@ function assertUniqueSliceKeys(features: readonly Feature[]): void {
   const seen = new Set<string>();
   for (const feature of features) {
     for (const slice of feature.slices ?? []) {
-      if (seen.has(slice.key)) throw new Error(`two features claim the slice "${slice.key}"`);
+      if (seen.has(slice.key)) {
+        throw new Error(`two features claim the slice "${slice.key}"`);
+      }
       seen.add(slice.key);
     }
   }

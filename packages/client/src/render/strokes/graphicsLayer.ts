@@ -19,34 +19,72 @@ export function createGraphicsStrokeLayer(scene: Phaser.Scene): StrokeLayer {
   layersMade += 1;
   const graphics = scene.add.graphics();
   const graphite = Phaser.Display.Color.HexStringToColor(PENCIL.colour).color;
-  const colouredPencils = { green: Phaser.Display.Color.HexStringToColor(COLOURED_PENCILS.green).color } satisfies Record<ColouredPencil, number>;
+  const colouredPencils = {
+    green: Phaser.Display.Color.HexStringToColor(COLOURED_PENCILS.green).color,
+  } satisfies Record<ColouredPencil, number>;
   let strokes: readonly Stroke[] = [];
   /** What the last drawing was made from. Nothing is redrawn while all of it is the same. */
-  let drawn: { strokes: readonly Stroke[]; boilFrame: number; seenX: number; seenY: number; seenWidth: number; seenHeight: number } | undefined;
+  let drawn:
+    | {
+        strokes: readonly Stroke[];
+        boilFrame: number;
+        seenX: number;
+        seenY: number;
+        seenWidth: number;
+        seenHeight: number;
+      }
+    | undefined;
 
   const draw = (): void => {
     const boilFrame = getBoilFrameAt(scene.time.now / 1000);
     const seen = getWorldSeenBy(scene.cameras.main);
     // The view is part of it: points off screen are skipped, so a camera that moved needs a new drawing.
-    const next = { strokes, boilFrame, seenX: seen.x, seenY: seen.y, seenWidth: seen.width, seenHeight: seen.height };
-    if (drawn && drawn.strokes === strokes && drawn.boilFrame === boilFrame && drawn.seenX === seen.x && drawn.seenY === seen.y && drawn.seenWidth === seen.width && drawn.seenHeight === seen.height) return;
+    const next = {
+      strokes,
+      boilFrame,
+      seenX: seen.x,
+      seenY: seen.y,
+      seenWidth: seen.width,
+      seenHeight: seen.height,
+    };
+    if (
+      drawn &&
+      drawn.strokes === strokes &&
+      drawn.boilFrame === boilFrame &&
+      drawn.seenX === seen.x &&
+      drawn.seenY === seen.y &&
+      drawn.seenWidth === seen.width &&
+      drawn.seenHeight === seen.height
+    ) {
+      return;
+    }
     drawn = next;
 
     const isInView = (point: PencilPoint): boolean =>
-      point.x > seen.x - OFF_SCREEN_MARGIN && point.x < seen.x + seen.width + OFF_SCREEN_MARGIN && point.y > seen.y - OFF_SCREEN_MARGIN && point.y < seen.y + seen.height + OFF_SCREEN_MARGIN;
+      point.x > seen.x - OFF_SCREEN_MARGIN &&
+      point.x < seen.x + seen.width + OFF_SCREEN_MARGIN &&
+      point.y > seen.y - OFF_SCREEN_MARGIN &&
+      point.y < seen.y + seen.height + OFF_SCREEN_MARGIN;
 
     graphics.clear();
     strokes.forEach((stroke, index) => {
       const colour = stroke.colour === undefined ? graphite : colouredPencils[stroke.colour];
       graphics.fillStyle(colour, 1);
       // Numbered by layer, so two layers' lines do not wobble alike.
-      const path = buildHandDrawnPath(stroke, { strokeIndex: layerNumber * STROKES_PER_LAYER + index, boilFrame });
+      const path = buildHandDrawnPath(stroke, {
+        strokeIndex: layerNumber * STROKES_PER_LAYER + index,
+        boilFrame,
+      });
       path.forEach((point, pointIndex) => {
-        if (!isInView(point)) return;
+        if (!isInView(point)) {
+          return;
+        }
         const width = stroke.thickness * point.pressure;
         graphics.fillCircle(point.x, point.y, width / 2);
         const next = path[pointIndex + 1];
-        if (!next) return;
+        if (!next) {
+          return;
+        }
         graphics.lineStyle((width + stroke.thickness * next.pressure) / 2, colour, 1);
         graphics.lineBetween(point.x, point.y, next.x, next.y);
       });

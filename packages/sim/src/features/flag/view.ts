@@ -22,9 +22,20 @@ export interface FlagView {
 
 /** The flag of the level being played, or undefined when the level has none. */
 export function getFlag(handle: SimHandle): FlagView | undefined {
-  if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
+  if (!(handle instanceof Sim)) {
+    throw new TypeError('not a sim made by createSim or restoreSim');
+  }
   const placed = findFlagPlacedIn(handle.levelDef);
-  if (!placed) return undefined;
+  if (!placed) {
+    return undefined;
+  }
   const reachedFor = getSecondsSinceFlagReached(handle) ?? 0;
-  return { position: placed.position, height: flagDef.height, isReached: handle.getStateOf(flagSlice).reachedAtTick !== null, upFor: Math.max(0, reachedFor - flagDef.raiseSeconds), raised: Math.min(1, reachedFor / flagDef.raiseSeconds), isFinalFlag: isLastLevel(handle.levelDef) };
+  return {
+    position: placed.position,
+    height: flagDef.height,
+    isReached: handle.getStateOf(flagSlice).reachedAtTick !== null,
+    upFor: Math.max(0, reachedFor - flagDef.raiseSeconds),
+    raised: Math.min(1, reachedFor / flagDef.raiseSeconds),
+    isFinalFlag: isLastLevel(handle.levelDef),
+  };
 }

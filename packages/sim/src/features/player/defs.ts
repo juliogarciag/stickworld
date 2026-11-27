@@ -68,7 +68,9 @@ export interface MovementTuning {
 }
 
 /** What the knobs move between: the sim ignores a value outside them. */
-export const MOVEMENT_TUNING_LIMITS: { readonly [Name in keyof MovementTuning]: { readonly min: number; readonly max: number } } = {
+export const MOVEMENT_TUNING_LIMITS: {
+  readonly [Name in keyof MovementTuning]: { readonly min: number; readonly max: number };
+} = {
   walkSpeed: { min: 0.5, max: 12 },
   jumpHeight: { min: 0.1, max: 8 },
   jumpHeightCarrying: { min: 0.1, max: 8 },

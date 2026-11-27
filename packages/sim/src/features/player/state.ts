@@ -33,26 +33,34 @@ export interface PlayerState {
   seatedAtTick: number | null;
 }
 
-export const playerSlice = defineSlice<PlayerState>('player', (level) => ({
-  x: level.start.x,
-  y: level.start.y,
-  verticalSpeed: 0,
-  horizontalSpeed: 0,
-  facing: 1,
-  walkDirection: 0,
-  isOnFloor: true,
-  distanceWalked: 0,
-  ticksSinceWalkedOff: null,
-  ticksSinceJumpAsked: null,
-  isJumpHeld: false,
-  isRiseCut: false,
-  isCarrying: false,
-  isSeated: false,
-  seatedAtTick: null,
-}), { isCarriedAcrossLevels: false });
+export const playerSlice = defineSlice<PlayerState>(
+  'player',
+  (level) => ({
+    x: level.start.x,
+    y: level.start.y,
+    verticalSpeed: 0,
+    horizontalSpeed: 0,
+    facing: 1,
+    walkDirection: 0,
+    isOnFloor: true,
+    distanceWalked: 0,
+    ticksSinceWalkedOff: null,
+    ticksSinceJumpAsked: null,
+    isJumpHeld: false,
+    isRiseCut: false,
+    isCarrying: false,
+    isSeated: false,
+    seatedAtTick: null,
+  }),
+  { isCarriedAcrossLevels: false },
+);
 
 /**
  * How the stick man walks, jumps and falls right now: `MOVEMENT_PRESETS.current` unless a dev build tuned it. It is kept when a
  * level starts or starts again, and goes back to `current` when the game starts over.
  */
-export const movementTuningSlice = defineSlice<MovementTuning>('movementTuning', () => ({ ...MOVEMENT_PRESETS.current }), { isCarriedAcrossLevels: true });
+export const movementTuningSlice = defineSlice<MovementTuning>(
+  'movementTuning',
+  () => ({ ...MOVEMENT_PRESETS.current }),
+  { isCarriedAcrossLevels: true },
+);

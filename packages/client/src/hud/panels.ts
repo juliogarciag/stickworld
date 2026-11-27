@@ -22,13 +22,37 @@ export interface LetterHeldUp {
  */
 export function buildLetterSheetStrokes(letter: LetterHeldUp, seen: Rectangle): Stroke[] {
   const width = Math.min(SHEET.width, seen.width - 2 * SHEET.topMargin);
-  const textAt = { x: seen.x + (seen.width - width) / 2 + SHEET.padding, y: seen.y + SHEET.topMargin + SHEET.padding };
+  const textAt = {
+    x: seen.x + (seen.width - width) / 2 + SHEET.padding,
+    y: seen.y + SHEET.topMargin + SHEET.padding,
+  };
   const lineWidth = width - 2 * SHEET.padding;
-  const words = buildWriting(letter.text, { position: textAt, letterHeight: SHEET.letterHeight, lineWidth });
-  const learned = letter.teaches === null ? null : buildWriting(`${SHEET.learned} ${letter.teaches}`, { position: { x: textAt.x, y: textAt.y + words.height + SHEET.learnedTextGap }, letterHeight: SHEET.letterHeight, lineWidth });
-  const writtenHeight = learned === null ? words.height : words.height + SHEET.learnedTextGap + learned.height;
-  const sheet = { x: textAt.x - SHEET.padding, y: textAt.y - SHEET.padding, width, height: writtenHeight + 2 * SHEET.padding };
-  return [{ points: skew(sheet, SHEET.askew), thickness: PENCIL.thickness, isClosed: true }, ...words.strokes, ...(learned?.strokes ?? [])];
+  const words = buildWriting(letter.text, {
+    position: textAt,
+    letterHeight: SHEET.letterHeight,
+    lineWidth,
+  });
+  const learned =
+    letter.teaches === null
+      ? null
+      : buildWriting(`${SHEET.learned} ${letter.teaches}`, {
+          position: { x: textAt.x, y: textAt.y + words.height + SHEET.learnedTextGap },
+          letterHeight: SHEET.letterHeight,
+          lineWidth,
+        });
+  const writtenHeight =
+    learned === null ? words.height : words.height + SHEET.learnedTextGap + learned.height;
+  const sheet = {
+    x: textAt.x - SHEET.padding,
+    y: textAt.y - SHEET.padding,
+    width,
+    height: writtenHeight + 2 * SHEET.padding,
+  };
+  return [
+    { points: skew(sheet, SHEET.askew), thickness: PENCIL.thickness, isClosed: true },
+    ...words.strokes,
+    ...(learned?.strokes ?? []),
+  ];
 }
 
 // ---- Helpers ----
@@ -52,7 +76,10 @@ function skew(rectangle: Rectangle, amount: number): StrokePoint[] {
   return [
     { x: rectangle.x - amount * 0.4, y: rectangle.y + amount },
     { x: rectangle.x + rectangle.width + amount * 0.6, y: rectangle.y - amount * 0.5 },
-    { x: rectangle.x + rectangle.width - amount * 0.3, y: rectangle.y + rectangle.height + amount * 0.8 },
+    {
+      x: rectangle.x + rectangle.width - amount * 0.3,
+      y: rectangle.y + rectangle.height + amount * 0.8,
+    },
     { x: rectangle.x + amount * 0.7, y: rectangle.y + rectangle.height - amount * 0.3 },
   ];
 }

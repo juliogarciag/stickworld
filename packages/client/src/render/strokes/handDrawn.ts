@@ -22,8 +22,13 @@ interface Redraw {
 
 /** The path a hand would draw for `stroke` on this redraw. The same arguments always give the same path. */
 export function buildHandDrawnPath(stroke: Stroke, redraw: Redraw): PencilPoint[] {
-  const path = spaceEvenly(stroke.isClosed ? buildOverlappingLoop(stroke.points) : stroke.points, PENCIL.pointSpacing);
-  if (path.length < 2) return [];
+  const path = spaceEvenly(
+    stroke.isClosed ? buildOverlappingLoop(stroke.points) : stroke.points,
+    PENCIL.pointSpacing,
+  );
+  if (path.length < 2) {
+    return [];
+  }
   const seed = mix(mix(redraw.strokeIndex + 1, redraw.boilFrame), path.length);
   const last = path.length - 1;
   return path.map((point, index) => {
@@ -32,7 +37,11 @@ export function buildHandDrawnPath(stroke: Stroke, redraw: Redraw): PencilPoint[
     const offset = PENCIL.wobble * getSmoothNoise(seed, distanceAlong / PENCIL.wobbleLength);
     const fromNearestEnd = Math.min(index, last - index) * PENCIL.pointSpacing;
     const lift = Math.min(1, fromNearestEnd / PENCIL.taperLength);
-    const pressure = (PENCIL.pressureAtEnds + (1 - PENCIL.pressureAtEnds) * lift) * (1 - PENCIL.pressureVariation * (0.5 + 0.5 * getSmoothNoise(seed + 7, distanceAlong / PENCIL.pressureLength)));
+    const pressure =
+      (PENCIL.pressureAtEnds + (1 - PENCIL.pressureAtEnds) * lift) *
+      (1 -
+        PENCIL.pressureVariation *
+          (0.5 + 0.5 * getSmoothNoise(seed + 7, distanceAlong / PENCIL.pressureLength)));
     return { x: point.x + normal.x * offset, y: point.y + normal.y * offset, pressure };
   });
 }
@@ -46,15 +55,23 @@ export function getBoilFrameAt(seconds: number): number {
 
 /** A loop whose pencil goes a little past where it started, as a hand closing a circle does. */
 function buildOverlappingLoop(points: readonly StrokePoint[]): StrokePoint[] {
-  if (points.length < 3) return [...points];
+  if (points.length < 3) {
+    return [...points];
+  }
   const loop = [...points, points[0]!];
   let overlap = PENCIL.loopOverlap;
   for (let index = 1; index < points.length && overlap > 0; index += 1) {
     const start = points[index - 1]!;
     const end = points[index]!;
     const length = Math.hypot(end.x - start.x, end.y - start.y);
-    if (length <= overlap) loop.push(end);
-    else loop.push({ x: start.x + ((end.x - start.x) * overlap) / length, y: start.y + ((end.y - start.y) * overlap) / length });
+    if (length <= overlap) {
+      loop.push(end);
+    } else {
+      loop.push({
+        x: start.x + ((end.x - start.x) * overlap) / length,
+        y: start.y + ((end.y - start.y) * overlap) / length,
+      });
+    }
     overlap -= length;
   }
   return loop;
@@ -68,11 +85,16 @@ function spaceEvenly(points: readonly StrokePoint[], spacing: number): StrokePoi
     const end = points[index]!;
     const length = Math.hypot(end.x - start.x, end.y - start.y);
     // A piece with no length, or with a coordinate that is not a number, is skipped: it has nowhere to be drawn.
-    if (!Number.isFinite(length) || length <= 0) continue;
+    if (!Number.isFinite(length) || length <= 0) {
+      continue;
+    }
     const steps = Math.max(1, Math.round(length / spacing));
     for (let step = spaced.length === 0 ? 0 : 1; step <= steps; step += 1) {
       const distanceAlong = step / steps;
-      spaced.push({ x: start.x + (end.x - start.x) * distanceAlong, y: start.y + (end.y - start.y) * distanceAlong });
+      spaced.push({
+        x: start.x + (end.x - start.x) * distanceAlong,
+        y: start.y + (end.y - start.y) * distanceAlong,
+      });
     }
   }
   return spaced;

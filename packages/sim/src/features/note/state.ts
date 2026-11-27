@@ -6,4 +6,8 @@ export interface NotesState {
 }
 
 /** Every note is there again when the level starts again: the stick man may need it a second time. */
-export const notesSlice = defineSlice<NotesState>('notes', (level) => ({ rubbedOutAtTick: (level.notes ?? []).map(() => null) }), { isCarriedAcrossLevels: false });
+export const notesSlice = defineSlice<NotesState>(
+  'notes',
+  (level) => ({ rubbedOutAtTick: (level.notes ?? []).map(() => null) }),
+  { isCarriedAcrossLevels: false },
+);

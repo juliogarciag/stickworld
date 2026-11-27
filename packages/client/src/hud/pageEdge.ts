@@ -16,9 +16,21 @@ export function buildPageEdgeStrokes(edgeAt: number, seen: Rectangle): Stroke[] 
   for (let y = seen.y - EDGE.hatchLength; y < seen.y + seen.height; y += EDGE.betweenHatches) {
     const length = EDGE.hatchLength * (0.45 + 0.55 * nextUnit());
     const start = { x: x + EDGE.lineOffset, y: y + nextUnit() * EDGE.betweenHatches * 0.5 };
-    hatches.push({ points: [start, { x: start.x + length, y: start.y + length * EDGE.hatchSlope }], thickness: EDGE.hatchThickness });
+    hatches.push({
+      points: [start, { x: start.x + length, y: start.y + length * EDGE.hatchSlope }],
+      thickness: EDGE.hatchThickness,
+    });
   }
-  return [{ points: [{ x, y: seen.y - EDGE.viewOverhang }, { x, y: seen.y + seen.height + EDGE.viewOverhang }], thickness: PENCIL.thickness }, ...hatches];
+  return [
+    {
+      points: [
+        { x, y: seen.y - EDGE.viewOverhang },
+        { x, y: seen.y + seen.height + EDGE.viewOverhang },
+      ],
+      thickness: PENCIL.thickness,
+    },
+    ...hatches,
+  ];
 }
 
 // ---- Helpers ----

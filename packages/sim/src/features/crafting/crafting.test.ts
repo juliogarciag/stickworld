@@ -73,12 +73,15 @@ describe('making a recipe', () => {
 });
 
 describe('every recipe', () => {
-  it.each(recipeDefs.map((recipe) => [recipe.name, recipe] as const))('%s is a def made from one item into another', (_, recipe) => {
-    expect(getDef(recipe.id)).toBe(recipe);
-    expect(isItemDefId(recipe.madeFrom)).toBe(true);
-    expect(isItemDefId(recipe.makes)).toBe(true);
-    expect(recipe.makes).not.toBe(recipe.madeFrom);
-  });
+  it.each(recipeDefs.map((recipe) => [recipe.name, recipe] as const))(
+    '%s is a def made from one item into another',
+    (_, recipe) => {
+      expect(getDef(recipe.id)).toBe(recipe);
+      expect(isItemDefId(recipe.madeFrom)).toBe(true);
+      expect(isItemDefId(recipe.makes)).toBe(true);
+      expect(recipe.makes).not.toBe(recipe.madeFrom);
+    },
+  );
 
   it('is the only one made from its item: using the item makes it, with no list to choose from yet', () => {
     const madeFrom = recipeDefs.map((recipe) => recipe.madeFrom);

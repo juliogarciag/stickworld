@@ -46,23 +46,28 @@ describe("'world/interact' and 'item/use'", () => {
     expect(getItemUse(sim)).toBe('craft');
   });
 
-  it.each(levels.map((level) => [level.id]))('change nothing on level %i when there is nothing to use or interact with', (level) => {
-    const sim = new Sim({ features, start: { seed: 1, level } });
-    walkTo(sim, getStickMan(sim).feet.x - 1);
-    expect(getInteraction(sim)).toBeNull();
-    expect(getItemUse(sim)).toBeNull();
-    const untouched = new Sim({ features, snapshot: sim.takeSnapshot() });
-    sim.step([INTERACT, USE_ITEM]);
-    untouched.step();
-    expect(hashSnapshot(sim.takeSnapshot())).toBe(hashSnapshot(untouched.takeSnapshot()));
-  });
+  it.each(levels.map((level) => [level.id]))(
+    'change nothing on level %i when there is nothing to use or interact with',
+    (level) => {
+      const sim = new Sim({ features, start: { seed: 1, level } });
+      walkTo(sim, getStickMan(sim).feet.x - 1);
+      expect(getInteraction(sim)).toBeNull();
+      expect(getItemUse(sim)).toBeNull();
+      const untouched = new Sim({ features, snapshot: sim.takeSnapshot() });
+      sim.step([INTERACT, USE_ITEM]);
+      untouched.step();
+      expect(hashSnapshot(sim.takeSnapshot())).toBe(hashSnapshot(untouched.takeSnapshot()));
+    },
+  );
 
   it('do nothing once the level is finished', () => {
     const sim = new Sim({ features, start: { seed: 1, level: 1 } });
     giveItem(sim, PAPER_ITEM_ID);
     sim.step([SELECT_SLOT_1]);
     sim.step([{ type: 'player/walk', direction: 1 }]);
-    for (let tick = 0; tick < 600 && !getFlag(sim)!.isReached; tick += 1) sim.step();
+    for (let tick = 0; tick < 600 && !getFlag(sim)!.isReached; tick += 1) {
+      sim.step();
+    }
     expect(getFlag(sim)!.isReached).toBe(true);
     expect(getItemUse(sim)).toBeNull();
     expect(getInteraction(sim)).toBeNull();
@@ -79,6 +84,8 @@ const INTERACT: Command = { type: 'world/interact' };
 function walkTo(sim: Sim, x: number): void {
   const direction = x > getStickMan(sim).feet.x ? 1 : -1;
   sim.step([{ type: 'player/walk', direction }]);
-  for (let tick = 0; tick < 3000 && (x - getStickMan(sim).feet.x) * direction > 0; tick += 1) sim.step();
+  for (let tick = 0; tick < 3000 && (x - getStickMan(sim).feet.x) * direction > 0; tick += 1) {
+    sim.step();
+  }
   sim.step([{ type: 'player/walk', direction: 0 }]);
 }

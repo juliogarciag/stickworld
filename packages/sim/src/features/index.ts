@@ -23,4 +23,16 @@ import { worldFeature } from './world';
  * stands, and comes after it so a note is rubbed out on the tick it gets there;
  * `checkpoint` also watches where the stick man stands, so it comes after the stick man too.
  */
-export const features: readonly Feature[] = [gameFeature, playerFeature, flagFeature, inventoryFeature, itemFeature, worldFeature, craftingFeature, letterFeature, airplaneFeature, noteFeature, checkpointFeature];
+export const features: readonly Feature[] = [
+  gameFeature,
+  playerFeature,
+  flagFeature,
+  inventoryFeature,
+  itemFeature,
+  worldFeature,
+  craftingFeature,
+  letterFeature,
+  airplaneFeature,
+  noteFeature,
+  checkpointFeature,
+];

@@ -12,8 +12,12 @@ import type { Stroke, StrokePoint } from './stroke';
  * all of it is written, so a layer shown it does not draw it anew.
  */
 export function getWrittenSoFar(strokes: readonly Stroke[], share: number): readonly Stroke[] {
-  if (share >= 1) return strokes;
-  return keepBetween(strokes, { start: 0, end: Math.max(0, share) }).filter((stroke) => stroke.points.length > 1);
+  if (share >= 1) {
+    return strokes;
+  }
+  return keepBetween(strokes, { start: 0, end: Math.max(0, share) }).filter(
+    (stroke) => stroke.points.length > 1,
+  );
 }
 
 /**
@@ -22,7 +26,9 @@ export function getWrittenSoFar(strokes: readonly Stroke[], share: number): read
  * very same list while nothing is rubbed out.
  */
 export function getRubbedOutSoFar(strokes: readonly Stroke[], share: number): readonly Stroke[] {
-  if (share <= 0) return strokes;
+  if (share <= 0) {
+    return strokes;
+  }
   return keepBetween(strokes, { start: Math.min(1, share), end: 1 });
 }
 
@@ -39,10 +45,17 @@ function keepBetween(strokes: readonly Stroke[], range: { start: number; end: nu
     const start = range.start * whole - before;
     const end = range.end * whole - before;
     before += length;
-    if (start <= 0 && end >= length) return stroke;
+    if (start <= 0 && end >= length) {
+      return stroke;
+    }
     // Sums of lengths are a rounding off: a piece shorter than this is no piece.
-    if (end <= SHORTEST_PIECE || start >= length - SHORTEST_PIECE) return { points: [], thickness: stroke.thickness };
-    return { points: cutBetween(path, { start: Math.max(0, start), end: Math.min(length, end) }), thickness: stroke.thickness };
+    if (end <= SHORTEST_PIECE || start >= length - SHORTEST_PIECE) {
+      return { points: [], thickness: stroke.thickness };
+    }
+    return {
+      points: cutBetween(path, { start: Math.max(0, start), end: Math.min(length, end) }),
+      thickness: stroke.thickness,
+    };
   });
 }
 
@@ -51,17 +64,24 @@ const SHORTEST_PIECE = 1e-6;
 
 /** The path the pencil follows for `stroke`: a loop comes back to where it started. */
 function getPath(stroke: Stroke): readonly StrokePoint[] {
-  return stroke.isClosed && stroke.points.length > 2 ? [...stroke.points, stroke.points[0]!] : stroke.points;
+  return stroke.isClosed && stroke.points.length > 2
+    ? [...stroke.points, stroke.points[0]!]
+    : stroke.points;
 }
 
 function measureLength(path: readonly StrokePoint[]): number {
   let length = 0;
-  for (let index = 1; index < path.length; index += 1) length += Math.hypot(path[index]!.x - path[index - 1]!.x, path[index]!.y - path[index - 1]!.y);
+  for (let index = 1; index < path.length; index += 1) {
+    length += Math.hypot(path[index]!.x - path[index - 1]!.x, path[index]!.y - path[index - 1]!.y);
+  }
   return length;
 }
 
 /** The part of `path` between `from` and `to`, measured along it from its start. */
-function cutBetween(path: readonly StrokePoint[], range: { start: number; end: number }): StrokePoint[] {
+function cutBetween(
+  path: readonly StrokePoint[],
+  range: { start: number; end: number },
+): StrokePoint[] {
   const cut: StrokePoint[] = [];
   let walked = 0;
   for (let index = 1; index < path.length; index += 1) {
@@ -73,7 +93,9 @@ function cutBetween(path: readonly StrokePoint[], range: { start: number; end: n
       return { x: start.x + (end.x - start.x) * share, y: start.y + (end.y - start.y) * share };
     };
     if (walked + length > range.start && walked < range.end) {
-      if (cut.length === 0) cut.push(getPointAlong(Math.max(range.start, walked)));
+      if (cut.length === 0) {
+        cut.push(getPointAlong(Math.max(range.start, walked)));
+      }
       cut.push(getPointAlong(Math.min(range.end, walked + length)));
     }
     walked += length;

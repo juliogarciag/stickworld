@@ -10,7 +10,9 @@ import { hashSnapshot } from './snapshot';
 describe('takeSnapshot', () => {
   it('a restored sim continues exactly as the one it was taken from', () => {
     const original = new Sim({ features: [walkerFeature], start: { seed: 3, level: 1 } });
-    for (let tick = 0; tick < 100; tick += 1) original.step([makeTurnCommand(tick)]);
+    for (let tick = 0; tick < 100; tick += 1) {
+      original.step([makeTurnCommand(tick)]);
+    }
     const restored = new Sim({ features: [walkerFeature], snapshot: original.takeSnapshot() });
     for (let tick = 100; tick < 200; tick += 1) {
       original.step([makeTurnCommand(tick)]);
@@ -29,12 +31,17 @@ describe('takeSnapshot', () => {
     expect((sim.takeSnapshot().slices.walker as Walker).x).not.toBe(999);
   });
 
-  it.each(levels.map((level) => [level.id]))('holds only plain JSON for every registered feature on level %i', (level) => {
-    const sim = new Sim({ features, start: { seed: 1, level } });
-    for (let tick = 0; tick < 60; tick += 1) sim.step();
-    const snapshot = sim.takeSnapshot();
-    expect(JSON.parse(JSON.stringify(snapshot))).toEqual(snapshot);
-  });
+  it.each(levels.map((level) => [level.id]))(
+    'holds only plain JSON for every registered feature on level %i',
+    (level) => {
+      const sim = new Sim({ features, start: { seed: 1, level } });
+      for (let tick = 0; tick < 60; tick += 1) {
+        sim.step();
+      }
+      const snapshot = sim.takeSnapshot();
+      expect(JSON.parse(JSON.stringify(snapshot))).toEqual(snapshot);
+    },
+  );
 
   it('hashes equal snapshots equally whatever their key order', () => {
     const snapshot = { seed: 1, tick: 2, level: 1, rngState: 4, slices: { a: { x: 1, y: 2 } } };
@@ -44,7 +51,9 @@ describe('takeSnapshot', () => {
 
   it('keeps a slice declared to carry across levels when the level restarts, and resets the rest', () => {
     const sim = new Sim({ features: [walkerFeature], start: { seed: 3, level: 1 } });
-    for (let tick = 0; tick < 10; tick += 1) sim.step();
+    for (let tick = 0; tick < 10; tick += 1) {
+      sim.step();
+    }
     sim.startLevel(1);
     const { slices } = sim.takeSnapshot();
     expect((slices.walker as Walker).x).toBe(levels[0]?.start.x);
@@ -59,7 +68,9 @@ interface Walker {
   direction: number;
 }
 
-const walkerSlice = defineSlice<Walker>('walker', (level) => ({ x: level.start.x, direction: 1 }), { isCarriedAcrossLevels: false });
+const walkerSlice = defineSlice<Walker>('walker', (level) => ({ x: level.start.x, direction: 1 }), {
+  isCarriedAcrossLevels: false,
+});
 const stepsSlice = defineSlice<number>('steps', () => 0, { isCarriedAcrossLevels: true });
 
 /** A fixture feature: walks a point left or right, turns on `walker/turn`, and counts its steps across levels. */
@@ -67,7 +78,9 @@ const walkerFeature: Feature = {
   name: 'walker',
   slices: [walkerSlice, stepsSlice],
   handleCommand(sim, command) {
-    if ((command as { type: string }).type === 'walker/turn') sim.getStateOf(walkerSlice).direction *= -1;
+    if ((command as { type: string }).type === 'walker/turn') {
+      sim.getStateOf(walkerSlice).direction *= -1;
+    }
   },
   update(sim) {
     const walker = sim.getStateOf(walkerSlice);

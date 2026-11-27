@@ -13,6 +13,10 @@ export interface Inventory {
  * level and restarting one after a death both keep it: the paper from level 2
  * is never lost.
  */
-export const inventorySlice = defineSlice<Inventory>('inventory', () => ({ slots: Array.from({ length: ITEM_SLOT_COUNT }, () => null), selectedSlot: null }), {
-  isCarriedAcrossLevels: true,
-});
+export const inventorySlice = defineSlice<Inventory>(
+  'inventory',
+  () => ({ slots: Array.from({ length: ITEM_SLOT_COUNT }, () => null), selectedSlot: null }),
+  {
+    isCarriedAcrossLevels: true,
+  },
+);

@@ -45,9 +45,19 @@ export interface PromptInput {
 export function getPromptsFor(input: PromptInput): Prompt[] {
   return [
     ...(input.flyingHint === null ? [] : [FLYING_HINTS[input.flyingHint]]),
-    ...(input.itemUse === null ? [] : [{ key: input.useItemKey, words: ITEM_USE_WORDS[input.itemUse](input.wouldMake) }]),
-    ...(input.interaction === null ? [] : [{ key: input.interactKey, words: INTERACTION_WORDS[input.interaction] }]),
-    ...(input.isSeated ? [{ key: input.flightKeys.climb, words: FLIGHT_WORDS.climb }, { key: input.flightKeys.dive, words: FLIGHT_WORDS.dive }, { key: input.flightKeys.jumpOut, words: FLIGHT_WORDS.jumpOut }] : []),
+    ...(input.itemUse === null
+      ? []
+      : [{ key: input.useItemKey, words: ITEM_USE_WORDS[input.itemUse](input.wouldMake) }]),
+    ...(input.interaction === null
+      ? []
+      : [{ key: input.interactKey, words: INTERACTION_WORDS[input.interaction] }]),
+    ...(input.isSeated
+      ? [
+          { key: input.flightKeys.climb, words: FLIGHT_WORDS.climb },
+          { key: input.flightKeys.dive, words: FLIGHT_WORDS.dive },
+          { key: input.flightKeys.jumpOut, words: FLIGHT_WORDS.jumpOut },
+        ]
+      : []),
   ];
 }
 
@@ -55,9 +65,24 @@ export function getPromptsFor(input: PromptInput): Prompt[] {
 export function buildPromptStrokes(prompts: readonly Prompt[], seen: Rectangle): Stroke[] {
   return prompts.flatMap((prompt, index) => {
     const indexFromBottom = prompts.length - 1 - index;
-    const position = { x: seen.x + PROMPTS.margin, y: seen.y + seen.height - PROMPTS.margin - PROMPTS.keySide - indexFromBottom * PROMPTS.rowHeight };
-    const { strokes } = buildKeysAndWords({ keys: prompt.key === null ? [] : [prompt.key], words: prompt.words, position, sizes: PROMPTS });
-    return prompt.colour === undefined ? strokes : strokes.map((stroke) => ({ ...stroke, colour: prompt.colour }));
+    const position = {
+      x: seen.x + PROMPTS.margin,
+      y:
+        seen.y +
+        seen.height -
+        PROMPTS.margin -
+        PROMPTS.keySide -
+        indexFromBottom * PROMPTS.rowHeight,
+    };
+    const { strokes } = buildKeysAndWords({
+      keys: prompt.key === null ? [] : [prompt.key],
+      words: prompt.words,
+      position,
+      sizes: PROMPTS,
+    });
+    return prompt.colour === undefined
+      ? strokes
+      : strokes.map((stroke) => ({ ...stroke, colour: prompt.colour }));
   });
 }
 

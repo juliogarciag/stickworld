@@ -19,9 +19,14 @@ import type { WorldCommand } from '../features/world/commands';
  *     | PlayerCommand
  *     | InventoryCommand;
  */
-export type Command = PlayerCommand | InventoryCommand | ItemCommand | WorldCommand | AirplaneCommand | GameCommand;
+export type Command =
+  PlayerCommand | InventoryCommand | ItemCommand | WorldCommand | AirplaneCommand | GameCommand;
 
 /** True when `value` has the minimal shape of a command. Anything else is dropped by Sim.step. */
 export function isCommandShaped(value: unknown): value is Command {
-  return typeof value === 'object' && value !== null && typeof (value as { type?: unknown }).type === 'string';
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof (value as { type?: unknown }).type === 'string'
+  );
 }

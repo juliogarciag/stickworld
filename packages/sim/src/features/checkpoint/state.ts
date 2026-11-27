@@ -10,4 +10,8 @@ export interface CheckpointState {
  * Starting a different level must clear it, and the feature's `init` does that.
  * Starting the game over resets every slice, including this one.
  */
-export const checkpointSlice = defineSlice<CheckpointState>('checkpoint', () => ({ passedOnLevel: null }), { isCarriedAcrossLevels: true });
+export const checkpointSlice = defineSlice<CheckpointState>(
+  'checkpoint',
+  () => ({ passedOnLevel: null }),
+  { isCarriedAcrossLevels: true },
+);

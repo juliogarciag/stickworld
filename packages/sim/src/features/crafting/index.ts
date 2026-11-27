@@ -18,7 +18,9 @@ export const craftingFeature: Feature = {
 /** The stick man knows the recipe `recipeDefId` from now on. Nothing changes for one the stick man knows already, or for an id that is not a recipe's. */
 export function teachRecipe(sim: Sim, recipeDefId: number): void {
   const known = sim.getStateOf(knownRecipesSlice);
-  if (getRecipeDef(recipeDefId) && !known.includes(recipeDefId)) known.push(recipeDefId);
+  if (getRecipeDef(recipeDefId) && !known.includes(recipeDefId)) {
+    known.push(recipeDefId);
+  }
 }
 
 /** The recipes the stick man knows, in the order it learned them. */
@@ -39,6 +41,8 @@ export function findCraftableRecipe(sim: Sim): RecipeDef | undefined {
 /** What using the held item does for crafting, for `features/item`: it makes the recipe the stick man knows for it. Undefined when the stick man knows none. */
 export function getCraftingUse(sim: Sim) {
   const recipe = findCraftableRecipe(sim);
-  if (!recipe) return undefined;
+  if (!recipe) {
+    return undefined;
+  }
   return { means: 'craft' as const, perform: () => void replaceSelectedItem(sim, recipe.makes) };
 }
