@@ -14,17 +14,17 @@ const FLAG = {
 } as const;
 
 /** The flag as pencil strokes in world pixels: a stick, and a triangle of cloth that is higher up it the more `raised` the flag is. */
-export function buildFlagStrokes({ at, height, raised }: FlagView): Stroke[] {
-  const top = at.y - height;
-  const clothTop = top + height * (FLAG.gapAtTop + FLAG.loweredBy * (1 - raised));
+export function buildFlagStrokes(flag: FlagView): Stroke[] {
+  const top = flag.position.y - flag.height;
+  const clothTop = top + flag.height * (FLAG.gapAtTop + FLAG.loweredBy * (1 - flag.raised));
   const cloth = [
-    { x: at.x, y: clothTop },
-    { x: at.x + height * FLAG.clothLength, y: clothTop + (height * FLAG.clothHeight) / 2 },
-    { x: at.x, y: clothTop + height * FLAG.clothHeight },
+    { x: flag.position.x, y: clothTop },
+    { x: flag.position.x + flag.height * FLAG.clothLength, y: clothTop + (flag.height * FLAG.clothHeight) / 2 },
+    { x: flag.position.x, y: clothTop + flag.height * FLAG.clothHeight },
   ];
   return [
-    { points: [at, { x: at.x, y: top }].map(convertPointToPixels), thickness: PENCIL.thickness },
-    { points: cloth.map(convertPointToPixels), thickness: PENCIL.thickness, closed: true },
+    { points: [flag.position, { x: flag.position.x, y: top }].map(convertPointToPixels), thickness: PENCIL.thickness },
+    { points: cloth.map(convertPointToPixels), thickness: PENCIL.thickness, isClosed: true },
   ];
 }
 

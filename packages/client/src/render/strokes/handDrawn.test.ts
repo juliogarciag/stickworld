@@ -51,7 +51,7 @@ describe('buildHandDrawnPath', () => {
   });
 
   it('takes a closed loop past where it started', () => {
-    const open = buildHandDrawnPath({ ...SQUARE, closed: false }, { strokeIndex: 0, boilFrame: 0 });
+    const open = buildHandDrawnPath({ ...SQUARE, isClosed: false }, { strokeIndex: 0, boilFrame: 0 });
     const closed = buildHandDrawnPath(SQUARE, { strokeIndex: 0, boilFrame: 0 });
     expect(measureLength(open)).toBeGreaterThan(120 - 4 * PENCIL.wobble);
     expect(measureLength(open)).toBeLessThan(120 + 4 * PENCIL.wobble);
@@ -89,7 +89,7 @@ describe('getBoilFrameAt', () => {
 
 const FLOOR: Stroke = { points: [{ x: 0, y: 100 }, { x: 600, y: 100 }], thickness: PENCIL.thickness };
 
-const SQUARE: Stroke = { points: [{ x: 0, y: 0 }, { x: 40, y: 0 }, { x: 40, y: 40 }, { x: 0, y: 40 }], thickness: 4, closed: true };
+const SQUARE: Stroke = { points: [{ x: 0, y: 0 }, { x: 40, y: 0 }, { x: 40, y: 40 }, { x: 0, y: 40 }], thickness: 4, isClosed: true };
 
 function measureDistance(first: { x: number; y: number }, second: { x: number; y: number }): number {
   return Math.hypot(first.x - second.x, first.y - second.y);

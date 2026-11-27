@@ -36,7 +36,7 @@ function boot(): void {
   if (import.meta.env.DEV) {
     exposeDebugApi({ loop, game, pageTurn });
     // Loaded only here, so that a production build has neither the panel nor the library that draws it.
-    void import('./movementPanel').then(({ showMovementPanel }) => showMovementPanel(loop));
+    void import('./movementPanel').then((movementPanel) => movementPanel.showMovementPanel(loop));
   }
 }
 

@@ -35,7 +35,7 @@ try {
   results.push(check('a level has a checkpoint', levelWithOne !== undefined, `level ${levelWithOne}`));
   await page.waitForFunction(() => window.__game.sim.tick > 30);
   const level = await page.evaluate(() => ({ start: window.__game.level.start, checkpoint: window.__game.getCheckpoint() }));
-  results.push(check('it stands past the start and is not passed yet', level.checkpoint.at.x > level.start.x && level.checkpoint.passed === false, JSON.stringify(level)));
+  results.push(check('it stands past the start and is not passed yet', level.checkpoint.position.x > level.start.x && level.checkpoint.isPassed === false, JSON.stringify(level)));
 
   // Before it: off the left end of the paper, and the level starts him at its start.
   await page.keyboard.down('ArrowLeft');
@@ -43,24 +43,24 @@ try {
   await page.keyboard.up('ArrowLeft');
   await page.waitForFunction(() => window.__game.getStickMan().feet.y === window.__game.level.start.y, null, { timeout: 10000 });
   const afterDeathBefore = await page.evaluate(() => ({ man: window.__game.getStickMan(), checkpoint: window.__game.getCheckpoint() }));
-  results.push(check('a death before it starts him at the start of the level', afterDeathBefore.man.feet.x === level.start.x && afterDeathBefore.checkpoint.passed === false, `x ${afterDeathBefore.man.feet.x}`));
+  results.push(check('a death before it starts him at the start of the level', afterDeathBefore.man.feet.x === level.start.x && afterDeathBefore.checkpoint.isPassed === false, `x ${afterDeathBefore.man.feet.x}`));
 
   // He walks towards it: the mark comes into view unpassed, and is passed as he goes by.
   await page.keyboard.down('ArrowRight');
-  await page.waitForFunction(() => window.__game.getStickMan().feet.x > window.__game.getCheckpoint().at.x - 1.2);
+  await page.waitForFunction(() => window.__game.getStickMan().feet.x > window.__game.getCheckpoint().position.x - 1.2);
   await page.keyboard.up('ArrowRight');
   await page.waitForTimeout(700);
   const before = await markOnScreen(page);
   await page.screenshot({ path: path.join(PROOF, '01-the-checkpoint-not-passed.png') });
-  results.push(check('the mark is in view before he reaches it', before.inView && before.passed === false, JSON.stringify(before)));
+  results.push(check('the mark is in view before he reaches it', before.inView && before.isPassed === false, JSON.stringify(before)));
   await page.keyboard.down('ArrowRight');
-  await page.waitForFunction(() => window.__game.getCheckpoint().passed, null, { timeout: 10000 });
+  await page.waitForFunction(() => window.__game.getCheckpoint().isPassed, null, { timeout: 10000 });
   const passedAt = await page.evaluate(() => window.__game.getStickMan().feet.x);
-  await page.waitForFunction(() => window.__game.getStickMan().feet.x > window.__game.getCheckpoint().at.x + 0.8);
+  await page.waitForFunction(() => window.__game.getStickMan().feet.x > window.__game.getCheckpoint().position.x + 0.8);
   await page.keyboard.up('ArrowRight');
   await page.waitForTimeout(700);
   await page.screenshot({ path: path.join(PROOF, '01-the-checkpoint-passed.png') });
-  results.push(check('it is passed as he walks past it, not before', passedAt >= level.checkpoint.at.x && passedAt < level.checkpoint.at.x + 0.2, `passed with his feet at x ${passedAt.toFixed(3)}, the mark at ${level.checkpoint.at.x}`));
+  results.push(check('it is passed as he walks past it, not before', passedAt >= level.checkpoint.position.x && passedAt < level.checkpoint.position.x + 0.2, `passed with his feet at x ${passedAt.toFixed(3)}, the mark at ${level.checkpoint.position.x}`));
   // That the mark looks different once passed is shown by the two screenshots and held by `render/checkpoint.test.ts`: he has moved between them, so comparing their pixels would prove nothing.
 
   // After it: into the gap, twice, and each time the level starts him at the mark.
@@ -72,7 +72,7 @@ try {
     await page.waitForFunction(() => window.__game.getStickMan().feet.y === window.__game.level.start.y, null, { timeout: 10000 });
     await page.waitForTimeout(300);
     const after = await page.evaluate(() => ({ man: window.__game.getStickMan(), checkpoint: window.__game.getCheckpoint(), level: window.__game.level.id, turning: window.__game.getPageTurn() !== null }));
-    results.push(check(`death ${death} past it starts him at the checkpoint, standing, with no page turned`, after.man.feet.x === level.checkpoint.at.x && after.man.action === 'standing' && after.checkpoint.passed && !after.turning && after.level === levelWithOne, `x ${after.man.feet.x}, ${after.man.action}`));
+    results.push(check(`death ${death} past it starts him at the checkpoint, standing, with no page turned`, after.man.feet.x === level.checkpoint.position.x && after.man.action === 'standing' && after.checkpoint.isPassed && !after.turning && after.level === levelWithOne, `x ${after.man.feet.x}, ${after.man.action}`));
     if (death === 1) await page.screenshot({ path: path.join(PROOF, '01-back-at-the-checkpoint.png') });
     report[`afterDeath${death}`] = after;
   }
@@ -81,7 +81,7 @@ try {
   await page.evaluate((id) => window.__game.loadLevel(id), levelWithOne);
   await page.waitForFunction(() => window.__game.sim.tick > 5);
   const afresh = await page.evaluate(() => ({ man: window.__game.getStickMan(), checkpoint: window.__game.getCheckpoint() }));
-  results.push(check('the level loaded afresh starts him at its start, the checkpoint not passed', afresh.man.feet.x === level.start.x && afresh.checkpoint.passed === false, `x ${afresh.man.feet.x}`));
+  results.push(check('the level loaded afresh starts him at its start, the checkpoint not passed', afresh.man.feet.x === level.start.x && afresh.checkpoint.isPassed === false, `x ${afresh.man.feet.x}`));
 
   results.push(check('no page errors', pageErrors.length === 0, pageErrors.join(' | ')));
   Object.assign(report, { level, afterDeathBefore, before, passedAt, afresh });
@@ -101,8 +101,8 @@ process.exit(summarize(results) ? 0 : 1);
 /** Whether the level's camera shows the place the checkpoint stands at, and whether the sim has it passed. */
 function markOnScreen(page) {
   return page.evaluate(() => {
-    const { at, passed } = window.__game.getCheckpoint();
+    const { position, isPassed } = window.__game.getCheckpoint();
     const seen = window.__game.getLevelInView();
-    return { passed, at, seen, inView: at.x > seen.left && at.x < seen.right && at.y > seen.top && at.y < seen.bottom };
+    return { isPassed, position, seen, inView: position.x > seen.left && position.x < seen.right && position.y > seen.top && position.y < seen.bottom };
   });
 }

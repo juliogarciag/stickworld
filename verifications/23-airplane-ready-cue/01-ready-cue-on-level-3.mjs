@@ -46,7 +46,7 @@ try {
   await press(page, 'KeyK', () => window.__game.itemUse() === 'craft');
   await press(page, 'KeyJ', () => window.__game.itemUse() === 'place');
   const folded = await stateOf(page);
-  results.push(check('with the airplane folded, the hint says to take it to the edge', folded.flyingHint === 'takeItToAnEdge', JSON.stringify(folded)));
+  results.push(check('with the airplane folded, the hint says to take it to the edge', folded.flyingHint === 'takeToEdge', JSON.stringify(folded)));
   await shoot(page, '01-folded');
 
   // Set it down, lift it, carry it to where putting it down leaves it on the edge.
@@ -58,7 +58,7 @@ try {
   await holdRightUntil(page, (feetAt) => window.__game.stickMan().feet.x >= feetAt, target);
   await page.waitForTimeout(300);
   const carried = await stateOf(page);
-  results.push(check('carried to the edge, still told to take it to the edge, and K puts it down', carried.flyingHint === 'takeItToAnEdge' && carried.interaction === 'putDown', JSON.stringify(carried)));
+  results.push(check('carried to the edge, still told to take it to the edge, and K puts it down', carried.flyingHint === 'takeToEdge' && carried.interaction === 'putDown', JSON.stringify(carried)));
   const beforeGreen = await shoot(page, '02-before-carried-to-the-edge');
   results.push(check('before: nothing green in the prompts', beforeGreen === 0, `${beforeGreen} green pixels`));
 

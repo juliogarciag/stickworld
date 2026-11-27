@@ -3,7 +3,7 @@ import type { Level, Placement } from '../../content/levels/types';
 import { STICK_MAN_HEIGHT } from '../../content/tuning';
 import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
-import { getWhereHeIs } from '../player/body';
+import { getPlayerBody } from '../player/body';
 import { FLAG_DEF_ID, flagDef, LEVEL_END } from './defs';
 import { flagSlice } from './state';
 
@@ -19,9 +19,9 @@ export const flagFeature: Feature = {
     const flag = sim.getStateOf(flagSlice);
     if (flag.reachedAtTick === null) {
       const placed = findFlagPlacedIn(sim.levelDef);
-      const { x, y, seated } = getWhereHeIs(sim);
+      const { x, y, isSeated } = getPlayerBody(sim);
       // A flag is reached on his own feet: flying past it in the airplane does not count.
-      if (placed && !seated && isTouchingFlag({ feet: { x, y }, placed })) flag.reachedAtTick = sim.tick;
+      if (placed && !isSeated && isTouchingFlag({ feet: { x, y }, placed })) flag.reachedAtTick = sim.tick;
       return;
     }
     const nextLevel = findLevelToStartNow({ levels, level: sim.level, ticksSinceReached: sim.tick - flag.reachedAtTick, dt: sim.dt });
@@ -30,7 +30,7 @@ export const flagFeature: Feature = {
 };
 
 /** True for the last level there is: its flag finishes the game, and no level follows it. */
-export function isTheLastLevel(level: Level): boolean {
+export function isLastLevel(level: Level): boolean {
   return levels[levels.length - 1]?.id === level.id;
 }
 
@@ -58,10 +58,10 @@ export function findFlagPlacedIn(level: Level): Placement | undefined {
 // ---- Helpers ----
 
 /** True when he is within reach of the stick and any part of him is level with it: he cannot jump over a flag taller than his jump. */
-function isTouchingFlag({ feet, placed }: { feet: { x: number; y: number }; placed: Placement }): boolean {
-  const withinReach = Math.abs(feet.x - placed.at.x) <= flagDef.reach;
-  const levelWithTheStick = feet.y >= placed.at.y - flagDef.height && feet.y - STICK_MAN_HEIGHT <= placed.at.y;
-  return withinReach && levelWithTheStick;
+function isTouchingFlag(input: { feet: { x: number; y: number }; placed: Placement }): boolean {
+  const isInReach = Math.abs(input.feet.x - input.placed.position.x) <= flagDef.reach;
+  const isLevelWithStick = input.feet.y >= input.placed.position.y - flagDef.height && input.feet.y - STICK_MAN_HEIGHT <= input.placed.position.y;
+  return isInReach && isLevelWithStick;
 }
 
 interface FinishedLevel {
@@ -74,10 +74,10 @@ interface FinishedLevel {
 }
 
 /** The level that follows the finished one, once the pause after its flag is over; undefined during the pause and after the last level. */
-function findLevelToStartNow({ levels, level, ticksSinceReached, dt }: FinishedLevel): Level | undefined {
-  if (ticksSinceReached < Math.round(LEVEL_END.pauseBeforeNextLevel / dt)) return undefined;
-  const finished = levels.findIndex((candidate) => candidate.id === level);
-  return finished === -1 ? undefined : levels[finished + 1];
+function findLevelToStartNow(finishedLevel: FinishedLevel): Level | undefined {
+  if (finishedLevel.ticksSinceReached < Math.round(LEVEL_END.pauseBeforeNextLevel / finishedLevel.dt)) return undefined;
+  const finishedIndex = finishedLevel.levels.findIndex((candidate) => candidate.id === finishedLevel.level);
+  return finishedIndex === -1 ? undefined : finishedLevel.levels[finishedIndex + 1];
 }
 
 export const __testing__ = { findLevelToStartNow };

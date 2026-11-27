@@ -13,17 +13,17 @@ import { getCrafting } from './view';
 
 describe('making a recipe', () => {
   it('turns the paper into the airplane in the same slot with one use, once he knows how', () => {
-    const sim = createSimWithThePaperSelected();
+    const sim = createSimWithPaperSelected();
     teachRecipe(sim, PAPER_AIRPLANE_RECIPE_ID);
     expect(getItemUse(sim)).toBe('craft');
     expect(getCrafting(sim).canMake).toEqual(PAPER_AIRPLANE);
     sim.step([USE_ITEM]);
-    expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, selected: true }]);
+    expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, isSelected: true }]);
     expect(getCrafting(sim).canMake).toBeNull();
   });
 
   it('is nothing the paper can do while he knows no recipe for it', () => {
-    const sim = createSimWithThePaperSelected();
+    const sim = createSimWithPaperSelected();
     expect(getItemUse(sim)).toBeNull();
     expect(getCrafting(sim)).toEqual({ knownRecipes: [], canMake: null });
     sim.step([USE_ITEM]);
@@ -31,7 +31,7 @@ describe('making a recipe', () => {
   });
 
   it('needs the paper in his hand', () => {
-    const unselected = createSimWithThePaperSelected();
+    const unselected = createSimWithPaperSelected();
     teachRecipe(unselected, PAPER_AIRPLANE_RECIPE_ID);
     unselected.step([SELECT_SLOT_1]);
     expect(getItemUse(unselected)).toBeNull();
@@ -46,7 +46,7 @@ describe('making a recipe', () => {
   });
 
   it('can be done while he walks or is in the air: there is nothing to stop and look at', () => {
-    const walking = createSimWithThePaperSelected();
+    const walking = createSimWithPaperSelected();
     teachRecipe(walking, PAPER_AIRPLANE_RECIPE_ID);
     walking.step([{ type: 'player/walk', direction: 1 }]);
     walking.step([{ type: 'player/jump' }]);
@@ -56,14 +56,14 @@ describe('making a recipe', () => {
   });
 
   it('is kept when a level starts again: what he learned he knows', () => {
-    const sim = createSimWithThePaperSelected();
+    const sim = createSimWithPaperSelected();
     teachRecipe(sim, PAPER_AIRPLANE_RECIPE_ID);
     sim.startLevel(sim.level);
     expect(getCrafting(sim)).toEqual({ knownRecipes: [PAPER_AIRPLANE], canMake: PAPER_AIRPLANE });
   });
 
   it('teaches a recipe once, and nothing that is not a recipe', () => {
-    const sim = createSimWithThePaperSelected();
+    const sim = createSimWithPaperSelected();
     teachRecipe(sim, PAPER_AIRPLANE_RECIPE_ID);
     teachRecipe(sim, PAPER_AIRPLANE_RECIPE_ID);
     teachRecipe(sim, PAPER_ITEM_ID);
@@ -92,7 +92,7 @@ const SELECT_SLOT_1: Command = { type: 'inventory/select', slot: 1 };
 const USE_ITEM: Command = { type: 'item/use' };
 const PAPER_AIRPLANE = { defId: PAPER_AIRPLANE_RECIPE_ID, name: 'paper airplane' };
 
-function createSimWithThePaperSelected(): Sim {
+function createSimWithPaperSelected(): Sim {
   const sim = new Sim({ features, start: { seed: 1, level: 1 } });
   giveItem(sim, PAPER_ITEM_ID);
   sim.step([SELECT_SLOT_1]);

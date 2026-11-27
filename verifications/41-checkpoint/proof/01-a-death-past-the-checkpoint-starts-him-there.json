@@ -10,16 +10,16 @@
       "distanceWalked": 0,
       "verticalSpeed": 0,
       "horizontalSpeed": 0,
-      "fallingOffAnEdge": false,
+      "isFallingOffEdge": false,
       "walkDirectionAsked": 0,
-      "carrying": false
+      "isCarrying": false
     },
     "checkpoint": {
-      "at": {
+      "position": {
         "x": 7,
         "y": 0
       },
-      "passed": true
+      "isPassed": true
     },
     "level": 3,
     "turning": false
@@ -35,16 +35,16 @@
       "distanceWalked": 0,
       "verticalSpeed": 0,
       "horizontalSpeed": 0,
-      "fallingOffAnEdge": false,
+      "isFallingOffEdge": false,
       "walkDirectionAsked": 0,
-      "carrying": false
+      "isCarrying": false
     },
     "checkpoint": {
-      "at": {
+      "position": {
         "x": 7,
         "y": 0
       },
-      "passed": true
+      "isPassed": true
     },
     "level": 3,
     "turning": false
@@ -55,11 +55,11 @@
       "y": 0
     },
     "checkpoint": {
-      "at": {
+      "position": {
         "x": 7,
         "y": 0
       },
-      "passed": false
+      "isPassed": false
     }
   },
   "afterDeathBefore": {
@@ -73,21 +73,21 @@
       "distanceWalked": 0,
       "verticalSpeed": 0,
       "horizontalSpeed": 0,
-      "fallingOffAnEdge": false,
+      "isFallingOffEdge": false,
       "walkDirectionAsked": 0,
-      "carrying": false
+      "isCarrying": false
     },
     "checkpoint": {
-      "at": {
+      "position": {
         "x": 7,
         "y": 0
       },
-      "passed": false
+      "isPassed": false
     }
   },
   "before": {
-    "passed": false,
-    "at": {
+    "isPassed": false,
+    "position": {
       "x": 7,
       "y": 0
     },
@@ -111,16 +111,16 @@
       "distanceWalked": 0,
       "verticalSpeed": 0,
       "horizontalSpeed": 0,
-      "fallingOffAnEdge": false,
+      "isFallingOffEdge": false,
       "walkDirectionAsked": 0,
-      "carrying": false
+      "isCarrying": false
     },
     "checkpoint": {
-      "at": {
+      "position": {
         "x": 7,
         "y": 0
       },
-      "passed": false
+      "isPassed": false
     }
   },
   "results": [
@@ -136,7 +136,7 @@
     {
       "name": "it stands past the start and is not passed yet",
       "pass": true,
-      "details": "{\"start\":{\"x\":2,\"y\":0},\"checkpoint\":{\"at\":{\"x\":7,\"y\":0},\"passed\":false}}"
+      "details": "{\"start\":{\"x\":2,\"y\":0},\"checkpoint\":{\"position\":{\"x\":7,\"y\":0},\"isPassed\":false}}"
     },
     {
       "name": "a death before it starts him at the start of the level",
@@ -146,7 +146,7 @@
     {
       "name": "the mark is in view before he reaches it",
       "pass": true,
-      "details": "{\"passed\":false,\"at\":{\"x\":7,\"y\":0},\"seen\":{\"left\":-3.7866666666666493,\"right\":15.41333333333335,\"top\":-7.775999999999999,\"bottom\":3.024000000000001},\"inView\":true}"
+      "details": "{\"isPassed\":false,\"position\":{\"x\":7,\"y\":0},\"seen\":{\"left\":-3.7866666666666493,\"right\":15.41333333333335,\"top\":-7.775999999999999,\"bottom\":3.024000000000001},\"inView\":true}"
     },
     {
       "name": "it is passed as he walks past it, not before",

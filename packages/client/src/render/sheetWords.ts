@@ -14,39 +14,39 @@ import { convertToPixels } from './units';
 
 /**
  * The level's number and name, "2. A GAP", above where he starts, in world pixels: written stroke by stroke as the
- * sheet arrives, left for a few seconds and then rubbed out. `secondsOnTheSheet` is how long this sheet has been the
+ * sheet arrives, left for a few seconds and then rubbed out. `secondsOnSheet` is how long this sheet has been the
  * one being played.
  */
-export function buildLevelNameStrokes(level: Level, secondsOnTheSheet: number): readonly Stroke[] {
-  if (getLevelNameState(secondsOnTheSheet) === 'notYet' || getLevelNameState(secondsOnTheSheet) === 'gone') return NOTHING;
+export function buildLevelNameStrokes(level: Level, secondsOnSheet: number): readonly Stroke[] {
+  if (getLevelNameState(secondsOnSheet) === 'notYet' || getLevelNameState(secondsOnSheet) === 'gone') return NOTHING;
   const words = `${level.id}. ${level.name}`;
-  const { width } = buildWriting(words, { at: { x: 0, y: 0 }, letterHeight: LEVEL_NAME.letterHeight });
-  const { strokes } = buildWriting(words, { at: { x: convertToPixels(level.start.x) - width / 2, y: convertToPixels(level.start.y) - LEVEL_NAME.aboveTheFloor }, letterHeight: LEVEL_NAME.letterHeight });
-  const soFar = getWrittenSoFar(strokes, (secondsOnTheSheet - LEVEL_NAME.writtenAfter) / LEVEL_NAME.writtenIn);
-  return getRubbedOutSoFar(soFar, (secondsOnTheSheet - LEVEL_NAME.rubbedOutAfter) / LEVEL_NAME.rubbedOutIn);
+  const { width } = buildWriting(words, { position: { x: 0, y: 0 }, letterHeight: LEVEL_NAME.letterHeight });
+  const { strokes } = buildWriting(words, { position: { x: convertToPixels(level.start.x) - width / 2, y: convertToPixels(level.start.y) - LEVEL_NAME.heightAboveFloor }, letterHeight: LEVEL_NAME.letterHeight });
+  const soFar = getWrittenSoFar(strokes, (secondsOnSheet - LEVEL_NAME.writtenAfter) / LEVEL_NAME.writtenIn);
+  return getRubbedOutSoFar(soFar, (secondsOnSheet - LEVEL_NAME.rubbedOutAfter) / LEVEL_NAME.rubbedOutIn);
 }
 
 /**
  * How far along the level's name is on a sheet that has been on top for `secondsOnTheSheet`. While it is `'notYet'`,
  * `'written'` or `'gone'` it is drawn the same from frame to frame; while it is being written or rubbed out it is not.
  */
-export function getLevelNameState(secondsOnTheSheet: number): 'notYet' | 'beingWritten' | 'written' | 'beingRubbedOut' | 'gone' {
-  if (secondsOnTheSheet < LEVEL_NAME.writtenAfter) return 'notYet';
-  if (secondsOnTheSheet < LEVEL_NAME.writtenAfter + LEVEL_NAME.writtenIn) return 'beingWritten';
-  if (secondsOnTheSheet < LEVEL_NAME.rubbedOutAfter) return 'written';
-  return secondsOnTheSheet < LEVEL_NAME.rubbedOutAfter + LEVEL_NAME.rubbedOutIn ? 'beingRubbedOut' : 'gone';
+export function getLevelNameState(secondsOnSheet: number): 'notYet' | 'beingWritten' | 'written' | 'beingRubbedOut' | 'gone' {
+  if (secondsOnSheet < LEVEL_NAME.writtenAfter) return 'notYet';
+  if (secondsOnSheet < LEVEL_NAME.writtenAfter + LEVEL_NAME.writtenIn) return 'beingWritten';
+  if (secondsOnSheet < LEVEL_NAME.rubbedOutAfter) return 'written';
+  return secondsOnSheet < LEVEL_NAME.rubbedOutAfter + LEVEL_NAME.rubbedOutIn ? 'beingRubbedOut' : 'gone';
 }
 
 /**
  * The page number in the bottom right corner of what the level's camera sees, in world pixels. It is as big on the
  * screen however far the camera has pulled back: `seen.zoom` against `zoomAtRest` says how much bigger to write it.
  */
-export function buildPageNumberStrokes({ page, seen, zoomAtRest }: { page: number; seen: WorldRectangle; zoomAtRest: number }): Stroke[] {
-  const timesLarger = zoomAtRest / seen.zoom;
+export function buildPageNumberStrokes(input: { page: number; seen: WorldRectangle; zoomAtRest: number }): Stroke[] {
+  const timesLarger = input.zoomAtRest / input.seen.zoom;
   const letterHeight = PAGE_NUMBER.letterHeight * timesLarger;
-  const { width } = buildWriting(String(page), { at: { x: 0, y: 0 }, letterHeight });
-  const at = { x: seen.x + seen.width - PAGE_NUMBER.margin * timesLarger - width, y: seen.y + seen.height - PAGE_NUMBER.margin * timesLarger - letterHeight };
-  return buildWriting(String(page), { at, letterHeight }).strokes;
+  const { width } = buildWriting(String(input.page), { position: { x: 0, y: 0 }, letterHeight });
+  const position = { x: input.seen.x + input.seen.width - PAGE_NUMBER.margin * timesLarger - width, y: input.seen.y + input.seen.height - PAGE_NUMBER.margin * timesLarger - letterHeight };
+  return buildWriting(String(input.page), { position, letterHeight }).strokes;
 }
 
 // ---- Helpers ----
@@ -57,7 +57,7 @@ const NOTHING: readonly Stroke[] = [];
 const LEVEL_NAME = {
   letterHeight: convertToPixels(0.4),
   /** From the floor he starts on up to the top of the words. */
-  aboveTheFloor: convertToPixels(4.3),
+  heightAboveFloor: convertToPixels(4.3),
   /** It is written once the sheet before has been turned away, and takes this long. */
   writtenAfter: 0.55,
   writtenIn: 0.7,

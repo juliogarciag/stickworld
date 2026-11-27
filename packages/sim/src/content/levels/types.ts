@@ -10,14 +10,14 @@ export interface Point {
 
 /** One stretch of pencil line the stick man can stand on. A gap is the space between two segments. */
 export interface FloorSegment {
-  readonly from: Point;
-  readonly to: Point;
+  readonly start: Point;
+  readonly end: Point;
 }
 
 /** Something placed in the level at start, by def id (a flag, a letter). */
 export interface Placement {
   readonly defId: number;
-  readonly at: Point;
+  readonly position: Point;
 }
 
 /**
@@ -26,13 +26,13 @@ export interface Placement {
  */
 export interface Note {
   /** The middle of the line its words stand on, in metres. */
-  readonly at: Point;
+  readonly position: Point;
   /** What it says. It never names a key: which keys there are is the client's business, and it draws them by what the note is `about`. */
   readonly words: string;
   /** What he does that the note is about, when it is about something he does. */
-  readonly about?: 'walking' | 'jumping';
+  readonly topic?: 'walking' | 'jumping';
   /** True for a note that is a title, the name of something, and not something to do. */
-  readonly title?: boolean;
+  readonly isTitle?: boolean;
   /** It is rubbed out once he stands on the floor further right than this x: he has done what it says. Left out, it stays. */
   readonly rubbedOutPast?: number;
 }

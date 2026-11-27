@@ -31,14 +31,14 @@ export function getKnownRecipes(sim: Sim): RecipeDef[] {
  * made from the same item yet (a test holds that): the first that are need a list to choose from, with a way to
  * move through it.
  */
-export function findRecipeHeCanMake(sim: Sim): RecipeDef | undefined {
+export function findCraftableRecipe(sim: Sim): RecipeDef | undefined {
   const held = getSelectedItem(sim);
   return held === null ? undefined : getKnownRecipes(sim).find((known) => known.madeFrom === held);
 }
 
 /** What using the held item does for crafting, for `features/item`: it makes the recipe he knows for it. Undefined when he knows none. */
 export function getCraftingUse(sim: Sim) {
-  const recipe = findRecipeHeCanMake(sim);
+  const recipe = findCraftableRecipe(sim);
   if (!recipe) return undefined;
   return { means: 'craft' as const, perform: () => void replaceSelectedItem(sim, recipe.makes) };
 }

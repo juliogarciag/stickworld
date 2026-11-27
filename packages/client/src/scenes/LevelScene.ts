@@ -3,7 +3,7 @@ import Phaser from 'phaser';
 import { sendActionCommands } from '../input/actionKeys';
 import { sendGameCommands } from '../input/gameKeys';
 import { sendItemSlotCommands } from '../input/itemSlotKeys';
-import { createKeysToCommands, type KeysNow } from '../input/playerCommands';
+import { createKeysToCommands, type HeldKeys } from '../input/playerCommands';
 import { watchPlayerKeys } from '../input/playerKeys';
 import { getFrameSeconds } from '../loop/frameSeconds';
 import type { GameLoop } from '../loop/GameLoop';
@@ -20,7 +20,7 @@ import { Sheet } from './Sheet';
  */
 export class LevelScene extends Phaser.Scene {
   private sheet!: Sheet;
-  private keysNow!: () => KeysNow;
+  private getHeldKeys!: () => HeldKeys;
   private follow!: ReturnType<typeof followStickManWith>;
   private readonly commandsFor = createKeysToCommands();
   /** The sheet on top and how long it has been: a new one when the sim is on another level, or is another sim. */
@@ -36,7 +36,7 @@ export class LevelScene extends Phaser.Scene {
   create(): void {
     this.cameras.main.setBackgroundColor(PAPER_COLOUR);
     this.sheet = new Sheet(this);
-    this.keysNow = watchPlayerKeys(this);
+    this.getHeldKeys = watchPlayerKeys(this);
     const queue = this.loop.queueCommand.bind(this.loop);
     sendItemSlotCommands(this, queue);
     sendActionCommands(this, queue);
@@ -45,7 +45,7 @@ export class LevelScene extends Phaser.Scene {
   }
 
   override update(_time: number, deltaMs: number): void {
-    for (const command of this.commandsFor({ keys: this.keysNow(), sim: this.loop.sim })) this.loop.queueCommand(command);
+    for (const command of this.commandsFor({ keys: this.getHeldKeys(), sim: this.loop.sim })) this.loop.queueCommand(command);
     const seconds = getFrameSeconds(deltaMs);
     this.loop.advanceBy(seconds);
 
@@ -56,10 +56,10 @@ export class LevelScene extends Phaser.Scene {
     else this.pageTurn.advanceBy(seconds);
 
     const { sim } = this.loop;
-    const isTheSheetOnTop = this.onTop !== undefined && this.onTop.sim === sim && this.onTop.level === sim.level;
-    this.onTop = { sim, level: sim.level, seconds: isTheSheetOnTop && this.onTop ? this.onTop.seconds + seconds : 0 };
+    const isSheetOnTop = this.onTop !== undefined && this.onTop.sim === sim && this.onTop.level === sim.level;
+    this.onTop = { sim, level: sim.level, seconds: isSheetOnTop && this.onTop ? this.onTop.seconds + seconds : 0 };
     this.follow({ stickMan: getStickMan(sim), floor: getLevel(sim).floor, seconds });
-    this.sheet.draw({ sim, seconds, secondsOnTheSheet: this.onTop.seconds });
+    this.sheet.draw({ sim, seconds, secondsOnSheet: this.onTop.seconds });
   }
 }
 

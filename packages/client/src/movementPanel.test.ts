@@ -6,7 +6,7 @@ const { readChoiceIn } = __testing__;
 
 describe('what the movement panel kept in browser storage', () => {
   it('reads back what it wrote', () => {
-    const choice = { preset: 'ninetiesPlatformer', tuning: { ...MOVEMENT_PRESETS.ninetiesPlatformer, jumpHeight: 2 }, open: true };
+    const choice = { preset: 'ninetiesPlatformer', tuning: { ...MOVEMENT_PRESETS.ninetiesPlatformer, jumpHeight: 2 }, isOpen: true };
     expect(readChoiceIn(JSON.stringify(choice))).toEqual(choice);
   });
 
@@ -27,8 +27,8 @@ describe('what the movement panel kept in browser storage', () => {
   });
 
   it('is folded away unless it was kept open', () => {
-    expect(readChoiceIn(JSON.stringify({ open: 'yes' }))?.open).toBe(false);
-    expect(readChoiceIn(JSON.stringify({ open: true }))?.open).toBe(true);
+    expect(readChoiceIn(JSON.stringify({ open: 'yes' }))?.isOpen).toBe(false);
+    expect(readChoiceIn(JSON.stringify({ isOpen: true }))?.isOpen).toBe(true);
   });
 
   it('ignores a tuning that is not an object', () => {

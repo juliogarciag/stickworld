@@ -26,12 +26,12 @@ export interface TakeWholeTicksInput {
  * `deltaSeconds` is clamped to [0, maxFrameSeconds] so a long hitch or a tab
  * switch drops time instead of running hundreds of ticks in one frame.
  */
-export function takeWholeTicks({ leftover, deltaSeconds, dt, maxFrameSeconds }: TakeWholeTicksInput): WholeTicks {
-  const delta = Math.min(Math.max(deltaSeconds, 0), maxFrameSeconds);
-  let remaining = leftover + delta;
+export function takeWholeTicks(input: TakeWholeTicksInput): WholeTicks {
+  const delta = Math.min(Math.max(input.deltaSeconds, 0), input.maxFrameSeconds);
+  let remaining = input.leftover + delta;
   let ticks = 0;
-  while (remaining >= dt) {
-    remaining -= dt;
+  while (remaining >= input.dt) {
+    remaining -= input.dt;
     ticks += 1;
   }
   return { ticks, leftover: remaining };

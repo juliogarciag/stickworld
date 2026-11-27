@@ -1,5 +1,5 @@
 import { Sim, type SimHandle } from '../../core/sim';
-import { getKnownRecipes, findRecipeHeCanMake } from './index';
+import { getKnownRecipes, findCraftableRecipe } from './index';
 
 /** A recipe as a view names it. */
 export interface RecipeView {
@@ -17,6 +17,6 @@ export interface CraftingView {
 
 export function getCrafting(handle: SimHandle): CraftingView {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
-  const canMake = findRecipeHeCanMake(handle);
-  return { knownRecipes: getKnownRecipes(handle).map(({ id, name }) => ({ defId: id, name })), canMake: canMake ? { defId: canMake.id, name: canMake.name } : null };
+  const canMake = findCraftableRecipe(handle);
+  return { knownRecipes: getKnownRecipes(handle).map((recipe) => ({ defId: recipe.id, name: recipe.name })), canMake: canMake ? { defId: canMake.id, name: canMake.name } : null };
 }

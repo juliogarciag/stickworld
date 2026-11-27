@@ -64,10 +64,10 @@ describe('a level asked for from inside a tick', () => {
     { asked: [2, 1], starts: 2, because: 'another level beats the level being played again, whichever was asked for first' },
     { asked: [2, 3], starts: 2, because: 'of two other levels the first asked for is kept' },
     { asked: [3, 'over' as const, 2], starts: 1, because: 'starting over beats a level asked for before or after it' },
-  ])('with $asked asked for in one tick level $starts starts: $because', ({ asked, starts }) => {
+  ])('with $asked asked for in one tick level $starts starts: $because', (testCase) => {
     const sim = new Sim({ features: [askerFeature, witnessFeature], start: { seed: 1, level: 1 } });
-    sim.step(asked.map((what) => (what === 'over' ? askToStartOver() : ask(what))));
-    expect(sim.level).toBe(starts);
+    sim.step(testCase.asked.map((request) => (request === 'over' ? askToStartOver() : ask(request))));
+    expect(sim.level).toBe(testCase.starts);
   });
 
   it('starts one level however many asked: every feature is set up once', () => {
@@ -160,9 +160,9 @@ const askerFeature: Feature = {
   },
 };
 
-const ticksOnThisLevelSlice = defineSlice<number>('ticksOnThisLevel', () => 0, { carriesAcrossLevels: false });
-const levelsStartedSlice = defineSlice<number>('levelsStarted', () => 0, { carriesAcrossLevels: true });
-const tickOfLastStartSlice = defineSlice<number>('tickOfLastStart', () => -1, { carriesAcrossLevels: false });
+const ticksOnThisLevelSlice = defineSlice<number>('ticksOnThisLevel', () => 0, { isCarriedAcrossLevels: false });
+const levelsStartedSlice = defineSlice<number>('levelsStarted', () => 0, { isCarriedAcrossLevels: true });
+const tickOfLastStartSlice = defineSlice<number>('tickOfLastStart', () => -1, { isCarriedAcrossLevels: false });
 
 /** A fixture feature: counts its ticks on the level being played and the levels started since the game began or started over, and notes the tick its `init` last ran on. */
 const witnessFeature: Feature = {
@@ -177,7 +177,7 @@ const witnessFeature: Feature = {
   },
 };
 
-const recorderSlice = defineSlice<string[]>('recorder', () => [], { carriesAcrossLevels: false });
+const recorderSlice = defineSlice<string[]>('recorder', () => [], { isCarriedAcrossLevels: false });
 
 const recorderFeature: Feature = {
   name: 'recorder',

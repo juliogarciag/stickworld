@@ -4,7 +4,7 @@ import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
 import { AIRPLANE_ITEM_ID } from '../inventory/defs';
 import { isHoldingItem, replaceSelectedItem, getSelectedItem } from '../inventory/held';
-import { startCarrying, stopCarrying, getWhereHeIs } from '../player/body';
+import { startCarrying, stopCarrying, getPlayerBody } from '../player/body';
 import { getFloorHeightAt, getLowestFloorHeight } from '../player/floor';
 import type { SteerDirection } from './commands';
 import { AIRPLANE } from './defs';
@@ -33,16 +33,16 @@ export const airplaneFeature: Feature = {
 
   update(sim) {
     const airplane = sim.getStateOf(airplaneSlice);
-    if (!airplane.inWorld) return;
-    const player = getWhereHeIs(sim);
+    if (!airplane.isInWorld) return;
+    const player = getPlayerBody(sim);
     const floorLevel = getLowestFloorHeight(sim.levelDef.floor);
-    if (airplane.carried) {
+    if (airplane.isCarried) {
       // In the air below the floor he is on his way down a gap or off the paper: he lets go of it.
-      if (!player.onFloor && player.y > floorLevel) {
+      if (!player.isOnFloor && player.y > floorLevel) {
         letFall(airplane);
         stopCarrying(sim);
       } else {
-        carryOverHisHead(sim);
+        carryOverhead(sim);
       }
     }
     moveOneTick(sim);
@@ -51,20 +51,20 @@ export const airplaneFeature: Feature = {
 
 /** True while he has an airplane, as an item in a slot or in the world. False once it is lost, and before he has made one. */
 export function hasAirplane(sim: Sim): boolean {
-  return isHoldingItem(sim, AIRPLANE_ITEM_ID) || sim.getStateOf(airplaneSlice).inWorld;
+  return isHoldingItem(sim, AIRPLANE_ITEM_ID) || sim.getStateOf(airplaneSlice).isInWorld;
 }
 
 /**
  * True while the airplane rests on the floor with its nose out over a gap: where it is boarded from. An airplane whose
  * nose sticks out past the end of the paper, with no floor further on to fly to, does not count: it is only lifted.
  */
-export function isSittingOnAnEdge(sim: Sim): boolean {
+export function isSittingOnEdge(sim: Sim): boolean {
   const airplane = sim.getStateOf(airplaneSlice);
-  if (!airplane.inWorld || airplane.carried || airplane.falling || airplane.flying || airplane.sliding) return false;
+  if (!airplane.isInWorld || airplane.isCarried || airplane.isFalling || airplane.isFlying || airplane.isSliding) return false;
   const { floor } = sim.levelDef;
   const nose = airplane.x + (airplane.facing * AIRPLANE.length) / 2;
-  const floorFurtherOn = floor.some(({ from, to }) => (airplane.facing === 1 ? from.x > nose : to.x < nose));
-  return getFloorHeightAt(floor, nose) === undefined && floorFurtherOn;
+  const hasFloorAhead = floor.some((segment) => (airplane.facing === 1 ? segment.start.x > nose : segment.end.x < nose));
+  return getFloorHeightAt(floor, nose) === undefined && hasFloorAhead;
 }
 
 /**
@@ -72,28 +72,28 @@ export function isSittingOnAnEdge(sim: Sim): boolean {
  * edge or over his head, the level has an edge to fly from, and he has not boarded one since the level started. It is
  * true again when the level starts again, a death included.
  */
-export function hasYetToTakeItToAnEdge(sim: Sim): boolean {
+export function hasYetToReachEdge(sim: Sim): boolean {
   const airplane = sim.getStateOf(airplaneSlice);
-  const inFlight = airplane.inWorld && (airplane.flying || airplane.falling || airplane.sliding);
-  if (sim.getStateOf(hasBoardedSlice) || !hasAirplane(sim) || inFlight || isSittingOnAnEdge(sim)) return false;
+  const isInFlight = airplane.isInWorld && (airplane.isFlying || airplane.isFalling || airplane.isSliding);
+  if (sim.getStateOf(hasBoardedSlice) || !hasAirplane(sim) || isInFlight || isSittingOnEdge(sim)) return false;
   const { floor } = sim.levelDef;
-  return floor.some((line) => floor.some((other) => other.from.x > line.to.x));
+  return floor.some((line) => floor.some((other) => other.start.x > line.end.x));
 }
 
 /** True while the airplane sits on an edge, where it is boarded from, and he has not boarded one since the level started. */
 export function isReadyToBoard(sim: Sim): boolean {
-  return !sim.getStateOf(hasBoardedSlice) && isSittingOnAnEdge(sim);
+  return !sim.getStateOf(hasBoardedSlice) && isSittingOnEdge(sim);
 }
 
 /** What using the held item does when it is the airplane, for `features/item`: it is put on the floor in front of him. */
 export function getAirplaneItemUse(sim: Sim) {
-  const canPlace = getSelectedItem(sim) === AIRPLANE_ITEM_ID && getWhereHeIs(sim).onFloor && !sim.getStateOf(airplaneSlice).inWorld;
+  const canPlace = getSelectedItem(sim) === AIRPLANE_ITEM_ID && getPlayerBody(sim).isOnFloor && !sim.getStateOf(airplaneSlice).isInWorld;
   if (!canPlace) return undefined;
   return {
     means: 'place' as const,
     perform: () => {
       replaceSelectedItem(sim, null);
-      putDownInFrontOfHim(sim);
+      putDownInFront(sim);
     },
   };
 }
@@ -104,17 +104,17 @@ export function getAirplaneItemUse(sim: Sim) {
  */
 export function getAirplaneInteraction(sim: Sim) {
   const airplane = sim.getStateOf(airplaneSlice);
-  const player = getWhereHeIs(sim);
-  if (!airplane.inWorld || airplane.falling || airplane.flying || airplane.sliding || !player.onFloor) return undefined;
-  if (airplane.carried) return { means: 'putDown' as const, perform: () => putDownInFrontOfHim(sim) };
+  const player = getPlayerBody(sim);
+  if (!airplane.isInWorld || airplane.isFalling || airplane.isFlying || airplane.isSliding || !player.isOnFloor) return undefined;
+  if (airplane.isCarried) return { means: 'putDown' as const, perform: () => putDownInFront(sim) };
   if (Math.abs(player.x - airplane.x) > AIRPLANE.reach) return undefined;
-  if (isSittingOnAnEdge(sim)) return { means: 'board' as const, perform: () => boardAndLaunch(sim) };
+  if (isSittingOnEdge(sim)) return { means: 'board' as const, perform: () => boardAndLaunch(sim) };
   return {
     means: 'lift' as const,
     perform: () => {
-      airplane.carried = true;
+      airplane.isCarried = true;
       startCarrying(sim);
-      carryOverHisHead(sim);
+      carryOverhead(sim);
     },
   };
 }
@@ -126,34 +126,34 @@ function isSteerDirection(value: unknown): value is SteerDirection {
 }
 
 /** The airplane leaves his hands or his slot for the floor in front of him, or for the air past the end of it. */
-function putDownInFrontOfHim(sim: Sim): void {
+function putDownInFront(sim: Sim): void {
   const airplane = sim.getStateOf(airplaneSlice);
-  const player = getWhereHeIs(sim);
+  const player = getPlayerBody(sim);
   const { floor } = sim.levelDef;
   const middle = player.x + player.facing * AIRPLANE.putDownAhead;
-  const resting = findWhereItRests(floor, { middle, facing: player.facing });
+  const resting = findRestingPlace(floor, { middle, facing: player.facing });
   stopCarrying(sim);
-  airplane.inWorld = true;
-  airplane.carried = false;
+  airplane.isInWorld = true;
+  airplane.isCarried = false;
   airplane.facing = player.facing;
   airplane.verticalSpeed = 0;
   airplane.speed = 0;
   airplane.x = resting ?? middle;
   airplane.y = getFloorHeightAt(floor, airplane.x) ?? player.y;
-  airplane.falling = resting === undefined;
+  airplane.isFalling = resting === undefined;
 }
 
-function carryOverHisHead(sim: Sim): void {
+function carryOverhead(sim: Sim): void {
   const airplane = sim.getStateOf(airplaneSlice);
-  const player = getWhereHeIs(sim);
+  const player = getPlayerBody(sim);
   airplane.x = player.x;
   airplane.y = player.y - STICK_MAN_HEIGHT - AIRPLANE.carriedAbove;
   airplane.facing = player.facing;
 }
 
 function letFall(airplane: AirplaneState): void {
-  airplane.carried = false;
-  airplane.falling = true;
+  airplane.isCarried = false;
+  airplane.isFalling = true;
   airplane.verticalSpeed = 0;
   airplane.speed = 0;
 }
@@ -163,14 +163,14 @@ function letFall(airplane: AirplaneState): void {
  * falls. It rests where it is put when there is floor under its middle. A little past the end of the line he put it
  * down from, it is pulled back to sit on that edge; it is never pulled on to the far side of a gap.
  */
-function findWhereItRests(floor: readonly FloorSegment[], { middle, facing }: { middle: number; facing: 1 | -1 }): number | undefined {
-  if (getFloorHeightAt(floor, middle) !== undefined) return middle;
-  for (const { from, to } of floor) {
-    const end = facing === 1 ? to.x : from.x;
-    const past = (middle - end) * facing;
-    if (past > 0 && past <= AIRPLANE.savedPastTheEdge) return end - facing * AIRPLANE.sitsBackFromTheEdge;
+function findRestingPlace(floor: readonly FloorSegment[], airplane: { middle: number; facing: 1 | -1 }): number | undefined {
+  if (getFloorHeightAt(floor, airplane.middle) !== undefined) return airplane.middle;
+  for (const segment of floor) {
+    const edgeX = airplane.facing === 1 ? segment.end.x : segment.start.x;
+    const overhang = (airplane.middle - edgeX) * airplane.facing;
+    if (overhang > 0 && overhang <= AIRPLANE.edgeOverhangTolerance) return edgeX - airplane.facing * AIRPLANE.edgeInset;
   }
   return undefined;
 }
 
-export const __testing__ = { findWhereItRests };
+export const __testing__ = { findRestingPlace };

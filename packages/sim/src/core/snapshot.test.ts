@@ -59,8 +59,8 @@ interface Walker {
   direction: number;
 }
 
-const walkerSlice = defineSlice<Walker>('walker', (level) => ({ x: level.start.x, direction: 1 }), { carriesAcrossLevels: false });
-const stepsSlice = defineSlice<number>('steps', () => 0, { carriesAcrossLevels: true });
+const walkerSlice = defineSlice<Walker>('walker', (level) => ({ x: level.start.x, direction: 1 }), { isCarriedAcrossLevels: false });
+const stepsSlice = defineSlice<number>('steps', () => 0, { isCarriedAcrossLevels: true });
 
 /** A fixture feature: walks a point left or right, turns on `walker/turn`, and counts its steps across levels. */
 const walkerFeature: Feature = {

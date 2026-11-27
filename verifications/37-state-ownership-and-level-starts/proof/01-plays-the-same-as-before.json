@@ -9,7 +9,7 @@
       "playedAgain": 1,
       "ticks": 2476,
       "sameEveryTick": true,
-      "endHash": "5eb4c2ea"
+      "endHash": "761aa2c0"
     },
     {
       "name": "falls into the gap of level 3 twice, then crosses",
@@ -19,7 +19,7 @@
       "playedAgain": 0,
       "ticks": 1820,
       "sameEveryTick": true,
-      "endHash": "3ee14338"
+      "endHash": "ffd06342"
     },
     {
       "name": "loses flights (no climb, climbing for ever), then crosses",
@@ -29,7 +29,7 @@
       "playedAgain": 0,
       "ticks": 1946,
       "sameEveryTick": true,
-      "endHash": "a14c3b14"
+      "endHash": "46ccdb46"
     },
     {
       "name": "falls, loses a flight, crosses, plays again and falls again",
@@ -39,7 +39,7 @@
       "playedAgain": 1,
       "ticks": 3638,
       "sameEveryTick": true,
-      "endHash": "83fbeeb4"
+      "endHash": "9132547e"
     },
     {
       "name": "level 3 with a climb of 16 ticks, however it ends",
@@ -49,7 +49,7 @@
       "playedAgain": 0,
       "ticks": 687,
       "sameEveryTick": true,
-      "endHash": "cc8035f3"
+      "endHash": "fb54a8d1"
     },
     {
       "name": "level 3 with a climb of 20 ticks, however it ends",
@@ -59,7 +59,7 @@
       "playedAgain": 0,
       "ticks": 678,
       "sameEveryTick": true,
-      "endHash": "9ee1ee0a"
+      "endHash": "6c75eca6"
     },
     {
       "name": "level 3 with a climb of 26 ticks, however it ends",
@@ -69,7 +69,7 @@
       "playedAgain": 0,
       "ticks": 676,
       "sameEveryTick": true,
-      "endHash": "7ab7abb8"
+      "endHash": "2da313b6"
     },
     {
       "name": "level 3 with a climb of 34 ticks, however it ends",
@@ -79,7 +79,7 @@
       "playedAgain": 0,
       "ticks": 689,
       "sameEveryTick": true,
-      "endHash": "2df7fb05"
+      "endHash": "9b48b3fd"
     },
     {
       "name": "level 3 with a climb of 42 ticks, however it ends",
@@ -89,7 +89,7 @@
       "playedAgain": 0,
       "ticks": 1255,
       "sameEveryTick": true,
-      "endHash": "72038140"
+      "endHash": "37b144c6"
     },
     {
       "name": "level 3 with a climb of 50 ticks, however it ends",
@@ -99,7 +99,7 @@
       "playedAgain": 0,
       "ticks": 1049,
       "sameEveryTick": true,
-      "endHash": "930ebd71"
+      "endHash": "63938ba3"
     },
     {
       "name": "level 3 with a climb of 70 ticks, however it ends",
@@ -109,7 +109,7 @@
       "playedAgain": 0,
       "ticks": 1055,
       "sameEveryTick": true,
-      "endHash": "fbef4a3f"
+      "endHash": "292dddc9"
     },
     {
       "name": "jumps out of the airplane over the gap",
@@ -119,7 +119,7 @@
       "playedAgain": 0,
       "ticks": 977,
       "sameEveryTick": true,
-      "endHash": "ef48948c"
+      "endHash": "9cad1bba"
     },
     {
       "name": "random keys, seed 1, from level 2",
@@ -129,7 +129,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "e874e614"
+      "endHash": "15ae7ea0"
     },
     {
       "name": "random keys, seed 2, from level 3",
@@ -139,7 +139,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "ad8adbcc"
+      "endHash": "70f70d4a"
     },
     {
       "name": "random keys, seed 3, from level 1",
@@ -149,7 +149,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "49a30ded"
+      "endHash": "b37734d7"
     },
     {
       "name": "random keys, seed 4, from level 2",
@@ -159,7 +159,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "78a1a730"
+      "endHash": "dd70f6e2"
     },
     {
       "name": "random keys, seed 5, from level 3",
@@ -169,7 +169,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "20dfac24"
+      "endHash": "587c17b6"
     },
     {
       "name": "random keys, seed 6, from level 1",
@@ -179,7 +179,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "0bbb29db"
+      "endHash": "1b39cf99"
     },
     {
       "name": "random keys, seed 7, from level 2",
@@ -189,7 +189,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "204e4a67"
+      "endHash": "1e20b049"
     },
     {
       "name": "random keys, seed 8, from level 3",
@@ -199,7 +199,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "cb0f4bc0"
+      "endHash": "4abdef18"
     },
     {
       "name": "random keys, seed 9, from level 1",
@@ -209,7 +209,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "f44666ea"
+      "endHash": "2102f1ee"
     },
     {
       "name": "random keys, seed 10, from level 2",
@@ -219,7 +219,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "827b6453"
+      "endHash": "b40d2ed3"
     },
     {
       "name": "random keys, seed 11, from level 3",
@@ -229,7 +229,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "32e4e2c6"
+      "endHash": "478e2c24"
     },
     {
       "name": "random keys, seed 12, from level 1",
@@ -239,7 +239,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "af66e045"
+      "endHash": "03d16171"
     },
     {
       "name": "random keys, seed 13, from level 2",
@@ -249,7 +249,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "e00024e7"
+      "endHash": "e3f24863"
     },
     {
       "name": "random keys, seed 14, from level 3",
@@ -259,7 +259,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "f4186c75"
+      "endHash": "70a747c9"
     },
     {
       "name": "random keys, seed 15, from level 1",
@@ -269,7 +269,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "601445ce"
+      "endHash": "afd3f14e"
     },
     {
       "name": "random keys, seed 16, from level 2",
@@ -279,7 +279,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "ad30dae1"
+      "endHash": "76cce163"
     },
     {
       "name": "random keys, seed 17, from level 3",
@@ -289,7 +289,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "d278faad"
+      "endHash": "52c1bff9"
     },
     {
       "name": "random keys, seed 18, from level 1",
@@ -299,7 +299,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "6e6296f6"
+      "endHash": "f622f280"
     },
     {
       "name": "random keys, seed 19, from level 2",
@@ -309,7 +309,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "49b4e06a"
+      "endHash": "c6b9b640"
     },
     {
       "name": "random keys, seed 20, from level 3",
@@ -319,7 +319,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "9179e44c"
+      "endHash": "0f5acee0"
     },
     {
       "name": "random keys, seed 21, from level 1",
@@ -329,7 +329,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "4527241d"
+      "endHash": "2439228b"
     },
     {
       "name": "random keys, seed 22, from level 2",
@@ -339,7 +339,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "74b8a565"
+      "endHash": "dec5c5d3"
     },
     {
       "name": "random keys, seed 23, from level 3",
@@ -349,7 +349,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "d5a29fa9"
+      "endHash": "e9a4f3f5"
     },
     {
       "name": "random keys, seed 24, from level 1",
@@ -359,7 +359,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "26062727"
+      "endHash": "68170819"
     },
     {
       "name": "random keys, seed 25, from level 2",
@@ -369,7 +369,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "cb1e387a"
+      "endHash": "b351185c"
     },
     {
       "name": "random keys, seed 26, from level 3",
@@ -379,7 +379,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "7550197b"
+      "endHash": "e72186e3"
     },
     {
       "name": "random keys, seed 27, from level 1",
@@ -389,7 +389,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "28d34a8e"
+      "endHash": "f7e5f560"
     },
     {
       "name": "random keys, seed 28, from level 2",
@@ -399,7 +399,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "d59a84bd"
+      "endHash": "3923a0e5"
     },
     {
       "name": "random keys, seed 29, from level 3",
@@ -409,7 +409,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "c7617609"
+      "endHash": "777f5cf9"
     },
     {
       "name": "random keys, seed 30, from level 1",
@@ -419,7 +419,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "86e40116"
+      "endHash": "a61181b0"
     },
     {
       "name": "random keys, seed 31, from level 2",
@@ -429,7 +429,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "6396ac65"
+      "endHash": "9296726d"
     },
     {
       "name": "random keys, seed 32, from level 3",
@@ -439,7 +439,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "d359726b"
+      "endHash": "a926bee5"
     },
     {
       "name": "random keys, seed 33, from level 1",
@@ -449,7 +449,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "10c5773a"
+      "endHash": "ec43a8fa"
     },
     {
       "name": "random keys, seed 34, from level 2",
@@ -459,7 +459,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "688d787e"
+      "endHash": "aa7c0dca"
     },
     {
       "name": "random keys, seed 35, from level 3",
@@ -469,7 +469,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "84f22db7"
+      "endHash": "fbec0a23"
     },
     {
       "name": "random keys, seed 36, from level 1",
@@ -479,7 +479,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "7b0f74ae"
+      "endHash": "c9ba9de2"
     },
     {
       "name": "random keys, seed 37, from level 2",
@@ -489,7 +489,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "2572653d"
+      "endHash": "45c198bf"
     },
     {
       "name": "random keys, seed 38, from level 3",
@@ -499,7 +499,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "5c064f14"
+      "endHash": "cf9b5c9c"
     },
     {
       "name": "random keys, seed 39, from level 1",
@@ -509,7 +509,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "8362d907"
+      "endHash": "fed60907"
     },
     {
       "name": "random keys, seed 40, from level 2",
@@ -519,7 +519,7 @@
       "playedAgain": 0,
       "ticks": 3000,
       "sameEveryTick": true,
-      "endHash": "88abd42a"
+      "endHash": "16d95f24"
     }
   ],
   "totals": {

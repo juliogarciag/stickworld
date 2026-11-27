@@ -1,6 +1,6 @@
 import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
-import { isFlagReached, isTheLastLevel, getTickFlagWasReached } from '../flag';
+import { isFlagReached, isLastLevel, getTickFlagWasReached } from '../flag';
 import { GAME_END } from './defs';
 
 /**
@@ -20,7 +20,7 @@ export const gameFeature: Feature = {
 
 /** True once the flag that ends the game has been reached. */
 export function isGameOver(sim: Sim): boolean {
-  return isTheLastLevel(sim.levelDef) && isFlagReached(sim);
+  return isLastLevel(sim.levelDef) && isFlagReached(sim);
 }
 
 /** True once the game has been over for long enough: he is done cheering and walks about again, and `'game/playAgain'` is heard. Counted in whole ticks, as the pause after a flag is. */

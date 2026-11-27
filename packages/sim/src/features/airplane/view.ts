@@ -2,13 +2,13 @@ import type { Point } from '../../content/levels/types';
 import { Sim, type SimHandle } from '../../core/sim';
 import type { SteerDirection } from './commands';
 import { AIRPLANE, FLIGHT } from './defs';
-import { hasYetToTakeItToAnEdge, isReadyToBoard, isSittingOnAnEdge } from './index';
+import { hasYetToReachEdge, isReadyToBoard, isSittingOnEdge } from './index';
 import { airplaneSlice } from './state';
 
 /** The airplane in the world as a view needs it. How it is folded and how it gets from the floor to his hands are the view's business. */
 export interface AirplaneView {
   /** The middle of its underside, in metres. */
-  readonly at: Point;
+  readonly position: Point;
   /** Which way its nose points: 1 right, -1 left. */
   readonly facing: 1 | -1;
   /** From nose to tail, in metres. */
@@ -29,25 +29,25 @@ export interface AirplaneView {
   /** The speed below which it stops flying and falls, in metres per second. */
   readonly stallSpeed: number;
   /** True while it rests with its nose out over a gap, floor further on: where it is boarded from. */
-  readonly onAnEdge: boolean;
+  readonly isOnEdge: boolean;
 }
 
 /** The airplane in the world, or undefined while there is none: it is an item in his slot, or lost, or not made yet. */
 export function getAirplane(handle: SimHandle): AirplaneView | undefined {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
   const airplane = handle.getStateOf(airplaneSlice);
-  if (!airplane.inWorld) return undefined;
+  if (!airplane.isInWorld) return undefined;
   return {
-    at: { x: airplane.x, y: airplane.y },
+    position: { x: airplane.x, y: airplane.y },
     facing: airplane.facing,
     length: AIRPLANE.length,
     height: AIRPLANE.height,
-    state: airplane.carried ? 'carried' : airplane.flying ? 'flying' : airplane.falling ? 'falling' : airplane.sliding ? 'landing' : 'resting',
-    verticalSpeed: airplane.falling ? airplane.verticalSpeed : 0,
+    state: airplane.isCarried ? 'carried' : airplane.isFlying ? 'flying' : airplane.isFalling ? 'falling' : airplane.isSliding ? 'landing' : 'resting',
+    verticalSpeed: airplane.isFalling ? airplane.verticalSpeed : 0,
     speed: airplane.speed,
     pitch: airplane.pitch,
     stallSpeed: FLIGHT.stallSpeed,
-    onAnEdge: isSittingOnAnEdge(handle),
+    isOnEdge: isSittingOnEdge(handle),
   };
 }
 
@@ -59,9 +59,9 @@ export function getSteeringAsked(handle: SimHandle): SteerDirection {
 
 /**
  * What he is told about the airplane he has before he has flown it, for a view that says so beside the keys:
- * `takeItToAnEdge` until it sits on an edge, then `createSimReadyToBoard` while it sits there, where the key boards it.
+ * `takeToEdge` until it sits on an edge, then `createSimReadyToBoard` while it sits there, where the key boards it.
  */
-export type FlyingHint = 'takeItToAnEdge' | 'readyToBoard';
+export type FlyingHint = 'takeToEdge' | 'readyToBoard';
 
 /**
  * What he has still to be told about flying the airplane he has, or null when there is nothing to tell: that it has
@@ -69,7 +69,7 @@ export type FlyingHint = 'takeItToAnEdge' | 'readyToBoard';
  */
 export function getFlyingHint(handle: SimHandle): FlyingHint | null {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
-  if (hasYetToTakeItToAnEdge(handle)) return 'takeItToAnEdge';
+  if (hasYetToReachEdge(handle)) return 'takeToEdge';
   if (isReadyToBoard(handle)) return 'readyToBoard';
   return null;
 }

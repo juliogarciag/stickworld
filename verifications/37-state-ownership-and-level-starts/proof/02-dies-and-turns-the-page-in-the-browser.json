@@ -1,6 +1,6 @@
 {
   "afterDeath": {
-    "tick": 277,
+    "tick": 278,
     "level": 3,
     "man": {
       "feet": {
@@ -12,27 +12,27 @@
       "distanceWalked": 0,
       "verticalSpeed": 0,
       "horizontalSpeed": 0,
-      "fallingOffAnEdge": false,
+      "isFallingOffEdge": false,
       "walkDirectionAsked": 0,
-      "carrying": false
+      "isCarrying": false
     }
   },
   "walkedOn": {
     "feet": {
-      "x": 3.356666666666665,
+      "x": 3.3199999999999985,
       "y": 0
     },
     "facing": 1,
     "action": "walking",
-    "distanceWalked": 1.3566666666666651,
+    "distanceWalked": 1.3199999999999985,
     "verticalSpeed": 0,
     "horizontalSpeed": 2.2,
-    "fallingOffAnEdge": false,
+    "isFallingOffEdge": false,
     "walkDirectionAsked": 1,
-    "carrying": false
+    "isCarrying": false
   },
   "death": {
-    "frames": 319,
+    "frames": 318,
     "turnsSeen": 0,
     "levels": [
       3
@@ -42,8 +42,8 @@
     "watching": false
   },
   "flag": {
-    "frames": 326,
-    "turnsSeen": 34,
+    "frames": 305,
+    "turnsSeen": 31,
     "levels": [
       1,
       2
@@ -64,9 +64,9 @@
       "distanceWalked": 0,
       "verticalSpeed": 0,
       "horizontalSpeed": 0,
-      "fallingOffAnEdge": false,
+      "isFallingOffEdge": false,
       "walkDirectionAsked": 0,
-      "carrying": false
+      "isCarrying": false
     },
     "start": {
       "x": 2,
@@ -81,7 +81,7 @@
     {
       "name": "falling into the gap starts the same level again, and the tick count goes on",
       "pass": true,
-      "details": "level 3, tick 266 -> 277"
+      "details": "level 3, tick 268 -> 278"
     },
     {
       "name": "he is back near where the level starts",
@@ -91,12 +91,12 @@
     {
       "name": "the key still held walks him on after the restart, without being pressed again",
       "pass": true,
-      "details": "walking, x 2.00 -> 3.36"
+      "details": "walking, x 2.00 -> 3.32"
     },
     {
       "name": "a death is not a page turn",
       "pass": true,
-      "details": "page turns seen in 319 frames: 0; levels: 3"
+      "details": "page turns seen in 318 frames: 0; levels: 3"
     },
     {
       "name": "reaching the flag starts the next level",
@@ -106,7 +106,7 @@
     {
       "name": "the page is turned between the two",
       "pass": true,
-      "details": "the turn was seen in 34 of 326 frames"
+      "details": "the turn was seen in 31 of 305 frames"
     },
     {
       "name": "the turn begins on the frame the level changes: the new level is never shown bare",

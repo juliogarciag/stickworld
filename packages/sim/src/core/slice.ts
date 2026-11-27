@@ -13,7 +13,7 @@ export interface StateSlice<T> {
   /** The value this slice holds when a level starts. */
   getInitialFor(level: Level): T;
   /** True when starting or restarting a level keeps this slice's value instead of resetting it (the paper the player keeps from level 2). */
-  readonly carriesAcrossLevels: boolean;
+  readonly isCarriedAcrossLevels: boolean;
 }
 
 export interface SliceOptions {
@@ -21,10 +21,10 @@ export interface SliceOptions {
    * True to keep the value when a level starts or restarts, false to go back to `getInitialFor` each time. Every slice
    * says which, so that the line that declares new state shows what a death does to it.
    */
-  readonly carriesAcrossLevels: boolean;
+  readonly isCarriedAcrossLevels: boolean;
 }
 
 /** Declares a slice of state. `key` must be unique across features; use the feature's name. */
-export function defineSlice<T>(key: string, initialFor: (level: Level) => T, { carriesAcrossLevels }: SliceOptions): StateSlice<T> {
-  return { key, getInitialFor: initialFor, carriesAcrossLevels };
+export function defineSlice<T>(key: string, initialFor: (level: Level) => T, options: SliceOptions): StateSlice<T> {
+  return { key, getInitialFor: initialFor, isCarriedAcrossLevels: options.isCarriedAcrossLevels };
 }

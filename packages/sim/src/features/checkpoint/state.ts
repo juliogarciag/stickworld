@@ -10,4 +10,4 @@ export interface CheckpointState {
  * next level, is done by the feature's `init`, which drops a checkpoint passed on any level but the one that starts.
  * Starting over resets every slice, this one too.
  */
-export const checkpointSlice = defineSlice<CheckpointState>('checkpoint', () => ({ passedOnLevel: null }), { carriesAcrossLevels: true });
+export const checkpointSlice = defineSlice<CheckpointState>('checkpoint', () => ({ passedOnLevel: null }), { isCarriedAcrossLevels: true });

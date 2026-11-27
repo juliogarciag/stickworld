@@ -16,9 +16,9 @@ export const AIRPLANE = {
   /** How far above his head its underside is while he carries it. */
   carriedAbove: 0.02,
   /** Put down with its middle up to this far past the end of a floor line, it is pulled back to sit on the edge. Further out it falls. */
-  savedPastTheEdge: 0.35,
+  edgeOverhangTolerance: 0.35,
   /** How far back from the end of the line its middle sits once it has been pulled back. */
-  sitsBackFromTheEdge: 0.1,
+  edgeInset: 0.1,
   /** How fast it falls faster, in metres per second squared. Paper: much slower than he does. */
   gravity: 7,
 } as const;

@@ -1,6 +1,6 @@
 import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
-import { beginHimAt, getWhereHeIs } from '../player/body';
+import { getPlayerBody, startPlayerAt } from '../player/body';
 import { checkpointSlice } from './state';
 
 /**
@@ -16,19 +16,19 @@ export const checkpointFeature: Feature = {
 
   init(sim) {
     const state = sim.getStateOf(checkpointSlice);
-    const { checkpoint: at } = sim.levelDef;
+    const checkpointPosition = sim.levelDef.checkpoint;
     // A level starting keeps this slice, so that a death does. That also keeps it when another level starts: what was
     // passed on any level but this one is forgotten here.
-    if (state.passedOnLevel !== sim.level || !at) state.passedOnLevel = null;
-    else beginHimAt(sim, at);
+    if (state.passedOnLevel !== sim.level || !checkpointPosition) state.passedOnLevel = null;
+    else startPlayerAt(sim, checkpointPosition);
   },
 
   update(sim) {
-    const { checkpoint: at } = sim.levelDef;
-    if (!at || hasPassedCheckpoint(sim)) return;
-    const { x, onFloor } = getWhereHeIs(sim);
+    const checkpointPosition = sim.levelDef.checkpoint;
+    if (!checkpointPosition || hasPassedCheckpoint(sim)) return;
+    const player = getPlayerBody(sim);
     // On his feet: flying over it in the airplane, or jumping over it, is not standing past it.
-    if (onFloor && x >= at.x) sim.getStateOf(checkpointSlice).passedOnLevel = sim.level;
+    if (player.isOnFloor && player.x >= checkpointPosition.x) sim.getStateOf(checkpointSlice).passedOnLevel = sim.level;
   },
 };
 

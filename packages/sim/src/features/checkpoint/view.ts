@@ -5,14 +5,14 @@ import { hasPassedCheckpoint } from './index';
 /** The level's checkpoint as a view needs it. */
 export interface CheckpointView {
   /** Where it stands on the floor, in metres. */
-  readonly at: Point;
+  readonly position: Point;
   /** True once he has stood past it: from then on the level starts him here. */
-  readonly passed: boolean;
+  readonly isPassed: boolean;
 }
 
 /** The checkpoint of the level being played, or undefined for a level without one. */
 export function getCheckpoint(handle: SimHandle): CheckpointView | undefined {
   if (!(handle instanceof Sim)) throw new TypeError('not a sim made by createSim or restoreSim');
-  const { checkpoint: at } = handle.levelDef;
-  return at && { at, passed: hasPassedCheckpoint(handle) };
+  const position = handle.levelDef.checkpoint;
+  return position && { position, isPassed: hasPassedCheckpoint(handle) };
 }

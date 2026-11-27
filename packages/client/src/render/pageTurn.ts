@@ -22,7 +22,7 @@ export interface TurningPage extends FinishedSheet {
 }
 
 export interface PageTurn {
-  /** Starts turning `finished` away. A turn still in progress is cut short. */
+  /** Starts turning `isFinished` away. A turn still in progress is cut short. */
   start(finished: FinishedSheet): void;
   /** Lets `seconds` of the turn pass. */
   advanceBy(seconds: number): void;

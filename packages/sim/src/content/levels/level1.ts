@@ -10,11 +10,11 @@ import type { Level } from './types';
 export const level1: Level = {
   id: 1,
   name: 'A walk',
-  floor: [{ from: { x: 0, y: 0 }, to: { x: 14, y: 0 } }],
+  floor: [{ start: { x: 0, y: 0 }, end: { x: 14, y: 0 } }],
   start: { x: 2, y: 0 },
-  placements: [{ defId: FLAG_DEF_ID, at: { x: 11, y: 0 } }],
+  placements: [{ defId: FLAG_DEF_ID, position: { x: 11, y: 0 } }],
   notes: [
-    { at: { x: 2, y: -5.4 }, words: 'Stickworld', title: true },
-    { at: { x: 2.2, y: -2.5 }, words: 'walk', about: 'walking', rubbedOutPast: 4.2 },
+    { position: { x: 2, y: -5.4 }, words: 'Stickworld', isTitle: true },
+    { position: { x: 2.2, y: -2.5 }, words: 'walk', topic: 'walking', rubbedOutPast: 4.2 },
   ],
 };

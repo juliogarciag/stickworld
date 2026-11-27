@@ -79,11 +79,11 @@ export function layPaper(scene: Phaser.Scene): Paper {
 // ---- Helpers ----
 
 /** Makes the square texture `key` and paints it, unless the game already has it. */
-function paintOnce(scene: Phaser.Scene, { key, size, paint }: { key: string; size: number; paint: (context: CanvasRenderingContext2D) => void }): void {
-  if (scene.textures.exists(key)) return;
-  const tile = scene.textures.createCanvas(key, size, size);
+function paintOnce(scene: Phaser.Scene, texture: { key: string; size: number; paint: (context: CanvasRenderingContext2D) => void }): void {
+  if (scene.textures.exists(texture.key)) return;
+  const tile = scene.textures.createCanvas(texture.key, texture.size, texture.size);
   if (!tile) return;
-  paint(tile.context);
+  texture.paint(tile.context);
   tile.refresh();
 }
 
@@ -163,11 +163,11 @@ function runOnEveryRepeat(size: number, paint: (offsetX: number, offsetY: number
  * Whole pixels, so that filling them leaves no half-covered pixel at the rim that filling the whole tile would not have: on the canvas a texture
  * gets, which the browser paints on the CPU, the tile then comes out the same to the last bit as with the whole tile filled.
  */
-function getPixelsOfTileWithin({ size, x, y, radius }: { size: number; x: number; y: number; radius: number }): { left: number; top: number; width: number; height: number } | undefined {
-  const left = Math.max(0, Math.floor(x - radius));
-  const top = Math.max(0, Math.floor(y - radius));
-  const right = Math.min(size, Math.ceil(x + radius));
-  const bottom = Math.min(size, Math.ceil(y + radius));
+function getPixelsOfTileWithin(tile: { size: number; x: number; y: number; radius: number }): { left: number; top: number; width: number; height: number } | undefined {
+  const left = Math.max(0, Math.floor(tile.x - tile.radius));
+  const top = Math.max(0, Math.floor(tile.y - tile.radius));
+  const right = Math.min(tile.size, Math.ceil(tile.x + tile.radius));
+  const bottom = Math.min(tile.size, Math.ceil(tile.y + tile.radius));
   if (right <= left || bottom <= top) return undefined;
   return { left, top, width: right - left, height: bottom - top };
 }

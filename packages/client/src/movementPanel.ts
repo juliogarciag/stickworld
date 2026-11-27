@@ -11,7 +11,7 @@ import type { GameLoop } from './loop/GameLoop';
  */
 export function showMovementPanel(loop: GameLoop): void {
   const kept = readKeptChoice();
-  const chosen: Choice = kept ?? { preset: 'current', tuning: { ...MOVEMENT_PRESETS.current }, open: false };
+  const chosen: Choice = kept ?? { preset: 'current', tuning: { ...MOVEMENT_PRESETS.current }, isOpen: false };
   // The sim and tick the last send waits for: until that tick has run, the sim has not heard it, and sending again would pile up.
   let lastSent: { sim: SimHandle; tick: number } | undefined;
   const send = (): void => {
@@ -27,12 +27,12 @@ export function showMovementPanel(loop: GameLoop): void {
   // go of in the panel still reaches the game, so that a key held for the game before is not held for ever.
   panel.domElement.addEventListener('keydown', (event) => event.stopPropagation());
   // Once a change is made the keys are the game's again: a jump pressed right after choosing a preset is a jump.
-  const giveTheKeysBack = (): void => {
+  const giveKeysBack = (): void => {
     if (document.activeElement instanceof HTMLElement && panel.domElement.contains(document.activeElement)) document.activeElement.blur();
   };
   // A clicked button (the panel's title, a button in it) would keep the keys otherwise: space would click it again.
   panel.domElement.addEventListener('click', (event) => {
-    if (event.target instanceof HTMLButtonElement || (event.target instanceof HTMLElement && event.target.closest('button'))) giveTheKeysBack();
+    if (event.target instanceof HTMLButtonElement || (event.target instanceof HTMLElement && event.target.closest('button'))) giveKeysBack();
   });
 
   const presetNames = Object.keys(MOVEMENT_PRESETS) as MovementPresetName[];
@@ -40,35 +40,35 @@ export function showMovementPanel(loop: GameLoop): void {
     Object.assign(chosen.tuning, MOVEMENT_PRESETS[name]);
     for (const knob of panel.controllersRecursive()) knob.updateDisplay();
     send();
-    giveTheKeysBack();
+    giveKeysBack();
   };
   panel
     .add(chosen, 'preset', Object.fromEntries(presetNames.map((name) => [PRESET_LABELS[name], name])))
     .name('preset')
     .onChange(usePreset);
   for (const [name, { label, step }] of Object.entries(KNOBS) as [keyof MovementTuning, Knob][]) {
-    const { least, most } = MOVEMENT_TUNING_LIMITS[name];
-    panel.add(chosen.tuning, name, least, most, step).name(label).onChange(send).onFinishChange(giveTheKeysBack);
+    const { min, max } = MOVEMENT_TUNING_LIMITS[name];
+    panel.add(chosen.tuning, name, min, max, step).name(label).onChange(send).onFinishChange(giveKeysBack);
   }
   // Choosing the preset already shown changes nothing in a dropdown: this puts its numbers back after knobs moved them.
   panel.add({ reset: () => usePreset(chosen.preset) }, 'reset').name('back to the preset');
-  const copyTheNumbers = (): void => {
+  const copyTuningNumbers = (): void => {
     navigator.clipboard?.writeText(JSON.stringify(chosen.tuning, null, 2)).catch(() => console.warn('The numbers could not be copied: the clipboard refused.'));
   };
-  panel.add({ copy: copyTheNumbers }, 'copy').name('copy the numbers as JSON');
+  panel.add({ copy: copyTuningNumbers }, 'copy').name('copy the numbers as JSON');
 
-  if (!chosen.open) panel.close();
+  if (!chosen.isOpen) panel.close();
   panel.onOpenClose(() => {
     // lil-gui 0.21 has no public way to ask whether it is open; `_closed` is what its own docs use.
-    chosen.open = !panel._closed;
+    chosen.isOpen = !panel._closed;
     keep(chosen);
   });
 
   if (kept) send();
   // The sim forgets the tuning when the game starts over, and a sim from `loadLevel` never had it.
   window.setInterval(() => {
-    const lastIsStillWaiting = lastSent !== undefined && lastSent.sim === loop.sim && lastSent.tick === loop.sim.tick;
-    if (!lastIsStillWaiting && !isSameTuning(getMovementTuning(loop.sim), chosen.tuning)) send();
+    const isLastRequestPending = lastSent !== undefined && lastSent.sim === loop.sim && lastSent.tick === loop.sim.tick;
+    if (!isLastRequestPending && !isSameTuning(getMovementTuning(loop.sim), chosen.tuning)) send();
   }, RESEND_EVERY_MS);
 }
 
@@ -77,7 +77,7 @@ export function showMovementPanel(loop: GameLoop): void {
 interface Choice {
   preset: MovementPresetName;
   tuning: { -readonly [Name in keyof MovementTuning]: number };
-  open: boolean;
+  isOpen: boolean;
 }
 
 interface Knob {
@@ -132,16 +132,16 @@ function readChoiceIn(text: string | null): Choice | undefined {
     return undefined;
   }
   if (typeof stored !== 'object' || stored === null) return undefined;
-  const { preset, tuning, open } = stored as { preset?: unknown; tuning?: unknown; open?: unknown };
+  const { preset, tuning, isOpen } = stored as { preset?: unknown; tuning?: unknown; isOpen?: unknown };
   const presetName: MovementPresetName = typeof preset === 'string' && Object.hasOwn(MOVEMENT_PRESETS, preset) ? (preset as MovementPresetName) : 'current';
   const keptTuning = typeof tuning === 'object' && tuning !== null ? (tuning as Record<string, unknown>) : {};
   const chosenTuning = { ...MOVEMENT_PRESETS[presetName] } as Choice['tuning'];
   for (const name of Object.keys(MOVEMENT_TUNING_LIMITS) as (keyof MovementTuning)[]) {
     const value = Object.hasOwn(keptTuning, name) ? keptTuning[name] : undefined;
-    const { least, most } = MOVEMENT_TUNING_LIMITS[name];
-    if (typeof value === 'number' && Number.isFinite(value) && value >= least && value <= most) chosenTuning[name] = value;
+    const { min, max } = MOVEMENT_TUNING_LIMITS[name];
+    if (typeof value === 'number' && Number.isFinite(value) && value >= min && value <= max) chosenTuning[name] = value;
   }
-  return { preset: presetName, tuning: chosenTuning, open: open === true };
+  return { preset: presetName, tuning: chosenTuning, isOpen: isOpen === true };
 }
 
 function keep(choice: Choice): void {

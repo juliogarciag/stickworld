@@ -15,9 +15,10 @@ const CHECKPOINT = {
 } as const;
 
 /** The checkpoint as pencil strokes in world pixels: a peg and a diamond, with a tick over them once he has passed it. */
-export function buildCheckpointStrokes({ at, passed }: CheckpointView): Stroke[] {
+export function buildCheckpointStrokes(checkpoint: CheckpointView): Stroke[] {
+  const base = checkpoint.position;
   const { pegHeight, diamondReach: reach, tickAbove, tickShortArm, tickLongArm } = CHECKPOINT;
-  const middle = { x: at.x, y: at.y - pegHeight - reach };
+  const middle = { x: base.x, y: base.y - pegHeight - reach };
   const diamond = [
     { x: middle.x, y: middle.y - reach },
     { x: middle.x + reach, y: middle.y },
@@ -25,11 +26,11 @@ export function buildCheckpointStrokes({ at, passed }: CheckpointView): Stroke[]
     { x: middle.x - reach, y: middle.y },
   ];
   const strokes: Stroke[] = [
-    { points: [at, { x: at.x, y: at.y - pegHeight }].map(convertPointToPixels), thickness: PENCIL.thickness },
-    { points: diamond.map(convertPointToPixels), thickness: PENCIL.thickness, closed: true },
+    { points: [base, { x: base.x, y: base.y - pegHeight }].map(convertPointToPixels), thickness: PENCIL.thickness },
+    { points: diamond.map(convertPointToPixels), thickness: PENCIL.thickness, isClosed: true },
   ];
-  if (!passed) return strokes;
-  const lowest = { x: at.x, y: middle.y - reach - tickAbove };
+  if (!checkpoint.isPassed) return strokes;
+  const lowest = { x: base.x, y: middle.y - reach - tickAbove };
   const tick = [{ x: lowest.x - tickShortArm, y: lowest.y - tickShortArm }, lowest, { x: lowest.x + tickLongArm, y: lowest.y - tickLongArm }];
   return [...strokes, { points: tick.map(convertPointToPixels), thickness: PENCIL.thickness }];
 }

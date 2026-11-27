@@ -45,9 +45,9 @@ export function keepCanvasAtWindowSize(game: Phaser.Game): () => void {
     stopWatchingPixelRatio?.();
     stopWatchingPixelRatio = watchPixelRatio(pixelRatio, fit);
     const zoom = 1 / pixelRatio;
-    const sizeChanged = game.scale.width !== width || game.scale.height !== height;
-    if (!sizeChanged && game.scale.zoom === zoom) return;
-    if (sizeChanged) game.scale.resize(width, height);
+    const hasSizeChanged = game.scale.width !== width || game.scale.height !== height;
+    if (!hasSizeChanged && game.scale.zoom === zoom) return;
+    if (hasSizeChanged) game.scale.resize(width, height);
     // Always after the resize: `setZoom` is what writes the canvas CSS size from the
     // game size; `resize` alone leaves it stale once the zoom is 1.
     game.scale.setZoom(zoom);
