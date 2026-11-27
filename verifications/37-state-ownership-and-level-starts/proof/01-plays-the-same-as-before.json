@@ -1,0 +1,533 @@
+{
+  "before": "e59011288a16cac028999c075072592bbfe4d856",
+  "games": [
+    {
+      "name": "the whole game, played well, and again",
+      "fallsToDeath": 0,
+      "lostFlights": 0,
+      "nextLevels": 4,
+      "playedAgain": 1,
+      "ticks": 2476,
+      "sameEveryTick": true,
+      "endHash": "5eb4c2ea"
+    },
+    {
+      "name": "falls into the gap of level 3 twice, then crosses",
+      "fallsToDeath": 2,
+      "lostFlights": 0,
+      "nextLevels": 2,
+      "playedAgain": 0,
+      "ticks": 1820,
+      "sameEveryTick": true,
+      "endHash": "3ee14338"
+    },
+    {
+      "name": "loses flights (no climb, climbing for ever), then crosses",
+      "fallsToDeath": 0,
+      "lostFlights": 2,
+      "nextLevels": 2,
+      "playedAgain": 0,
+      "ticks": 1946,
+      "sameEveryTick": true,
+      "endHash": "a14c3b14"
+    },
+    {
+      "name": "falls, loses a flight, crosses, plays again and falls again",
+      "fallsToDeath": 2,
+      "lostFlights": 2,
+      "nextLevels": 4,
+      "playedAgain": 1,
+      "ticks": 3638,
+      "sameEveryTick": true,
+      "endHash": "83fbeeb4"
+    },
+    {
+      "name": "level 3 with a climb of 16 ticks, however it ends",
+      "fallsToDeath": 0,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 687,
+      "sameEveryTick": true,
+      "endHash": "cc8035f3"
+    },
+    {
+      "name": "level 3 with a climb of 20 ticks, however it ends",
+      "fallsToDeath": 0,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 678,
+      "sameEveryTick": true,
+      "endHash": "9ee1ee0a"
+    },
+    {
+      "name": "level 3 with a climb of 26 ticks, however it ends",
+      "fallsToDeath": 0,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 676,
+      "sameEveryTick": true,
+      "endHash": "7ab7abb8"
+    },
+    {
+      "name": "level 3 with a climb of 34 ticks, however it ends",
+      "fallsToDeath": 0,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 689,
+      "sameEveryTick": true,
+      "endHash": "2df7fb05"
+    },
+    {
+      "name": "level 3 with a climb of 42 ticks, however it ends",
+      "fallsToDeath": 1,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 1255,
+      "sameEveryTick": true,
+      "endHash": "72038140"
+    },
+    {
+      "name": "level 3 with a climb of 50 ticks, however it ends",
+      "fallsToDeath": 0,
+      "lostFlights": 1,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 1049,
+      "sameEveryTick": true,
+      "endHash": "930ebd71"
+    },
+    {
+      "name": "level 3 with a climb of 70 ticks, however it ends",
+      "fallsToDeath": 0,
+      "lostFlights": 1,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 1055,
+      "sameEveryTick": true,
+      "endHash": "fbef4a3f"
+    },
+    {
+      "name": "jumps out of the airplane over the gap",
+      "fallsToDeath": 1,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 977,
+      "sameEveryTick": true,
+      "endHash": "ef48948c"
+    },
+    {
+      "name": "random keys, seed 1, from level 2",
+      "fallsToDeath": 7,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "e874e614"
+    },
+    {
+      "name": "random keys, seed 2, from level 3",
+      "fallsToDeath": 8,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "ad8adbcc"
+    },
+    {
+      "name": "random keys, seed 3, from level 1",
+      "fallsToDeath": 4,
+      "lostFlights": 0,
+      "nextLevels": 2,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "49a30ded"
+    },
+    {
+      "name": "random keys, seed 4, from level 2",
+      "fallsToDeath": 4,
+      "lostFlights": 0,
+      "nextLevels": 1,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "78a1a730"
+    },
+    {
+      "name": "random keys, seed 5, from level 3",
+      "fallsToDeath": 4,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "20dfac24"
+    },
+    {
+      "name": "random keys, seed 6, from level 1",
+      "fallsToDeath": 8,
+      "lostFlights": 0,
+      "nextLevels": 1,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "0bbb29db"
+    },
+    {
+      "name": "random keys, seed 7, from level 2",
+      "fallsToDeath": 7,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "204e4a67"
+    },
+    {
+      "name": "random keys, seed 8, from level 3",
+      "fallsToDeath": 4,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "cb0f4bc0"
+    },
+    {
+      "name": "random keys, seed 9, from level 1",
+      "fallsToDeath": 5,
+      "lostFlights": 0,
+      "nextLevels": 2,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "f44666ea"
+    },
+    {
+      "name": "random keys, seed 10, from level 2",
+      "fallsToDeath": 4,
+      "lostFlights": 0,
+      "nextLevels": 1,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "827b6453"
+    },
+    {
+      "name": "random keys, seed 11, from level 3",
+      "fallsToDeath": 4,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "32e4e2c6"
+    },
+    {
+      "name": "random keys, seed 12, from level 1",
+      "fallsToDeath": 4,
+      "lostFlights": 0,
+      "nextLevels": 2,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "af66e045"
+    },
+    {
+      "name": "random keys, seed 13, from level 2",
+      "fallsToDeath": 8,
+      "lostFlights": 0,
+      "nextLevels": 1,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "e00024e7"
+    },
+    {
+      "name": "random keys, seed 14, from level 3",
+      "fallsToDeath": 5,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "f4186c75"
+    },
+    {
+      "name": "random keys, seed 15, from level 1",
+      "fallsToDeath": 3,
+      "lostFlights": 0,
+      "nextLevels": 2,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "601445ce"
+    },
+    {
+      "name": "random keys, seed 16, from level 2",
+      "fallsToDeath": 4,
+      "lostFlights": 0,
+      "nextLevels": 1,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "ad30dae1"
+    },
+    {
+      "name": "random keys, seed 17, from level 3",
+      "fallsToDeath": 5,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "d278faad"
+    },
+    {
+      "name": "random keys, seed 18, from level 1",
+      "fallsToDeath": 6,
+      "lostFlights": 0,
+      "nextLevels": 1,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "6e6296f6"
+    },
+    {
+      "name": "random keys, seed 19, from level 2",
+      "fallsToDeath": 5,
+      "lostFlights": 0,
+      "nextLevels": 1,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "49b4e06a"
+    },
+    {
+      "name": "random keys, seed 20, from level 3",
+      "fallsToDeath": 5,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "9179e44c"
+    },
+    {
+      "name": "random keys, seed 21, from level 1",
+      "fallsToDeath": 4,
+      "lostFlights": 0,
+      "nextLevels": 2,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "4527241d"
+    },
+    {
+      "name": "random keys, seed 22, from level 2",
+      "fallsToDeath": 3,
+      "lostFlights": 0,
+      "nextLevels": 1,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "74b8a565"
+    },
+    {
+      "name": "random keys, seed 23, from level 3",
+      "fallsToDeath": 6,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "d5a29fa9"
+    },
+    {
+      "name": "random keys, seed 24, from level 1",
+      "fallsToDeath": 5,
+      "lostFlights": 0,
+      "nextLevels": 2,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "26062727"
+    },
+    {
+      "name": "random keys, seed 25, from level 2",
+      "fallsToDeath": 9,
+      "lostFlights": 0,
+      "nextLevels": 1,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "cb1e387a"
+    },
+    {
+      "name": "random keys, seed 26, from level 3",
+      "fallsToDeath": 3,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "7550197b"
+    },
+    {
+      "name": "random keys, seed 27, from level 1",
+      "fallsToDeath": 4,
+      "lostFlights": 0,
+      "nextLevels": 2,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "28d34a8e"
+    },
+    {
+      "name": "random keys, seed 28, from level 2",
+      "fallsToDeath": 8,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "d59a84bd"
+    },
+    {
+      "name": "random keys, seed 29, from level 3",
+      "fallsToDeath": 6,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "c7617609"
+    },
+    {
+      "name": "random keys, seed 30, from level 1",
+      "fallsToDeath": 5,
+      "lostFlights": 0,
+      "nextLevels": 1,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "86e40116"
+    },
+    {
+      "name": "random keys, seed 31, from level 2",
+      "fallsToDeath": 5,
+      "lostFlights": 0,
+      "nextLevels": 1,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "6396ac65"
+    },
+    {
+      "name": "random keys, seed 32, from level 3",
+      "fallsToDeath": 3,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "d359726b"
+    },
+    {
+      "name": "random keys, seed 33, from level 1",
+      "fallsToDeath": 9,
+      "lostFlights": 0,
+      "nextLevels": 1,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "10c5773a"
+    },
+    {
+      "name": "random keys, seed 34, from level 2",
+      "fallsToDeath": 7,
+      "lostFlights": 0,
+      "nextLevels": 1,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "688d787e"
+    },
+    {
+      "name": "random keys, seed 35, from level 3",
+      "fallsToDeath": 6,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "84f22db7"
+    },
+    {
+      "name": "random keys, seed 36, from level 1",
+      "fallsToDeath": 6,
+      "lostFlights": 0,
+      "nextLevels": 2,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "7b0f74ae"
+    },
+    {
+      "name": "random keys, seed 37, from level 2",
+      "fallsToDeath": 8,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "2572653d"
+    },
+    {
+      "name": "random keys, seed 38, from level 3",
+      "fallsToDeath": 4,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "5c064f14"
+    },
+    {
+      "name": "random keys, seed 39, from level 1",
+      "fallsToDeath": 5,
+      "lostFlights": 0,
+      "nextLevels": 2,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "8362d907"
+    },
+    {
+      "name": "random keys, seed 40, from level 2",
+      "fallsToDeath": 8,
+      "lostFlights": 0,
+      "nextLevels": 0,
+      "playedAgain": 0,
+      "ticks": 3000,
+      "sameEveryTick": true,
+      "endHash": "88abd42a"
+    }
+  ],
+  "totals": {
+    "games": 52,
+    "ticks": 136946,
+    "fallsToDeath": 224,
+    "lostFlights": 6,
+    "nextLevels": 43,
+    "playedAgain": 2
+  }
+}

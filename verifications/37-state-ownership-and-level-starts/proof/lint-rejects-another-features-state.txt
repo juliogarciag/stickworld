@@ -1,0 +1,6 @@
+
+<repo>/packages/sim/src/features/letter/letter.test.ts
+  16:1  error  '../player/state' import is restricted from being used by a pattern. A feature's slices are its own. Read or change another feature's state through the functions that feature exports for it (features/player/body.ts, features/inventory/held.ts), so a diff shows who changes whom  no-restricted-imports
+
+✖ 1 problem (1 error, 0 warnings)
+
