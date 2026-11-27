@@ -1,0 +1,11 @@
+# Formatted: the two packages, the root config files, the verification template.
+# Not formatted: prose (its line breaks are the author's), generated files, and the
+# verification folders of merged tickets, which are frozen (AGENTS.md).
+*.md
+pnpm-lock.yaml
+dist/
+.worktrees/
+.claude/
+/verifications/*/
+!/verifications/_template/
+verifications/**/proof/
