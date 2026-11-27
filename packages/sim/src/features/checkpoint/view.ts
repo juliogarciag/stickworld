@@ -19,5 +19,8 @@ export function getCheckpoint(handle: SimHandle): CheckpointView | undefined {
     throw new TypeError('not a sim made by createSim or restoreSim');
   }
   const position = handle.levelDef.checkpoint;
-  return position && { position, isPassed: hasPassedCheckpoint(handle) };
+  if (!position) {
+    return undefined;
+  }
+  return { position, isPassed: hasPassedCheckpoint(handle) };
 }

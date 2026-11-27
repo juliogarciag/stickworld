@@ -2,7 +2,7 @@ PASS  dev server up, started by this run
 PASS  a level has a checkpoint  (level 3)
 PASS  the checkpoint is past the level start and is not passed yet  ({"start":{"x":2,"y":0},"checkpoint":{"position":{"x":7,"y":0},"isPassed":false}})
 PASS  a death before the checkpoint restarts the level at its start  (x 2)
-PASS  the mark is in view before the stick man reaches the checkpoint  ({"isPassed":false,"position":{"x":7,"y":0},"seen":{"left":-3.749999999999982,"right":15.450000000000019,"top":-7.775999999999999,"bottom":3.024000000000001},"inView":true})
+PASS  the mark is in view before the stick man reaches the checkpoint  ({"isPassed":false,"position":{"x":7,"y":0},"seen":{"left":-3.7866666666666493,"right":15.41333333333335,"top":-7.775999999999999,"bottom":3.024000000000001},"inView":true})
 PASS  the checkpoint is passed as the stick man walks past it, not before  (passed with the feet at x 7.023, the mark at 7)
 PASS  death 1 past the checkpoint restarts the level there, with the stick man standing and no page turned  (x 7, standing)
 PASS  death 2 past the checkpoint restarts the level there, with the stick man standing and no page turned  (x 7, standing)
