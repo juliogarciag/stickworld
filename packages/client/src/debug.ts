@@ -95,61 +95,61 @@ declare global {
   }
 }
 
-export function exposeDebugApi({ loop, game, pageTurn }: { loop: GameLoop; game: Phaser.Game; pageTurn: PageTurn }): void {
+export function exposeDebugApi(sources: { loop: GameLoop; game: Phaser.Game; pageTurn: PageTurn }): void {
   const getCameraOf = (scene: string): CameraView | undefined => {
-    if (!game.scene.isActive(scene)) return undefined;
-    const { zoom, scrollX, scrollY, width, height } = game.scene.getScene(scene).cameras.main;
+    if (!sources.game.scene.isActive(scene)) return undefined;
+    const { zoom, scrollX, scrollY, width, height } = sources.game.scene.getScene(scene).cameras.main;
     return { zoom, scrollX, scrollY, width, height };
   };
   window.__game = {
     get sim() {
-      return loop.sim;
+      return sources.loop.sim;
     },
-    game,
+    game: sources.game,
     get level() {
-      return getLevel(loop.sim);
+      return getLevel(sources.loop.sim);
     },
     defs,
     pixelsPerMetre: PIXELS_PER_METRE,
     stickManHeight: STICK_MAN_HEIGHT,
     stickManWidth: STICK_MAN_WIDTH,
     maxFrameSeconds: MAX_FRAME_SECONDS,
-    takeSnapshot: () => loop.sim.takeSnapshot(),
-    hash: () => hashSnapshot(loop.sim.takeSnapshot()),
+    takeSnapshot: () => sources.loop.sim.takeSnapshot(),
+    hash: () => hashSnapshot(sources.loop.sim.takeSnapshot()),
     getCamera: () => getCameraOf(LEVEL_SCENE),
     getLevelInView: () => {
-      if (!game.scene.isActive(LEVEL_SCENE)) return undefined;
-      const seen = getWorldSeenBy(game.scene.getScene(LEVEL_SCENE).cameras.main);
+      if (!sources.game.scene.isActive(LEVEL_SCENE)) return undefined;
+      const seen = getWorldSeenBy(sources.game.scene.getScene(LEVEL_SCENE).cameras.main);
       return { left: seen.x / PIXELS_PER_METRE, right: (seen.x + seen.width) / PIXELS_PER_METRE, top: seen.y / PIXELS_PER_METRE, bottom: (seen.y + seen.height) / PIXELS_PER_METRE };
     },
     getHudCamera: () => getCameraOf(HUD_SCENE),
     getPageTurn: () => {
-      const turning = pageTurn.getTurningPage();
+      const turning = sources.pageTurn.getTurningPage();
       return turning ? { edgeAt: turning.edgeAt } : null;
     },
-    getNotes: () => getNotes(loop.sim),
-    getEnding: () => getGame(loop.sim),
-    getStickMan: () => getStickMan(loop.sim),
-    getFlag: () => getFlag(loop.sim),
+    getNotes: () => getNotes(sources.loop.sim),
+    getEnding: () => getGame(sources.loop.sim),
+    getStickMan: () => getStickMan(sources.loop.sim),
+    getFlag: () => getFlag(sources.loop.sim),
     getItemSlots: () => {
-      if (!game.scene.isActive(HUD_SCENE)) return [];
-      const seen = getWorldSeenBy(game.scene.getScene(HUD_SCENE).cameras.main);
+      if (!sources.game.scene.isActive(HUD_SCENE)) return [];
+      const seen = getWorldSeenBy(sources.game.scene.getScene(HUD_SCENE).cameras.main);
       // World pixels to canvas pixels by the camera's zoom, canvas pixels to CSS pixels by the game's.
-      const cssPixelsPerWorldPixel = seen.zoom * game.scale.zoom;
-      return getItemSlots(loop.sim).map((itemSlot) => {
+      const cssPixelsPerWorldPixel = seen.zoom * sources.game.scale.zoom;
+      return getItemSlots(sources.loop.sim).map((itemSlot) => {
         const box = getItemSlotBox(itemSlot.slot, seen);
         return { ...itemSlot, onPage: { x: (box.x - seen.x) * cssPixelsPerWorldPixel, y: (box.y - seen.y) * cssPixelsPerWorldPixel, width: box.width * cssPixelsPerWorldPixel, height: box.height * cssPixelsPerWorldPixel } };
       });
     },
-    getLetter: () => getLetter(loop.sim),
-    getFallenItem: () => getFallenItem(loop.sim),
-    getCrafting: () => getCrafting(loop.sim),
-    getAirplane: () => getAirplane(loop.sim),
-    getFlyingHint: () => getFlyingHint(loop.sim),
-    getMovementTuning: () => getMovementTuning(loop.sim),
-    getItemUse: () => getItemUse(loop.sim),
-    getInteraction: () => getInteraction(loop.sim),
-    queueCommand: (command) => loop.queueCommand(command),
-    loadLevel: (level) => loop.playLevel(level),
+    getLetter: () => getLetter(sources.loop.sim),
+    getFallenItem: () => getFallenItem(sources.loop.sim),
+    getCrafting: () => getCrafting(sources.loop.sim),
+    getAirplane: () => getAirplane(sources.loop.sim),
+    getFlyingHint: () => getFlyingHint(sources.loop.sim),
+    getMovementTuning: () => getMovementTuning(sources.loop.sim),
+    getItemUse: () => getItemUse(sources.loop.sim),
+    getInteraction: () => getInteraction(sources.loop.sim),
+    queueCommand: (command) => sources.loop.queueCommand(command),
+    loadLevel: (level) => sources.loop.playLevel(level),
   };
 }

@@ -85,6 +85,43 @@ const FUNCTIONS_ARE_VERBS = [
   `Identifier[name=${NOT_A_VERB}]:has(> TSTypeAnnotation > TSFunctionType)`,
 ].map((selector) => ({ selector, message: NAME_A_FUNCTION_WITH_A_VERB }));
 
+/**
+ * A name is read on one line of a diff, with no way to jump to where it is declared (AGENTS.md, "Naming"). So:
+ * a parameter is named, never destructured, and its fields are read through it (`checkpoint.position`);
+ * a name is a technical term, not part of a sentence: no article or pronoun in it (`getPlayerBody`, never `getWhereHeIs`);
+ * a name is never a bare preposition or a bare "least"/"most" (`position`, `start`, `end`, `min`, `max`).
+ */
+const NAME_THE_PARAMETER = 'Name the parameter and read its fields through it (checkpoint.position), so every line says whose field it is. Do not destructure a parameter.';
+const PARAMETERS_ARE_NAMED = [
+  ':function > ObjectPattern.params',
+  ':function > AssignmentPattern.params > ObjectPattern.left',
+].map((selector) => ({ selector, message: NAME_THE_PARAMETER }));
+const SENTENCE_WORDS = 'The|An?|He|Him|His|Its?|What|Where|While';
+const NOT_A_SENTENCE = 'A name is a technical term, not part of a sentence: no article or pronoun in it (getPlayerBody, maxFallSpeed, never getWhereHeIs or speedOfALongFall).';
+const NAMES_ARE_TERMS = [
+  `Identifier[name=/[a-z0-9](${SENTENCE_WORDS})(?=[A-Z]|$)/]`,
+  `Identifier[name=/^(${SENTENCE_WORDS})(?=[A-Z][a-z])/]`,
+  `Identifier[name=/^(${SENTENCE_WORDS.toLowerCase()})(?=[A-Z])/]`,
+  `Identifier[name=/(^|_)(${SENTENCE_WORDS.toUpperCase()})_|_(${SENTENCE_WORDS.toUpperCase()})$/]`,
+].map((selector) => ({ selector, message: NOT_A_SENTENCE }));
+const NAMING = [...FUNCTIONS_ARE_VERBS, ...PARAMETERS_ARE_NAMED, ...NAMES_ARE_TERMS];
+/** Names that mean nothing without their owner or the line before. */
+const BARE_WORDS = ['at', 'to', 'from', 'by', 'of', 'on', 'in', 'with', 'without', 'about', 'over', 'under', 'along', 'past', 'ahead', 'least', 'most', 'what', 'where', 'which'];
+const BARE_NAMES = [...BARE_WORDS, ...BARE_WORDS.map((word) => word.toUpperCase())];
+/** A boolean's name says it is one: `isSeated`, `hasLanded`, never `seated` or `landed`. Needs types, so it runs with the project's tsconfig. */
+const BOOLEANS_SAY_SO = {
+  'id-denylist': ['error', ...BARE_NAMES],
+  '@typescript-eslint/naming-convention': [
+    'error',
+    {
+      selector: ['variable', 'parameter', 'classProperty', 'typeProperty', 'parameterProperty', 'accessor'],
+      types: ['boolean'],
+      format: null,
+      custom: { regex: '^_*(is|has|are|was|were|can|should|does|did|will)[A-Z0-9]', match: true },
+    },
+  ],
+};
+
 const STROKES_ONLY = 'Only packages/client/src/render/strokes/ draws lines and shapes. Ask createStrokeLayer for a stroke instead (AGENTS.md rule 12).';
 const DRAWN_OUTSIDE_STROKES = [
   {
@@ -126,7 +163,7 @@ export default defineConfig([
         { object: 'Date', property: 'now', message: 'Non-deterministic. Use sim.tick instead.' },
         { object: 'performance', property: 'now', message: 'Non-deterministic. Use sim.tick instead.' },
       ],
-      'no-restricted-syntax': ['error', NEW_DATE, ...FUNCTIONS_ARE_VERBS],
+      'no-restricted-syntax': ['error', NEW_DATE, ...NAMING],
     },
   },
   // Later blocks replace a rule's whole setting, so the features block repeats the sim's groups here.
@@ -136,27 +173,32 @@ export default defineConfig([
   },
   {
     files: ['packages/client/**/*.ts'],
-    rules: { ...restrictImports(SIM_DEEP), 'no-restricted-syntax': ['error', ...FUNCTIONS_ARE_VERBS] },
+    rules: { ...restrictImports(SIM_DEEP), 'no-restricted-syntax': ['error', ...NAMING] },
   },
   {
     files: ['verifications/_template/**/*.mjs'],
-    rules: { 'no-restricted-syntax': ['error', ...FUNCTIONS_ARE_VERBS] },
+    rules: { 'no-restricted-syntax': ['error', ...NAMING] },
   },
   // `__testing__` exports exist for tests only. Later blocks replace a rule's
   // whole setting, so each repeats what the blocks above set: NEW_DATE for the sim, and the verbs everywhere.
   {
     files: ['packages/sim/**/*.ts'],
     ignores: ['**/*.test.ts'],
-    rules: { 'no-restricted-syntax': ['error', NEW_DATE, TESTING_IMPORT, ...FUNCTIONS_ARE_VERBS] },
+    rules: { 'no-restricted-syntax': ['error', NEW_DATE, TESTING_IMPORT, ...NAMING] },
   },
   {
     files: ['packages/client/**/*.ts'],
     ignores: ['**/*.test.ts'],
-    rules: { 'no-restricted-syntax': ['error', TESTING_IMPORT, ...DRAWN_OUTSIDE_STROKES, ...FUNCTIONS_ARE_VERBS] },
+    rules: { 'no-restricted-syntax': ['error', TESTING_IMPORT, ...DRAWN_OUTSIDE_STROKES, ...NAMING] },
+  },
+  {
+    files: ['packages/*/src/**/*.ts'],
+    languageOptions: { parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname } },
+    rules: BOOLEANS_SAY_SO,
   },
   {
     files: ['packages/client/src/render/strokes/**/*.ts'],
     ignores: ['**/*.test.ts'],
-    rules: { 'no-restricted-syntax': ['error', TESTING_IMPORT, ...FUNCTIONS_ARE_VERBS] },
+    rules: { 'no-restricted-syntax': ['error', TESTING_IMPORT, ...NAMING] },
   },
 ]);

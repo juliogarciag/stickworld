@@ -11,6 +11,9 @@
  * The build from before still has its functions under their old names (`stickManOf`, `snapshot()`); this branch renamed
  * them (`getStickMan`, `takeSnapshot()`), so only what both are asked is spelled twice below.
  *
+ * This branch also renamed fields of the sim's state, and a field's name is part of what a snapshot hashes, so the
+ * snapshot from before is given the new field names before it is hashed (`renameStateFields`); its values are untouched.
+ *
  * The scripted player decides from the sim built from the commit before, and
  * both sims are given the same commands, so a difference shows as a hash that
  * differs and not as two players who went different ways.
@@ -114,13 +117,28 @@ function playBoth({ simBefore, simNow, from, seed, mostTicks, commandsFor }) {
     else if (backAtTheStart) counts.fallsToDeath += 1;
     if (a.level !== was.level && !was.offered) counts.nextLevels += 1;
     if (was.offered && commands.some((command) => command.type === 'game/playAgain')) counts.playedAgain += 1;
-    const [hashA, hashB] = [simBefore.hashSnapshot(a.snapshot()), simNow.hashSnapshot(b.takeSnapshot())];
+    const [hashA, hashB] = [simNow.hashSnapshot(renameStateFields(a.snapshot())), simNow.hashSnapshot(b.takeSnapshot())];
     if (hashA !== hashB) {
-      difference = { atTick: a.tick, before: a.snapshot(), now: b.takeSnapshot() };
+      difference = { atTick: a.tick, before: renameStateFields(a.snapshot()), now: b.takeSnapshot() };
       break;
     }
   }
-  return { ticks, counts, difference, endHash: simBefore.hashSnapshot(a.snapshot()) };
+  return { ticks, counts, difference, endHash: simNow.hashSnapshot(b.takeSnapshot()) };
+}
+
+/**
+ * This branch renamed fields of the sim's state (a boolean's name now says it is one), and the name of a field is part
+ * of what a snapshot hashes. So the snapshot from before is given this branch's field names, and nothing else about it
+ * is touched: every value, and every field not listed, has to be the same for the two hashes to be equal.
+ */
+function renameStateFields(value) {
+  const renamed = {
+    inWorld: 'isInWorld', carried: 'isCarried', falling: 'isFalling', flying: 'isFlying', sliding: 'isSliding', inLevel: 'isInLevel', beingRead: 'isBeingRead',
+    ticksUntilItFalls: 'ticksUntilFall', onFloor: 'isOnFloor', jumpHeld: 'isJumpHeld', riseCut: 'isRiseCut', carrying: 'isCarrying', seated: 'isSeated',
+  };
+  if (Array.isArray(value)) return value.map(renameStateFields);
+  if (value === null || typeof value !== 'object') return value;
+  return Object.fromEntries(Object.entries(value).map(([key, inner]) => [renamed[key] ?? key, renameStateFields(inner)]));
 }
 
 function addTo(totals, played) {

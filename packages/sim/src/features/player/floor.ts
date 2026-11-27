@@ -4,25 +4,25 @@ import { PLAYER } from './defs';
 
 /** How high the floor is at `x`, or undefined over a gap or past the floor's ends. */
 export function getFloorHeightAt(floor: readonly FloorSegment[], x: number): number | undefined {
-  const segment = floor.find(({ from, to }) => from.x <= x && x <= to.x);
+  const segment = floor.find((segment) => segment.start.x <= x && x <= segment.end.x);
   if (!segment) return undefined;
-  const { from, to } = segment;
-  return from.y + ((x - from.x) / (to.x - from.x)) * (to.y - from.y);
+  const { start, end } = segment;
+  return start.y + ((x - start.x) / (end.x - start.x)) * (end.y - start.y);
 }
 
 /**
  * Where a step from `from` towards `to` ends when the ends of the floor line under `from` stop it: `to`, or the end of
  * the line less half his width. `to` itself when there is no line under `from`.
  */
-export function keepOverTheLine(floor: readonly FloorSegment[], { from, to }: { readonly from: number; readonly to: number }): number {
-  const line = floor.find((segment) => segment.from.x <= from && from <= segment.to.x);
-  if (!line) return to;
-  return Math.max(line.from.x + STICK_MAN_WIDTH / 2, Math.min(line.to.x - STICK_MAN_WIDTH / 2, to));
+export function keepOverLine(floor: readonly FloorSegment[], range: { readonly start: number; readonly end: number }): number {
+  const line = floor.find((segment) => segment.start.x <= range.start && range.start <= segment.end.x);
+  if (!line) return range.end;
+  return Math.max(line.start.x + STICK_MAN_WIDTH / 2, Math.min(line.end.x - STICK_MAN_WIDTH / 2, range.end));
 }
 
 /** The y of the floor's lowest point (y points down, so the largest). */
 export function getLowestFloorHeight(floor: readonly FloorSegment[]): number {
-  return Math.max(...floor.flatMap(({ from, to }) => [from.y, to.y]));
+  return Math.max(...floor.flatMap((segment) => [segment.start.y, segment.end.y]));
 }
 
 /**
@@ -31,9 +31,9 @@ export function getLowestFloorHeight(floor: readonly FloorSegment[]): number {
  * gaps wider than he is, which is all the levels have: each segment pushes by the height of its nearer end.
  */
 export function findClearOfFloorEnds(floor: readonly FloorSegment[], feet: { readonly x: number; readonly y: number }): { x: number; awayFromFloor: 1 | -1 } | undefined {
-  for (const { from, to } of floor) {
-    const nearerEnd = feet.x < (from.x + to.x) / 2 ? from : to;
-    const awayFromFloor = nearerEnd === from ? -1 : 1;
+  for (const { start, end } of floor) {
+    const nearerEnd = feet.x < (start.x + end.x) / 2 ? start : end;
+    const awayFromFloor = nearerEnd === start ? -1 : 1;
     const reach = getBodyReachAt(feet.y - nearerEnd.y);
     const x = nearerEnd.x + awayFromFloor * reach;
     if (reach > 0 && (x - feet.x) * awayFromFloor > 0) return { x, awayFromFloor };

@@ -14,12 +14,12 @@ import { convertToPixels } from './units';
  */
 
 /** The names of the keys for each thing a note can be about, as the player knows them. */
-export type KeysForNotes = Readonly<Record<NonNullable<NoteView['about']>, readonly string[]>>;
+export type KeysForNotes = Readonly<Record<NonNullable<NoteView['topic']>, readonly string[]>>;
 
 /** The strokes of every note, in world pixels. A note that has been rubbed out goes stroke by stroke, in the order it was written. */
 export function buildNoteStrokes(notes: readonly NoteView[], keysFor: KeysForNotes): Stroke[] {
   return notes.flatMap((note) => {
-    const strokes = note.title ? buildTitleStrokes(note) : buildKeyedStrokes(note, note.about ? keysFor[note.about] : []);
+    const strokes = note.isTitle ? buildTitleStrokes(note) : buildKeyedStrokes(note, note.topic ? keysFor[note.topic] : []);
     return note.rubbedOutFor === null ? strokes : getRubbedOutSoFar(strokes, note.rubbedOutFor / NOTES.rubbedOutIn);
   });
 }
@@ -36,23 +36,23 @@ const NOTES = {
   /** How tall the capitals of a title are. */
   titleLetterHeight: convertToPixels(0.72),
   /** A note about something he does: the boxes of its keys and its words. */
-  keyed: { keySide: convertToPixels(0.52), insideTheKey: convertToPixels(0.12), letterHeight: convertToPixels(0.27), besideTheKey: convertToPixels(0.2) },
+  keyed: { keySide: convertToPixels(0.52), keyPadding: convertToPixels(0.12), letterHeight: convertToPixels(0.27), keyGap: convertToPixels(0.2) },
   /** How long rubbing a note out takes. */
   rubbedOutIn: 0.45,
 } as const;
 
 /** A title: its words alone, large, centred on where the note is, standing on its line. */
-function buildTitleStrokes({ words, at }: NoteView): Stroke[] {
+function buildTitleStrokes(note: NoteView): Stroke[] {
   const letterHeight = NOTES.titleLetterHeight;
-  const { width } = buildWriting(words, { at: { x: 0, y: 0 }, letterHeight });
-  return buildWriting(words, { at: { x: convertToPixels(at.x) - width / 2, y: convertToPixels(at.y) - letterHeight }, letterHeight }).strokes;
+  const { width } = buildWriting(note.words, { position: { x: 0, y: 0 }, letterHeight });
+  return buildWriting(note.words, { position: { x: convertToPixels(note.position.x) - width / 2, y: convertToPixels(note.position.y) - letterHeight }, letterHeight }).strokes;
 }
 
 /** A note with the keys it is about: boxes and words, centred on where the note is, the boxes standing on its line. */
-function buildKeyedStrokes({ words, at }: NoteView, keys: readonly string[]): Stroke[] {
+function buildKeyedStrokes(note: NoteView, keys: readonly string[]): Stroke[] {
   const sizes = NOTES.keyed;
-  const { width } = buildKeysAndWords({ keys, words, at: { x: 0, y: 0 }, sizes });
-  return buildKeysAndWords({ keys, words, at: { x: convertToPixels(at.x) - width / 2, y: convertToPixels(at.y) - sizes.keySide }, sizes }).strokes;
+  const { width } = buildKeysAndWords({ keys, words: note.words, position: { x: 0, y: 0 }, sizes });
+  return buildKeysAndWords({ keys, words: note.words, position: { x: convertToPixels(note.position.x) - width / 2, y: convertToPixels(note.position.y) - sizes.keySide }, sizes }).strokes;
 }
 
 export const __testing__ = { NOTES };

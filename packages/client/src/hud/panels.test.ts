@@ -6,7 +6,7 @@ import { buildLetterSheetStrokes } from './panels';
 describe('buildLetterSheetStrokes', () => {
   it('draws a sheet near the top of the screen with all of the text inside it', () => {
     const [sheet, ...words] = buildLetterSheetStrokes(LETTER, CAMERA_SEES);
-    expect(sheet).toMatchObject({ closed: true });
+    expect(sheet).toMatchObject({ isClosed: true });
     expect(words.length).toBeGreaterThan(TEXT.replaceAll(' ', '').length / 2);
     const box = getBounds([sheet!]);
     const text = getBounds(words);
@@ -40,7 +40,7 @@ describe('buildLetterSheetStrokes', () => {
 // ---- Helpers ----
 
 const CAMERA_SEES = { x: 40, y: -20, width: 1920, height: 1080 };
-const WRITING = { at: { x: 0, y: 0 }, letterHeight: 30 };
+const WRITING = { position: { x: 0, y: 0 }, letterHeight: 30 };
 const TEXT = 'A sheet of paper can fly. Fold it into an airplane and carry it to the edge.';
 const LETTER = { text: TEXT, teaches: null };
 const TEACHING = { text: TEXT, teaches: 'paper airplane' };

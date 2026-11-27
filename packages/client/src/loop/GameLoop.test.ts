@@ -33,7 +33,7 @@ describe('GameLoop', () => {
     const finished = loop.takeFinishedLevel()!;
     expect(finished.level).toBe(1);
     expect(finished.tick).toBe(lastTickOnLevel1);
-    expect(getFlag(finished)).toMatchObject({ reached: true, raised: 1 });
+    expect(getFlag(finished)).toMatchObject({ isReached: true, raised: 1 });
     expect(loop.takeFinishedLevel()).toBeUndefined();
   });
 

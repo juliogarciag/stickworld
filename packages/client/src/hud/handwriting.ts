@@ -17,7 +17,7 @@ export interface Written {
 
 export interface WritingPlace {
   /** The top left corner of the first line. */
-  readonly at: StrokePoint;
+  readonly position: StrokePoint;
   /** How tall a capital is. */
   readonly letterHeight: number;
   /** How wide a line may get before the next word starts a new one. Left out, it is all one line. */
@@ -25,20 +25,20 @@ export interface WritingPlace {
 }
 
 /** `text` as pencil strokes, word-wrapped to `lineWidth`. */
-export function buildWriting(text: string, { at, letterHeight, lineWidth = Infinity }: WritingPlace): Written {
-  const lines = wrapText(text.toUpperCase(), lineWidth / letterHeight);
-  const thickness = Math.min(PENCIL.thickness, letterHeight * WRITING.thickness);
+export function buildWriting(text: string, place: WritingPlace): Written {
+  const lines = wrapText(text.toUpperCase(), (place.lineWidth ?? Infinity) / place.letterHeight);
+  const thickness = Math.min(PENCIL.thickness, place.letterHeight * WRITING.thickness);
   const strokes = lines.flatMap((line, lineIndex) => {
     let x = 0;
     return [...line].flatMap((character) => {
       const glyph = getGlyph(character);
       const left = x;
       x += glyph.width + WRITING.betweenLetters;
-      return glyph.paths.map((path) => ({ points: path.map((point) => ({ x: at.x + (left + point.x) * letterHeight, y: at.y + (lineIndex * WRITING.lineHeight + point.y) * letterHeight })), thickness }));
+      return glyph.paths.map((path) => ({ points: path.map((point) => ({ x: place.position.x + (left + point.x) * place.letterHeight, y: place.position.y + (lineIndex * WRITING.lineHeight + point.y) * place.letterHeight })), thickness }));
     });
   });
   const widest = Math.max(0, ...lines.map(measureWidth));
-  return { strokes, width: widest * letterHeight, height: (Math.max(0, lines.length - 1) * WRITING.lineHeight + 1) * letterHeight };
+  return { strokes, width: widest * place.letterHeight, height: (Math.max(0, lines.length - 1) * WRITING.lineHeight + 1) * place.letterHeight };
 }
 
 // ---- Helpers ----

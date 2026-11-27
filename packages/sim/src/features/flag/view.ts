@@ -1,23 +1,23 @@
 import type { Point } from '../../content/levels/types';
 import { Sim, type SimHandle } from '../../core/sim';
 import { flagDef } from './defs';
-import { findFlagPlacedIn, isTheLastLevel, getSecondsSinceFlagReached } from './index';
+import { findFlagPlacedIn, isLastLevel, getSecondsSinceFlagReached } from './index';
 import { flagSlice } from './state';
 
 /** The level's flag as a view needs it. */
 export interface FlagView {
   /** Where the foot of the stick is, in metres. */
-  readonly at: Point;
+  readonly position: Point;
   /** How tall the stick is, in metres. */
   readonly height: number;
   /** True once the stick man has reached it: the level is finished. */
-  readonly reached: boolean;
+  readonly isReached: boolean;
   /** How long it has been all the way up its stick, in seconds. 0 until it is. */
   readonly upFor: number;
   /** How far up the stick the flag has gone since he reached it, from 0 to 1. */
   readonly raised: number;
   /** True for the flag of the last level: reaching it finishes the game. */
-  readonly endsTheGame: boolean;
+  readonly isFinalFlag: boolean;
 }
 
 /** The flag of the level being played, or undefined when the level has none. */
@@ -26,5 +26,5 @@ export function getFlag(handle: SimHandle): FlagView | undefined {
   const placed = findFlagPlacedIn(handle.levelDef);
   if (!placed) return undefined;
   const reachedFor = getSecondsSinceFlagReached(handle) ?? 0;
-  return { at: placed.at, height: flagDef.height, reached: handle.getStateOf(flagSlice).reachedAtTick !== null, upFor: Math.max(0, reachedFor - flagDef.raiseSeconds), raised: Math.min(1, reachedFor / flagDef.raiseSeconds), endsTheGame: isTheLastLevel(handle.levelDef) };
+  return { position: placed.position, height: flagDef.height, isReached: handle.getStateOf(flagSlice).reachedAtTick !== null, upFor: Math.max(0, reachedFor - flagDef.raiseSeconds), raised: Math.min(1, reachedFor / flagDef.raiseSeconds), isFinalFlag: isLastLevel(handle.levelDef) };
 }

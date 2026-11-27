@@ -68,16 +68,16 @@ export interface MovementTuning {
 }
 
 /** What the knobs move between: the sim ignores a value outside them. */
-export const MOVEMENT_TUNING_LIMITS: { readonly [Name in keyof MovementTuning]: { readonly least: number; readonly most: number } } = {
-  walkSpeed: { least: 0.5, most: 12 },
-  jumpHeight: { least: 0.1, most: 8 },
-  jumpHeightCarrying: { least: 0.1, most: 8 },
-  riseGravity: { least: 2, most: 200 },
-  fallGravity: { least: 2, most: 200 },
-  fastestFall: { least: 1, most: 1000 },
-  letGoCut: { least: 0, most: 1 },
-  airSteering: { least: 0, most: 1000 },
-  airBraking: { least: 0, most: 1000 },
+export const MOVEMENT_TUNING_LIMITS: { readonly [Name in keyof MovementTuning]: { readonly min: number; readonly max: number } } = {
+  walkSpeed: { min: 0.5, max: 12 },
+  jumpHeight: { min: 0.1, max: 8 },
+  jumpHeightCarrying: { min: 0.1, max: 8 },
+  riseGravity: { min: 2, max: 200 },
+  fallGravity: { min: 2, max: 200 },
+  fastestFall: { min: 1, max: 1000 },
+  letGoCut: { min: 0, max: 1 },
+  airSteering: { min: 0, max: 1000 },
+  airBraking: { min: 0, max: 1000 },
 };
 
 /**

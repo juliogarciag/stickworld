@@ -22,7 +22,7 @@ export interface Prompt {
   readonly colour?: ColouredPencil;
 }
 
-export interface KeysWouldDo {
+export interface PromptInput {
   /** What using the held item would do, and the name of the key that does it. */
   readonly itemUse: ItemUseMeaning | null;
   /** The name of what using the held item would make, or null when it would make nothing. */
@@ -32,7 +32,7 @@ export interface KeysWouldDo {
   readonly interaction: InteractionMeaning | null;
   readonly interactKey: string;
   /** True while he is seated in the airplane, and the names of the keys that fly it. */
-  readonly seated: boolean;
+  readonly isSeated: boolean;
   readonly flightKeys: { readonly climb: string; readonly dive: string; readonly jumpOut: string };
   /** What he has still to be told about flying the airplane he has, or null (`getFlyingHint`). */
   readonly flyingHint: FlyingHint | null;
@@ -42,22 +42,22 @@ export interface KeysWouldDo {
  * The prompts to show: first what he has still to be told, in words alone; then the item key and the interact key,
  * each only when it would do something; then the keys that fly the airplane while he is seated in it.
  */
-export function getPromptsFor({ itemUse, wouldMake, useItemKey, interaction, interactKey, seated, flightKeys, flyingHint }: KeysWouldDo): Prompt[] {
+export function getPromptsFor(input: PromptInput): Prompt[] {
   return [
-    ...(flyingHint === null ? [] : [FLYING_HINTS[flyingHint]]),
-    ...(itemUse === null ? [] : [{ key: useItemKey, words: ITEM_USE_WORDS[itemUse](wouldMake) }]),
-    ...(interaction === null ? [] : [{ key: interactKey, words: INTERACTION_WORDS[interaction] }]),
-    ...(seated ? [{ key: flightKeys.climb, words: FLIGHT_WORDS.climb }, { key: flightKeys.dive, words: FLIGHT_WORDS.dive }, { key: flightKeys.jumpOut, words: FLIGHT_WORDS.jumpOut }] : []),
+    ...(input.flyingHint === null ? [] : [FLYING_HINTS[input.flyingHint]]),
+    ...(input.itemUse === null ? [] : [{ key: input.useItemKey, words: ITEM_USE_WORDS[input.itemUse](input.wouldMake) }]),
+    ...(input.interaction === null ? [] : [{ key: input.interactKey, words: INTERACTION_WORDS[input.interaction] }]),
+    ...(input.isSeated ? [{ key: input.flightKeys.climb, words: FLIGHT_WORDS.climb }, { key: input.flightKeys.dive, words: FLIGHT_WORDS.dive }, { key: input.flightKeys.jumpOut, words: FLIGHT_WORDS.jumpOut }] : []),
   ];
 }
 
 /** The strokes that draw `prompts` in the bottom left corner of what the HUD camera sees, one above the other. */
 export function buildPromptStrokes(prompts: readonly Prompt[], seen: Rectangle): Stroke[] {
-  return prompts.flatMap(({ key, words, colour }, index) => {
-    const fromTheBottom = prompts.length - 1 - index;
-    const at = { x: seen.x + PROMPTS.margin, y: seen.y + seen.height - PROMPTS.margin - PROMPTS.keySide - fromTheBottom * PROMPTS.rowHeight };
-    const { strokes } = buildKeysAndWords({ keys: key === null ? [] : [key], words, at, sizes: PROMPTS });
-    return colour === undefined ? strokes : strokes.map((stroke) => ({ ...stroke, colour }));
+  return prompts.flatMap((prompt, index) => {
+    const indexFromBottom = prompts.length - 1 - index;
+    const position = { x: seen.x + PROMPTS.margin, y: seen.y + seen.height - PROMPTS.margin - PROMPTS.keySide - indexFromBottom * PROMPTS.rowHeight };
+    const { strokes } = buildKeysAndWords({ keys: prompt.key === null ? [] : [prompt.key], words: prompt.words, position, sizes: PROMPTS });
+    return prompt.colour === undefined ? strokes : strokes.map((stroke) => ({ ...stroke, colour: prompt.colour }));
   });
 }
 
@@ -86,7 +86,7 @@ const INTERACTION_WORDS: Readonly<Record<InteractionMeaning, string>> = {
  * that he got it there. The keys under it say which one boards it.
  */
 const FLYING_HINTS: Readonly<Record<FlyingHint, Prompt>> = {
-  takeItToAnEdge: { key: null, words: 'take the airplane to the edge' },
+  takeToEdge: { key: null, words: 'take the airplane to the edge' },
   readyToBoard: { key: null, words: 'the airplane is ready', colour: 'green' },
 };
 
@@ -97,9 +97,9 @@ const PROMPTS = {
   /** From the corner of the screen, as far as the item slots are from theirs. */
   margin: 56,
   keySide: 58,
-  insideTheKey: 14,
+  keyPadding: 14,
   letterHeight: 28,
-  besideTheKey: 24,
+  keyGap: 24,
   /** From the top of one prompt to the top of the next. */
   rowHeight: 80,
 } as const;

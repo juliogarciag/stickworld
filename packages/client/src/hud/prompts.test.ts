@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildWriting } from './handwriting';
 import { getPromptsFor, buildPromptStrokes } from './prompts';
-import { keepWhileUnchanged } from './unchanged';
+import { keepUntilChanged } from './unchanged';
 
 describe('getPromptsFor', () => {
   it('shows nothing when neither key would do anything', () => {
@@ -17,7 +17,7 @@ describe('getPromptsFor', () => {
   });
 
   it('names the keys that fly the airplane while he is seated in it, and only then', () => {
-    expect(getPromptsFor({ ...KEYS, itemUse: null, interaction: null, seated: true })).toEqual([
+    expect(getPromptsFor({ ...KEYS, itemUse: null, interaction: null, isSeated: true })).toEqual([
       { key: '↑', words: 'climb' },
       { key: '↓', words: 'dive' },
       { key: 'SPACE', words: 'jump out' },
@@ -25,11 +25,11 @@ describe('getPromptsFor', () => {
   });
 
   it('says first, in words with no key, that the airplane goes to the edge while he has still to be told', () => {
-    expect(getPromptsFor({ ...KEYS, itemUse: null, interaction: 'putDown', flyingHint: 'takeItToAnEdge' })).toEqual([
+    expect(getPromptsFor({ ...KEYS, itemUse: null, interaction: 'putDown', flyingHint: 'takeToEdge' })).toEqual([
       { key: null, words: 'take the airplane to the edge' },
       { key: 'K', words: 'put the airplane down' },
     ]);
-    expect(getPromptsFor({ ...KEYS, itemUse: null, interaction: null, flyingHint: 'takeItToAnEdge' })).toEqual([{ key: null, words: 'take the airplane to the edge' }]);
+    expect(getPromptsFor({ ...KEYS, itemUse: null, interaction: null, flyingHint: 'takeToEdge' })).toEqual([{ key: null, words: 'take the airplane to the edge' }]);
   });
 
   it('says in green, in words with no key, that the airplane is ready once it sits on the edge, above the key that boards it', () => {
@@ -55,7 +55,7 @@ describe('getPromptsFor', () => {
 describe('buildPromptStrokes', () => {
   it('draws each prompt as a boxed key and its words, in the bottom left corner, one above the other', () => {
     const one = buildPromptStrokes([{ key: 'K', words: 'lift' }], CAMERA_SEES);
-    expect(one[0]).toMatchObject({ closed: true });
+    expect(one[0]).toMatchObject({ isClosed: true });
     expect(one).toHaveLength(1 + buildWriting('K', WRITING).strokes.length + buildWriting('lift', WRITING).strokes.length);
     const points = one.flatMap((stroke) => stroke.points);
     expect(Math.min(...points.map((point) => point.x))).toBeGreaterThan(CAMERA_SEES.x);
@@ -71,11 +71,11 @@ describe('buildPromptStrokes', () => {
   it('writes words with no key as words alone, in a row of their own above the keys, starting where a key\'s box would', () => {
     const hint = { key: null, words: 'take the airplane to the edge' };
     const alone = buildPromptStrokes([hint], CAMERA_SEES);
-    expect(alone.some((stroke) => stroke.closed)).toBe(false);
+    expect(alone.some((stroke) => stroke.isClosed)).toBe(false);
     expect(alone).toHaveLength(buildWriting(hint.words, WRITING).strokes.length);
-    const withAKey = buildPromptStrokes([hint, { key: 'K', words: 'lift' }], CAMERA_SEES);
+    const withOneKey = buildPromptStrokes([hint, { key: 'K', words: 'lift' }], CAMERA_SEES);
     const [box] = buildPromptStrokes([{ key: 'K', words: 'lift' }], CAMERA_SEES);
-    const hintPoints = withAKey.slice(0, alone.length).flatMap((stroke) => stroke.points);
+    const hintPoints = withOneKey.slice(0, alone.length).flatMap((stroke) => stroke.points);
     expect(Math.max(...hintPoints.map((point) => point.y))).toBeLessThan(Math.min(...box!.points.map((point) => point.y)));
     expect(Math.min(...hintPoints.map((point) => point.x))).toBeCloseTo(Math.min(...box!.points.map((point) => point.x)), 0);
   });
@@ -111,7 +111,7 @@ describe('buildPromptStrokes', () => {
 
 describe('keepWhileUnchanged', () => {
   it('gives back the very same value while the key is the same, and makes a new one when it changes', () => {
-    const kept = keepWhileUnchanged<number[]>();
+    const kept = keepUntilChanged<number[]>();
     let made = 0;
     const make = (): number[] => [(made += 1)];
     const first = kept('a', make);
@@ -124,6 +124,6 @@ describe('keepWhileUnchanged', () => {
 
 // ---- Helpers ----
 
-const KEYS = { useItemKey: 'J', interactKey: 'K', wouldMake: null, seated: false, flightKeys: { climb: '↑', dive: '↓', jumpOut: 'SPACE' }, flyingHint: null } as const;
+const KEYS = { useItemKey: 'J', interactKey: 'K', wouldMake: null, isSeated: false, flightKeys: { climb: '↑', dive: '↓', jumpOut: 'SPACE' }, flyingHint: null } as const;
 const CAMERA_SEES = { x: 40, y: -20, width: 1920, height: 1080 };
-const WRITING = { at: { x: 0, y: 0 }, letterHeight: 28 };
+const WRITING = { position: { x: 0, y: 0 }, letterHeight: 28 };

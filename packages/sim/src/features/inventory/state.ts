@@ -14,5 +14,5 @@ export interface Inventory {
  * is never lost.
  */
 export const inventorySlice = defineSlice<Inventory>('inventory', () => ({ slots: Array.from({ length: ITEM_SLOT_COUNT }, () => null), selectedSlot: null }), {
-  carriesAcrossLevels: true,
+  isCarriedAcrossLevels: true,
 });

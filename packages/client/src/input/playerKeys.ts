@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import type { KeysNow } from './playerCommands';
+import type { HeldKeys } from './playerCommands';
 
 /**
  * The keys the player uses: left and right arrows or A and D to walk; up
@@ -8,9 +8,9 @@ import type { KeysNow } from './playerCommands';
  * knows which keys those are; `MOVE_KEY_NAMES` and `FLIGHT_KEY_NAMES` are
  * how they are named to the player. Returns a function to call once a frame.
  */
-export function watchPlayerKeys(scene: Phaser.Scene): () => KeysNow {
+export function watchPlayerKeys(scene: Phaser.Scene): () => HeldKeys {
   const keyboard = scene.input.keyboard;
-  if (!keyboard) return () => ({ leftHeld: false, rightHeld: false, upHeld: false, downHeld: false, jumpHeld: false, jumpPressed: false, upPressed: false });
+  if (!keyboard) return () => ({ isLeftHeld: false, isRightHeld: false, isUpHeld: false, isDownHeld: false, isJumpHeld: false, isJumpPressed: false, isUpPressed: false });
   const { KeyCodes } = Phaser.Input.Keyboard;
   const left = [keyboard.addKey(KeyCodes.LEFT), keyboard.addKey(KeyCodes.A)];
   const right = [keyboard.addKey(KeyCodes.RIGHT), keyboard.addKey(KeyCodes.D)];
@@ -22,10 +22,10 @@ export function watchPlayerKeys(scene: Phaser.Scene): () => KeysNow {
   // A repeat is not a press: Phaser forgets held keys when the window loses focus, and a key still held
   // when it comes back would otherwise jump by itself.
   const pressed = { jump: false, up: false };
-  const recordPresses = (keys: Phaser.Input.Keyboard.Key[], which: keyof typeof pressed): void => {
+  const recordPresses = (keys: Phaser.Input.Keyboard.Key[], pressedKey: keyof typeof pressed): void => {
     for (const key of keys) {
       key.on('down', (_key: Phaser.Input.Keyboard.Key, event: KeyboardEvent) => {
-        if (!event.repeat) pressed[which] = true;
+        if (!event.repeat) pressed[pressedKey] = true;
       });
     }
   };
@@ -33,7 +33,7 @@ export function watchPlayerKeys(scene: Phaser.Scene): () => KeysNow {
   recordPresses(up, 'up');
   const isAnyDown = (keys: Phaser.Input.Keyboard.Key[]): boolean => keys.some((key) => key.isDown);
   return () => {
-    const now = { leftHeld: isAnyDown(left), rightHeld: isAnyDown(right), upHeld: isAnyDown(up), downHeld: isAnyDown(down), jumpHeld: isAnyDown(jump), jumpPressed: pressed.jump, upPressed: pressed.up };
+    const now = { isLeftHeld: isAnyDown(left), isRightHeld: isAnyDown(right), isUpHeld: isAnyDown(up), isDownHeld: isAnyDown(down), isJumpHeld: isAnyDown(jump), isJumpPressed: pressed.jump, isUpPressed: pressed.up };
     pressed.jump = false;
     pressed.up = false;
     return now;

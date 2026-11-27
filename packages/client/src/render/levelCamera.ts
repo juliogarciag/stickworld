@@ -11,11 +11,11 @@ const FRAMING = {
   /** The view never shows less than this much of the level across: a narrow window is held further from the sheet instead. */
   leastMetresAcross: 12,
   /** Looking ahead, he stands this share of the view's width from the side behind him, and the rest is where he is going. */
-  fromTheSideBehindHim: 0.3,
+  trailingViewShare: 0.3,
   /** On the floor, facing the end of his line from this close or closer, with floor further on, he is at an edge. */
-  nearAnEdge: 2.5,
+  edgeDistance: 2.5,
   /** Looking ahead, this much of the next floor line has to be in view. */
-  ofTheNextLine: 2.5,
+  nextLineMargin: 2.5,
   /** However far the next floor line is, the view is never pulled back to show more than this across (or the window's own width, when that shows more). */
   mostMetresAcross: 21,
   /** How long the view takes to get most of the way to where it is wanted. */
@@ -27,11 +27,11 @@ const FRAMING = {
 } as const;
 
 /** What the camera needs to know about him. */
-export type Followed = Pick<StickManView, 'feet' | 'facing' | 'action' | 'carrying'>;
+export type Followed = Pick<StickManView, 'feet' | 'facing' | 'action' | 'isCarrying'>;
 
 /** How the view sits on the level: how far ahead of his feet its middle is, and how much of the level it shows across. Metres. */
 interface Framing {
-  readonly ahead: number;
+  readonly metresAhead: number;
   readonly metresAcross: number;
 }
 
@@ -46,16 +46,16 @@ interface Framing {
 export function followStickManWith(camera: Phaser.Cameras.Scene2D.Camera): (now: { stickMan: Followed; floor: readonly FloorSegment[]; seconds: number }) => void {
   let floorHeight: number | undefined;
   let shown: { framing: Framing; followedX: number } | undefined;
-  return ({ stickMan, floor, seconds }) => {
-    const { feet, action } = stickMan;
+  return (input) => {
+    const { feet, action } = input.stickMan;
     if ((action !== 'jumping' && action !== 'seated') || floorHeight === undefined) floorHeight = feet.y;
-    const wanted = getFramingWanted({ stickMan, floor, metresAcrossAtRest: getMetresAcrossAtRest(camera) });
-    const cut = shown === undefined || Math.abs(feet.x - shown.followedX) > FRAMING.cutBeyond;
-    shown = cut || !shown ? { framing: wanted, followedX: feet.x } : { framing: easeTowards(shown.framing, wanted, seconds), followedX: keepUpWith({ followedX: shown.followedX, feetX: feet.x, seconds }) };
+    const wanted = getFramingWanted({ stickMan: input.stickMan, floor: input.floor, metresAcrossAtRest: getMetresAcrossAtRest(camera) });
+    const isCut = shown === undefined || Math.abs(feet.x - shown.followedX) > FRAMING.cutBeyond;
+    shown = isCut || !shown ? { framing: wanted, followedX: feet.x } : { framing: easeTowards(shown.framing, wanted, input.seconds), followedX: keepUpWith({ followedX: shown.followedX, feetX: feet.x, seconds: input.seconds }) };
 
     const zoom = camera.width / convertToPixels(shown.framing.metresAcross);
     camera.setZoom(zoom);
-    camera.centerOn(convertToPixels(shown.followedX + shown.framing.ahead), convertToPixels(floorHeight) - ((FRAMING.floorFromTop - 0.5) * camera.height) / zoom);
+    camera.centerOn(convertToPixels(shown.followedX + shown.framing.metresAhead), convertToPixels(floorHeight) - ((FRAMING.floorFromTop - 0.5) * camera.height) / zoom);
   };
 }
 
@@ -72,29 +72,29 @@ export function getZoomAtRest(camera: Phaser.Cameras.Scene2D.Camera): number {
  * Where the view wants to be for him as he is now. Centred on him and as wide as it is at rest, unless he is looking
  * where he is going: then he stands to one side, and it is as much wider as it takes to show the next floor line.
  */
-function getFramingWanted({ stickMan, floor, metresAcrossAtRest }: { stickMan: Followed; floor: readonly FloorSegment[]; metresAcrossAtRest: number }): Framing {
-  const { feet, facing, action, carrying } = stickMan;
-  const looksAhead = carrying || action === 'seated' || (action !== 'jumping' && isAtAnEdge({ x: feet.x, facing, floor }));
-  if (!looksAhead) return { ahead: 0, metresAcross: metresAcrossAtRest };
-  const toTheNextLine = measureDistanceToTheNextLine({ x: feet.x, facing, floor });
-  const toShowIt = toTheNextLine === undefined ? 0 : (toTheNextLine + FRAMING.ofTheNextLine) / (1 - FRAMING.fromTheSideBehindHim);
-  const metresAcross = Math.max(metresAcrossAtRest, Math.min(toShowIt, FRAMING.mostMetresAcross));
-  return { ahead: facing * (0.5 - FRAMING.fromTheSideBehindHim) * metresAcross, metresAcross };
+function getFramingWanted(input: { stickMan: Followed; floor: readonly FloorSegment[]; metresAcrossAtRest: number }): Framing {
+  const { feet, facing, action, isCarrying } = input.stickMan;
+  const isLookingAhead = isCarrying || action === 'seated' || (action !== 'jumping' && isAtEdge({ x: feet.x, facing, floor: input.floor }));
+  if (!isLookingAhead) return { metresAhead: 0, metresAcross: input.metresAcrossAtRest };
+  const distanceToNextLine = measureDistanceToNextLine({ x: feet.x, facing, floor: input.floor });
+  const metresToShowNextLine = distanceToNextLine === undefined ? 0 : (distanceToNextLine + FRAMING.nextLineMargin) / (1 - FRAMING.trailingViewShare);
+  const metresAcross = Math.max(input.metresAcrossAtRest, Math.min(metresToShowNextLine, FRAMING.mostMetresAcross));
+  return { metresAhead: facing * (0.5 - FRAMING.trailingViewShare) * metresAcross, metresAcross };
 }
 
 /** `from` a frame of `seconds` closer to `to`: most of the way there after `FRAMING.easeSeconds`, never past it. */
-function easeTowards(from: Framing, to: Framing, seconds: number): Framing {
+function easeTowards(start: Framing, end: Framing, seconds: number): Framing {
   const share = 1 - Math.exp(-Math.max(0, seconds) / FRAMING.easeSeconds);
-  return { ahead: from.ahead + (to.ahead - from.ahead) * share, metresAcross: from.metresAcross + (to.metresAcross - from.metresAcross) * share };
+  return { metresAhead: start.metresAhead + (end.metresAhead - start.metresAhead) * share, metresAcross: start.metresAcross + (end.metresAcross - start.metresAcross) * share };
 }
 
 /**
  * Where along the line the view follows him to, a frame of `seconds` after it was at `followedX`: where his feet are,
  * unless they got there faster than `FRAMING.fastestFollow`, which only a hop within one tick does.
  */
-function keepUpWith({ followedX, feetX, seconds }: { followedX: number; feetX: number; seconds: number }): number {
-  const furthest = FRAMING.fastestFollow * Math.max(0, seconds);
-  return followedX + Math.max(-furthest, Math.min(furthest, feetX - followedX));
+function keepUpWith(input: { followedX: number; feetX: number; seconds: number }): number {
+  const furthest = FRAMING.fastestFollow * Math.max(0, input.seconds);
+  return input.followedX + Math.max(-furthest, Math.min(furthest, input.feetX - input.followedX));
 }
 
 // ---- Helpers ----
@@ -103,23 +103,23 @@ function getMetresAcrossAtRest(camera: Phaser.Cameras.Scene2D.Camera): number {
   return camera.width / getZoomAtRest(camera) / convertToPixels(1);
 }
 
-interface Looking {
+interface Viewpoint {
   readonly x: number;
   readonly facing: 1 | -1;
   readonly floor: readonly FloorSegment[];
 }
 
 /** True when the end of the floor line under `x` that he faces is near, and there is floor further on to get to. */
-function isAtAnEdge({ x, facing, floor }: Looking): boolean {
-  const line = floor.find(({ from, to }) => from.x <= x && x <= to.x);
+function isAtEdge(viewpoint: Viewpoint): boolean {
+  const line = viewpoint.floor.find((segment) => segment.start.x <= viewpoint.x && viewpoint.x <= segment.end.x);
   if (!line) return false;
-  const toTheEnd = facing === 1 ? line.to.x - x : x - line.from.x;
-  return toTheEnd <= FRAMING.nearAnEdge && measureDistanceToTheNextLine({ x, facing, floor }) !== undefined;
+  const distanceToEnd = viewpoint.facing === 1 ? line.end.x - viewpoint.x : viewpoint.x - line.start.x;
+  return distanceToEnd <= FRAMING.edgeDistance && measureDistanceToNextLine({ x: viewpoint.x, facing: viewpoint.facing, floor: viewpoint.floor }) !== undefined;
 }
 
 /** How far the way he faces the nearest floor line begins that he is not on or over, or undefined when there is none. */
-function measureDistanceToTheNextLine({ x, facing, floor }: Looking): number | undefined {
-  const distances = floor.map(({ from, to }) => (facing === 1 ? from.x - x : x - to.x)).filter((distance) => distance > 0);
+function measureDistanceToNextLine(viewpoint: Viewpoint): number | undefined {
+  const distances = viewpoint.floor.map((segment) => (viewpoint.facing === 1 ? segment.start.x - viewpoint.x : viewpoint.x - segment.end.x)).filter((distance) => distance > 0);
   return distances.length === 0 ? undefined : Math.min(...distances);
 }
 

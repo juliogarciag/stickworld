@@ -1,17 +1,17 @@
 import { getSteeringAsked, getStickMan, type Command, type SimHandle, type SteerDirection, type WalkDirection } from '@stickworld/sim';
 
 /** What the keys say this frame, whichever keys they are. */
-export interface KeysNow {
-  readonly leftHeld: boolean;
-  readonly rightHeld: boolean;
-  readonly upHeld: boolean;
-  readonly downHeld: boolean;
+export interface HeldKeys {
+  readonly isLeftHeld: boolean;
+  readonly isRightHeld: boolean;
+  readonly isUpHeld: boolean;
+  readonly isDownHeld: boolean;
   /** True while a key that only ever jumps is down. */
-  readonly jumpHeld: boolean;
+  readonly isJumpHeld: boolean;
   /** True on the one frame a key that only ever jumps went down. */
-  readonly jumpPressed: boolean;
+  readonly isJumpPressed: boolean;
   /** True on the one frame an up key went down: on his feet that is a jump too; seated, up steers and is not one. */
-  readonly upPressed: boolean;
+  readonly isUpPressed: boolean;
 }
 
 /**
@@ -36,39 +36,39 @@ export interface KeysNow {
  * that went down and up between two frames. An up key held since he was
  * seated steered the airplane and holds no jump after he jumps out of it.
  */
-export function createKeysToCommands(): (now: { keys: KeysNow; sim: SimHandle }) => Command[] {
-  const walkIsNews = createNewsToTheSim<WalkDirection>();
-  const steeringIsNews = createNewsToTheSim<SteerDirection>();
-  let jumpWasHeld = false;
+export function createKeysToCommands(): (now: { keys: HeldKeys; sim: SimHandle }) => Command[] {
+  const hasWalkChanged = createChangeDetector<WalkDirection>();
+  const hasSteeringChanged = createChangeDetector<SteerDirection>();
+  let wasJumpHeld = false;
   // An up key held to steer the airplane is not a jump held once he jumps out: it steered, and counts again only once let go of.
-  let upHeldSinceSeated = false;
-  return ({ keys, sim }) => {
+  let wasUpHeldSinceSeated = false;
+  return (input) => {
     const commands: Command[] = [];
-    const seated = getStickMan(sim).action === 'seated';
-    const walkDirection = getWalkDirectionHeld(keys);
-    if (walkIsNews({ wanted: walkDirection, believed: getStickMan(sim).walkDirectionAsked, sim })) commands.push({ type: 'player/walk', direction: walkDirection });
-    const steerDirection = seated ? getSteerDirectionHeld(keys) : 0;
-    if (steeringIsNews({ wanted: steerDirection, believed: getSteeringAsked(sim), sim })) commands.push({ type: 'airplane/steer', direction: steerDirection });
-    const jumpAsked = keys.jumpPressed || (keys.upPressed && !seated);
-    if (jumpAsked) commands.push({ type: 'player/jump' });
-    upHeldSinceSeated = keys.upHeld && (seated || upHeldSinceSeated);
-    const jumpHeld = keys.jumpHeld || (keys.upHeld && !upHeldSinceSeated);
-    if (!jumpHeld && (jumpWasHeld || jumpAsked)) commands.push({ type: 'player/letGoOfJump' });
-    jumpWasHeld = jumpHeld;
+    const isSeated = getStickMan(input.sim).action === 'seated';
+    const walkDirection = getWalkDirectionHeld(input.keys);
+    if (hasWalkChanged({ wanted: walkDirection, believed: getStickMan(input.sim).walkDirectionAsked, sim: input.sim })) commands.push({ type: 'player/walk', direction: walkDirection });
+    const steerDirection = isSeated ? getSteerDirectionHeld(input.keys) : 0;
+    if (hasSteeringChanged({ wanted: steerDirection, believed: getSteeringAsked(input.sim), sim: input.sim })) commands.push({ type: 'airplane/steer', direction: steerDirection });
+    const isJumpRequested = input.keys.isJumpPressed || (input.keys.isUpPressed && !isSeated);
+    if (isJumpRequested) commands.push({ type: 'player/jump' });
+    wasUpHeldSinceSeated = input.keys.isUpHeld && (isSeated || wasUpHeldSinceSeated);
+    const isJumpHeld = input.keys.isJumpHeld || (input.keys.isUpHeld && !wasUpHeldSinceSeated);
+    if (!isJumpHeld && (wasJumpHeld || isJumpRequested)) commands.push({ type: 'player/letGoOfJump' });
+    wasJumpHeld = isJumpHeld;
     return commands;
   };
 }
 
 /** Which way the keys say to walk: neither when both or none are held. */
-export function getWalkDirectionHeld({ leftHeld, rightHeld }: KeysNow): WalkDirection {
-  if (leftHeld === rightHeld) return 0;
-  return leftHeld ? -1 : 1;
+export function getWalkDirectionHeld(keys: HeldKeys): WalkDirection {
+  if (keys.isLeftHeld === keys.isRightHeld) return 0;
+  return keys.isLeftHeld ? -1 : 1;
 }
 
 /** Which way the keys say to steer the airplane's nose: 1 up, -1 down, neither when both or none are held. */
-export function getSteerDirectionHeld({ upHeld, downHeld }: KeysNow): SteerDirection {
-  if (upHeld === downHeld) return 0;
-  return upHeld ? 1 : -1;
+export function getSteerDirectionHeld(keys: HeldKeys): SteerDirection {
+  if (keys.isUpHeld === keys.isDownHeld) return 0;
+  return keys.isUpHeld ? 1 : -1;
 }
 
 // ---- Helpers ----
@@ -77,15 +77,15 @@ export function getSteerDirectionHeld({ upHeld, downHeld }: KeysNow): SteerDirec
  * Returns a function that says whether what the keys want is something the sim has not been told: it differs from what
  * the sim believes, or from what was asked last when that command is still waiting for the sim's next tick.
  */
-function createNewsToTheSim<Wanted>(): (now: { wanted: Wanted; believed: Wanted; sim: SimHandle }) => boolean {
+function createChangeDetector<Wanted>(): (now: { wanted: Wanted; believed: Wanted; sim: SimHandle }) => boolean {
   let lastAsked: { wanted: Wanted; sim: SimHandle; tick: number } | undefined;
-  return ({ wanted, believed, sim }) => {
+  return (input) => {
     // The last command may still be waiting for the sim's next tick. Until then the sim has not heard it,
     // but it has been asked, and asking again would be a duplicate.
-    const lastIsStillWaiting = lastAsked !== undefined && lastAsked.sim === sim && lastAsked.tick === sim.tick;
-    const alreadyAsked = lastIsStillWaiting && lastAsked ? lastAsked.wanted : believed;
-    if (wanted === alreadyAsked) return false;
-    lastAsked = { wanted, sim, tick: sim.tick };
+    const isLastRequestPending = lastAsked !== undefined && lastAsked.sim === input.sim && lastAsked.tick === input.sim.tick;
+    const alreadyAsked = isLastRequestPending && lastAsked ? lastAsked.wanted : input.believed;
+    if (input.wanted === alreadyAsked) return false;
+    lastAsked = { wanted: input.wanted, sim: input.sim, tick: input.sim.tick };
     return true;
   };
 }

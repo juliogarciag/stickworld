@@ -19,26 +19,26 @@ describe("'world/interact' and 'item/use'", () => {
     const sim = new Sim({ features, start: { seed: 1, level: 3 } });
     // In play he cannot have an airplane before he has read the letter, so this one is handed to him.
     giveItem(sim, AIRPLANE_ITEM_ID);
-    walkTo(sim, getLetter(sim)!.at.x - 0.4);
+    walkTo(sim, getLetter(sim)!.position.x - 0.4);
     sim.step([SELECT_SLOT_1]);
     sim.step([USE_ITEM]);
     expect(getAirplane(sim)!.state).toBe('resting');
     expect(getInteraction(sim)).toBe('lift');
     sim.step([INTERACT]);
     expect(getAirplane(sim)!.state).toBe('carried');
-    expect(getLetter(sim)).toMatchObject({ beingRead: false });
+    expect(getLetter(sim)).toMatchObject({ isBeingRead: false });
     expect(getInteraction(sim)).toBe('putDown');
   });
 
   it('leave the letter he is reading to the interact key: using an item does nothing until it is put away, and putting it away does nothing more', () => {
     const sim = new Sim({ features, start: { seed: 1, level: 3 } });
     giveItem(sim, PAPER_ITEM_ID);
-    walkTo(sim, getLetter(sim)!.at.x);
+    walkTo(sim, getLetter(sim)!.position.x);
     sim.step([INTERACT]);
     expect(getInteraction(sim)).toBe('putLetterAway');
     expect(getItemUse(sim)).toBeNull();
     sim.step([USE_ITEM]);
-    expect(getLetter(sim)).toMatchObject({ beingRead: true });
+    expect(getLetter(sim)).toMatchObject({ isBeingRead: true });
     expect(getItemSlots(sim)[0]?.itemDefId).toBe(PAPER_ITEM_ID);
     sim.step([INTERACT]);
     expect(getLetter(sim)).toBeUndefined();
@@ -62,8 +62,8 @@ describe("'world/interact' and 'item/use'", () => {
     giveItem(sim, PAPER_ITEM_ID);
     sim.step([SELECT_SLOT_1]);
     sim.step([{ type: 'player/walk', direction: 1 }]);
-    for (let tick = 0; tick < 600 && !getFlag(sim)!.reached; tick += 1) sim.step();
-    expect(getFlag(sim)!.reached).toBe(true);
+    for (let tick = 0; tick < 600 && !getFlag(sim)!.isReached; tick += 1) sim.step();
+    expect(getFlag(sim)!.isReached).toBe(true);
     expect(getItemUse(sim)).toBeNull();
     expect(getInteraction(sim)).toBeNull();
   });

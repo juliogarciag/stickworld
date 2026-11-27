@@ -2,7 +2,7 @@ import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
 import { getAirplaneItemUse } from '../airplane';
 import { getCraftingUse } from '../crafting';
-import { isReadingALetter } from '../letter';
+import { isReadingLetter } from '../letter';
 import { isFlagReached } from '../flag';
 
 /**
@@ -24,7 +24,7 @@ export const itemFeature: Feature = {
 /** What `'item/use'` would do right now, with the function that does it, or undefined when it would do nothing. */
 export function getItemUseNow(sim: Sim): ItemUse | undefined {
   // A letter he reads fills his hands: it is put away by interacting, and until then no item is used.
-  if (isFlagReached(sim) || isReadingALetter(sim)) return undefined;
+  if (isFlagReached(sim) || isReadingLetter(sim)) return undefined;
   for (const answer of ANSWERS) {
     const use = answer(sim);
     if (use) return use;

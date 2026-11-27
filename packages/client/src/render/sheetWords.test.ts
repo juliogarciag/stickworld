@@ -7,7 +7,7 @@ import { convertToPixels } from './units';
 describe('the name of a level', () => {
   it('is its number and name, written above where he starts, centred on him', () => {
     const strokes = buildLevelNameStrokes(LEVEL_2, WRITTEN_BY);
-    expect(strokes).toHaveLength(buildWriting('2. A gap', { at: { x: 0, y: 0 }, letterHeight: 1 }).strokes.length);
+    expect(strokes).toHaveLength(buildWriting('2. A gap', { position: { x: 0, y: 0 }, letterHeight: 1 }).strokes.length);
     const points = strokes.flatMap((stroke) => stroke.points);
     const xs = points.map((point) => point.x);
     expect((Math.min(...xs) + Math.max(...xs)) / 2).toBeCloseTo(convertToPixels(LEVEL_2.start.x), 6);

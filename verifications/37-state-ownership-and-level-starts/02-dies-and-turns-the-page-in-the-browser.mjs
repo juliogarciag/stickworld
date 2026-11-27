@@ -58,7 +58,7 @@ try {
   await page.waitForFunction(() => window.__game.sim.tick > 5 && window.__game.level.id === 1);
   await watch(page);
   await page.keyboard.down('ArrowRight');
-  await page.waitForFunction(() => window.__game.getFlag().reached, null, { timeout: 30000 });
+  await page.waitForFunction(() => window.__game.getFlag().isReached, null, { timeout: 30000 });
   await page.keyboard.up('ArrowRight');
   await page.waitForFunction(() => window.__game.level.id === 2, null, { timeout: 15000 });
   await page.waitForFunction(() => window.__game.getPageTurn() !== null, null, { timeout: 3000 }).catch(() => undefined);

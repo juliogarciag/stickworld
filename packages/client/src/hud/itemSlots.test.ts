@@ -8,7 +8,7 @@ describe('buildItemSlotStrokes', () => {
   it('draws an empty slot as its box and nothing else: no number that could be read as a count', () => {
     const strokes = buildItemSlotStrokes([EMPTY_SLOT], CAMERA_SEES);
     expect(strokes).toHaveLength(1);
-    expect(strokes[0]).toMatchObject({ closed: true });
+    expect(strokes[0]).toMatchObject({ isClosed: true });
     expect(strokes[0]?.points).toHaveLength(4);
     const box = getItemSlotBox(1, CAMERA_SEES);
     expect(Math.max(...getPoints(strokes).map((point) => point.y))).toBe(box.y + box.height);
@@ -34,11 +34,11 @@ describe('buildItemSlotStrokes', () => {
 
   it('draws a second, heavier box around the selected slot', () => {
     const unselected = buildItemSlotStrokes([EMPTY_SLOT], CAMERA_SEES);
-    const selected = buildItemSlotStrokes([{ ...EMPTY_SLOT, selected: true }], CAMERA_SEES);
+    const selected = buildItemSlotStrokes([{ ...EMPTY_SLOT, isSelected: true }], CAMERA_SEES);
     expect(selected).toHaveLength(unselected.length + 1);
     const outer = selected[selected.length - 1]!;
     const box = getItemSlotBox(1, CAMERA_SEES);
-    expect(outer.closed).toBe(true);
+    expect(outer.isClosed).toBe(true);
     expect(outer.thickness).toBeGreaterThan(unselected[0]!.thickness);
     expect(Math.min(...outer.points.map((point) => point.x))).toBeLessThan(box.x);
     expect(Math.max(...outer.points.map((point) => point.x))).toBeGreaterThan(box.x + box.width);
@@ -48,10 +48,10 @@ describe('buildItemSlotStrokes', () => {
     const moved = { ...CAMERA_SEES, x: 500, y: -300 };
     const first = getItemSlotBox(1, moved);
     const second = getItemSlotBox(2, moved);
-    const measureFromTheRight = (box: { x: number; width: number }, seen: typeof CAMERA_SEES): number => seen.x + seen.width - (box.x + box.width);
-    expect(measureFromTheRight(first, moved)).toBe(measureFromTheRight(getItemSlotBox(1, CAMERA_SEES), CAMERA_SEES));
+    const measureFromRight = (box: { x: number; width: number }, seen: typeof CAMERA_SEES): number => seen.x + seen.width - (box.x + box.width);
+    expect(measureFromRight(first, moved)).toBe(measureFromRight(getItemSlotBox(1, CAMERA_SEES), CAMERA_SEES));
     expect(first.y - moved.y).toBe(getItemSlotBox(1, CAMERA_SEES).y - CAMERA_SEES.y);
-    expect(measureFromTheRight(first, moved)).toBeGreaterThan(0);
+    expect(measureFromRight(first, moved)).toBeGreaterThan(0);
     expect(first.x).toBeGreaterThan(moved.x + moved.width * 0.9);
     expect(first.y).toBeGreaterThan(moved.y);
     // The next slot is to its left, clear of it.
@@ -59,7 +59,7 @@ describe('buildItemSlotStrokes', () => {
     expect(second.y).toBe(first.y);
     // On a narrow view it is the same distance from the right side.
     const narrow = { ...CAMERA_SEES, width: 1200 };
-    expect(measureFromTheRight(getItemSlotBox(1, narrow), narrow)).toBe(measureFromTheRight(first, moved));
+    expect(measureFromRight(getItemSlotBox(1, narrow), narrow)).toBe(measureFromRight(first, moved));
   });
 
   it('is small and clear of the letter he holds up, on the narrowest view the HUD has', () => {
@@ -67,9 +67,9 @@ describe('buildItemSlotStrokes', () => {
     const box = getItemSlotBox(1, narrow);
     expect(box.width).toBeLessThan(80);
     const sheet = buildLetterSheetStrokes({ text: 'A sheet of paper can fly. Fold it into an airplane and carry it to the edge.', teaches: 'paper airplane' }, narrow);
-    const rightOfTheSheet = Math.max(...sheet.flatMap((stroke) => stroke.points).map((point) => point.x));
-    const selected = buildItemSlotStrokes([{ ...EMPTY_SLOT, selected: true }], narrow);
-    expect(Math.min(...getPoints(selected).map((point) => point.x))).toBeGreaterThan(rightOfTheSheet);
+    const rightOfSheet = Math.max(...sheet.flatMap((stroke) => stroke.points).map((point) => point.x));
+    const selected = buildItemSlotStrokes([{ ...EMPTY_SLOT, isSelected: true }], narrow);
+    expect(Math.min(...getPoints(selected).map((point) => point.x))).toBeGreaterThan(rightOfSheet);
   });
 
   it('draws nothing when there are no slots', () => {
@@ -80,7 +80,7 @@ describe('buildItemSlotStrokes', () => {
 // ---- Helpers ----
 
 const CAMERA_SEES = { x: 0, y: 0, width: 1920, height: 1080 };
-const EMPTY_SLOT: ItemSlot = { slot: 1, itemDefId: null, selected: false };
+const EMPTY_SLOT: ItemSlot = { slot: 1, itemDefId: null, isSelected: false };
 
 function getPoints(strokes: readonly Stroke[]) {
   return strokes.flatMap((stroke) => stroke.points);

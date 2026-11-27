@@ -11,7 +11,7 @@ import { getFrameSeconds } from '../loop/frameSeconds';
  * level changes, the sheet that is turned away would not be there yet. What
  * such a scene shows is therefore worked out here and not in its `update`.
  */
-export function runEveryFrameAfterTheLevel(scene: Phaser.Scene, draw: (seconds: number) => void): void {
+export function runEveryFrameAfterLevel(scene: Phaser.Scene, draw: (seconds: number) => void): void {
   const runAfterEveryUpdate = (_time: number, deltaMs: number): void => {
     if (scene.sys.isActive()) draw(getFrameSeconds(deltaMs));
   };

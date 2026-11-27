@@ -19,7 +19,7 @@ export interface Stroke {
   /** How thick the line is, in world pixels, where the pencil presses hardest. */
   readonly thickness: number;
   /** True for a loop (a head): the pencil comes back past where it started. */
-  readonly closed?: boolean;
+  readonly isClosed?: boolean;
   /** A coloured pencil for the few lines that must stand out from the graphite (`COLOURED_PENCILS`); graphite when absent. */
   readonly colour?: ColouredPencil;
 }

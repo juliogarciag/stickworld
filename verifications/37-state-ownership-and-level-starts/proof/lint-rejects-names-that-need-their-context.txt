@@ -1,0 +1,17 @@
+
+<repo>/packages/sim/src/proofOfTheNamingRules.ts
+   2:3   error  Identifier 'at' is restricted                                                                                                                          id-denylist
+   3:3   error  Type Property name `passed` must match the RegExp: /^_*(is|has|are|was|were|can|should|does|did|will)[A-Z0-9]/u                                        @typescript-eslint/naming-convention
+   6:38  error  Name the parameter and read its fields through it (checkpoint.position), so every line says whose field it is. Do not destructure a parameter          no-restricted-syntax
+   6:40  error  Identifier 'at' is restricted                                                                                                                          id-denylist
+   6:44  error  Parameter name `passed` must match the RegExp: /^_*(is|has|are|was|were|can|should|does|did|will)[A-Z0-9]/u                                            @typescript-eslint/naming-convention
+   7:13  error  Identifier 'at' is restricted                                                                                                                          id-denylist
+  10:17  error  A name is a technical term, not part of a sentence: no article or pronoun in it (getPlayerBody, maxFallSpeed, never getWhereHeIs or speedOfALongFall)  no-restricted-syntax
+  11:9   error  Identifier 'least' is restricted                                                                                                                       id-denylist
+  12:9   error  A name is a technical term, not part of a sentence: no article or pronoun in it (getPlayerBody, maxFallSpeed, never getWhereHeIs or speedOfALongFall)  no-restricted-syntax
+  13:9   error  Variable name `landed` must match the RegExp: /^_*(is|has|are|was|were|can|should|does|did|will)[A-Z0-9]/u                                             @typescript-eslint/naming-convention
+  14:19  error  Identifier 'least' is restricted                                                                                                                       id-denylist
+  14:27  error  A name is a technical term, not part of a sentence: no article or pronoun in it (getPlayerBody, maxFallSpeed, never getWhereHeIs or speedOfALongFall)  no-restricted-syntax
+
+✖ 12 problems (12 errors, 0 warnings)
+

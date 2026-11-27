@@ -12,50 +12,50 @@ import { level2 } from './level2';
 describe('level 1', () => {
   it('is finished by walking right to the flag, with a jump on the way', () => {
     const sim = createSim({ level: 1 });
-    play(sim, WALK_TO_THE_FLAG);
+    play(sim, WALK_TO_FLAG);
     const flag = getFlag(sim)!;
-    expect(flag.reached).toBe(true);
+    expect(flag.isReached).toBe(true);
     expect(flag.raised).toBe(1);
     expect(getStickMan(sim).action).toBe('cheering');
-    expect(Math.abs(getStickMan(sim).feet.x - flag.at.x)).toBeLessThan(0.5);
+    expect(Math.abs(getStickMan(sim).feet.x - flag.position.x)).toBeLessThan(0.5);
   });
 
   it('is not finished by stopping short of the flag', () => {
     const sim = createSim({ level: 1 });
     play(sim, STOP_SHORT);
     const flag = getFlag(sim)!;
-    expect(flag.reached).toBe(false);
+    expect(flag.isReached).toBe(false);
     expect(flag.raised).toBe(0);
     expect(getStickMan(sim).action).toBe('standing');
     expect(getStickMan(sim).feet.x).toBeGreaterThan(level1.start.x + 3);
-    expect(getStickMan(sim).feet.x).toBeLessThan(flag.at.x - 1);
+    expect(getStickMan(sim).feet.x).toBeLessThan(flag.position.x - 1);
   });
 
   it('is not finished by walking the wrong way and falling off the paper', () => {
     const sim = createSim({ level: 1 });
     play(sim, { commands: [{ atTick: 0, command: { type: 'player/walk', direction: -1 } }], ticks: 600 });
-    expect(getFlag(sim)!.reached).toBe(false);
+    expect(getFlag(sim)!.isReached).toBe(false);
   });
 
   it('stays finished, and he stays put, whatever is pressed before the next level starts', () => {
     const sim = createSim({ level: 1 });
-    walkUntilTheFlagIsReached(sim);
+    walkUntilFlagIsReached(sim);
     const stoodAt = getStickMan(sim).feet;
     play(sim, { commands: [{ atTick: 0, command: { type: 'player/walk', direction: -1 } }, { atTick: 5, command: { type: 'player/jump' } }], ticks: PAUSE_TICKS - 2 });
     expect(sim.level).toBe(1);
-    expect(getFlag(sim)!.reached).toBe(true);
+    expect(getFlag(sim)!.isReached).toBe(true);
     expect(getStickMan(sim)).toMatchObject({ feet: stoodAt, action: 'cheering' });
   });
 
   it('is followed by level 2, a short pause after the flag is reached', () => {
     const sim = createSim({ level: 1 });
-    walkUntilTheFlagIsReached(sim);
+    walkUntilFlagIsReached(sim);
     play(sim, { commands: [], ticks: PAUSE_TICKS - 2 });
     expect(sim.level).toBe(1);
     play(sim, { commands: [], ticks: 4 });
     expect(sim.level).toBe(2);
     expect(getStickMan(sim)).toMatchObject({ feet: level2.start, action: 'standing' });
-    expect(getFlag(sim)!.reached).toBe(false);
+    expect(getFlag(sim)!.isReached).toBe(false);
   });
 });
 
@@ -68,7 +68,7 @@ interface Recording {
 }
 
 /** Walk right, jump once on the way, keep walking: he reaches the flag after about four seconds. It ends with the flag up, before the next level starts. */
-const WALK_TO_THE_FLAG: Recording = {
+const WALK_TO_FLAG: Recording = {
   commands: [
     { atTick: 10, command: { type: 'player/walk', direction: 1 } },
     { atTick: 90, command: { type: 'player/jump' } },
@@ -89,14 +89,14 @@ const STOP_SHORT: Recording = {
 const PAUSE_TICKS = Math.round(LEVEL_END.pauseBeforeNextLevel * TICK_RATE);
 
 /** Walks him right from where he is until the tick the flag is reached. */
-function walkUntilTheFlagIsReached(sim: SimHandle): void {
+function walkUntilFlagIsReached(sim: SimHandle): void {
   sim.step([{ type: 'player/walk', direction: 1 }]);
-  for (let tick = 0; tick < 600 && !getFlag(sim)!.reached; tick += 1) sim.step();
-  expect(getFlag(sim)!.reached).toBe(true);
+  for (let tick = 0; tick < 600 && !getFlag(sim)!.isReached; tick += 1) sim.step();
+  expect(getFlag(sim)!.isReached).toBe(true);
 }
 
-function play(sim: SimHandle, { commands, ticks }: Recording): void {
-  for (let tick = 0; tick < ticks; tick += 1) {
-    sim.step(commands.filter(({ atTick }) => atTick === tick).map(({ command }) => command));
+function play(sim: SimHandle, recording: Recording): void {
+  for (let tick = 0; tick < recording.ticks; tick += 1) {
+    sim.step(recording.commands.filter((entry) => entry.atTick === tick).map((entry) => entry.command));
   }
 }

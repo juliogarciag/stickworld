@@ -12,11 +12,11 @@ export const level2: Level = {
   id: 2,
   name: 'A gap',
   floor: [
-    { from: { x: 0, y: 0 }, to: { x: 6, y: 0 } },
-    { from: { x: 6.8, y: 0 }, to: { x: 14, y: 0 } },
+    { start: { x: 0, y: 0 }, end: { x: 6, y: 0 } },
+    { start: { x: 6.8, y: 0 }, end: { x: 14, y: 0 } },
   ],
   start: { x: 2, y: 0 },
-  placements: [{ defId: FLAG_DEF_ID, at: { x: 11, y: 0 } }],
+  placements: [{ defId: FLAG_DEF_ID, position: { x: 11, y: 0 } }],
   flagGivesItem: PAPER_ITEM_ID,
-  notes: [{ at: { x: 5, y: -2.5 }, words: 'jump', about: 'jumping', rubbedOutPast: 6.8 }],
+  notes: [{ position: { x: 5, y: -2.5 }, words: 'jump', topic: 'jumping', rubbedOutPast: 6.8 }],
 };

@@ -13,19 +13,19 @@ describe('the flag', () => {
   it('stands where the level places it, not reached', () => {
     const placed = LEVEL.placements.find((placement) => placement.defId === FLAG_DEF_ID)!;
     expect(getDef(FLAG_DEF_ID)).toBe(flagDef);
-    expect(getFlag(createSim({ level: 1 }))).toEqual({ at: placed.at, height: flagDef.height, reached: false, upFor: 0, raised: 0, endsTheGame: false });
+    expect(getFlag(createSim({ level: 1 }))).toEqual({ position: placed.position, height: flagDef.height, isReached: false, upFor: 0, raised: 0, isFinalFlag: false });
   });
 
   it('ends the game on the last level only', () => {
-    expect(levels.map((level) => getFlag(createSim({ level: level.id }))!.endsTheGame)).toEqual(levels.map((_, index) => index === levels.length - 1));
+    expect(levels.map((level) => getFlag(createSim({ level: level.id }))!.isFinalFlag)).toEqual(levels.map((_, index) => index === levels.length - 1));
   });
 
   it('is reached the moment he comes within reach of the stick, and then goes up it', () => {
     const sim = createSim({ level: 1 });
     sim.step([{ type: 'player/walk', direction: 1 }]);
-    while (!getFlag(sim)!.reached) sim.step();
+    while (!getFlag(sim)!.isReached) sim.step();
     const flag = getFlag(sim)!;
-    expect(flag.at.x - getStickMan(sim).feet.x).toBeCloseTo(flagDef.reach, 1);
+    expect(flag.position.x - getStickMan(sim).feet.x).toBeCloseTo(flagDef.reach, 1);
     expect(flag.raised).toBeLessThan(0.1);
 
     const halfway = Math.round(flagDef.raiseSeconds / 2 / sim.dt);
@@ -38,10 +38,10 @@ describe('the flag', () => {
   it('is reached by jumping into it: it is taller than his jump', () => {
     const sim = createSim({ level: 1 });
     sim.step([{ type: 'player/walk', direction: 1 }]);
-    while (getFlag(sim)!.at.x - getStickMan(sim).feet.x > 0.6) sim.step();
+    while (getFlag(sim)!.position.x - getStickMan(sim).feet.x > 0.6) sim.step();
     sim.step([{ type: 'player/jump' }]);
     for (let tick = 0; tick < 30; tick += 1) sim.step();
-    expect(getFlag(sim)!.reached).toBe(true);
+    expect(getFlag(sim)!.isReached).toBe(true);
   });
 });
 
@@ -50,8 +50,8 @@ describe('every flag', () => {
     for (const level of levels) {
       const placed = findFlagPlacedIn(level);
       if (!placed) continue;
-      const overFloor = level.floor.some((segment) => segment.from.x <= placed.at.x - flagDef.reach && placed.at.x + flagDef.reach <= segment.to.x);
-      expect(overFloor, `level ${level.id}`).toBe(true);
+      const isOverFloor = level.floor.some((segment) => segment.start.x <= placed.position.x - flagDef.reach && placed.position.x + flagDef.reach <= segment.end.x);
+      expect(isOverFloor, `level ${level.id}`).toBe(true);
     }
   });
 });

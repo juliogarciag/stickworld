@@ -17,12 +17,12 @@ export const level3: Level = {
   id: 3,
   name: 'A long way across',
   floor: [
-    { from: { x: 0, y: 0 }, to: { x: 10, y: 0 } },
-    { from: { x: 19, y: 0 }, to: { x: 27, y: 0 } },
+    { start: { x: 0, y: 0 }, end: { x: 10, y: 0 } },
+    { start: { x: 19, y: 0 }, end: { x: 27, y: 0 } },
   ],
   start: { x: 2, y: 0 },
   placements: [
-    { defId: AIRPLANE_LETTER_ID, at: { x: 3.6, y: 0 } },
-    { defId: FLAG_DEF_ID, at: { x: 24, y: 0 } },
+    { defId: AIRPLANE_LETTER_ID, position: { x: 3.6, y: 0 } },
+    { defId: FLAG_DEF_ID, position: { x: 24, y: 0 } },
   ],
 };

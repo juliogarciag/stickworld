@@ -9,9 +9,9 @@ import { playerSlice, type PlayerState } from './state';
  */
 
 /** Where he is and how: on the floor or in the air, seated or on his feet. Read-only, and live: it is his state itself, so it changes as he does. Ask again after changing him rather than keeping it. */
-export type WhereHeIs = Readonly<Pick<PlayerState, 'x' | 'y' | 'facing' | 'onFloor' | 'seated'>>;
+export type PlayerBody = Readonly<Pick<PlayerState, 'x' | 'y' | 'facing' | 'isOnFloor' | 'isSeated'>>;
 
-export function getWhereHeIs(sim: Sim): WhereHeIs {
+export function getPlayerBody(sim: Sim): PlayerBody {
   return sim.getStateOf(playerSlice);
 }
 
@@ -20,11 +20,11 @@ export function getWhereHeIs(sim: Sim): WhereHeIs {
  * where he was: no speed, no walk under way, and a jump asked for a moment before he sat down was for the floor, so it
  * is forgotten and cannot throw him out of his seat.
  */
-export function seatHim(sim: Sim, seat: { readonly x: number; readonly y: number; readonly facing: 1 | -1 }): void {
+export function seatPlayer(sim: Sim, seat: { readonly x: number; readonly y: number; readonly facing: 1 | -1 }): void {
   const player = sim.getStateOf(playerSlice);
-  player.seated = true;
+  player.isSeated = true;
   player.seatedAtTick = sim.tick;
-  player.onFloor = false;
+  player.isOnFloor = false;
   player.facing = seat.facing;
   player.verticalSpeed = 0;
   player.horizontalSpeed = 0;
@@ -36,20 +36,20 @@ export function seatHim(sim: Sim, seat: { readonly x: number; readonly y: number
 }
 
 /** Seated, he is where his seat is: its underside is what the sim calls his feet. Nothing changes for him on his feet. */
-export function moveHimWithHisSeat(sim: Sim, seat: { readonly x: number; readonly y: number }): void {
+export function movePlayerWithSeat(sim: Sim, seat: { readonly x: number; readonly y: number }): void {
   const player = sim.getStateOf(playerSlice);
-  if (!player.seated) return;
+  if (!player.isSeated) return;
   player.x = seat.x;
   player.y = seat.y;
 }
 
 /** What he sat in has come to rest on the floor: he gets up and stands where he is, still. Nothing changes for him on his feet. */
-export function standHimUp(sim: Sim): void {
+export function standPlayerUp(sim: Sim): void {
   const player = sim.getStateOf(playerSlice);
-  if (!player.seated) return;
-  player.seated = false;
+  if (!player.isSeated) return;
+  player.isSeated = false;
   player.seatedAtTick = null;
-  player.onFloor = true;
+  player.isOnFloor = true;
   player.verticalSpeed = 0;
   player.horizontalSpeed = 0;
   player.distanceWalked = 0;
@@ -57,10 +57,10 @@ export function standHimUp(sim: Sim): void {
 
 /** He holds something over his head with both hands from now on: his jump is the lower one and his arms are up. What it is belongs to the feature that says so. */
 export function startCarrying(sim: Sim): void {
-  sim.getStateOf(playerSlice).carrying = true;
+  sim.getStateOf(playerSlice).isCarrying = true;
 }
 
 /** His hands are free again. */
 export function stopCarrying(sim: Sim): void {
-  sim.getStateOf(playerSlice).carrying = false;
+  sim.getStateOf(playerSlice).isCarrying = false;
 }

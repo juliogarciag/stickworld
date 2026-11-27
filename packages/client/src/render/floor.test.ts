@@ -9,10 +9,10 @@ describe('buildFloorStrokes', () => {
       const strokes = buildFloorStrokes(level);
       expect(strokes).toHaveLength(level.floor.length);
       strokes.forEach((stroke, index) => {
-        const { from, to } = level.floor[index]!;
+        const { start, end } = level.floor[index]!;
         expect(stroke.points).toEqual([
-          { x: convertToPixels(from.x), y: convertToPixels(from.y) },
-          { x: convertToPixels(to.x), y: convertToPixels(to.y) },
+          { x: convertToPixels(start.x), y: convertToPixels(start.y) },
+          { x: convertToPixels(end.x), y: convertToPixels(end.y) },
         ]);
         expect(stroke.thickness).toBeGreaterThan(0);
       });
@@ -31,5 +31,5 @@ describe('buildFloorStrokes', () => {
 // ---- Helpers ----
 
 function makeSegment(fromX: number, toX: number) {
-  return { from: { x: fromX, y: 0 }, to: { x: toX, y: 0 } };
+  return { start: { x: fromX, y: 0 }, end: { x: toX, y: 0 } };
 }
