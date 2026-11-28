@@ -9,6 +9,7 @@ import { itemFeature } from './item';
 import { letterFeature } from './letter';
 import { noteFeature } from './note';
 import { playerFeature } from './player';
+import { spearFeature } from './spear';
 import { worldFeature } from './world';
 
 /**
@@ -22,7 +23,9 @@ import { worldFeature } from './world';
  * command, so where it comes decides nothing; `note` watches where the stick man
  * stands, and comes after it so a note is rubbed out on the tick it gets there. `enemy` comes after
  * everything that moves the stick man (the player, and the airplane that carries its seat): an
- * enemy's body and club meet the stick man where it is at the end of the tick.
+ * enemy's body and club meet the stick man where it is at the end of the tick. `spear`, the weapon
+ * the stick man carries, comes after what moves the stick man too, and before `enemy`: a thrust and
+ * a swing that land on the same tick go to the stick man (ADR 0008).
  */
 export const features: readonly Feature[] = [
   gameFeature,
@@ -34,6 +37,7 @@ export const features: readonly Feature[] = [
   craftingFeature,
   letterFeature,
   airplaneFeature,
+  spearFeature,
   enemyFeature,
   noteFeature,
 ];

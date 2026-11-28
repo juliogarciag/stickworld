@@ -14,12 +14,26 @@ export const PAPER_ITEM_ID = 200;
  */
 export const AIRPLANE_ITEM_ID = 201;
 
+/**
+ * The pencil the letter about the spear gives: as long as the stick man is tall, and blunt. It
+ * hurts nothing until it is sharpened.
+ */
+export const PENCIL_ITEM_ID = 202;
+
+/**
+ * The spear the stick man sharpens the pencil into (the `crafting` feature's recipe). Using it is
+ * a thrust (the `spear` feature); it never leaves the stick man's slot.
+ */
+export const SPEAR_ITEM_ID = 203;
+
 /** How many item slots the stick man has. The player counts them from 1. */
 export const ITEM_SLOT_COUNT = 1;
 
 export const itemDefs: readonly Def[] = [
   { id: PAPER_ITEM_ID, name: 'paper' },
   { id: AIRPLANE_ITEM_ID, name: 'paper airplane' },
+  { id: PENCIL_ITEM_ID, name: 'pencil' },
+  { id: SPEAR_ITEM_ID, name: 'spear' },
 ];
 
 /** True when `defId` is the id of an item, the only kind of thing a slot can hold. */

@@ -1,0 +1,15 @@
+PASS  dev server up, started by this run
+PASS  the spear is in its hand, ready
+PASS  the point goes out, further every frame, and is level at the height of its chest  (4 frames out, reach 2.10 m)
+PASS  drawing it back takes several times longer than the thrust, and the press in the middle of it changed nothing  (4 frames out, 30 frames back)
+PASS  no J is offered from the press until the spear is ready again, and then it is
+PASS  four pictures of the thrust were taken  (4 with the one before it)
+PASS  standing just outside the reach of the club for four seconds, the stick man is not struck and the enemy does not swing  (2.09 m away; the club reaches 1.96 m, the spear 2.50 m)
+PASS  the thrust from there rubs the enemy out: more and more, frame after frame, standing where it was struck, and then it is gone  (29 frames, 3 pictures)
+PASS  the stick man was not struck
+PASS  after a fall the level starts again with the spear in its hand, no letter to read, and the enemy back at its post  (slot {"itemDefId":203,"isSelected":true}, enemy at 12)
+PASS  the spear is no shield: walking into the swing without thrusting, the stick man is struck down
+PASS  after the club the level starts again with the spear in its hand, too
+PASS  no page errors
+
+ALL 13 CHECKS PASSED

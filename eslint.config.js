@@ -225,6 +225,7 @@ const VERBS = [
   'check',
   'summarize',
   'strike',
+  'thrust',
   'swing',
 ];
 const NOT_A_VERB = `/^(?!_*(?:${VERBS.join('|')})(?:[A-Z0-9_]|$))/`;

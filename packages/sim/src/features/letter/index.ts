@@ -4,7 +4,8 @@ import type { Sim } from '../../core/sim';
 import { hasAirplane } from '../airplane';
 import { teachRecipe } from '../crafting';
 import { getRecipeDef } from '../crafting/defs';
-import { giveItem } from '../inventory/give';
+import { AIRPLANE_ITEM_ID } from '../inventory/defs';
+import { giveItem, giveItemInHand } from '../inventory/give';
 import { isHoldingItem, selectItem } from '../inventory/held';
 import { isFlagReached } from '../flag';
 import { getPlayerBody, isPlayerStruck } from '../player/body';
@@ -137,12 +138,14 @@ export function getLetterInteraction(sim: Sim) {
         lettersRead.push(def.id);
       }
       teachRecipe(sim, def.teachesRecipe);
-      if (!hasRecipeResult(sim, def)) {
-        giveItem(sim, def.gives);
-      }
       // What the letter is about is in the stick man's hand when the stick man looks up from it, so
-      // the key that uses it has a use at once.
-      selectItem(sim, def.gives);
+      // the key that uses it has a use at once. With no slot free it takes the place of what the
+      // stick man held: the letter is read once, and what it gives is the way on.
+      if (hasRecipeResult(sim, def)) {
+        selectItem(sim, def.gives);
+        return;
+      }
+      giveItemInHand(sim, def.gives);
     },
   };
 }
@@ -199,13 +202,14 @@ function isWithinReach(sim: Sim, position: { readonly x: number }): boolean {
 /**
  * True while the stick man still has the item the letter gives, or what its recipe makes of that
  * item. The only thing a recipe makes that leaves the stick man's slots for the world is the
- * airplane, so that is the one asked about here.
+ * airplane, so that is the one asked about here, for the letter whose recipe makes it.
  */
 function hasRecipeResult(sim: Sim, def: LetterDef): boolean {
   const made = getRecipeDef(def.teachesRecipe)?.makes;
+  const isMadeInWorld = made === AIRPLANE_ITEM_ID && hasAirplane(sim);
   return (
     isHoldingItem(sim, def.gives) ||
     (made !== undefined && isHoldingItem(sim, made)) ||
-    hasAirplane(sim)
+    isMadeInWorld
   );
 }

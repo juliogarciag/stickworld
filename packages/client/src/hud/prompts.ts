@@ -1,4 +1,11 @@
-import type { FlyingHint, InteractionMeaning, ItemUseMeaning } from '@stickworld/sim';
+import {
+  PAPER_AIRPLANE_RECIPE_ID,
+  SPEAR_RECIPE_ID,
+  type FlyingHint,
+  type InteractionMeaning,
+  type ItemUseMeaning,
+  type RecipeView,
+} from '@stickworld/sim';
 import type { ColouredPencil, Stroke } from '../render/strokes';
 import type { Rectangle } from './itemSlots';
 import { buildKeysAndWords } from './keysAndWords';
@@ -28,8 +35,8 @@ export interface Prompt {
 export interface PromptInput {
   /** What using the held item would do, and the name of the key that does it. */
   readonly itemUse: ItemUseMeaning | null;
-  /** The name of what using the held item would make, or null when it would make nothing. */
-  readonly wouldMake: string | null;
+  /** The recipe using the held item would make, or null when it would make nothing. */
+  readonly wouldMake: RecipeView | null;
   readonly useItemKey: string;
   /** What interacting with the world would do, and the name of the key that does it. */
   readonly interaction: InteractionMeaning | null;
@@ -99,13 +106,30 @@ export function buildPromptStrokes(prompts: readonly Prompt[], seen: Rectangle):
 // ---- Helpers ----
 
 /**
- * The HUD's own words for what a key would do. Each names the thing it is done to: "it" would be
- * the letter in one prompt and the airplane in the next. Everything the stick man makes so far is
- * folded paper, so making is called folding.
+ * The HUD's own words for making each recipe, by its def id: what is done to the item it is made
+ * from is not the same for each. A recipe with no words here is made, and named as the sim names
+ * it.
  */
-const ITEM_USE_WORDS: Readonly<Record<ItemUseMeaning, (wouldMake: string | null) => string>> = {
-  craft: (wouldMake) => (wouldMake === null ? 'fold it' : `fold a ${wouldMake}`),
+const CRAFT_WORDS: Readonly<Record<number, string>> = {
+  [PAPER_AIRPLANE_RECIPE_ID]: 'fold a paper airplane',
+  [SPEAR_RECIPE_ID]: 'sharpen the pencil',
+};
+
+function getCraftWords(wouldMake: RecipeView | null): string {
+  if (wouldMake === null) {
+    return 'make it';
+  }
+  return CRAFT_WORDS[wouldMake.defId] ?? `make a ${wouldMake.name}`;
+}
+
+/**
+ * The HUD's own words for what a key would do. Each names the thing it is done to: "it" would be
+ * the letter in one prompt and the airplane in the next.
+ */
+const ITEM_USE_WORDS: Readonly<Record<ItemUseMeaning, (wouldMake: RecipeView | null) => string>> = {
+  craft: getCraftWords,
   place: () => 'set the airplane down',
+  thrust: () => 'thrust the spear',
 };
 
 const INTERACTION_WORDS: Readonly<Record<InteractionMeaning, string>> = {

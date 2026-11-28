@@ -500,6 +500,43 @@ describe('the stick man cheering', () => {
   });
 });
 
+describe('the stick man holding something in its hand', () => {
+  it('puts the hand of its front arm where what it holds says, and leaves the rest of it as it was', () => {
+    for (const pose of [STANDING, WALKING, { ...STANDING, facing: -1 as const }]) {
+      const handAt = { x: pose.feet.x + pose.facing * 0.3, y: pose.feet.y - 0.95 };
+      const holding = getSkeleton({ ...pose, handAt });
+      const free = getSkeleton(pose);
+      expect(holding.arms[1]![2]).toEqual(handAt);
+      expect(holding.arms[1]![0]).toEqual(free.arms[1]![0]);
+      expect(holding.arms[0]).toEqual(free.arms[0]);
+      expect(holding.legs).toEqual(free.legs);
+      expect(holding.head).toEqual(free.head);
+    }
+  });
+
+  it('bends the arm at an elbow as long from the shoulder as from the hand, hanging below the line between them', () => {
+    const handAt = { x: STANDING.feet.x + 0.3, y: STANDING.feet.y - 0.95 };
+    const [shoulder, elbow, hand] = getSkeleton({ ...STANDING, handAt }).arms[1]!;
+    expect(Math.hypot(elbow!.x - shoulder!.x, elbow!.y - shoulder!.y)).toBeCloseTo(BODY.upperArm);
+    expect(Math.hypot(hand!.x - elbow!.x, hand!.y - elbow!.y)).toBeCloseTo(BODY.forearm);
+    expect(elbow!.y).toBeGreaterThan((shoulder!.y + hand!.y) / 2);
+  });
+
+  it('draws the arm straight, as long as it takes, to a hand further away than the arm is long', () => {
+    const handAt = { x: STANDING.feet.x + 1.5, y: STANDING.feet.y - 1.05 };
+    const [shoulder, elbow, hand] = getSkeleton({ ...STANDING, handAt }).arms[1]!;
+    expect(hand).toEqual(handAt);
+    expect(elbow!.x).toBeCloseTo((shoulder!.x + hand!.x) / 2);
+    expect(elbow!.y).toBeCloseTo((shoulder!.y + hand!.y) / 2);
+  });
+
+  it('lets go when it is struck down: the arm falls with the rest of it', () => {
+    const struck = { ...STANDING, action: 'struck' as const, struck: 1 };
+    const handAt = { x: STANDING.feet.x + 0.3, y: STANDING.feet.y - 0.95 };
+    expect(getSkeleton({ ...struck, handAt })).toEqual(getSkeleton(struck));
+  });
+});
+
 describe('the stick man carrying something over its head', () => {
   it("holds both hands up at the height of the top of the stick man, one to each side, elbows out past the stick man's head", () => {
     for (const pose of [
@@ -762,6 +799,7 @@ const SEATED: StickManPose = {
   tipsAboutAbove: 0,
   armsLifted: [0, 0],
   carrying: 0,
+  handAt: null,
   struck: 0,
   struckDirection: 1,
 };
@@ -780,6 +818,7 @@ const STANDING: StickManPose = {
   tipsAboutAbove: 0,
   armsLifted: [0, 0],
   carrying: 0,
+  handAt: null,
   struck: 0,
   struckDirection: 1,
 };
@@ -797,6 +836,7 @@ const WALKING: StickManPose = {
   tipsAboutAbove: 0,
   armsLifted: [0, 0],
   carrying: 0,
+  handAt: null,
   struck: 0,
   struckDirection: 1,
 };
@@ -814,6 +854,7 @@ const JUMPING: StickManPose = {
   tipsAboutAbove: 0,
   armsLifted: [0, 0],
   carrying: 0,
+  handAt: null,
   struck: 0,
   struckDirection: 1,
 };
@@ -880,6 +921,7 @@ const DROPPING: StickManPose = {
   tipsAboutAbove: 0,
   armsLifted: [0, 0],
   carrying: 0,
+  handAt: null,
   struck: 0,
   struckDirection: 1,
 };

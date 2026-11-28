@@ -4,6 +4,7 @@ import type {
   CraftingView,
   Def,
   EnemyView,
+  SpearView,
   FallenItemView,
   FlagView,
   FlyingHint,
@@ -36,6 +37,7 @@ import {
   getLevel,
   getMovementTuning,
   getNotes,
+  getSpear,
   STICK_MAN_HEIGHT,
   STICK_MAN_WIDTH,
   getStickMan,
@@ -131,6 +133,12 @@ export interface GameDebugApi {
    * along, and where its club is.
    */
   getEnemies(): EnemyView[];
+  /**
+   * The spear in the stick man's hand as the sim has it right now: whether it is ready, thrusting
+   * or being drawn back, how far along, and where its point is. Undefined while the stick man
+   * holds something else or nothing.
+   */
+  getSpear(): SpearView | undefined;
   /**
    * What the stick man has still to be told about flying the airplane the stick man has, as the sim
    * has it right now, or null.
@@ -257,6 +265,7 @@ export function exposeDebugApi(sources: {
     getCrafting: () => getCrafting(sources.loop.sim),
     getAirplane: () => getAirplane(sources.loop.sim),
     getEnemies: () => getEnemies(sources.loop.sim),
+    getSpear: () => getSpear(sources.loop.sim),
     getFlyingHint: () => getFlyingHint(sources.loop.sim),
     getMovementTuning: () => getMovementTuning(sources.loop.sim),
     getItemUse: () => getItemUse(sources.loop.sim),

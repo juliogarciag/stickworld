@@ -1,6 +1,7 @@
 import type { Point } from '../../content/levels/types';
 import { Sim, type SimHandle } from '../../core/sim';
 import { findClubEnemyDef } from './clubEnemy/defs';
+import { ENEMY } from './defs';
 import { getClubEnemyView, type ClubEnemyView } from './clubEnemy/view';
 import { getGuardedStretch } from './guard';
 import { enemiesSlice } from './state';
@@ -23,6 +24,12 @@ export interface EnemyBaseView {
   readonly facing: 1 | -1;
   /** The stretch of floor it guards: how far its middle goes to either side, in metres. */
   readonly guardedStretch: { readonly start: number; readonly end: number };
+  /**
+   * How far along being rubbed out it is, from 0, struck this tick, towards 1, or null while
+   * nothing has struck it. Being rubbed out it is still where it was struck, doing what it was
+   * doing, harmless and in nobody's way; rubbed out, it is no longer among the enemies.
+   */
+  readonly rubbedOutProgress: number | null;
 }
 
 /**
@@ -31,7 +38,10 @@ export interface EnemyBaseView {
  */
 export type EnemyView = ClubEnemyView;
 
-/** Every enemy of the level being played, in the order the level lists them. */
+/**
+ * Every enemy of the level being played that is still there, in the order the level lists them: one
+ * that has been rubbed out is not among them.
+ */
 export function getEnemies(handle: SimHandle): EnemyView[] {
   if (!(handle instanceof Sim)) {
     throw new TypeError('not a sim made by createSim or restoreSim');
@@ -50,6 +60,10 @@ export function getEnemies(handle: SimHandle): EnemyView[] {
       floatHeight: def.floatHeight,
       facing: enemy.facing,
       guardedStretch: getGuardedStretch(handle.levelDef.floor, enemy, def),
+      rubbedOutProgress:
+        enemy.ticksSinceStruck === null
+          ? null
+          : Math.min(1, enemy.ticksSinceStruck / Math.round(ENEMY.rubOutSeconds / handle.dt)),
     };
     views.push(getClubEnemyView(handle, { enemy, def, base }));
   }

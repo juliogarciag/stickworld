@@ -31,7 +31,12 @@ export {
 } from './features/player/defs';
 export { getFlag, type FlagView } from './features/flag/view';
 export type { InventoryCommand, InventorySelectCommand } from './features/inventory/commands';
-export { AIRPLANE_ITEM_ID, PAPER_ITEM_ID } from './features/inventory/defs';
+export {
+  AIRPLANE_ITEM_ID,
+  PAPER_ITEM_ID,
+  PENCIL_ITEM_ID,
+  SPEAR_ITEM_ID,
+} from './features/inventory/defs';
 export { getItemSlots, type ItemSlot } from './features/inventory/view';
 export type { ItemCommand, ItemUseCommand } from './features/item/commands';
 export type { ItemUseMeaning } from './features/item';
@@ -39,6 +44,7 @@ export { getItemUse } from './features/item/view';
 export type { WorldCommand, WorldInteractCommand } from './features/world/commands';
 export type { InteractionMeaning } from './features/world';
 export { getInteraction } from './features/world/view';
+export { PAPER_AIRPLANE_RECIPE_ID, SPEAR_RECIPE_ID } from './features/crafting/defs';
 export { getCrafting, type CraftingView, type RecipeView } from './features/crafting/view';
 export {
   getFallenItem,
@@ -64,3 +70,5 @@ export { getNotes, type NoteView } from './features/note/view';
 export type { ClubEnemyAction } from './features/enemy/clubEnemy/defs';
 export type { ClubEnemyView } from './features/enemy/clubEnemy/view';
 export { getEnemies, type EnemyBaseView, type EnemyView } from './features/enemy/view';
+export type { SpearAction } from './features/spear';
+export { getSpear, type SpearView } from './features/spear/view';

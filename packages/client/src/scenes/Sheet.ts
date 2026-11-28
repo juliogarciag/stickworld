@@ -3,9 +3,11 @@ import {
   getEnemies,
   getFallenItem,
   getFlag,
+  getItemSlots,
   getLetter,
   getLevel,
   getNotes,
+  getSpear,
   getStickMan,
   type SimHandle,
 } from '@stickworld/sim';
@@ -17,6 +19,7 @@ import { getWorldSeenBy } from '../render/cameraView';
 import { buildClubEnemyStrokes } from '../render/clubEnemy';
 import { buildFlagStrokes } from '../render/flag';
 import { buildFloorStrokes } from '../render/floor';
+import { buildHeldItemStrokes, getHeldItem } from '../render/heldItem';
 import { buildFallenPaperStrokes, buildLetterStrokes } from '../render/letter';
 import { getZoomAtRest } from '../render/levelCamera';
 import { areNotesStill, buildNoteStrokes } from '../render/notes';
@@ -28,6 +31,7 @@ import {
 } from '../render/sheetWords';
 import { easePosesOverTime, seatIn, buildStickManStrokes } from '../render/stickMan';
 import { createStrokeLayer, type Stroke, type StrokeLayer } from '../render/strokes';
+import { getRubbedOutSoFar } from '../render/strokes/partly';
 
 /** The one empty list: a layer shown it again does not draw anew. */
 const NOTHING: readonly Stroke[] = [];
@@ -49,8 +53,8 @@ export interface SheetFrame {
  * One sheet of paper with a level drawn on it, in a scene of its own camera:
  * the paper, what is written on it (the level's name, its notes, the page
  * number), the floor line, the flag, the letter or the sheet of paper that
- * fell in its place, the airplane, the enemies and the stick
- * man, each as the sim it is shown says it is. The level being played is one
+ * fell in its place, the airplane, the enemies, what the stick man holds in its hand and the
+ * stick man, each as the sim it is shown says it is. The level being played is one
  * of these, and so is the sheet that is turned away when a level is finished.
  */
 export class Sheet {
@@ -62,6 +66,7 @@ export class Sheet {
   private readonly letter: StrokeLayer;
   private readonly airplane: StrokeLayer;
   private readonly enemies: StrokeLayer;
+  private readonly heldItem: StrokeLayer;
   private readonly stickMan: StrokeLayer;
   private readonly poseFor = easePosesOverTime();
   private readonly airplaneShownFor = easeAirplanesOverTime();
@@ -77,6 +82,7 @@ export class Sheet {
     this.letter = createStrokeLayer(scene);
     this.airplane = createStrokeLayer(scene);
     this.enemies = createStrokeLayer(scene);
+    this.heldItem = createStrokeLayer(scene);
     this.stickMan = createStrokeLayer(scene);
   }
 
@@ -93,6 +99,7 @@ export class Sheet {
       this.letter,
       this.airplane,
       this.enemies,
+      this.heldItem,
       this.stickMan,
     ]) {
       layer.show(NOTHING);
@@ -147,11 +154,25 @@ export class Sheet {
     );
     this.airplane.show(airplane ? buildAirplaneStrokes(airplane) : []);
     // Every enemy is a club enemy so far. A second kind has its own drawing, picked here by the
-    // `kind` of each enemy.
+    // `kind` of each enemy. One that was struck is rubbed out line by line, in the order it is
+    // drawn, as far as the sim says.
     this.enemies.show(
-      getEnemies(frame.sim).flatMap((enemy) => buildClubEnemyStrokes(enemy, frame.secondsOnSheet)),
+      getEnemies(frame.sim).flatMap((enemy) =>
+        getRubbedOutSoFar(
+          buildClubEnemyStrokes(enemy, frame.secondsOnSheet),
+          enemy.rubbedOutProgress ?? 0,
+        ),
+      ),
     );
-    const pose = this.poseFor(stickMan, frame.seconds, level.floor);
+    // The pencil or the spear in its hand, under the stick man's own lines: its hand is on it.
+    const heldItem = getHeldItem({
+      stickMan,
+      itemDefId: getItemSlots(frame.sim).find((slot) => slot.isSelected)?.itemDefId ?? null,
+      spear: getSpear(frame.sim),
+    });
+    this.heldItem.show(heldItem ? buildHeldItemStrokes(heldItem) : NOTHING);
+    const eased = this.poseFor(stickMan, frame.seconds, level.floor);
+    const pose = { ...eased, handAt: heldItem?.hand ?? null };
     // Seated, the stick man tips with the airplane as it is drawn, about the point it is drawn
     // turning about: its middle.
     this.stickMan.show(

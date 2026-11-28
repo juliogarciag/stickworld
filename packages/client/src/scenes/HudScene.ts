@@ -80,7 +80,7 @@ export class HudScene extends Phaser.Scene {
 
     const prompts = getPromptsFor({
       itemUse: getItemUse(sim),
-      wouldMake: getCrafting(sim).canMake?.name ?? null,
+      wouldMake: getCrafting(sim).canMake,
       useItemKey: ACTION_KEY_NAMES.useItem,
       interaction: getInteraction(sim),
       interactKey: ACTION_KEY_NAMES.interact,

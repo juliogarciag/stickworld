@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { levels } from '../../content/levels';
+import { clubYard } from '../../content/levels/clubYard';
 import { level3 } from '../../content/levels/level3';
 import { TICK_RATE } from '../../content/tuning';
 import type { Command } from '../../core/commands';
@@ -10,12 +11,13 @@ import { AIRPLANE } from '../airplane/defs';
 import { getAirplane } from '../airplane/view';
 import { getRecipeDef } from '../crafting/defs';
 import { getCrafting } from '../crafting/view';
-import { AIRPLANE_ITEM_ID, isItemDefId, PAPER_ITEM_ID } from '../inventory/defs';
+import { AIRPLANE_ITEM_ID, isItemDefId, PAPER_ITEM_ID, PENCIL_ITEM_ID } from '../inventory/defs';
 import { giveItem } from '../inventory/give';
 import { getItemSlots } from '../inventory/view';
+import { getItemUse } from '../item/view';
 import { getStickMan } from '../player/view';
 import { getInteraction } from '../world/view';
-import { LETTER, letterDefs } from './defs';
+import { LETTER, letterDefs, SPEAR_LETTER_ID } from './defs';
 import { findLetterPlacedIn } from './index';
 import { getFallenItem, getLetter } from './view';
 
@@ -399,6 +401,45 @@ describe('every letter', () => {
   );
 });
 
+describe('the letter about the spear, read with a hand that is full', () => {
+  it.each([
+    ['the paper', PAPER_ITEM_ID],
+    ['a paper airplane', AIRPLANE_ITEM_ID],
+  ])(
+    'puts the pencil in the hand of the stick man that holds %s in its only slot, in place of it',
+    (_name, heldItemDefId) => {
+      const sim = new Sim({ features, start: { seed: 1, level: clubYard.id } });
+      giveItem(sim, heldItemDefId);
+      readSpearLetter(sim);
+      expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: PENCIL_ITEM_ID, isSelected: true }]);
+      sim.step([INTERACT]);
+      expect(getItemUse(sim)).toBe('craft');
+      // Nothing falls from the sky afterwards: the stick man has what the letter was for.
+      for (let tick = 0; tick < 5 * TICK_RATE; tick += 1) {
+        sim.step();
+      }
+      expect(getFallenItem(sim)).toBeUndefined();
+    },
+  );
+
+  it('gives the pencil to the stick man that has an airplane on the floor: only the letter about the airplane counts an airplane as what it was for', () => {
+    const sim = new Sim({ features, start: { seed: 1, level: clubYard.id } });
+    giveItem(sim, AIRPLANE_ITEM_ID);
+    sim.step([{ type: 'inventory/select', slot: 1 }]);
+    sim.step([USE_ITEM]);
+    expect(hasAirplane(sim)).toBe(true);
+    expect(getItemSlots(sim)[0]?.itemDefId).toBeNull();
+    readSpearLetter(sim);
+    expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: PENCIL_ITEM_ID, isSelected: true }]);
+  });
+
+  it('teaches the spear and names it', () => {
+    const sim = new Sim({ features, start: { seed: 1, level: clubYard.id } });
+    expect(getLetter(sim)).toMatchObject({ teaches: 'spear', isBeingRead: false });
+    expect(letterDefs.find((def) => def.id === SPEAR_LETTER_ID)!.gives).toBe(PENCIL_ITEM_ID);
+  });
+});
+
 // ---- Helpers ----
 
 const LETTER_AT = findLetterPlacedIn(level3)!.position;
@@ -486,6 +527,12 @@ function createSimOnLevel3WithPaper(): Sim {
   const sim = new Sim({ features, start: { seed: 1, level: 3 } });
   giveItem(sim, PAPER_ITEM_ID);
   return sim;
+}
+
+function readSpearLetter(sim: Sim): void {
+  walkTo(sim, findLetterPlacedIn(clubYard)!.position.x);
+  sim.step([INTERACT]);
+  expect(getLetter(sim)!.isBeingRead).toBe(true);
 }
 
 function readLetter(sim: Sim): void {

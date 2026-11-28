@@ -1,0 +1,168 @@
+{
+  "reach": 2.1000000000000005,
+  "clubReach": 1.9550000000000003,
+  "spearHitsFrom": 2.5000000000000004,
+  "thrustSeconds": 0.55,
+  "atFlag": {
+    "tick": 821,
+    "dt": 0.016666666666666666,
+    "level": 900,
+    "start": {
+      "x": 2,
+      "y": 0
+    },
+    "stickMan": {
+      "feet": {
+        "x": 19.56333333333333,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "cheering",
+      "distanceWalked": 10.743333333333279,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 2.2,
+      "isFallingOffEdge": false,
+      "walkDirectionAsked": 1,
+      "isCarrying": false,
+      "struckFor": null,
+      "struckDirection": 1
+    },
+    "stickManWidth": 0.65,
+    "slots": [
+      {
+        "itemDefId": 203,
+        "isSelected": true
+      }
+    ],
+    "letter": null,
+    "crafting": {
+      "knownRecipes": [
+        {
+          "defId": 401,
+          "name": "spear"
+        }
+      ],
+      "canMake": null
+    },
+    "itemUse": null,
+    "interaction": null,
+    "spear": {
+      "action": "ready",
+      "progress": 0,
+      "direction": 1,
+      "butt": {
+        "x": 19.16333333333333,
+        "y": -1.05
+      },
+      "tip": {
+        "x": 20.86333333333333,
+        "y": -1.05
+      },
+      "thickness": 0.08
+    },
+    "enemies": [],
+    "flag": {
+      "position": {
+        "x": 20,
+        "y": 0
+      },
+      "height": 2.2,
+      "isReached": true,
+      "upFor": 0,
+      "raised": 0.02777777777777778,
+      "isFinalFlag": false
+    },
+    "fallenItem": null
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "the yard starts with an empty hand, a letter on the floor and one enemy",
+      "pass": true,
+      "details": "level 900, slots [{\"itemDefId\":null,\"isSelected\":false}]"
+    },
+    {
+      "name": "the pencil and the spear are items the game knows by name",
+      "pass": true,
+      "details": "pencil 202, spear 203"
+    },
+    {
+      "name": "K by the letter reads it, and it teaches the spear",
+      "pass": true,
+      "details": "teaches spear"
+    },
+    {
+      "name": "reading it puts the pencil in the hand of the stick man",
+      "pass": true,
+      "details": "[{\"itemDefId\":202,\"isSelected\":true}]"
+    },
+    {
+      "name": "while it reads, J does nothing and K puts the letter away",
+      "pass": true
+    },
+    {
+      "name": "with the letter put away, J would sharpen the pencil into the spear",
+      "pass": true,
+      "details": "J: craft, would make spear"
+    },
+    {
+      "name": "J sharpens it: the spear is in the same slot, in its hand, and J would now thrust it",
+      "pass": true,
+      "details": "slot {\"itemDefId\":203,\"isSelected\":true}, J: thrust"
+    },
+    {
+      "name": "J thrusts: the point goes out in front of the stick man and the spear is drawn back",
+      "pass": true,
+      "details": "reach 2.10 m, seen 19 times"
+    },
+    {
+      "name": "a thrust costs time: no J is offered until the spear is drawn back",
+      "pass": true,
+      "details": "0.55 s from the press to ready again"
+    },
+    {
+      "name": "the spear is still in its hand after the thrust, and the enemy untouched",
+      "pass": true
+    },
+    {
+      "name": "the spear reaches the enemy from further away than its club reaches the stick man",
+      "pass": true,
+      "details": "spear from 2.50 m, club from 1.96 m, middle to middle"
+    },
+    {
+      "name": "it thrusts from outside the reach of the club",
+      "pass": true,
+      "details": "2.13 m away, the enemy approaching"
+    },
+    {
+      "name": "the thrust reaches the enemy: it is being rubbed out",
+      "pass": true,
+      "details": "rubbed out 0.16666666666666666"
+    },
+    {
+      "name": "a moment later the enemy is gone",
+      "pass": true
+    },
+    {
+      "name": "the stick man walks on through where the enemy stood and reaches the flag",
+      "pass": true,
+      "details": "at x 19.56"
+    },
+    {
+      "name": "it was never struck on the way",
+      "pass": true
+    },
+    {
+      "name": "it still has the spear under the flag",
+      "pass": true
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

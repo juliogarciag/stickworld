@@ -32,6 +32,15 @@ export interface EnemyDef extends Def {
   readonly guardedStretch: number;
 }
 
+/** What holds for every kind of enemy. Seconds. */
+export const ENEMY = {
+  /**
+   * How long an enemy that was struck takes to be rubbed out, in seconds: long enough to be seen
+   * going, line by line. It is harmless and in nobody's way from the tick it was struck.
+   */
+  rubOutSeconds: 0.5,
+} as const;
+
 export const enemyDefs: readonly EnemyDef[] = [clubEnemyDef];
 
 /** The enemy def with this id, or undefined when `defId` is not an enemy's. */

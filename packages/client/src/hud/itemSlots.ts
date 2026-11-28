@@ -1,4 +1,10 @@
-import { AIRPLANE_ITEM_ID, PAPER_ITEM_ID, type ItemSlot } from '@stickworld/sim';
+import {
+  AIRPLANE_ITEM_ID,
+  PAPER_ITEM_ID,
+  PENCIL_ITEM_ID,
+  SPEAR_ITEM_ID,
+  type ItemSlot,
+} from '@stickworld/sim';
 import type { Stroke, StrokePoint } from '../render/strokes';
 import { PENCIL } from '../render/strokes/pencil';
 
@@ -125,6 +131,39 @@ const ITEM_DRAWINGS: Readonly<Record<number, readonly UnitPath[]>> = {
     [
       { x: 0.84, y: 0.44 },
       { x: 0.26, y: 0.52 },
+    ],
+  ],
+  // The pencil from corner to corner: a long shaft with flat ends and a band near the lower one.
+  [PENCIL_ITEM_ID]: [
+    [
+      { x: 0.185, y: 0.745 },
+      { x: 0.745, y: 0.185 },
+      { x: 0.815, y: 0.255 },
+      { x: 0.255, y: 0.815 },
+      { x: 0.185, y: 0.745 },
+    ],
+    [
+      { x: 0.265, y: 0.665 },
+      { x: 0.335, y: 0.735 },
+    ],
+  ],
+  // The spear: the same pencil, its upper end sharpened to a point.
+  [SPEAR_ITEM_ID]: [
+    [
+      { x: 0.185, y: 0.745 },
+      { x: 0.605, y: 0.325 },
+      { x: 0.82, y: 0.18 },
+      { x: 0.675, y: 0.395 },
+      { x: 0.255, y: 0.815 },
+      { x: 0.185, y: 0.745 },
+    ],
+    [
+      { x: 0.605, y: 0.325 },
+      { x: 0.675, y: 0.395 },
+    ],
+    [
+      { x: 0.265, y: 0.665 },
+      { x: 0.335, y: 0.735 },
     ],
   ],
 };

@@ -5,6 +5,7 @@ import { getCraftingUse } from '../crafting';
 import { isReadingLetter } from '../letter';
 import { isFlagReached } from '../flag';
 import { isPlayerStruck } from '../player/body';
+import { getSpearUse } from '../spear';
 
 /**
  * Using the held item: one command, `'item/use'`, whose meaning depends on
@@ -45,12 +46,12 @@ export function getItemUseNow(sim: Sim): ItemUse | undefined {
 }
 
 /** Every use an item has. No item has two yet, so the order decides nothing so far. */
-const ANSWERS = [getCraftingUse, getAirplaneItemUse] as const;
+const ANSWERS = [getCraftingUse, getAirplaneItemUse, getSpearUse] as const;
 
 export type ItemUse = NonNullable<ReturnType<(typeof ANSWERS)[number]>>;
 
 /**
- * What using the held item means: make the recipe the stick man knows for it, or put the airplane
- * on the floor.
+ * What using the held item means: make the recipe the stick man knows for it, put the airplane on
+ * the floor, or thrust the spear.
  */
 export type ItemUseMeaning = ItemUse['means'];

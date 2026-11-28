@@ -1,3 +1,4 @@
+import { PAPER_AIRPLANE_RECIPE_ID, SPEAR_RECIPE_ID, type RecipeView } from '@stickworld/sim';
 import { describe, expect, it } from 'vitest';
 import { buildWriting } from './handwriting';
 import { getPromptsFor, buildPromptStrokes } from './prompts';
@@ -49,15 +50,29 @@ describe('getPromptsFor', () => {
 
   it('says what would be made, by the name the sim gives it', () => {
     expect(
-      getPromptsFor({ ...KEYS, itemUse: 'craft', wouldMake: 'paper airplane', interaction: null }),
+      getPromptsFor({ ...KEYS, itemUse: 'craft', wouldMake: AIRPLANE_RECIPE, interaction: null }),
     ).toEqual([{ key: 'J', words: 'fold a paper airplane' }]);
+  });
+
+  it('says what is done to the pencil to make the spear of it, and makes by name what it has no words for', () => {
+    const getCraftWords = (wouldMake: RecipeView | null): string =>
+      getPromptsFor({ ...KEYS, itemUse: 'craft', wouldMake, interaction: null })[0]!.words;
+    expect(getCraftWords({ defId: SPEAR_RECIPE_ID, name: 'spear' })).toBe('sharpen the pencil');
+    expect(getCraftWords({ defId: 499, name: 'paper boat' })).toBe('make a paper boat');
+  });
+
+  it('says the spear is thrust, and shows no key for it while it cannot be', () => {
+    expect(getPromptsFor({ ...KEYS, itemUse: 'thrust', interaction: null })).toEqual([
+      { key: 'J', words: 'thrust the spear' },
+    ]);
+    expect(getPromptsFor({ ...KEYS, itemUse: null, interaction: null })).toEqual([]);
   });
 
   it('has words for everything a key can mean, and each names what it is done to', () => {
     const words = [
-      ...(['craft', 'place'] as const).map(
+      ...(['craft', 'place', 'thrust'] as const).map(
         (itemUse) =>
-          getPromptsFor({ ...KEYS, itemUse, wouldMake: 'paper airplane', interaction: null })[0]
+          getPromptsFor({ ...KEYS, itemUse, wouldMake: AIRPLANE_RECIPE, interaction: null })[0]
             ?.words,
       ),
       ...(['read', 'putLetterAway', 'lift', 'putDown', 'board', 'pickUp'] as const).map(
@@ -65,7 +80,7 @@ describe('getPromptsFor', () => {
       ),
     ];
     for (const prompt of words) {
-      expect(prompt).toMatch(/letter|airplane|paper/);
+      expect(prompt).toMatch(/letter|airplane|paper|spear/);
     }
   });
 });
@@ -183,5 +198,6 @@ const KEYS = {
   flightKeys: { climb: '↑', dive: '↓', jumpOut: 'SPACE' },
   flyingHint: null,
 } as const;
+const AIRPLANE_RECIPE = { defId: PAPER_AIRPLANE_RECIPE_ID, name: 'paper airplane' };
 const CAMERA_SEES = { x: 40, y: -20, width: 1920, height: 1080 };
 const WRITING = { position: { x: 0, y: 0 }, letterHeight: 28 };

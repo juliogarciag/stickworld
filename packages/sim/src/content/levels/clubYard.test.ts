@@ -5,7 +5,11 @@ import type { SimHandle } from '../../core/sim';
 import { clubEnemyDef } from '../../features/enemy/clubEnemy/defs';
 import { getEnemies } from '../../features/enemy/view';
 import { getFlag } from '../../features/flag/view';
+import { PENCIL_ITEM_ID, SPEAR_ITEM_ID } from '../../features/inventory/defs';
+import { getItemSlots } from '../../features/inventory/view';
 import { getStickMan } from '../../features/player/view';
+import { SPEAR } from '../../features/spear/defs';
+import { getInteraction } from '../../features/world/view';
 import { TICK_RATE } from '../tuning';
 import { clubYard } from './clubYard';
 
@@ -16,6 +20,41 @@ describe('the yard with a club in it', () => {
     expect(wasStruck).toBe(false);
     expect(getFlag(sim)!.isReached).toBe(true);
     expect(getStickMan(sim).action).toBe('cheering');
+  });
+
+  it('is finished with the spear: the stick man reads the letter, sharpens the pencil, thrusts at the enemy that comes for it and walks on to the flag', () => {
+    const sim = createSim({ level: clubYard.id });
+    sim.step([WALK_RIGHT]);
+    stepUntil(sim, () => getInteraction(sim) === 'read');
+    sim.step([STOP, INTERACT]);
+    expect(getItemSlots(sim)[0]!.itemDefId).toBe(PENCIL_ITEM_ID);
+    sim.step([INTERACT]);
+    sim.step([USE]);
+    expect(getItemSlots(sim)[0]!.itemDefId).toBe(SPEAR_ITEM_ID);
+    sim.step([WALK_RIGHT]);
+    // It thrusts as the enemy comes into the spear's reach, and never stops walking.
+    stepUntil(sim, () => getEnemies(sim)[0]!.position.x - getStickMan(sim).feet.x <= SPEAR.reach);
+    sim.step([USE]);
+    let wasStruck = false;
+    stepUntil(sim, () => {
+      wasStruck ||= getStickMan(sim).action === 'struck';
+      return wasStruck || getFlag(sim)!.isReached;
+    });
+    expect(wasStruck).toBe(false);
+    expect(getEnemies(sim)).toEqual([]);
+    expect(getStickMan(sim).action).toBe('cheering');
+  });
+
+  it('is not finished with the pencil: unsharpened it does nothing to the enemy, and the stick man is struck down', () => {
+    const sim = createSim({ level: clubYard.id });
+    sim.step([WALK_RIGHT]);
+    stepUntil(sim, () => getInteraction(sim) === 'read');
+    sim.step([STOP, INTERACT]);
+    sim.step([INTERACT]);
+    sim.step([WALK_RIGHT]);
+    stepUntil(sim, () => getStickMan(sim).action === 'struck');
+    expect(getEnemies(sim)[0]!.rubbedOutProgress).toBeNull();
+    expect(getFlag(sim)!.isReached).toBe(false);
   });
 
   it('is not finished by walking to the flag: the stick man is struck down and starts again', () => {
@@ -62,6 +101,8 @@ const WALK_RIGHT: Command = { type: 'player/walk', direction: 1 };
 const WALK_LEFT: Command = { type: 'player/walk', direction: -1 };
 const STOP: Command = { type: 'player/walk', direction: 0 };
 const JUMP: Command = { type: 'player/jump' };
+const USE: Command = { type: 'item/use' };
+const INTERACT: Command = { type: 'world/interact' };
 /** How far in front of the enemy's middle the stick man jumps from, in metres. */
 const JUMP_FROM = 1;
 /** Every wait tried between the end of the swing and going back in, in ticks. */
