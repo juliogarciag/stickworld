@@ -9,9 +9,9 @@ const { LOOK } = __testing__;
 describe('the club enemy as it is drawn', () => {
   it('has a body, a hand at its back, two eyes, a mouth, an arm, a hand and a dotted club', () => {
     const strokes = buildClubEnemyStrokes(WAITING, 0);
-    // Five lines of the box and the hand at its back, two eyes and a mouth, the arm, the hand on
-    // the club, the club and its dots.
-    expect(strokes).toHaveLength(6 + 3 + 3 + LOOK.clubDots);
+    // Five lines of the box, the arm at its back and its hand, two eyes and a mouth, the arm
+    // that holds the club, its hand, the club and its dots.
+    expect(strokes).toHaveLength(7 + 3 + 3 + LOOK.clubDots);
     for (const stroke of strokes) {
       expect(stroke.points.length).toBeGreaterThanOrEqual(2);
       for (const point of stroke.points) {
@@ -34,7 +34,7 @@ describe('the club enemy as it is drawn', () => {
   it('floats: nothing of its body touches the floor line under it', () => {
     const lowest = Math.max(
       ...buildClubEnemyStrokes(WAITING, 0)
-        .slice(0, 9)
+        .slice(0, 10)
         .flatMap((stroke) => stroke.points.map((point) => point.y)),
     );
     expect(lowest).toBeLessThan(convertToPixels(0) - 5);
@@ -43,9 +43,9 @@ describe('the club enemy as it is drawn', () => {
   it('draws its arm from the shoulder to the hand and its club from the hand to its end, where the sim has them', () => {
     for (const enemy of [WAITING, getEnemyDoing('windingUp'), getEnemyDoing('swinging')]) {
       const strokes = buildClubEnemyStrokes(enemy, 0);
-      // After the six lines of its body and the three of its face: the arm, the hand, the club.
-      const arm = strokes[9]!;
-      const club = strokes[11]!;
+      // After the seven lines of its body and the three of its face: the arm, the hand, the club.
+      const arm = strokes[10]!;
+      const club = strokes[12]!;
       expect(arm.points).toEqual([enemy.club.shoulder, enemy.club.grip].map(convertPointToPixels));
       expect(club.isClosed).toBe(true);
       const tip = convertPointToPixels(enemy.club.tip);
@@ -65,6 +65,21 @@ describe('the club enemy as it is drawn', () => {
   it('frowns only while it means to strike, winding up and swinging, and the brows are the last lines: no other line changes its place', () => {
     const frowning = buildClubEnemyStrokes({ ...WAITING, action: 'windingUp' }, 0);
     expect(frowning.slice(0, -2)).toEqual(buildClubEnemyStrokes(WAITING, 0));
+  });
+
+  it('has an arm at its back that hangs from its body to its hand, and is thrown up and back with the club', () => {
+    const getBackArm = (enemy: ClubEnemyView) => buildClubEnemyStrokes(enemy, 0)[5]!.points;
+    const back = convertToPixels(WAITING.position.x - (WAITING.facing * WAITING.width) / 2);
+    const hanging = getBackArm(WAITING);
+    expect(hanging).toHaveLength(3);
+    expect(hanging[0]!.x).toBeCloseTo(back, 6);
+    // Its hand is behind its body and lower than where the arm leaves it.
+    expect((hanging[2]!.x - back) * WAITING.facing).toBeLessThan(0);
+    expect(hanging[2]!.y).toBeGreaterThan(hanging[0]!.y);
+    const thrownUp = getBackArm({ ...WAITING, action: 'swinging', progress: 0.5 });
+    expect(thrownUp[2]!.y).toBeLessThan(thrownUp[0]!.y);
+    expect(getBackArm({ ...WAITING, action: 'windingUp', progress: 0 })).toEqual(hanging);
+    expect(getBackArm({ ...WAITING, action: 'recovering', progress: 1 })).toEqual(hanging);
     const count = buildClubEnemyStrokes(WAITING, 0).length;
     expect(buildClubEnemyStrokes(getEnemyDoing('windingUp'), 0)).toHaveLength(count + 2);
     expect(buildClubEnemyStrokes(getEnemyDoing('swinging'), 0)).toHaveLength(count + 2);

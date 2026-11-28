@@ -5,11 +5,11 @@ import { convertToPixels } from './units';
 
 /**
  * The club enemy as pencil strokes: a box seen a little from the side, with a peaked top, two
- * scribbled eyes and a wavy mouth on the face it turns to the stick man, a small round hand at its
- * back, and an arm that holds a wide, dotted club. Where it is, which way it looks and where its
- * arm and club are come from the sim: the club is drawn along the line the sim tests, as thick at
- * its end as the sim has it (the sim's test reaches half that thickness past the end, too).
- * Everything else here is how it looks, and view detail only.
+ * scribbled eyes and a wavy mouth on the face it turns to the stick man, a short arm with a round
+ * hand at its back, and an arm that holds a wide, dotted club. Where it is, which way it looks
+ * and where its arm and club are come from the sim: the club is drawn along the line the sim
+ * tests, as thick at its end as the sim has it (the sim's test reaches half that thickness past
+ * the end, too). Everything else here is how it looks, and view detail only.
  */
 
 /** Its shape, as shares of its body's width and height unless said otherwise. */
@@ -40,8 +40,16 @@ const LOOK = {
   /** The hand at its back and the hand on the club, in metres. */
   handRadius: 0.07,
   /** How far behind its body the hand at its back is, in metres, and how high up its body. */
-  backHandBehind: 0.1,
-  backHandHeight: 0.45,
+  /**
+   * Its other arm, at its back: where it leaves its body, and where its elbow and hand are while it
+   * hangs and while it is thrown up and back for a swing. Each is how far behind its body, in
+   * metres, and how high up its body, as a share of its height.
+   */
+  backArm: {
+    shoulderHeight: 0.62,
+    hanging: { elbow: { behind: 0.17, height: 0.5 }, hand: { behind: 0.2, height: 0.33 } },
+    thrownUp: { elbow: { behind: 0.24, height: 0.66 }, hand: { behind: 0.2, height: 0.9 } },
+  },
   /** How wide the club is where the hand holds it, as a share of how thick it is at its end. */
   clubWidthAtGrip: 0.45,
   /** The rounded end of the club: how far from the end it starts to narrow, and to how much. */
@@ -118,7 +126,27 @@ function getFace(enemy: ClubEnemyView): { back: number; front: number; top: numb
   };
 }
 
-/** The box: its face, the side beside it, the peak of its top, and the hand at its back. */
+/**
+ * How far into the pose of a swing the enemy is, from 0, at rest, to 1: it gets into it as the
+ * club goes back, holds it through the swing, and leaves it as the club is lifted again. How far
+ * along each of those it is comes from the sim.
+ */
+function getShareOfSwingPose(enemy: ClubEnemyView): number {
+  if (enemy.action === 'windingUp') {
+    return enemy.progress;
+  }
+  if (enemy.action === 'swinging') {
+    return 1;
+  }
+  return enemy.action === 'recovering' ? 1 - enemy.progress : 0;
+}
+
+/** `share` from 0 to 1, starting and ending gently (smoothstep). */
+function smooth(share: number): number {
+  return share * share * (3 - 2 * share);
+}
+
+/** The box: its face, the side beside it, the peak of its top, and its other arm at its back. */
 function buildBodyLines(enemy: ClubEnemyView): Line[] {
   const face = getFace(enemy);
   const farEdge = -enemy.width / 2;
@@ -131,11 +159,19 @@ function buildBodyLines(enemy: ClubEnemyView): Line[] {
   const faceTopFront = getBodyPoint(enemy, face.front, face.top);
   const faceTopBack = getBodyPoint(enemy, face.back, face.top);
   const sideTop = getBodyPoint(enemy, farEdge, face.top + rise * LOOK.sideRiseAtTop);
-  const backHand = getBodyPoint(
-    enemy,
-    farEdge - LOOK.backHandBehind,
-    enemy.height * LOOK.backHandHeight,
-  );
+  const backArm = LOOK.backArm;
+  // Its other arm goes up and back as the club does, and comes down again as the club is lifted.
+  const thrownUp = smooth(getShareOfSwingPose(enemy));
+  const getArmPoint = (joint: 'elbow' | 'hand'): Point => {
+    const hanging = backArm.hanging[joint];
+    const up = backArm.thrownUp[joint];
+    return getBodyPoint(
+      enemy,
+      farEdge - (hanging.behind + (up.behind - hanging.behind) * thrownUp),
+      enemy.height * (hanging.height + (up.height - hanging.height) * thrownUp),
+    );
+  };
+  const backHand = getArmPoint('hand');
   return [
     {
       points: [
@@ -150,6 +186,13 @@ function buildBodyLines(enemy: ClubEnemyView): Line[] {
     { points: [getBodyPoint(enemy, farEdge, rise), getBodyPoint(enemy, face.back, 0)] },
     { points: [faceTopFront, peak, faceTopBack] },
     { points: [peak, sideTop] },
+    {
+      points: [
+        getBodyPoint(enemy, farEdge, enemy.height * backArm.shoulderHeight),
+        getArmPoint('elbow'),
+        backHand,
+      ],
+    },
     { points: buildCircleAround(backHand, LOOK.handRadius), isClosed: true },
   ];
 }

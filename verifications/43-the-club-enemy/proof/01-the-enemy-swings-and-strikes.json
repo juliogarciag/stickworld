@@ -25,7 +25,7 @@
     }
   },
   "start": {
-    "tick": 17,
+    "tick": 16,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -192,7 +192,7 @@
     "interaction": null
   },
   "seen": {
-    "tick": 156,
+    "tick": 154,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -359,7 +359,7 @@
     "interaction": null
   },
   "woundUp": {
-    "tick": 231,
+    "tick": 229,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -526,7 +526,7 @@
     "interaction": null
   },
   "struck": {
-    "tick": 267,
+    "tick": 264,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -579,7 +579,7 @@
       "isFallingOffEdge": false,
       "walkDirectionAsked": 1,
       "isCarrying": false,
-      "struckFor": 0.016666666666666666,
+      "struckFor": 0,
       "struckDirection": -1
     },
     "stickManWidth": 0.65,
@@ -602,19 +602,19 @@
         },
         "kind": "clubEnemy",
         "action": "swinging",
-        "progress": 0.5454545454545454,
+        "progress": 0.45454545454545453,
         "club": {
           "shoulder": {
             "x": 10.529999999999994,
             "y": -0.85
           },
           "grip": {
-            "x": 10.168891214206258,
-            "y": -1.2648499063788903
+            "x": 10.303052326468237,
+            "y": -1.3509937659078435
           },
           "tip": {
-            "x": 9.54515785692617,
-            "y": -1.9814088355787915
+            "x": 9.91105179945884,
+            "y": -2.2163466342941183
           },
           "thickness": 0.26
         }
@@ -636,19 +636,19 @@
       },
       "kind": "clubEnemy",
       "action": "swinging",
-      "progress": 0.5454545454545454,
+      "progress": 0.45454545454545453,
       "club": {
         "shoulder": {
           "x": 10.529999999999994,
           "y": -0.85
         },
         "grip": {
-          "x": 10.168891214206258,
-          "y": -1.2648499063788903
+          "x": 10.303052326468237,
+          "y": -1.3509937659078435
         },
         "tip": {
-          "x": 9.54515785692617,
-          "y": -1.9814088355787915
+          "x": 9.91105179945884,
+          "y": -2.2163466342941183
         },
         "thickness": 0.26
       }
@@ -693,7 +693,7 @@
     "interaction": null
   },
   "goingDown": {
-    "tick": 600,
+    "tick": 598,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -860,7 +860,7 @@
     "interaction": null
   },
   "lying": {
-    "tick": 309,
+    "tick": 307,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -1027,7 +1027,7 @@
     "interaction": null
   },
   "again": {
-    "tick": 344,
+    "tick": 342,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -1217,7 +1217,7 @@
     {
       "name": "it moves along the floor inside the stretch it guards",
       "pass": true,
-      "details": "at 11.00, guards 9 to 15"
+      "details": "at 10.97, guards 9 to 15"
     },
     {
       "name": "it winds up before it swings: the club is on its way back from where it holds it, and the stick man is not hurt yet",
@@ -1227,7 +1227,7 @@
     {
       "name": "the club strikes the stick man who stayed in its reach: struck down by the swing, knocked away from the enemy",
       "pass": true,
-      "details": "struck 0.72 m from its middle, 55% through the swing, the club 0.68 m above its top"
+      "details": "struck 0.72 m from its middle, 45% through the swing, the club 0.92 m above its top"
     },
     {
       "name": "struck down, neither action key would do anything",
@@ -1247,7 +1247,7 @@
     {
       "name": "the pause is long enough to see what happened and short enough to try again at once",
       "pass": true,
-      "details": "1.28 s from the blow to the new start"
+      "details": "1.30 s from the blow to the new start"
     },
     {
       "name": "walking in again is struck down again: the stick man goes over, away from the enemy",
