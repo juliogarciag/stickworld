@@ -22,7 +22,7 @@ import {
 } from './stickMan';
 import { convertToPixels } from './units';
 
-const { getSkeleton, BODY, EASING, LINE_CLEARANCE } = __testing__;
+const { getSkeleton, BODY, EASING, LINE_CLEARANCE, STRUCK } = __testing__;
 
 describe('the stick man standing', () => {
   it('is a head, a body, two arms and two legs', () => {
@@ -564,6 +564,81 @@ describe('the pose for what the sim says', () => {
   });
 });
 
+describe('the stick man struck down', () => {
+  it('is still on its feet the moment the blow lands, and flat on the floor once it has fallen', () => {
+    const upright = getSkeleton(getPose({ ...ON_FLOOR, action: 'struck', struckFor: 0 }));
+    expect(upright.head.y).toBeLessThan(ON_FLOOR.feet.y - STICK_MAN_HEIGHT * 0.8);
+
+    const down = getSkeleton(
+      getPose({ ...ON_FLOOR, action: 'struck', struckFor: STRUCK.fallSeconds }),
+    );
+    // Its body lies along the floor; a knee and an arm are up off it, no higher than a knee is.
+    for (const joint of [down.neck, down.hip]) {
+      expect(ON_FLOOR.feet.y - joint.y).toBeCloseTo(STRUCK.lyingAboveFloor, 6);
+    }
+    for (const joint of [...down.arms.flat(), ...down.legs.flat()]) {
+      expect(ON_FLOOR.feet.y - joint.y).toBeLessThan(STICK_MAN_HEIGHT * 0.35);
+    }
+    const highestLimb = Math.min(...[...down.arms, ...down.legs].flat().map((joint) => joint.y));
+    expect(ON_FLOOR.feet.y - highestLimb).toBeGreaterThan(STICK_MAN_HEIGHT * 0.15);
+    expect(Math.abs(down.head.x - ON_FLOOR.feet.x)).toBeGreaterThan(STICK_MAN_HEIGHT * 0.7);
+  });
+
+  it('has a knee and an arm up off the floor whichever way it faced as it fell', () => {
+    for (const facing of [1, -1] as const) {
+      for (const struckDirection of [1, -1] as const) {
+        const down = getSkeleton(
+          getPose({ ...ON_FLOOR, facing, action: 'struck', struckFor: 1, struckDirection }),
+        );
+        const knee = down.legs[0]![1]!;
+        expect(ON_FLOOR.feet.y - knee.y).toBeGreaterThan(STICK_MAN_HEIGHT * 0.15);
+      }
+    }
+  });
+
+  it('goes over the way the blow knocked it', () => {
+    const getHeadSide = (struckDirection: 1 | -1): number =>
+      getSkeleton(
+        getPose({ ...ON_FLOOR, action: 'struck', struckFor: STRUCK.fallSeconds, struckDirection }),
+      ).head.x - ON_FLOOR.feet.x;
+    expect(getHeadSide(1)).toBeGreaterThan(0);
+    expect(getHeadSide(-1)).toBeLessThan(0);
+    expect(getHeadSide(-1)).toBeCloseTo(-getHeadSide(1), 6);
+  });
+
+  it('falls further every moment until it is down, and then lies still', () => {
+    const getHeadHeightAfter = (struckFor: number): number =>
+      ON_FLOOR.feet.y - getSkeleton(getPose({ ...ON_FLOOR, action: 'struck', struckFor })).head.y;
+    const moments = [0, 0.25, 0.5, 0.75, 1].map((share) => share * STRUCK.fallSeconds);
+    const heights = moments.map(getHeadHeightAfter);
+    for (let index = 1; index < heights.length; index += 1) {
+      expect(heights[index]).toBeLessThan(heights[index - 1]!);
+    }
+    expect(getHeadHeightAfter(STRUCK.fallSeconds + 1)).toBe(heights[heights.length - 1]);
+  });
+
+  it('is drawn with nothing below the floor it lies on: its head rests on the line', () => {
+    const pose = getPose({ ...ON_FLOOR, action: 'struck', struckFor: 1 });
+    const down = getSkeleton(pose);
+    const joints = [down.neck, down.hip, ...down.arms.flat(), ...down.legs.flat()];
+    for (const joint of joints) {
+      expect(joint.y).toBeLessThanOrEqual(ON_FLOOR.feet.y - LINE_CLEARANCE + 1e-9);
+    }
+    expect(down.head.y).toBeLessThanOrEqual(
+      ON_FLOOR.feet.y - BODY.headRadius - LINE_CLEARANCE + 1e-9,
+    );
+    expect(buildStickManStrokes(pose)).toHaveLength(6);
+  });
+
+  it('does not take a landing in its knees when it is struck out of the air', () => {
+    const poseFor = easePosesOverTime();
+    poseFor(COMING_DOWN, FRAME, NO_FLOOR);
+    poseFor(COMING_DOWN, FRAME, NO_FLOOR);
+    const struck = poseFor({ ...COMING_DOWN, action: 'struck', struckFor: 0 }, FRAME, NO_FLOOR);
+    expect(struck.landing).toBe(0);
+  });
+});
+
 describe('seated in the airplane', () => {
   it('sits on it: hips just above where the sim has the stick man, knees up and feet out in front, head on top, well under its standing height', () => {
     for (const facing of [1, -1] as const) {
@@ -687,6 +762,8 @@ const SEATED: StickManPose = {
   tipsAboutAbove: 0,
   armsLifted: [0, 0],
   carrying: 0,
+  struck: 0,
+  struckDirection: 1,
 };
 
 const STANDING: StickManPose = {
@@ -703,6 +780,8 @@ const STANDING: StickManPose = {
   tipsAboutAbove: 0,
   armsLifted: [0, 0],
   carrying: 0,
+  struck: 0,
+  struckDirection: 1,
 };
 const WALKING: StickManPose = {
   feet: { x: 3, y: 0.5 },
@@ -718,6 +797,8 @@ const WALKING: StickManPose = {
   tipsAboutAbove: 0,
   armsLifted: [0, 0],
   carrying: 0,
+  struck: 0,
+  struckDirection: 1,
 };
 const JUMPING: StickManPose = {
   feet: { x: 3, y: 0.2 },
@@ -733,6 +814,8 @@ const JUMPING: StickManPose = {
   tipsAboutAbove: 0,
   armsLifted: [0, 0],
   carrying: 0,
+  struck: 0,
+  struckDirection: 1,
 };
 const view = {
   feet: { x: 3, y: 0.5 },
@@ -744,6 +827,8 @@ const view = {
   isFallingOffEdge: false,
   walkDirectionAsked: -1,
   isCarrying: false,
+  struckFor: null,
+  struckDirection: 1,
 } as const;
 const ON_FLOOR = {
   feet: { x: 3, y: 0 },
@@ -755,6 +840,8 @@ const ON_FLOOR = {
   isFallingOffEdge: false,
   walkDirectionAsked: 0,
   isCarrying: false,
+  struckFor: null,
+  struckDirection: 1,
 } as const;
 const GOING_UP = {
   ...ON_FLOOR,
@@ -793,6 +880,8 @@ const DROPPING: StickManPose = {
   tipsAboutAbove: 0,
   armsLifted: [0, 0],
   carrying: 0,
+  struck: 0,
+  struckDirection: 1,
 };
 const BACK_ARM = 0;
 /**

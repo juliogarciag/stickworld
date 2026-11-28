@@ -15,7 +15,9 @@ import { movementTuningSlice, playerSlice, type PlayerState } from './state';
 
 /**
  * The stick man: walking, a jump a little over the stick man's height with forgiveness on
- * both sides of it, and falling off the paper, which starts the level again.
+ * both sides of it, and falling off the paper, which starts the level again. A blow
+ * that strikes the stick man down (`strikePlayerWith`, ADR 0008) leaves it lying where it
+ * falls, deaf to every key, and the level starts again a moment later.
  * Walking off an edge the stick man starts with the sideways speed the stick man had, and the keys
  * steer it, or with none held the stick man slows down (`airSteering`, `airBraking`):
  * almost at once in the game as it is. In a jump they move the stick man as they do on
@@ -62,6 +64,10 @@ export const playerFeature: Feature = {
   update(sim) {
     const player = sim.getStateOf(playerSlice);
     const tuning = sim.getStateOf(movementTuningSlice);
+    if (player.ticksSinceStruck !== null) {
+      updateStruckPlayer(sim, player);
+      return;
+    }
     if (player.isSeated) {
       // Seated the stick man neither walks nor falls: what the stick man sits in moves it. A jump
       // stands the stick man up in its seat, which is floor enough to take off from. A jump that
@@ -125,10 +131,12 @@ export const playerFeature: Feature = {
 
 /**
  * Which way the stick man walks this tick: the way the player asked, or nowhere while the stick man
- * cheers under the flag.
+ * cheers under the flag or lies struck down.
  */
 export function getWalkDirectionNow(sim: Sim): WalkDirection {
-  return isStandingCheering(sim) ? 0 : sim.getStateOf(playerSlice).walkDirection;
+  const player = sim.getStateOf(playerSlice);
+  const canWalk = !isStandingCheering(sim) && player.ticksSinceStruck === null;
+  return canWalk ? player.walkDirection : 0;
 }
 
 /**
@@ -175,6 +183,38 @@ function getValidTuningIn(tuning: unknown): Partial<MovementTuning> {
     }
   }
   return valid;
+}
+
+/**
+ * One tick of the stick man struck down: no key moves it, it falls to the floor if it was in the
+ * air, and once it has been down for `PLAYER.struckPause` the level starts again, as it does at
+ * once when the stick man falls off the paper instead.
+ */
+function updateStruckPlayer(sim: Sim, player: PlayerState): void {
+  if (player.ticksSinceStruck === null) {
+    return;
+  }
+  const { floor } = sim.levelDef;
+  player.ticksSinceJumpAsked = null;
+  player.horizontalSpeed = 0;
+  if (!player.isOnFloor) {
+    fallTo(player, {
+      x: player.x,
+      floorHeight: getFloorHeightAt(floor, player.x),
+      tuning: sim.getStateOf(movementTuningSlice),
+      dt: sim.dt,
+    });
+  }
+  if (!player.isOnFloor) {
+    slideOffFloorEnds(player, floor);
+  }
+  player.ticksSinceStruck += 1;
+  const isPauseOver = player.ticksSinceStruck >= countWholeTicksIn(PLAYER.struckPause, sim.dt);
+  const hasFallenOffPaper = player.y > getLowestFloorHeight(floor) + PLAYER.fallBelowFloor;
+  const shouldStartLevelAgain = isPauseOver || hasFallenOffPaper;
+  if (shouldStartLevelAgain) {
+    sim.startLevelAfterThisTick(sim.level);
+  }
 }
 
 /**

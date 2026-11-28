@@ -55,6 +55,16 @@ export interface PlayerState {
    * very tick was meant for the floor.
    */
   seatedAtTick: number | null;
+  /**
+   * Ticks since something struck the stick man down, or null while nothing has: struck, the stick
+   * man falls where it is, lies there and takes no commands until the level starts again.
+   */
+  ticksSinceStruck: number | null;
+  /**
+   * Which way the blow that struck the stick man knocked it: 1 to the right, -1 to the left. Only
+   * read while it is struck.
+   */
+  struckDirection: 1 | -1;
 }
 
 export const playerSlice = defineSlice<PlayerState>(
@@ -75,6 +85,8 @@ export const playerSlice = defineSlice<PlayerState>(
     isCarrying: false,
     isSeated: false,
     seatedAtTick: null,
+    ticksSinceStruck: null,
+    struckDirection: 1,
   }),
   { isCarriedAcrossLevels: false },
 );

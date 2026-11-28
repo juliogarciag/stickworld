@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { levels } from '../content/levels';
+import { levels, practiceLevels } from '../content/levels';
 import { features } from '../features';
 import type { Command } from './commands';
 import type { Feature } from './feature';
@@ -31,7 +31,7 @@ describe('takeSnapshot', () => {
     expect((sim.takeSnapshot().slices.walker as Walker).x).not.toBe(999);
   });
 
-  it.each(levels.map((level) => [level.id]))(
+  it.each([...levels, ...practiceLevels].map((level) => [level.id]))(
     'holds only plain JSON for every registered feature on level %i',
     (level) => {
       const sim = new Sim({ features, start: { seed: 1, level } });

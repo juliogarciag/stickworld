@@ -68,6 +68,13 @@ export interface StickManPose {
   readonly armsLifted: readonly [number, number];
   /** How far the stick man's arms have gone up to hold something over its head, from 0 to 1. */
   readonly carrying: number;
+  /**
+   * How far down a blow has knocked the stick man, from 0, still on its feet, to 1, flat on the
+   * floor. 0 unless it is struck.
+   */
+  readonly struck: number;
+  /** Which way it is knocked over: 1 to the right, -1 to the left. Only read when struck. */
+  readonly struckDirection: 1 | -1;
 }
 
 /**
@@ -101,6 +108,8 @@ export function getPose(stickMan: StickManView): StickManPose {
     tipsAboutAbove: 0,
     armsLifted: [0, 0],
     carrying: stickMan.isCarrying ? 1 : 0,
+    struck: stickMan.struckFor === null ? 0 : Math.min(1, stickMan.struckFor / STRUCK.fallSeconds),
+    struckDirection: stickMan.struckDirection,
   };
 }
 
@@ -202,7 +211,9 @@ export function easePosesOverTime(): (
       pose.airborneShare === 1
         ? Math.min(1, last.airborneShare + share)
         : Math.max(0, last.airborneShare - share);
-    const hasJustLanded = last.isFalling && stickMan.action !== 'jumping';
+    // Struck out of the air, the stick man does not land on its feet: no knees give.
+    const isOnFeetAgain = stickMan.action !== 'jumping' && stickMan.action !== 'struck';
+    const hasJustLanded = last.isFalling && isOnFeetAgain;
     const landing = hasJustLanded ? 1 : Math.max(0, last.landing - seconds / EASING.landing);
     const mostTipping = seconds * EASING.tiltPerSecond;
     const tilt = last.tilt + Math.max(-mostTipping, Math.min(mostTipping, pose.tilt - last.tilt));
@@ -430,6 +441,36 @@ const EASING = {
 } as const;
 
 /**
+ * Struck down: the stick man goes over like a felled tree, about its feet, the way the blow knocked
+ * it, and lies flat. View detail only: the sim says when it was struck and which way.
+ */
+const STRUCK = {
+  /** How long it takes to go from its feet to the floor, in seconds. */
+  fallSeconds: 0.32,
+  /**
+   * How far above the floor line it lies, in metres: its back is on the line, and it is drawn a
+   * little over it so that the two pencil lines do not run into one.
+   */
+  lyingAboveFloor: 0.1,
+  /**
+   * Its limbs as it lies there, for a stick man that faces the sky side of its fall: one knee up,
+   * one arm thrown out past its head and the other up off its chest. Facing the other way they
+   * are mirrored, so that the knee is always the one in the air.
+   */
+  limbs: {
+    legs: [
+      { swing: 0.95, bend: 1.6 },
+      { swing: 0.1, bend: 0.1 },
+    ],
+    arms: [
+      { swing: 2.85, bend: 0.2 },
+      { swing: 1.15, bend: 0.9 },
+    ],
+    lean: 0,
+  },
+} as const;
+
+/**
  * How close to a floor line the stick man's arms, body and head may be drawn, in metres: the two
  * pencil lines touch and do not cross.
  */
@@ -524,7 +565,36 @@ function getSkeleton(pose: StickManPose): Skeleton {
       movePartWay(joint, held[jointIndex]!, holdingUp),
     );
   });
-  return { head, neck, hip, arms, legs: limbs.legs.map((leg) => buildLegFrom(hip, leg, facing)) };
+  const upright = {
+    head,
+    neck,
+    hip,
+    arms,
+    legs: limbs.legs.map((leg) => buildLegFrom(hip, leg, facing)),
+  };
+  return pose.action === 'struck' ? layDown(upright, pose) : upright;
+}
+
+/**
+ * `upright` knocked over about the stick man's feet, as far as `pose.struck` says: slowly at first
+ * and faster as it goes, as a thing that topples does. Nothing of it goes lower than a little over
+ * its feet, which is where the floor is once it lies there: its head rests on the line.
+ */
+function layDown(upright: Skeleton, pose: StickManPose): Skeleton {
+  const angle = pose.struckDirection * (Math.PI / 2) * pose.struck * pose.struck;
+  const lowest = pose.feet.y - Math.max(LINE_CLEARANCE, STRUCK.lyingAboveFloor * pose.struck);
+  const fall = (point: Point): Point => {
+    const turned = turnAbout(pose.feet, point, angle);
+    return { x: turned.x, y: Math.min(turned.y, lowest) };
+  };
+  const head = fall(upright.head);
+  return {
+    head: { x: head.x, y: Math.min(head.y, lowest - BODY.headRadius) },
+    neck: fall(upright.neck),
+    hip: fall(upright.hip),
+    arms: upright.arms.map((arm) => arm.map(fall)),
+    legs: upright.legs.map((leg) => leg.map(fall)),
+  };
 }
 
 /**
@@ -659,7 +729,20 @@ function getLimbs(pose: StickManPose): Limbs {
   const airborneLimbs = blendBetween(getLimbsOnFloor(pose), jumping, smooth(airborneShare));
   // A landing is deepest the moment the stick man touches down and eases out: fast at first, slow
   // at the end.
-  return blendBetween(airborneLimbs, BODY.landed, BODY.landingDepth * landing * landing);
+  const onFeet = blendBetween(airborneLimbs, BODY.landed, BODY.landingDepth * landing * landing);
+  return blendBetween(onFeet, getStruckLimbs(pose), smooth(pose.struck));
+}
+
+/**
+ * Where every limb points once the stick man lies struck down: `STRUCK.limbs`, turned so that what
+ * is up in them is up off the floor whichever way the stick man faced as it fell.
+ */
+function getStruckLimbs(pose: StickManPose): Limbs {
+  // Knocked over to the right, what was to its left is towards the sky.
+  const skySide = -pose.struckDirection * pose.facing;
+  const turn = (limb: Limb): Limb => ({ swing: limb.swing * skySide, bend: limb.bend * skySide });
+  const { legs, arms, lean } = STRUCK.limbs;
+  return { legs: [turn(legs[0]), turn(legs[1])], arms: [turn(arms[0]), turn(arms[1])], lean };
 }
 
 /** Where every limb points with the stick man's feet on the floor. */
@@ -785,4 +868,4 @@ const convertPointToPixels = (point: Point): StrokePoint => ({
   y: convertToPixels(point.y),
 });
 
-export const __testing__ = { getSkeleton, BODY, EASING, LINE_CLEARANCE };
+export const __testing__ = { getSkeleton, BODY, EASING, LINE_CLEARANCE, STRUCK };

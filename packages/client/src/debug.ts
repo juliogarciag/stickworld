@@ -3,6 +3,7 @@ import type {
   Command,
   CraftingView,
   Def,
+  EnemyView,
   FallenItemView,
   FlagView,
   FlyingHint,
@@ -22,6 +23,7 @@ import {
   getAirplane,
   getCrafting,
   defs,
+  getEnemies,
   getFallenItem,
   getFlag,
   getFlyingHint,
@@ -124,6 +126,11 @@ export interface GameDebugApi {
   getCrafting(): CraftingView;
   /** The airplane in the world as the sim has it right now, or undefined while there is none. */
   getAirplane(): AirplaneView | undefined;
+  /**
+   * Every enemy of the level as the sim has it right now: where it is, what it is doing and how far
+   * along, and where its club is.
+   */
+  getEnemies(): EnemyView[];
   /**
    * What the stick man has still to be told about flying the airplane the stick man has, as the sim
    * has it right now, or null.
@@ -249,6 +256,7 @@ export function exposeDebugApi(sources: {
     getFallenItem: () => getFallenItem(sources.loop.sim),
     getCrafting: () => getCrafting(sources.loop.sim),
     getAirplane: () => getAirplane(sources.loop.sim),
+    getEnemies: () => getEnemies(sources.loop.sim),
     getFlyingHint: () => getFlyingHint(sources.loop.sim),
     getMovementTuning: () => getMovementTuning(sources.loop.sim),
     getItemUse: () => getItemUse(sources.loop.sim),

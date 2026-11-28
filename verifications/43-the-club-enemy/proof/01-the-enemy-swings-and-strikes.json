@@ -1,0 +1,1263 @@
+{
+  "def": {
+    "id": 500,
+    "name": "club enemy",
+    "width": 0.8,
+    "height": 1.2,
+    "floatHeight": 0.1,
+    "sightDistance": 5,
+    "sightHeight": 3,
+    "speed": 1.4,
+    "guardedStretch": 3,
+    "swingDistance": 1.2,
+    "windUpSeconds": 0.7,
+    "swingSeconds": 0.18,
+    "recoverSeconds": 2,
+    "club": {
+      "shoulderHeight": 0.75,
+      "armLength": 0.55,
+      "length": 0.95,
+      "thickness": 0.26,
+      "restAngle": 1.1,
+      "raisedAngle": 2.6,
+      "downAngle": -0.6,
+      "stepsPerTick": 4
+    }
+  },
+  "start": {
+    "tick": 16,
+    "dt": 0.016666666666666666,
+    "level": {
+      "id": 900,
+      "name": "A yard with a club in it",
+      "floor": [
+        {
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "end": {
+            "x": 24,
+            "y": 0
+          }
+        }
+      ],
+      "start": {
+        "x": 2,
+        "y": 0
+      },
+      "placements": [
+        {
+          "defId": 100,
+          "position": {
+            "x": 20,
+            "y": 0
+          }
+        }
+      ],
+      "enemies": [
+        {
+          "defId": 500,
+          "position": {
+            "x": 12,
+            "y": 0
+          }
+        }
+      ]
+    },
+    "stickMan": {
+      "feet": {
+        "x": 2,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "standing",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "isFallingOffEdge": false,
+      "walkDirectionAsked": 0,
+      "isCarrying": false,
+      "struckFor": null,
+      "struckDirection": 1
+    },
+    "stickManWidth": 0.65,
+    "stickManHeight": 1.8,
+    "jumpHeight": 2,
+    "enemies": [
+      {
+        "defId": 500,
+        "position": {
+          "x": 12,
+          "y": -0.1
+        },
+        "width": 0.8,
+        "height": 1.2,
+        "floatHeight": 0.1,
+        "facing": -1,
+        "guardedStretch": {
+          "start": 9,
+          "end": 15
+        },
+        "kind": "clubEnemy",
+        "action": "waiting",
+        "progress": 0,
+        "club": {
+          "shoulder": {
+            "x": 12,
+            "y": -0.85
+          },
+          "grip": {
+            "x": 11.750522133215933,
+            "y": -1.3401640480337895
+          },
+          "tip": {
+            "x": 11.319605817861634,
+            "y": -2.186811040092153
+          },
+          "thickness": 0.26
+        }
+      }
+    ],
+    "enemy": {
+      "defId": 500,
+      "position": {
+        "x": 12,
+        "y": -0.1
+      },
+      "width": 0.8,
+      "height": 1.2,
+      "floatHeight": 0.1,
+      "facing": -1,
+      "guardedStretch": {
+        "start": 9,
+        "end": 15
+      },
+      "kind": "clubEnemy",
+      "action": "waiting",
+      "progress": 0,
+      "club": {
+        "shoulder": {
+          "x": 12,
+          "y": -0.85
+        },
+        "grip": {
+          "x": 11.750522133215933,
+          "y": -1.3401640480337895
+        },
+        "tip": {
+          "x": 11.319605817861634,
+          "y": -2.186811040092153
+        },
+        "thickness": 0.26
+      }
+    },
+    "enemyDef": {
+      "id": 500,
+      "name": "club enemy",
+      "width": 0.8,
+      "height": 1.2,
+      "floatHeight": 0.1,
+      "sightDistance": 5,
+      "sightHeight": 3,
+      "speed": 1.4,
+      "guardedStretch": 3,
+      "swingDistance": 1.2,
+      "windUpSeconds": 0.7,
+      "swingSeconds": 0.18,
+      "recoverSeconds": 2,
+      "club": {
+        "shoulderHeight": 0.75,
+        "armLength": 0.55,
+        "length": 0.95,
+        "thickness": 0.26,
+        "restAngle": 1.1,
+        "raisedAngle": 2.6,
+        "downAngle": -0.6,
+        "stepsPerTick": 4
+      }
+    },
+    "flag": {
+      "position": {
+        "x": 20,
+        "y": 0
+      },
+      "height": 2.2,
+      "isReached": false,
+      "upFor": 0,
+      "raised": 0,
+      "isFinalFlag": false
+    },
+    "itemUse": null,
+    "interaction": null
+  },
+  "seen": {
+    "tick": 154,
+    "dt": 0.016666666666666666,
+    "level": {
+      "id": 900,
+      "name": "A yard with a club in it",
+      "floor": [
+        {
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "end": {
+            "x": 24,
+            "y": 0
+          }
+        }
+      ],
+      "start": {
+        "x": 2,
+        "y": 0
+      },
+      "placements": [
+        {
+          "defId": 100,
+          "position": {
+            "x": 20,
+            "y": 0
+          }
+        }
+      ],
+      "enemies": [
+        {
+          "defId": 500,
+          "position": {
+            "x": 12,
+            "y": 0
+          }
+        }
+      ]
+    },
+    "stickMan": {
+      "feet": {
+        "x": 7.0233333333333645,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "walking",
+      "distanceWalked": 5.0233333333333645,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 2.2,
+      "isFallingOffEdge": false,
+      "walkDirectionAsked": 1,
+      "isCarrying": false,
+      "struckFor": null,
+      "struckDirection": 1
+    },
+    "stickManWidth": 0.65,
+    "stickManHeight": 1.8,
+    "jumpHeight": 2,
+    "enemies": [
+      {
+        "defId": 500,
+        "position": {
+          "x": 11.976666666666667,
+          "y": -0.1
+        },
+        "width": 0.8,
+        "height": 1.2,
+        "floatHeight": 0.1,
+        "facing": -1,
+        "guardedStretch": {
+          "start": 9,
+          "end": 15
+        },
+        "kind": "clubEnemy",
+        "action": "approaching",
+        "progress": 0,
+        "club": {
+          "shoulder": {
+            "x": 11.976666666666667,
+            "y": -0.85
+          },
+          "grip": {
+            "x": 11.7271887998826,
+            "y": -1.3401640480337895
+          },
+          "tip": {
+            "x": 11.2962724845283,
+            "y": -2.186811040092153
+          },
+          "thickness": 0.26
+        }
+      }
+    ],
+    "enemy": {
+      "defId": 500,
+      "position": {
+        "x": 11.976666666666667,
+        "y": -0.1
+      },
+      "width": 0.8,
+      "height": 1.2,
+      "floatHeight": 0.1,
+      "facing": -1,
+      "guardedStretch": {
+        "start": 9,
+        "end": 15
+      },
+      "kind": "clubEnemy",
+      "action": "approaching",
+      "progress": 0,
+      "club": {
+        "shoulder": {
+          "x": 11.976666666666667,
+          "y": -0.85
+        },
+        "grip": {
+          "x": 11.7271887998826,
+          "y": -1.3401640480337895
+        },
+        "tip": {
+          "x": 11.2962724845283,
+          "y": -2.186811040092153
+        },
+        "thickness": 0.26
+      }
+    },
+    "enemyDef": {
+      "id": 500,
+      "name": "club enemy",
+      "width": 0.8,
+      "height": 1.2,
+      "floatHeight": 0.1,
+      "sightDistance": 5,
+      "sightHeight": 3,
+      "speed": 1.4,
+      "guardedStretch": 3,
+      "swingDistance": 1.2,
+      "windUpSeconds": 0.7,
+      "swingSeconds": 0.18,
+      "recoverSeconds": 2,
+      "club": {
+        "shoulderHeight": 0.75,
+        "armLength": 0.55,
+        "length": 0.95,
+        "thickness": 0.26,
+        "restAngle": 1.1,
+        "raisedAngle": 2.6,
+        "downAngle": -0.6,
+        "stepsPerTick": 4
+      }
+    },
+    "flag": {
+      "position": {
+        "x": 20,
+        "y": 0
+      },
+      "height": 2.2,
+      "isReached": false,
+      "upFor": 0,
+      "raised": 0,
+      "isFinalFlag": false
+    },
+    "itemUse": null,
+    "interaction": null
+  },
+  "woundUp": {
+    "tick": 229,
+    "dt": 0.016666666666666666,
+    "level": {
+      "id": 900,
+      "name": "A yard with a club in it",
+      "floor": [
+        {
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "end": {
+            "x": 24,
+            "y": 0
+          }
+        }
+      ],
+      "start": {
+        "x": 2,
+        "y": 0
+      },
+      "placements": [
+        {
+          "defId": 100,
+          "position": {
+            "x": 20,
+            "y": 0
+          }
+        }
+      ],
+      "enemies": [
+        {
+          "defId": 500,
+          "position": {
+            "x": 12,
+            "y": 0
+          }
+        }
+      ]
+    },
+    "stickMan": {
+      "feet": {
+        "x": 9.773333333333394,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "walking",
+      "distanceWalked": 7.773333333333394,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 2.2,
+      "isFallingOffEdge": false,
+      "walkDirectionAsked": 1,
+      "isCarrying": false,
+      "struckFor": null,
+      "struckDirection": 1
+    },
+    "stickManWidth": 0.65,
+    "stickManHeight": 1.8,
+    "jumpHeight": 2,
+    "enemies": [
+      {
+        "defId": 500,
+        "position": {
+          "x": 10.529999999999994,
+          "y": -0.1
+        },
+        "width": 0.8,
+        "height": 1.2,
+        "floatHeight": 0.1,
+        "facing": -1,
+        "guardedStretch": {
+          "start": 9,
+          "end": 15
+        },
+        "kind": "clubEnemy",
+        "action": "windingUp",
+        "progress": 0.2857142857142857,
+        "club": {
+          "shoulder": {
+            "x": 10.529999999999994,
+            "y": -0.85
+          },
+          "grip": {
+            "x": 10.506783206445261,
+            "y": -1.3995097637868112
+          },
+          "tip": {
+            "x": 10.466681472123453,
+            "y": -2.3486629921458486
+          },
+          "thickness": 0.26
+        }
+      }
+    ],
+    "enemy": {
+      "defId": 500,
+      "position": {
+        "x": 10.529999999999994,
+        "y": -0.1
+      },
+      "width": 0.8,
+      "height": 1.2,
+      "floatHeight": 0.1,
+      "facing": -1,
+      "guardedStretch": {
+        "start": 9,
+        "end": 15
+      },
+      "kind": "clubEnemy",
+      "action": "windingUp",
+      "progress": 0.2857142857142857,
+      "club": {
+        "shoulder": {
+          "x": 10.529999999999994,
+          "y": -0.85
+        },
+        "grip": {
+          "x": 10.506783206445261,
+          "y": -1.3995097637868112
+        },
+        "tip": {
+          "x": 10.466681472123453,
+          "y": -2.3486629921458486
+        },
+        "thickness": 0.26
+      }
+    },
+    "enemyDef": {
+      "id": 500,
+      "name": "club enemy",
+      "width": 0.8,
+      "height": 1.2,
+      "floatHeight": 0.1,
+      "sightDistance": 5,
+      "sightHeight": 3,
+      "speed": 1.4,
+      "guardedStretch": 3,
+      "swingDistance": 1.2,
+      "windUpSeconds": 0.7,
+      "swingSeconds": 0.18,
+      "recoverSeconds": 2,
+      "club": {
+        "shoulderHeight": 0.75,
+        "armLength": 0.55,
+        "length": 0.95,
+        "thickness": 0.26,
+        "restAngle": 1.1,
+        "raisedAngle": 2.6,
+        "downAngle": -0.6,
+        "stepsPerTick": 4
+      }
+    },
+    "flag": {
+      "position": {
+        "x": 20,
+        "y": 0
+      },
+      "height": 2.2,
+      "isReached": false,
+      "upFor": 0,
+      "raised": 0,
+      "isFinalFlag": false
+    },
+    "itemUse": null,
+    "interaction": null
+  },
+  "struck": {
+    "tick": 264,
+    "dt": 0.016666666666666666,
+    "level": {
+      "id": 900,
+      "name": "A yard with a club in it",
+      "floor": [
+        {
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "end": {
+            "x": 24,
+            "y": 0
+          }
+        }
+      ],
+      "start": {
+        "x": 2,
+        "y": 0
+      },
+      "placements": [
+        {
+          "defId": 100,
+          "position": {
+            "x": 20,
+            "y": 0
+          }
+        }
+      ],
+      "enemies": [
+        {
+          "defId": 500,
+          "position": {
+            "x": 12,
+            "y": 0
+          }
+        }
+      ]
+    },
+    "stickMan": {
+      "feet": {
+        "x": 9.804999999999994,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "struck",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "isFallingOffEdge": false,
+      "walkDirectionAsked": 1,
+      "isCarrying": false,
+      "struckFor": 0,
+      "struckDirection": -1
+    },
+    "stickManWidth": 0.65,
+    "stickManHeight": 1.8,
+    "jumpHeight": 2,
+    "enemies": [
+      {
+        "defId": 500,
+        "position": {
+          "x": 10.529999999999994,
+          "y": -0.1
+        },
+        "width": 0.8,
+        "height": 1.2,
+        "floatHeight": 0.1,
+        "facing": -1,
+        "guardedStretch": {
+          "start": 9,
+          "end": 15
+        },
+        "kind": "clubEnemy",
+        "action": "swinging",
+        "progress": 0.45454545454545453,
+        "club": {
+          "shoulder": {
+            "x": 10.529999999999994,
+            "y": -0.85
+          },
+          "grip": {
+            "x": 10.303052326468237,
+            "y": -1.3509937659078435
+          },
+          "tip": {
+            "x": 9.91105179945884,
+            "y": -2.2163466342941183
+          },
+          "thickness": 0.26
+        }
+      }
+    ],
+    "enemy": {
+      "defId": 500,
+      "position": {
+        "x": 10.529999999999994,
+        "y": -0.1
+      },
+      "width": 0.8,
+      "height": 1.2,
+      "floatHeight": 0.1,
+      "facing": -1,
+      "guardedStretch": {
+        "start": 9,
+        "end": 15
+      },
+      "kind": "clubEnemy",
+      "action": "swinging",
+      "progress": 0.45454545454545453,
+      "club": {
+        "shoulder": {
+          "x": 10.529999999999994,
+          "y": -0.85
+        },
+        "grip": {
+          "x": 10.303052326468237,
+          "y": -1.3509937659078435
+        },
+        "tip": {
+          "x": 9.91105179945884,
+          "y": -2.2163466342941183
+        },
+        "thickness": 0.26
+      }
+    },
+    "enemyDef": {
+      "id": 500,
+      "name": "club enemy",
+      "width": 0.8,
+      "height": 1.2,
+      "floatHeight": 0.1,
+      "sightDistance": 5,
+      "sightHeight": 3,
+      "speed": 1.4,
+      "guardedStretch": 3,
+      "swingDistance": 1.2,
+      "windUpSeconds": 0.7,
+      "swingSeconds": 0.18,
+      "recoverSeconds": 2,
+      "club": {
+        "shoulderHeight": 0.75,
+        "armLength": 0.55,
+        "length": 0.95,
+        "thickness": 0.26,
+        "restAngle": 1.1,
+        "raisedAngle": 2.6,
+        "downAngle": -0.6,
+        "stepsPerTick": 4
+      }
+    },
+    "flag": {
+      "position": {
+        "x": 20,
+        "y": 0
+      },
+      "height": 2.2,
+      "isReached": false,
+      "upFor": 0,
+      "raised": 0,
+      "isFinalFlag": false
+    },
+    "itemUse": null,
+    "interaction": null
+  },
+  "goingDown": {
+    "tick": 598,
+    "dt": 0.016666666666666666,
+    "level": {
+      "id": 900,
+      "name": "A yard with a club in it",
+      "floor": [
+        {
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "end": {
+            "x": 24,
+            "y": 0
+          }
+        }
+      ],
+      "start": {
+        "x": 2,
+        "y": 0
+      },
+      "placements": [
+        {
+          "defId": 100,
+          "position": {
+            "x": 20,
+            "y": 0
+          }
+        }
+      ],
+      "enemies": [
+        {
+          "defId": 500,
+          "position": {
+            "x": 12,
+            "y": 0
+          }
+        }
+      ]
+    },
+    "stickMan": {
+      "feet": {
+        "x": 9.804999999999994,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "struck",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "isFallingOffEdge": false,
+      "walkDirectionAsked": 1,
+      "isCarrying": false,
+      "struckFor": 0.13333333333333333,
+      "struckDirection": -1
+    },
+    "stickManWidth": 0.65,
+    "stickManHeight": 1.8,
+    "jumpHeight": 2,
+    "enemies": [
+      {
+        "defId": 500,
+        "position": {
+          "x": 10.529999999999994,
+          "y": -0.1
+        },
+        "width": 0.8,
+        "height": 1.2,
+        "floatHeight": 0.1,
+        "facing": -1,
+        "guardedStretch": {
+          "start": 9,
+          "end": 15
+        },
+        "kind": "clubEnemy",
+        "action": "recovering",
+        "progress": 0.016666666666666666,
+        "club": {
+          "shoulder": {
+            "x": 10.529999999999994,
+            "y": -0.85
+          },
+          "grip": {
+            "x": 10.067449769261726,
+            "y": -0.5524310432118703
+          },
+          "tip": {
+            "x": 9.26849937071381,
+            "y": -0.03844829966873731
+          },
+          "thickness": 0.26
+        }
+      }
+    ],
+    "enemy": {
+      "defId": 500,
+      "position": {
+        "x": 10.529999999999994,
+        "y": -0.1
+      },
+      "width": 0.8,
+      "height": 1.2,
+      "floatHeight": 0.1,
+      "facing": -1,
+      "guardedStretch": {
+        "start": 9,
+        "end": 15
+      },
+      "kind": "clubEnemy",
+      "action": "recovering",
+      "progress": 0.016666666666666666,
+      "club": {
+        "shoulder": {
+          "x": 10.529999999999994,
+          "y": -0.85
+        },
+        "grip": {
+          "x": 10.067449769261726,
+          "y": -0.5524310432118703
+        },
+        "tip": {
+          "x": 9.26849937071381,
+          "y": -0.03844829966873731
+        },
+        "thickness": 0.26
+      }
+    },
+    "enemyDef": {
+      "id": 500,
+      "name": "club enemy",
+      "width": 0.8,
+      "height": 1.2,
+      "floatHeight": 0.1,
+      "sightDistance": 5,
+      "sightHeight": 3,
+      "speed": 1.4,
+      "guardedStretch": 3,
+      "swingDistance": 1.2,
+      "windUpSeconds": 0.7,
+      "swingSeconds": 0.18,
+      "recoverSeconds": 2,
+      "club": {
+        "shoulderHeight": 0.75,
+        "armLength": 0.55,
+        "length": 0.95,
+        "thickness": 0.26,
+        "restAngle": 1.1,
+        "raisedAngle": 2.6,
+        "downAngle": -0.6,
+        "stepsPerTick": 4
+      }
+    },
+    "flag": {
+      "position": {
+        "x": 20,
+        "y": 0
+      },
+      "height": 2.2,
+      "isReached": false,
+      "upFor": 0,
+      "raised": 0,
+      "isFinalFlag": false
+    },
+    "itemUse": null,
+    "interaction": null
+  },
+  "lying": {
+    "tick": 307,
+    "dt": 0.016666666666666666,
+    "level": {
+      "id": 900,
+      "name": "A yard with a club in it",
+      "floor": [
+        {
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "end": {
+            "x": 24,
+            "y": 0
+          }
+        }
+      ],
+      "start": {
+        "x": 2,
+        "y": 0
+      },
+      "placements": [
+        {
+          "defId": 100,
+          "position": {
+            "x": 20,
+            "y": 0
+          }
+        }
+      ],
+      "enemies": [
+        {
+          "defId": 500,
+          "position": {
+            "x": 12,
+            "y": 0
+          }
+        }
+      ]
+    },
+    "stickMan": {
+      "feet": {
+        "x": 9.804999999999994,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "struck",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "isFallingOffEdge": false,
+      "walkDirectionAsked": -1,
+      "isCarrying": false,
+      "struckFor": 0.7166666666666667,
+      "struckDirection": -1
+    },
+    "stickManWidth": 0.65,
+    "stickManHeight": 1.8,
+    "jumpHeight": 2,
+    "enemies": [
+      {
+        "defId": 500,
+        "position": {
+          "x": 10.529999999999994,
+          "y": -0.1
+        },
+        "width": 0.8,
+        "height": 1.2,
+        "floatHeight": 0.1,
+        "facing": -1,
+        "guardedStretch": {
+          "start": 9,
+          "end": 15
+        },
+        "kind": "clubEnemy",
+        "action": "recovering",
+        "progress": 0.30833333333333335,
+        "club": {
+          "shoulder": {
+            "x": 10.529999999999994,
+            "y": -0.85
+          },
+          "grip": {
+            "x": 9.981580683252158,
+            "y": -0.8083316304874143
+          },
+          "tip": {
+            "x": 9.034310954324079,
+            "y": -0.7363589922384026
+          },
+          "thickness": 0.26
+        }
+      }
+    ],
+    "enemy": {
+      "defId": 500,
+      "position": {
+        "x": 10.529999999999994,
+        "y": -0.1
+      },
+      "width": 0.8,
+      "height": 1.2,
+      "floatHeight": 0.1,
+      "facing": -1,
+      "guardedStretch": {
+        "start": 9,
+        "end": 15
+      },
+      "kind": "clubEnemy",
+      "action": "recovering",
+      "progress": 0.30833333333333335,
+      "club": {
+        "shoulder": {
+          "x": 10.529999999999994,
+          "y": -0.85
+        },
+        "grip": {
+          "x": 9.981580683252158,
+          "y": -0.8083316304874143
+        },
+        "tip": {
+          "x": 9.034310954324079,
+          "y": -0.7363589922384026
+        },
+        "thickness": 0.26
+      }
+    },
+    "enemyDef": {
+      "id": 500,
+      "name": "club enemy",
+      "width": 0.8,
+      "height": 1.2,
+      "floatHeight": 0.1,
+      "sightDistance": 5,
+      "sightHeight": 3,
+      "speed": 1.4,
+      "guardedStretch": 3,
+      "swingDistance": 1.2,
+      "windUpSeconds": 0.7,
+      "swingSeconds": 0.18,
+      "recoverSeconds": 2,
+      "club": {
+        "shoulderHeight": 0.75,
+        "armLength": 0.55,
+        "length": 0.95,
+        "thickness": 0.26,
+        "restAngle": 1.1,
+        "raisedAngle": 2.6,
+        "downAngle": -0.6,
+        "stepsPerTick": 4
+      }
+    },
+    "flag": {
+      "position": {
+        "x": 20,
+        "y": 0
+      },
+      "height": 2.2,
+      "isReached": false,
+      "upFor": 0,
+      "raised": 0,
+      "isFinalFlag": false
+    },
+    "itemUse": null,
+    "interaction": null
+  },
+  "again": {
+    "tick": 342,
+    "dt": 0.016666666666666666,
+    "level": {
+      "id": 900,
+      "name": "A yard with a club in it",
+      "floor": [
+        {
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "end": {
+            "x": 24,
+            "y": 0
+          }
+        }
+      ],
+      "start": {
+        "x": 2,
+        "y": 0
+      },
+      "placements": [
+        {
+          "defId": 100,
+          "position": {
+            "x": 20,
+            "y": 0
+          }
+        }
+      ],
+      "enemies": [
+        {
+          "defId": 500,
+          "position": {
+            "x": 12,
+            "y": 0
+          }
+        }
+      ]
+    },
+    "stickMan": {
+      "feet": {
+        "x": 2,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "standing",
+      "distanceWalked": 0,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 0,
+      "isFallingOffEdge": false,
+      "walkDirectionAsked": 0,
+      "isCarrying": false,
+      "struckFor": null,
+      "struckDirection": 1
+    },
+    "stickManWidth": 0.65,
+    "stickManHeight": 1.8,
+    "jumpHeight": 2,
+    "enemies": [
+      {
+        "defId": 500,
+        "position": {
+          "x": 12,
+          "y": -0.1
+        },
+        "width": 0.8,
+        "height": 1.2,
+        "floatHeight": 0.1,
+        "facing": -1,
+        "guardedStretch": {
+          "start": 9,
+          "end": 15
+        },
+        "kind": "clubEnemy",
+        "action": "waiting",
+        "progress": 0,
+        "club": {
+          "shoulder": {
+            "x": 12,
+            "y": -0.85
+          },
+          "grip": {
+            "x": 11.750522133215933,
+            "y": -1.3401640480337895
+          },
+          "tip": {
+            "x": 11.319605817861634,
+            "y": -2.186811040092153
+          },
+          "thickness": 0.26
+        }
+      }
+    ],
+    "enemy": {
+      "defId": 500,
+      "position": {
+        "x": 12,
+        "y": -0.1
+      },
+      "width": 0.8,
+      "height": 1.2,
+      "floatHeight": 0.1,
+      "facing": -1,
+      "guardedStretch": {
+        "start": 9,
+        "end": 15
+      },
+      "kind": "clubEnemy",
+      "action": "waiting",
+      "progress": 0,
+      "club": {
+        "shoulder": {
+          "x": 12,
+          "y": -0.85
+        },
+        "grip": {
+          "x": 11.750522133215933,
+          "y": -1.3401640480337895
+        },
+        "tip": {
+          "x": 11.319605817861634,
+          "y": -2.186811040092153
+        },
+        "thickness": 0.26
+      }
+    },
+    "enemyDef": {
+      "id": 500,
+      "name": "club enemy",
+      "width": 0.8,
+      "height": 1.2,
+      "floatHeight": 0.1,
+      "sightDistance": 5,
+      "sightHeight": 3,
+      "speed": 1.4,
+      "guardedStretch": 3,
+      "swingDistance": 1.2,
+      "windUpSeconds": 0.7,
+      "swingSeconds": 0.18,
+      "recoverSeconds": 2,
+      "club": {
+        "shoulderHeight": 0.75,
+        "armLength": 0.55,
+        "length": 0.95,
+        "thickness": 0.26,
+        "restAngle": 1.1,
+        "raisedAngle": 2.6,
+        "downAngle": -0.6,
+        "stepsPerTick": 4
+      }
+    },
+    "flag": {
+      "position": {
+        "x": 20,
+        "y": 0
+      },
+      "height": 2.2,
+      "isReached": false,
+      "upFor": 0,
+      "raised": 0,
+      "isFinalFlag": false
+    },
+    "itemUse": null,
+    "interaction": null
+  },
+  "results": [
+    {
+      "name": "VITE_LEVEL=900 starts on the practice yard, which has one enemy",
+      "pass": true,
+      "details": "level 900 \"A yard with a club in it\", 1 enemy"
+    },
+    {
+      "name": "the enemy waits at the post the level gives it, floating over the floor by what its def says",
+      "pass": true,
+      "details": "at (12, -0.1), waiting"
+    },
+    {
+      "name": "it is a kind of enemy from the defs, with every number of how it fights",
+      "pass": true,
+      "details": "def 500 \"club enemy\""
+    },
+    {
+      "name": "it sees the stick man from its sight distance, turns to it and comes towards it",
+      "pass": true,
+      "details": "seen from 4.95 m, sight distance 5 m"
+    },
+    {
+      "name": "it moves along the floor inside the stretch it guards",
+      "pass": true,
+      "details": "at 10.97, guards 9 to 15"
+    },
+    {
+      "name": "it winds up before it swings: the club is on its way back from where it holds it, and the stick man is not hurt yet",
+      "pass": true,
+      "details": "club end 0.68 m in front of its shoulder at rest, 0.06 m now, 29% through the wind-up; stick man walking"
+    },
+    {
+      "name": "the club strikes the stick man who stayed in its reach: struck down by the swing, knocked away from the enemy",
+      "pass": true,
+      "details": "struck 0.72 m from its middle, 45% through the swing, the club 0.92 m above its top"
+    },
+    {
+      "name": "struck down, neither action key would do anything",
+      "pass": true,
+      "details": "J: null, K: null"
+    },
+    {
+      "name": "the stick man lies where it was struck whatever is pressed",
+      "pass": true,
+      "details": "at 9.80 for 0.72 s"
+    },
+    {
+      "name": "after a pause the level starts again: the stick man at the start, the enemy back at its post",
+      "pass": true,
+      "details": "stick man at 2.00, enemy at 12"
+    },
+    {
+      "name": "the pause is long enough to see what happened and short enough to try again at once",
+      "pass": true,
+      "details": "1.30 s from the blow to the new start"
+    },
+    {
+      "name": "walking in again is struck down again: the stick man goes over, away from the enemy",
+      "pass": true,
+      "details": "0.13 s after the blow"
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

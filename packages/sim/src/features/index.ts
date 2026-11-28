@@ -1,6 +1,7 @@
 import type { Feature } from '../core/feature';
 import { airplaneFeature } from './airplane';
 import { craftingFeature } from './crafting';
+import { enemyFeature } from './enemy';
 import { flagFeature } from './flag';
 import { gameFeature } from './game';
 import { inventoryFeature } from './inventory';
@@ -19,7 +20,9 @@ import { worldFeature } from './world';
  * features answer for, and come before those features. The airplane follows
  * the stick man who carries it, so it comes after the stick man. `game` only hears a
  * command, so where it comes decides nothing; `note` watches where the stick man
- * stands, and comes after it so a note is rubbed out on the tick it gets there.
+ * stands, and comes after it so a note is rubbed out on the tick it gets there. `enemy` comes after
+ * everything that moves the stick man (the player, and the airplane that carries its seat): an
+ * enemy's body and club meet the stick man where it is at the end of the tick.
  */
 export const features: readonly Feature[] = [
   gameFeature,
@@ -31,5 +34,6 @@ export const features: readonly Feature[] = [
   craftingFeature,
   letterFeature,
   airplaneFeature,
+  enemyFeature,
   noteFeature,
 ];

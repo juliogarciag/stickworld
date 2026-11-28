@@ -224,6 +224,8 @@ const VERBS = [
   'wait',
   'check',
   'summarize',
+  'strike',
+  'swing',
 ];
 const NOT_A_VERB = `/^(?!_*(?:${VERBS.join('|')})(?:[A-Z0-9_]|$))/`;
 const NAME_A_FUNCTION_WITH_A_VERB =

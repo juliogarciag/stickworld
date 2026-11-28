@@ -4,7 +4,7 @@ import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
 import { AIRPLANE_ITEM_ID } from '../inventory/defs';
 import { isHoldingItem, replaceSelectedItem, getSelectedItem } from '../inventory/held';
-import { startCarrying, stopCarrying, getPlayerBody } from '../player/body';
+import { startCarrying, stopCarrying, getPlayerBody, isPlayerStruck } from '../player/body';
 import { getFloorHeightAt, getLowestFloorHeight } from '../player/floor';
 import type { SteerDirection } from './commands';
 import { AIRPLANE } from './defs';
@@ -43,9 +43,10 @@ export const airplaneFeature: Feature = {
     const floorLevel = getLowestFloorHeight(sim.levelDef.floor);
     if (airplane.isCarried) {
       // In the air below the floor the stick man is on the stick man's way down a gap or off the
-      // paper: the stick man lets go of it.
+      // paper: the stick man lets go of it. Struck down, it lets go of it too.
       const isFallingBelowFloor = !player.isOnFloor && player.y > floorLevel;
-      if (isFallingBelowFloor) {
+      const hasLostGrip = isFallingBelowFloor || isPlayerStruck(sim);
+      if (hasLostGrip) {
         letFall(airplane);
         stopCarrying(sim);
       } else {

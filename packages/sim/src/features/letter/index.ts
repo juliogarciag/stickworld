@@ -7,7 +7,7 @@ import { getRecipeDef } from '../crafting/defs';
 import { giveItem } from '../inventory/give';
 import { isHoldingItem, selectItem } from '../inventory/held';
 import { isFlagReached } from '../flag';
-import { getPlayerBody } from '../player/body';
+import { getPlayerBody, isPlayerStruck } from '../player/body';
 import { LETTER, getLetterDef, type LetterDef } from './defs';
 import { fallenItemSlice, letterSlice, lettersReadSlice } from './state';
 
@@ -56,9 +56,10 @@ export const letterFeature: Feature = {
     if (!def) {
       return;
     }
-    const hasWalkedAwayReading =
-      sim.getStateOf(letterSlice).isBeingRead && !isWithinReach(sim, placed.position);
-    if (hasWalkedAwayReading) {
+    // Struck down, the stick man holds nothing up to read.
+    const canStillRead = isWithinReach(sim, placed.position) && !isPlayerStruck(sim);
+    const hasStoppedReading = sim.getStateOf(letterSlice).isBeingRead && !canStillRead;
+    if (hasStoppedReading) {
       putAway(sim);
     }
     const fallen = sim.getStateOf(fallenItemSlice);

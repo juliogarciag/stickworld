@@ -18,9 +18,10 @@ export interface StickManView {
    * `jumping` is any time the stick man's feet are off the floor and it is not seated; `cheering`
    * is standing on the floor under the flag the stick man reached, which on the last level ends
    * when playing again is offered; `seated` is sitting in the airplane, and then `feet` is the
-   * middle of its underside.
+   * middle of its underside; `struck` is from the tick a blow struck the stick man down until the
+   * level starts again, falling or lying on the floor.
    */
-  readonly action: 'standing' | 'walking' | 'jumping' | 'cheering' | 'seated';
+  readonly action: 'standing' | 'walking' | 'jumping' | 'cheering' | 'seated' | 'struck';
   /**
    * Metres walked on the floor since the stick man last stood still or landed: how far along the
    * stick man's walk it is.
@@ -52,6 +53,13 @@ export interface StickManView {
    * airplane, as `getAirplane` has it).
    */
   readonly isCarrying: boolean;
+  /** How long ago a blow struck the stick man down, in seconds, or null while none has. */
+  readonly struckFor: number | null;
+  /**
+   * Which way the blow knocked the stick man: 1 to the right, -1 to the left. Only read while it
+   * is struck.
+   */
+  readonly struckDirection: 1 | -1;
 }
 
 export function getStickMan(handle: SimHandle): StickManView {
@@ -67,6 +75,8 @@ export function getStickMan(handle: SimHandle): StickManView {
     isFallingOffEdge: isFallingOffEdge(player),
     walkDirectionAsked: player.walkDirection,
     isCarrying: player.isCarrying,
+    struckFor: player.ticksSinceStruck === null ? null : player.ticksSinceStruck * sim.dt,
+    struckDirection: player.struckDirection,
   };
 }
 
@@ -83,6 +93,9 @@ export function getMovementTuning(handle: SimHandle): MovementTuning {
 /** What the stick man is doing right now. Anything in the air counts as jumping. */
 function getAction(sim: Sim): StickManView['action'] {
   const player = sim.getStateOf(playerSlice);
+  if (player.ticksSinceStruck !== null) {
+    return 'struck';
+  }
   if (player.isSeated) {
     return 'seated';
   }
