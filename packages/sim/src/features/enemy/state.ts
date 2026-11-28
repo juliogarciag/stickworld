@@ -20,16 +20,17 @@ export interface EnemyState {
   /** The x the level put it at: the middle of the stretch it guards. */
   postX: number;
   /**
-   * Ticks since something struck it and it began to be rubbed out, or null while nothing has. From
-   * then on it does nothing and is in nobody's way, and after `ENEMY.rubOutSeconds` it is gone.
+   * Ticks since something struck it and tore it in two, or null while nothing has. From then on it
+   * does nothing and is in nobody's way, and once its halves have left the sheet (`torn.ts`) it
+   * is gone.
    */
   ticksSinceStruck: number | null;
 }
 
 /**
  * Every enemy of the level that is still there, in the order the level lists them: one that has
- * been rubbed out is taken off the list. The feature's `init` puts them where the level says, so a
- * level that starts again has every enemy back at its post.
+ * been torn and has left the sheet is taken off the list. The feature's `init` puts them where the
+ * level says, so a level that starts again has every enemy back at its post.
  */
 export const enemiesSlice = defineSlice<EnemyState[]>('enemies', () => [], {
   isCarriedAcrossLevels: false,

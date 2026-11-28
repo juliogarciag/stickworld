@@ -5,9 +5,10 @@ import { keepPlayerOutOfBox } from '../player/body';
 import { getFloorHeightAt } from '../player/floor';
 import { updateClubEnemy } from './clubEnemy';
 import { findClubEnemyDef } from './clubEnemy/defs';
-import { ENEMY, findEnemyDef } from './defs';
+import { findEnemyDef } from './defs';
 import { getEnemyBox } from './guard';
 import { enemiesSlice, type EnemyState } from './state';
+import { isTornAndGone } from './torn';
 
 /**
  * The enemies of a level (`enemies` in its data), the first things in the game
@@ -16,8 +17,9 @@ import { enemiesSlice, type EnemyState } from './state';
  * man is kept out of it and gets past by jumping over. What an enemy does
  * with its tick is its kind's (`clubEnemy/`, the only kind so far): a new
  * kind is a folder next to it and a line in `update` here. An enemy that is
- * struck (`strikeEnemiesWith`) is rubbed out: it stops where it is, is no
- * longer solid and hurts nobody, and a moment later it is gone.
+ * struck (`strikeEnemiesWith`) is torn in two: it stops where it is, is no
+ * longer solid and hurts nobody, its halves fall, lie there for a moment
+ * and leave the sheet as scraps, and then it is gone (`torn.ts`).
  */
 export const enemyFeature: Feature = {
   name: 'enemy',
@@ -48,13 +50,12 @@ export const enemyFeature: Feature = {
   },
 
   update(sim) {
-    const rubOutTicks = Math.round(ENEMY.rubOutSeconds / sim.dt);
     for (const enemy of sim.getStateOf(enemiesSlice)) {
       const def = findEnemyDef(enemy.defId);
       if (!def) {
         continue;
       }
-      // Being rubbed out, it neither stands in the way nor does anything.
+      // Torn, it neither stands in the way nor does anything.
       if (enemy.ticksSinceStruck !== null) {
         enemy.ticksSinceStruck += 1;
         continue;
@@ -67,13 +68,13 @@ export const enemyFeature: Feature = {
         updateClubEnemy(sim, enemy, clubEnemyDef);
       }
     }
-    const isRubbedOut = (enemy: EnemyState): boolean =>
-      enemy.ticksSinceStruck !== null && enemy.ticksSinceStruck >= rubOutTicks;
+    const isGone = (enemy: EnemyState): boolean =>
+      enemy.ticksSinceStruck !== null && isTornAndGone(enemy.ticksSinceStruck, sim.dt);
     const enemies = sim.getStateOf(enemiesSlice);
-    if (enemies.some(isRubbedOut)) {
+    if (enemies.some(isGone)) {
       sim.setStateOf(
         enemiesSlice,
-        enemies.filter((enemy) => !isRubbedOut(enemy)),
+        enemies.filter((enemy) => !isGone(enemy)),
       );
     }
   },
@@ -81,8 +82,8 @@ export const enemyFeature: Feature = {
 
 /**
  * Something strikes at the enemies: the one way anything hurts one (ADR 0008). `blow` is where the
- * weapon is this instant; every enemy it touches begins to be rubbed out, whatever it was doing,
- * its swing included. True when it struck at least one. An enemy that is being rubbed out already
+ * weapon is this instant; every enemy it touches is torn in two, whatever it was doing,
+ * its swing included. True when it struck at least one. An enemy that is torn already
  * is not struck again.
  */
 export function strikeEnemiesWith(sim: Sim, blow: Blow): boolean {

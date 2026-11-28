@@ -119,10 +119,10 @@ describe('a thrust', () => {
     standInFrontOfEnemy(sim, SPEAR_HITS_FROM - 0.1);
     sim.step([USE, SELECT_FIRST]);
     stepFor(sim, THRUST_TICKS + RECOVER_TICKS);
-    expect(getEnemies(sim)[0]!.rubbedOutProgress).toBeNull();
+    expect(getEnemies(sim)[0]!.torn).toBeNull();
   });
 
-  it('goes to the left as well as to the right: the enemy behind which the stick man has got is rubbed out by a thrust back at it', () => {
+  it('goes to the left as well as to the right: the enemy behind which the stick man has got is torn by a thrust back at it', () => {
     const sim = createSimWithSpear();
     standInFrontOfEnemy(sim, SPEAR_HITS_FROM - 0.1);
     sim.step([USE]);
@@ -177,20 +177,20 @@ describe('a thrust', () => {
 });
 
 describe('a thrust at the club enemy', () => {
-  it('rubs the enemy out when it reaches it: the enemy stops, is rubbed out for as long as its def says, and is gone', () => {
+  it('tears the enemy in two when it reaches it: the enemy stops, tears, lies and leaves for as long as its def says, and is gone', () => {
     const sim = createSimWithSpear();
     const distance = standInFrontOfEnemy(sim, SPEAR_HITS_FROM - 0.1);
     expect(distance).toBeGreaterThan(CLUB_HITS_FROM);
     sim.step([USE]);
-    stepUntil(sim, () => getEnemies(sim)[0]!.rubbedOutProgress !== null);
+    stepUntil(sim, () => getEnemies(sim)[0]!.torn !== null);
     expect(getSpear(sim)!.action).not.toBe('ready');
     const struckPosition = getEnemies(sim)[0]!.position;
-    const rubbedOut = recordEnemyAsLongAs(sim, () => getEnemies(sim).length > 0);
-    expect(rubbedOut.length).toBe(RUB_OUT_TICKS - 1);
-    expect(rubbedOut.every((enemy) => enemy.position.x === struckPosition.x)).toBe(true);
-    const progress = rubbedOut.map((enemy) => enemy.rubbedOutProgress!);
-    expect(progress).toEqual([...progress].sort((one, other) => one - other));
-    expect(progress.at(-1)).toBeLessThan(1);
+    const torn = recordEnemyAsLongAs(sim, () => getEnemies(sim).length > 0);
+    expect(torn.length).toBe(TORN_TICKS - 1);
+    expect(torn.every((enemy) => enemy.position.x === struckPosition.x)).toBe(true);
+    const actions = torn.map((enemy) => enemy.torn!.action);
+    expect([...new Set(actions)]).toEqual(['tearing', 'lying', 'leaving']);
+    expect(torn.at(-1)!.torn!.progress).toBeLessThan(1);
     expect(getEnemies(sim)).toEqual([]);
     expect(getStickMan(sim).action).toBe('standing');
   });
@@ -201,7 +201,7 @@ describe('a thrust at the club enemy', () => {
     expect(distance).toBeGreaterThan(SPEAR_HITS_FROM);
     sim.step([USE]);
     stepUntil(sim, () => getSpear(sim)!.action === 'ready');
-    expect(getEnemies(sim)[0]!.rubbedOutProgress).toBeNull();
+    expect(getEnemies(sim)[0]!.torn).toBeNull();
   });
 
   it('reaches further than the club by a margin: from where the club cannot reach the stick man, the spear still reaches the enemy', () => {
@@ -244,7 +244,7 @@ describe('a thrust at the club enemy', () => {
     expect(getStickMan(sim).action).toBe('standing');
   });
 
-  it('wins a tie: a thrust that reaches the enemy on the tick its club would have reached the stick man rubs it out, and the stick man stands', () => {
+  it('wins a tie: a thrust that reaches the enemy on the tick its club would have reached the stick man tears it, and the stick man stands', () => {
     const sim = createSimWithSpear();
     sim.step([WALK_RIGHT]);
     // As far as the last tick before the club reaches the stick man that does nothing about it.
@@ -258,12 +258,12 @@ describe('a thrust at the club enemy', () => {
     // The press and the club arrive on the same tick.
     sim.step([USE]);
     expect(getStickMan(sim).action).not.toBe('struck');
-    expect(getEnemies(sim)[0]!.rubbedOutProgress).not.toBeNull();
+    expect(getEnemies(sim)[0]!.torn).not.toBeNull();
     stepFor(sim, 3 * TICKS);
     expect(getStickMan(sim).action).not.toBe('struck');
   });
 
-  it("lets the stick man through where the enemy stood, at once: an enemy being rubbed out is in nobody's way", () => {
+  it("lets the stick man through where the enemy stood, at once: a torn enemy is in nobody's way", () => {
     const sim = createSimWithSpear();
     standInFrontOfEnemy(sim, SPEAR_HITS_FROM - 0.1);
     const enemyX = getEnemies(sim)[0]!.position.x;
@@ -302,11 +302,11 @@ describe('dying with the spear', () => {
     expect(getSpear(sim)!.action).toBe('ready');
     expect(getEnemies(sim)[0]).toMatchObject({
       position: { x: clubYard.enemies![0]!.position.x },
-      rubbedOutProgress: null,
+      torn: null,
     });
   });
 
-  it('brings the enemy back too: one rubbed out is at its post again when the level starts again', () => {
+  it('brings the enemy back too: one torn and gone is at its post again when the level starts again', () => {
     const sim = createSimWithSpear();
     standInFrontOfEnemy(sim, SPEAR_HITS_FROM - 0.1);
     sim.step([USE]);
@@ -342,7 +342,10 @@ const LETTER_X = findLetterPlacedIn(clubYard)!.position.x;
 const TICKS = Math.round(1 / createSim({ level: clubYard.id }).dt);
 const THRUST_TICKS = Math.round(SPEAR.thrustSeconds * TICKS);
 const RECOVER_TICKS = Math.round(SPEAR.recoverSeconds * TICKS);
-const RUB_OUT_TICKS = Math.round(ENEMY.rubOutSeconds * TICKS);
+const TORN_TICKS =
+  Math.round(ENEMY.tearSeconds * TICKS) +
+  Math.round(ENEMY.lieSeconds * TICKS) +
+  Math.round(ENEMY.leaveSeconds * TICKS);
 /** The tick on which `createSimWithSpear` hands the sim over: the stick man has the spear. */
 const TICK_OF_FIRST_PRESS = createSimWithSpear().tick;
 

@@ -53,7 +53,7 @@ describe('the yard with a club in it', () => {
     sim.step([INTERACT]);
     sim.step([WALK_RIGHT]);
     stepUntil(sim, () => getStickMan(sim).action === 'struck');
-    expect(getEnemies(sim)[0]!.rubbedOutProgress).toBeNull();
+    expect(getEnemies(sim)[0]!.torn).toBeNull();
     expect(getFlag(sim)!.isReached).toBe(false);
   });
 

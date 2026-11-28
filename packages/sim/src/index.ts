@@ -64,6 +64,7 @@ export { getGame, type GameView } from './features/game/view';
 export { getNotes, type NoteView } from './features/note/view';
 export type { ClubEnemyAction } from './features/enemy/clubEnemy/defs';
 export type { ClubEnemyView } from './features/enemy/clubEnemy/view';
+export type { Torn, TornAction } from './features/enemy/torn';
 export { getEnemies, type EnemyBaseView, type EnemyView } from './features/enemy/view';
 export type { SpearAction } from './features/spear';
 export { getSpear, type SpearView } from './features/spear/view';

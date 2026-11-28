@@ -1,0 +1,7 @@
+PASS  dev server up, started by this run
+PASS  the stick man walks through where the enemy stood while its halves are still on the sheet  (past it at x 11.24, the enemy lying)
+PASS  it tore, its halves lay there, and they left, in that order  (tearing, lying, leaving)
+PASS  nothing of it is left in the game afterwards, and the stick man was never struck  (gone 2.18 s after it was torn)
+PASS  no page errors
+
+ALL 5 CHECKS PASSED

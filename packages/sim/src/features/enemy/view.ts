@@ -1,10 +1,10 @@
 import type { Point } from '../../content/levels/types';
 import { Sim, type SimHandle } from '../../core/sim';
 import { findClubEnemyDef } from './clubEnemy/defs';
-import { ENEMY } from './defs';
 import { getClubEnemyView, type ClubEnemyView } from './clubEnemy/view';
 import { getGuardedStretch } from './guard';
 import { enemiesSlice } from './state';
+import { getTorn, type Torn } from './torn';
 
 /**
  * What a view needs of every enemy, whatever kind it is: where it is, how big its body is and
@@ -25,12 +25,12 @@ export interface EnemyBaseView {
   /** The stretch of floor it guards: how far its middle goes to either side, in metres. */
   readonly guardedStretch: { readonly start: number; readonly end: number };
   /**
-   * How far along being rubbed out it is, from just over 0 on the tick it was struck towards 1,
-   * or null while nothing has struck it. Being rubbed out it is still where it was struck, doing
-   * what it was doing, harmless and in nobody's way; rubbed out, it is no longer among the
-   * enemies.
+   * How far along being torn it is (`tearing` in two, its halves `lying` where they fell, then
+   * `leaving` the sheet as scraps, each from just over 0 towards 1), or null while nothing has
+   * struck it. Torn, it is still where it was struck, doing what it was doing, harmless and in
+   * nobody's way; once the scraps have left, it is no longer among the enemies.
    */
-  readonly rubbedOutProgress: number | null;
+  readonly torn: Torn | null;
 }
 
 /**
@@ -41,7 +41,7 @@ export type EnemyView = ClubEnemyView;
 
 /**
  * Every enemy of the level being played that is still there, in the order the level lists them: one
- * that has been rubbed out is not among them.
+ * that was torn and has left the sheet is not among them.
  */
 export function getEnemies(handle: SimHandle): EnemyView[] {
   if (!(handle instanceof Sim)) {
@@ -61,10 +61,7 @@ export function getEnemies(handle: SimHandle): EnemyView[] {
       floatHeight: def.floatHeight,
       facing: enemy.facing,
       guardedStretch: getGuardedStretch(handle.levelDef.floor, enemy, def),
-      rubbedOutProgress:
-        enemy.ticksSinceStruck === null
-          ? null
-          : Math.min(1, enemy.ticksSinceStruck / Math.round(ENEMY.rubOutSeconds / handle.dt)),
+      torn: enemy.ticksSinceStruck === null ? null : getTorn(enemy.ticksSinceStruck, handle.dt),
     };
     views.push(getClubEnemyView(handle, { enemy, def, base }));
   }

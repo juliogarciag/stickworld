@@ -128,7 +128,7 @@ try {
   results.push(
     check(
       'the spear is still in its hand after the thrust, and the enemy untouched',
-      afterMiss.slots[0].itemDefId === spearId && afterMiss.itemUse === 'thrust' && afterMiss.enemies[0].rubbedOutProgress === null,
+      afterMiss.slots[0].itemDefId === spearId && afterMiss.itemUse === 'thrust' && afterMiss.enemies[0].torn === null,
     ),
   );
 
@@ -148,15 +148,21 @@ try {
     ),
   );
 
-  // It walks at the enemy and thrusts as soon as the spear reaches, outside the club's reach.
+  // It walks at the enemy, stops a little short of the spear's reach, and thrusts as the enemy
+  // comes into it, outside the club's reach. Standing still for the last of it: the two close in
+  // fast, and a script reads the game less often than a player sees it.
   const thrustFrom = (spearHitsFrom + clubReach) / 2;
   let wasStruck = false;
   await page.keyboard.down('ArrowRight');
+  await waitForGame(page, 'the enemy nearly within the spear', (now) => {
+    wasStruck ||= now.stickMan.action === 'struck';
+    return now.enemies[0].position.x - now.stickMan.feet.x <= thrustFrom + enemy.width + 0.4;
+  }, 20000);
+  await page.keyboard.up('ArrowRight');
   const inReach = await waitForGame(page, 'the enemy within the spear', (now) => {
     wasStruck ||= now.stickMan.action === 'struck';
     return now.enemies[0].position.x - now.stickMan.feet.x <= thrustFrom;
   }, 20000);
-  await page.keyboard.up('ArrowRight');
   await page.keyboard.press('KeyJ');
   results.push(
     check(
@@ -167,22 +173,22 @@ try {
   );
   const struckEnemy = await waitForGame(
     page,
-    'the enemy being rubbed out',
-    (now) => now.enemies.length === 0 || now.enemies[0].rubbedOutProgress !== null,
+    'the enemy torn',
+    (now) => now.enemies.length === 0 || now.enemies[0].torn !== null,
   );
-  await takeScreenshot(page, '05-the-enemy-being-rubbed-out.png');
+  await takeScreenshot(page, '05-the-enemy-torn.png');
   results.push(
     check(
-      'the thrust reaches the enemy: it is being rubbed out',
-      struckEnemy.enemies.length === 0 || struckEnemy.enemies[0].rubbedOutProgress !== null,
-      `rubbed out ${struckEnemy.enemies[0]?.rubbedOutProgress ?? 'all of it'}`,
+      'the thrust reaches the enemy: it is torn in two',
+      struckEnemy.enemies.length === 0 || struckEnemy.enemies[0].torn !== null,
+      `${struckEnemy.enemies[0]?.torn?.action ?? 'gone already'}`,
     ),
   );
   const gone = await waitForGame(page, 'the enemy gone', (now) => {
     wasStruck ||= now.stickMan.action === 'struck';
     return now.enemies.length === 0;
   });
-  results.push(check('a moment later the enemy is gone', gone.enemies.length === 0));
+  results.push(check('its halves lie, leave the sheet, and then the enemy is gone', gone.enemies.length === 0));
   await page.waitForTimeout(700);
   await takeScreenshot(page, '06-the-enemy-gone.png');
 

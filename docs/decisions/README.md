@@ -11,3 +11,4 @@ One file per decision, numbered, never edited after the fact (write a new one th
 - [0007 - A feature's state is its own, every slice says whether it carries, and a level starts between two ticks](0007-a-features-state-is-its-own-and-a-level-starts-between-two-ticks.md)
 - [0008 - How things hurt the stick man and how it hurts them: the one who is struck owns the hit test](0008-how-things-hurt-the-stick-man-and-how-it-hurts-them.md)
 - [0009 - Two recipes from one item: one is chosen, and a key switches the use of the item](0009-two-recipes-from-one-item-and-the-key-that-switches.md)
+- [0010 - A struck enemy is torn in two, and its scraps leave the sheet: the sim times all of it](0010-a-struck-enemy-is-torn-and-its-scraps-leave-the-sheet.md)

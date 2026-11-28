@@ -35,10 +35,17 @@ export interface EnemyDef extends Def {
 /** What holds for every kind of enemy. Seconds. */
 export const ENEMY = {
   /**
-   * How long an enemy that was struck takes to be rubbed out, in seconds: long enough to be seen
-   * going, line by line. It is harmless and in nobody's way from the tick it was struck.
+   * How long an enemy that was struck takes to tear in two and for the halves and what it held to
+   * come down, in seconds. It is harmless and in nobody's way from the tick it was struck.
    */
-  rubOutSeconds: 0.5,
+  tearSeconds: 0.5,
+  /** How long the halves lie where they fell, in seconds: long enough to see what happened. */
+  lieSeconds: 0.8,
+  /**
+   * How long they take to leave the sheet as scraps of paper, in seconds. Then the enemy is gone
+   * from the level: nothing of it stays, however many there were.
+   */
+  leaveSeconds: 0.9,
 } as const;
 
 export const enemyDefs: readonly EnemyDef[] = [clubEnemyDef];

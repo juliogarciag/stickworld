@@ -75,8 +75,8 @@ const LOOK = {
 const FINE = PENCIL.thickness * LOOK.finePencil;
 
 /**
- * TRYOUT (#44, comes out before merge): the same drawing in its parts, still and without brows,
- * for the ways an enemy may die that take it apart. In world pixels.
+ * The same drawing in its parts, still and without brows: its body, its face, the arm that holds
+ * the club, and the club. For what takes it apart (`tornClubEnemy.ts`). In world pixels.
  */
 export function buildClubEnemyParts(enemy: ClubEnemyView): {
   body: Stroke[];

@@ -1,8 +1,8 @@
 /**
  * The thrust looked at a frame at a time, with the page's clock in the script's hands: what it
  * looks like as it goes out and is drawn back, that a second press during the drawing back does
- * nothing, that from just outside the club's reach the spear rubs the enemy out while the enemy
- * never swings, what the rubbing out looks like, and that dying, by a fall and by the club, costs
+ * nothing, that from just outside the club's reach the spear tears the enemy in two while the enemy
+ * never swings, what the tearing, the lying and the leaving look like, and that dying, by a fall and by the club, costs
  * neither the spear nor a second reading of the letter.
  */
 import { check, summarize, writeProof } from './lib.mjs';
@@ -136,35 +136,49 @@ try {
   await takeScreenshot(page, '09-outside-the-reach-of-the-club.png');
 
   await page.keyboard.press('KeyJ');
-  const rubbedOut = [];
-  let rubOutShots = 0;
-  for (let frame = 0; frame < 240; frame += 1) {
+  const torn = [];
+  const shotFrom = { tearing: 0.5, lying: 0, leaving: 0.3 };
+  const shotsTaken = [];
+  for (let frame = 0; frame < 480; frame += 1) {
     const now = await stepFrames(page);
-    rubbedOut.push(now);
-    const progress = now.enemies[0]?.rubbedOutProgress ?? null;
-    const isNextShot = progress !== null && progress >= [0.05, 0.35, 0.7][rubOutShots];
+    torn.push(now);
+    const state = now.enemies[0]?.torn ?? null;
+    const isNextShot =
+      state !== null && !shotsTaken.includes(state.action) && state.progress >= shotFrom[state.action];
     if (isNextShot) {
-      rubOutShots += 1;
-      await takeScreenshot(page, `10-rubbed-out-${rubOutShots}.png`);
+      shotsTaken.push(state.action);
+      await takeScreenshot(page, `10-torn-${shotsTaken.length}-${state.action}.png`);
     }
     if (now.enemies.length === 0) {
       break;
     }
   }
-  const beingRubbedOut = rubbedOut.filter((now) => now.enemies[0]?.rubbedOutProgress != null);
+  const whileTorn = torn.filter((now) => now.enemies[0]?.torn != null);
+  const actions = [...new Set(whileTorn.map((now) => now.enemies[0].torn.action))];
   results.push(
     check(
-      'the thrust from there rubs the enemy out: more and more, frame after frame, standing where it was struck, and then it is gone',
-      beingRubbedOut.length > 10 &&
-        beingRubbedOut.every((now, index) => index === 0 || now.enemies[0].rubbedOutProgress >= beingRubbedOut[index - 1].enemies[0].rubbedOutProgress) &&
-        beingRubbedOut.at(-1).enemies[0].rubbedOutProgress > 0.8 &&
-        beingRubbedOut.every((now) => now.enemies[0].position.x === nearEnd) &&
-        rubbedOut.at(-1).enemies.length === 0 &&
-        rubOutShots === 3,
-      `${beingRubbedOut.length} frames, ${rubOutShots} pictures`,
+      'the thrust from there tears the enemy in two: it tears, its halves lie, they leave, in that order, where it stood, and then it is gone',
+      actions.join(' ') === 'tearing lying leaving' &&
+        whileTorn.every((now) => now.enemies[0].position.x === nearEnd) &&
+        torn.at(-1).enemies.length === 0 &&
+        shotsTaken.length === 3,
+      `${actions.join(', ')}; ${whileTorn.length} frames, ${shotsTaken.length} pictures`,
     ),
   );
-  results.push(check('the stick man was not struck', rubbedOut.every((now) => now.stickMan.action !== 'struck')));
+  const framesOf = (action) => whileTorn.filter((now) => now.enemies[0].torn.action === action);
+  results.push(
+    check(
+      'each part goes on, frame after frame, and the halves lie long enough to be seen',
+      ['tearing', 'lying', 'leaving'].every((action) =>
+        framesOf(action).every(
+          (now, index, frames) =>
+            index === 0 || now.enemies[0].torn.progress >= frames[index - 1].enemies[0].torn.progress,
+        ),
+      ) && framesOf('lying').length >= 30,
+      `${framesOf('tearing').length} frames tearing, ${framesOf('lying').length} lying, ${framesOf('leaving').length} leaving`,
+    ),
+  );
+  results.push(check('the stick man was not struck', torn.every((now) => now.stickMan.action !== 'struck')));
   await stepFrames(page, 20);
   await takeScreenshot(page, '11-the-enemy-gone.png');
 
@@ -186,7 +200,7 @@ try {
         again.letter === null &&
         again.fallenItem === null &&
         again.enemies.length === 1 &&
-        again.enemies[0].rubbedOutProgress === null &&
+        again.enemies[0].torn === null &&
         again.enemies[0].position.x > nearEnd,
       `slot ${JSON.stringify(again.slots[0])}, enemy at ${again.enemies[0]?.position.x}`,
     ),
