@@ -1,6 +1,6 @@
-import { createSim, getEnemies, practiceLevels, type EnemyView } from '@stickworld/sim';
+import { createSim, getEnemies, practiceLevels, type ClubEnemyView } from '@stickworld/sim';
 import { describe, expect, it } from 'vitest';
-import { __testing__, buildEnemyStrokes } from './enemy';
+import { __testing__, buildClubEnemyStrokes } from './clubEnemy';
 import type { Stroke } from './strokes';
 import { convertToPixels } from './units';
 
@@ -8,7 +8,7 @@ const { LOOK } = __testing__;
 
 describe('the club enemy as it is drawn', () => {
   it('has a body, a hand at its back, two eyes, a mouth, an arm, a hand and a dotted club', () => {
-    const strokes = buildEnemyStrokes(WAITING, 0);
+    const strokes = buildClubEnemyStrokes(WAITING, 0);
     // Five lines of the box and the hand at its back, two eyes and a mouth, the arm, the hand on
     // the club, the club and its dots.
     expect(strokes).toHaveLength(6 + 3 + 3 + LOOK.clubDots);
@@ -21,7 +21,7 @@ describe('the club enemy as it is drawn', () => {
   });
 
   it('keeps its box inside the body the sim has: what stops the stick man is what is drawn', () => {
-    const box = buildEnemyStrokes(WAITING, 0).slice(0, 5);
+    const box = buildClubEnemyStrokes(WAITING, 0).slice(0, 5);
     const xs = box.flatMap((stroke) => stroke.points.map((point) => point.x));
     const ys = box.flatMap((stroke) => stroke.points.map((point) => point.y));
     const { position, width, height } = WAITING;
@@ -33,7 +33,7 @@ describe('the club enemy as it is drawn', () => {
 
   it('floats: nothing of its body touches the floor line under it', () => {
     const lowest = Math.max(
-      ...buildEnemyStrokes(WAITING, 0)
+      ...buildClubEnemyStrokes(WAITING, 0)
         .slice(0, 9)
         .flatMap((stroke) => stroke.points.map((point) => point.y)),
     );
@@ -42,7 +42,7 @@ describe('the club enemy as it is drawn', () => {
 
   it('draws its arm from the shoulder to the hand and its club from the hand to its end, where the sim has them', () => {
     for (const enemy of [WAITING, getEnemyDoing('windingUp'), getEnemyDoing('swinging')]) {
-      const strokes = buildEnemyStrokes(enemy, 0);
+      const strokes = buildClubEnemyStrokes(enemy, 0);
       // After the six lines of its body and the three of its face: the arm, the hand, the club.
       const arm = strokes[9]!;
       const club = strokes[11]!;
@@ -63,16 +63,16 @@ describe('the club enemy as it is drawn', () => {
   });
 
   it('frowns only while it means to strike, winding up and swinging, and the brows are the last lines: no other line changes its place', () => {
-    const frowning = buildEnemyStrokes({ ...WAITING, action: 'windingUp' }, 0);
-    expect(frowning.slice(0, -2)).toEqual(buildEnemyStrokes(WAITING, 0));
-    const count = buildEnemyStrokes(WAITING, 0).length;
-    expect(buildEnemyStrokes(getEnemyDoing('windingUp'), 0)).toHaveLength(count + 2);
-    expect(buildEnemyStrokes(getEnemyDoing('swinging'), 0)).toHaveLength(count + 2);
-    expect(buildEnemyStrokes(getEnemyDoing('recovering'), 0)).toHaveLength(count);
+    const frowning = buildClubEnemyStrokes({ ...WAITING, action: 'windingUp' }, 0);
+    expect(frowning.slice(0, -2)).toEqual(buildClubEnemyStrokes(WAITING, 0));
+    const count = buildClubEnemyStrokes(WAITING, 0).length;
+    expect(buildClubEnemyStrokes(getEnemyDoing('windingUp'), 0)).toHaveLength(count + 2);
+    expect(buildClubEnemyStrokes(getEnemyDoing('swinging'), 0)).toHaveLength(count + 2);
+    expect(buildClubEnemyStrokes(getEnemyDoing('recovering'), 0)).toHaveLength(count);
   });
 
   it('is drawn the other way round when it looks the other way', () => {
-    const mirrored: EnemyView = {
+    const mirrored: ClubEnemyView = {
       ...WAITING,
       facing: WAITING.facing === 1 ? -1 : 1,
       club: {
@@ -86,15 +86,15 @@ describe('the club enemy as it is drawn', () => {
     const getFarthestRight = (strokes: Stroke[]): number =>
       Math.max(...strokes.flatMap((stroke) => stroke.points.map((point) => point.x)));
     const middle = convertToPixels(WAITING.position.x);
-    expect(getFarthestLeft(buildEnemyStrokes(mirrored, 0)) - middle).toBeCloseTo(
-      middle - getFarthestRight(buildEnemyStrokes(WAITING, 0)),
+    expect(getFarthestLeft(buildClubEnemyStrokes(mirrored, 0)) - middle).toBeCloseTo(
+      middle - getFarthestRight(buildClubEnemyStrokes(WAITING, 0)),
       6,
     );
   });
 
   it('is drawn still, where the sim has it, on a sheet whose clock is endless: the one being turned away', () => {
-    const strokes = buildEnemyStrokes(WAITING, Infinity);
-    expect(strokes).toEqual(buildEnemyStrokes(WAITING, 0));
+    const strokes = buildClubEnemyStrokes(WAITING, Infinity);
+    expect(strokes).toEqual(buildClubEnemyStrokes(WAITING, 0));
     for (const stroke of strokes) {
       for (const point of stroke.points) {
         expect(Number.isFinite(point.x) && Number.isFinite(point.y)).toBe(true);
@@ -104,8 +104,8 @@ describe('the club enemy as it is drawn', () => {
 
   it('bobs a little as it floats, by the clock of the view, club and all', () => {
     const quarterOfBob = 1 / LOOK.bobsPerSecond / 4;
-    const still = buildEnemyStrokes(WAITING, 0);
-    const bobbed = buildEnemyStrokes(WAITING, quarterOfBob);
+    const still = buildClubEnemyStrokes(WAITING, 0);
+    const bobbed = buildClubEnemyStrokes(WAITING, quarterOfBob);
     bobbed.forEach((stroke, index) => {
       stroke.points.forEach((point, pointIndex) => {
         const before = still[index]!.points[pointIndex]!;
@@ -124,7 +124,7 @@ const WAITING = getEnemies(createSim({ level: YARD.id }))[0]!;
 /**
  * The yard's enemy as the sim has it a few ticks into `action`, the stick man standing in reach.
  */
-function getEnemyDoing(action: EnemyView['action']): EnemyView {
+function getEnemyDoing(action: ClubEnemyView['action']): ClubEnemyView {
   const sim = createSim({ level: YARD.id });
   sim.step([{ type: 'player/walk', direction: 1 }]);
   for (let tick = 0; tick < 3000; tick += 1) {

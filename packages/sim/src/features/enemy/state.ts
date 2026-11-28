@@ -1,11 +1,10 @@
 import { defineSlice } from '../../core/slice';
+import type { ClubEnemyAction } from './clubEnemy/defs';
 
 /**
- * What an enemy is doing: `waiting` where it is, `approaching` the stick man it sees, `windingUp`
- * with its club going back, `swinging` it over the top and down, `recovering` while it lifts the
- * club again.
+ * What an enemy is doing. Each kind has its own things to do; every kind starts a level `waiting`.
  */
-export type EnemyAction = 'waiting' | 'approaching' | 'windingUp' | 'swinging' | 'recovering';
+export type EnemyAction = ClubEnemyAction;
 
 export interface EnemyState {
   /** Which kind of enemy it is: an id of `enemyDefs`. */

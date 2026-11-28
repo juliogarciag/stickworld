@@ -61,5 +61,6 @@ export {
 export type { GameCommand, GamePlayAgainCommand } from './features/game/commands';
 export { getGame, type GameView } from './features/game/view';
 export { getNotes, type NoteView } from './features/note/view';
-export type { EnemyAction } from './features/enemy/state';
-export { getEnemies, type EnemyView } from './features/enemy/view';
+export type { ClubEnemyAction } from './features/enemy/clubEnemy/defs';
+export type { ClubEnemyView } from './features/enemy/clubEnemy/view';
+export { getEnemies, type EnemyBaseView, type EnemyView } from './features/enemy/view';

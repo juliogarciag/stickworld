@@ -14,7 +14,7 @@ import { keepUntilChanged } from '../hud/unchanged';
 import { MOVE_KEY_NAMES } from '../input/playerKeys';
 import { easeAirplanesOverTime, buildAirplaneStrokes, getPivotHeight } from '../render/airplane';
 import { getWorldSeenBy } from '../render/cameraView';
-import { buildEnemyStrokes } from '../render/enemy';
+import { buildClubEnemyStrokes } from '../render/clubEnemy';
 import { buildFlagStrokes } from '../render/flag';
 import { buildFloorStrokes } from '../render/floor';
 import { buildFallenPaperStrokes, buildLetterStrokes } from '../render/letter';
@@ -146,8 +146,10 @@ export class Sheet {
       letter ? buildLetterStrokes(letter) : fallenItem ? buildFallenPaperStrokes(fallenItem) : [],
     );
     this.airplane.show(airplane ? buildAirplaneStrokes(airplane) : []);
+    // Every enemy is a club enemy so far. A second kind has its own drawing, picked here by the
+    // `kind` of each enemy.
     this.enemies.show(
-      getEnemies(frame.sim).flatMap((enemy) => buildEnemyStrokes(enemy, frame.secondsOnSheet)),
+      getEnemies(frame.sim).flatMap((enemy) => buildClubEnemyStrokes(enemy, frame.secondsOnSheet)),
     );
     const pose = this.poseFor(stickMan, frame.seconds, level.floor);
     // Seated, the stick man tips with the airplane as it is drawn, about the point it is drawn

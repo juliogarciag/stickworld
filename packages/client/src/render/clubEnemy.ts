@@ -1,4 +1,4 @@
-import type { EnemyView, Point } from '@stickworld/sim';
+import type { ClubEnemyView, Point } from '@stickworld/sim';
 import type { Stroke, StrokePoint } from './strokes';
 import { PENCIL } from './strokes/pencil';
 import { convertToPixels } from './units';
@@ -70,7 +70,7 @@ const FINE = PENCIL.thickness * LOOK.finePencil;
  * The strokes that draw `enemy`, in world pixels. `seconds` is the view's own clock, for the way it
  * bobs as it floats.
  */
-export function buildEnemyStrokes(enemy: EnemyView, seconds: number): Stroke[] {
+export function buildClubEnemyStrokes(enemy: ClubEnemyView, seconds: number): Stroke[] {
   // A sheet that is being turned away has no clock of its own (its time is endless): the enemy on
   // it is still.
   const bob = Number.isFinite(seconds)
@@ -105,12 +105,12 @@ interface Line {
  * Where a point of its body is: `forward` metres from its middle the way it faces, `up` metres
  * above its underside.
  */
-function getBodyPoint(enemy: EnemyView, forward: number, up: number): Point {
+function getBodyPoint(enemy: ClubEnemyView, forward: number, up: number): Point {
   return { x: enemy.position.x + forward * enemy.facing, y: enemy.position.y - up };
 }
 
 /** The part of its body that is its face: from where its side ends to its front edge. */
-function getFace(enemy: EnemyView): { back: number; front: number; top: number } {
+function getFace(enemy: ClubEnemyView): { back: number; front: number; top: number } {
   return {
     back: -enemy.width / 2 + enemy.width * LOOK.sideWidth,
     front: enemy.width / 2,
@@ -119,7 +119,7 @@ function getFace(enemy: EnemyView): { back: number; front: number; top: number }
 }
 
 /** The box: its face, the side beside it, the peak of its top, and the hand at its back. */
-function buildBodyLines(enemy: EnemyView): Line[] {
+function buildBodyLines(enemy: ClubEnemyView): Line[] {
   const face = getFace(enemy);
   const farEdge = -enemy.width / 2;
   const rise = enemy.height * LOOK.sideRise;
@@ -155,7 +155,7 @@ function buildBodyLines(enemy: EnemyView): Line[] {
 }
 
 /** Where its eyes are: how far forward of its middle each is, and how high up its body. */
-function getEyes(enemy: EnemyView): { forward: readonly [number, number]; up: number } {
+function getEyes(enemy: ClubEnemyView): { forward: readonly [number, number]; up: number } {
   const face = getFace(enemy);
   const middle = (face.back + face.front) / 2;
   const spacing = enemy.width * LOOK.eyeSpacing;
@@ -163,7 +163,7 @@ function getEyes(enemy: EnemyView): { forward: readonly [number, number]; up: nu
 }
 
 /** A brow over each eye, each coming down towards the middle of its face: a frown. */
-function buildBrowLines(enemy: EnemyView): Line[] {
+function buildBrowLines(enemy: ClubEnemyView): Line[] {
   const eyes = getEyes(enemy);
   const browUp = eyes.up + enemy.height * LOOK.browAbove;
   const half = (enemy.width * LOOK.browLength) / 2;
@@ -180,7 +180,7 @@ function buildBrowLines(enemy: EnemyView): Line[] {
 }
 
 /** Two scribbled eyes and a wavy mouth. */
-function buildFaceLines(enemy: EnemyView): Line[] {
+function buildFaceLines(enemy: ClubEnemyView): Line[] {
   const face = getFace(enemy);
   const middle = (face.back + face.front) / 2;
   const eyes = getEyes(enemy);
@@ -211,7 +211,7 @@ function buildFaceLines(enemy: EnemyView): Line[] {
  * Its arm from the shoulder to the hand, the hand, and the club from the hand to its end: wider at
  * the end, with dots along it. Exactly where the sim has them.
  */
-function buildArmAndClubLines(enemy: EnemyView): Line[] {
+function buildArmAndClubLines(enemy: ClubEnemyView): Line[] {
   const { shoulder, grip, tip, thickness } = enemy.club;
   const length = Math.hypot(tip.x - grip.x, tip.y - grip.y) || 1;
   const lengthwise = { x: (tip.x - grip.x) / length, y: (tip.y - grip.y) / length };

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { Command } from '../../core/commands';
 import { createSim } from '../../core/create';
 import type { SimHandle } from '../../core/sim';
-import { clubEnemyDef } from '../../features/enemy/defs';
+import { clubEnemyDef } from '../../features/enemy/clubEnemy/defs';
 import { getEnemies } from '../../features/enemy/view';
 import { getFlag } from '../../features/flag/view';
 import { getStickMan } from '../../features/player/view';

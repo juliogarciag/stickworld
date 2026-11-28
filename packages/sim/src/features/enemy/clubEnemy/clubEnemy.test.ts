@@ -1,19 +1,19 @@
 import { describe, expect, it } from 'vitest';
-import { clubYard } from '../../content/levels/clubYard';
-import { STICK_MAN_HEIGHT, STICK_MAN_WIDTH } from '../../content/tuning';
-import type { Command } from '../../core/commands';
-import { createSim, restoreSim } from '../../core/create';
-import type { SimHandle } from '../../core/sim';
-import { hashSnapshot } from '../../core/snapshot';
-import { getFlag } from '../flag/view';
-import { getInteraction } from '../world/view';
-import { getItemUse } from '../item/view';
-import { PLAYER } from '../player/defs';
-import { getStickMan } from '../player/view';
+import { clubYard } from '../../../content/levels/clubYard';
+import { STICK_MAN_HEIGHT, STICK_MAN_WIDTH } from '../../../content/tuning';
+import type { Command } from '../../../core/commands';
+import { createSim, restoreSim } from '../../../core/create';
+import type { SimHandle } from '../../../core/sim';
+import { hashSnapshot } from '../../../core/snapshot';
+import { getFlag } from '../../flag/view';
+import { getInteraction } from '../../world/view';
+import { getItemUse } from '../../item/view';
+import { PLAYER } from '../../player/defs';
+import { getStickMan } from '../../player/view';
 import { clubEnemyDef } from './defs';
-import { getGuardedStretch } from './index';
-import type { EnemyState } from './state';
-import { getEnemies, type EnemyView } from './view';
+import { getGuardedStretch } from '../guard';
+import type { EnemyState } from '../state';
+import { getEnemies, type EnemyView } from '../view';
 
 describe('the club enemy at its post', () => {
   it('floats over the floor where the level put it, waiting, while the stick man is out of sight', () => {

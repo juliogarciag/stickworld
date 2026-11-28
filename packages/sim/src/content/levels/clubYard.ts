@@ -1,4 +1,4 @@
-import { CLUB_ENEMY_ID } from '../../features/enemy/defs';
+import { CLUB_ENEMY_ID } from '../../features/enemy/clubEnemy/defs';
 import { FLAG_DEF_ID } from '../../features/flag/defs';
 import type { Level } from './types';
 

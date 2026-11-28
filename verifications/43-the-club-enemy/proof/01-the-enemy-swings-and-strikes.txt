@@ -2,13 +2,13 @@ PASS  VITE_LEVEL=900 starts on the practice yard, which has one enemy  (level 90
 PASS  the enemy waits at the post the level gives it, floating over the floor by what its def says  (at (12, -0.1), waiting)
 PASS  it is a kind of enemy from the defs, with every number of how it fights  (def 500 "club enemy")
 PASS  it sees the stick man from its sight distance, turns to it and comes towards it  (seen from 4.95 m, sight distance 5 m)
-PASS  it moves along the floor inside the stretch it guards  (at 10.97, guards 9 to 15)
-PASS  it winds up before it swings: the club is on its way back from where it holds it, and the stick man is not hurt yet  (club end 0.68 m in front of its shoulder at rest, 0.12 m now, 26% through the wind-up; stick man walking)
-PASS  the club strikes the stick man who stayed in its reach: struck down by the swing, knocked away from the enemy  (struck 0.72 m from its middle, 45% through the swing, the club 0.92 m above its top)
+PASS  it moves along the floor inside the stretch it guards  (at 11.00, guards 9 to 15)
+PASS  it winds up before it swings: the club is on its way back from where it holds it, and the stick man is not hurt yet  (club end 0.68 m in front of its shoulder at rest, 0.06 m now, 29% through the wind-up; stick man walking)
+PASS  the club strikes the stick man who stayed in its reach: struck down by the swing, knocked away from the enemy  (struck 0.72 m from its middle, 55% through the swing, the club 0.68 m above its top)
 PASS  struck down, neither action key would do anything  (J: null, K: null)
 PASS  the stick man lies where it was struck whatever is pressed  (at 9.80 for 0.72 s)
 PASS  after a pause the level starts again: the stick man at the start, the enemy back at its post  (stick man at 2.00, enemy at 12)
-PASS  the pause is long enough to see what happened and short enough to try again at once  (1.30 s from the blow to the new start)
+PASS  the pause is long enough to see what happened and short enough to try again at once  (1.28 s from the blow to the new start)
 PASS  walking in again is struck down again: the stick man goes over, away from the enemy  (0.13 s after the blow)
 PASS  no page errors
 

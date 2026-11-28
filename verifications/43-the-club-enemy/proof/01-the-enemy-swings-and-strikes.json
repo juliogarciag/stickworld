@@ -95,6 +95,11 @@
         "height": 1.2,
         "floatHeight": 0.1,
         "facing": -1,
+        "guardedStretch": {
+          "start": 9,
+          "end": 15
+        },
+        "kind": "clubEnemy",
         "action": "waiting",
         "progress": 0,
         "club": {
@@ -111,10 +116,6 @@
             "y": -2.186811040092153
           },
           "thickness": 0.26
-        },
-        "guardedStretch": {
-          "start": 9,
-          "end": 15
         }
       }
     ],
@@ -128,6 +129,11 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "facing": -1,
+      "guardedStretch": {
+        "start": 9,
+        "end": 15
+      },
+      "kind": "clubEnemy",
       "action": "waiting",
       "progress": 0,
       "club": {
@@ -144,10 +150,6 @@
           "y": -2.186811040092153
         },
         "thickness": 0.26
-      },
-      "guardedStretch": {
-        "start": 9,
-        "end": 15
       }
     },
     "enemyDef": {
@@ -190,7 +192,7 @@
     "interaction": null
   },
   "seen": {
-    "tick": 155,
+    "tick": 156,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -260,6 +262,11 @@
         "height": 1.2,
         "floatHeight": 0.1,
         "facing": -1,
+        "guardedStretch": {
+          "start": 9,
+          "end": 15
+        },
+        "kind": "clubEnemy",
         "action": "approaching",
         "progress": 0,
         "club": {
@@ -276,10 +283,6 @@
             "y": -2.186811040092153
           },
           "thickness": 0.26
-        },
-        "guardedStretch": {
-          "start": 9,
-          "end": 15
         }
       }
     ],
@@ -293,6 +296,11 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "facing": -1,
+      "guardedStretch": {
+        "start": 9,
+        "end": 15
+      },
+      "kind": "clubEnemy",
       "action": "approaching",
       "progress": 0,
       "club": {
@@ -309,10 +317,6 @@
           "y": -2.186811040092153
         },
         "thickness": 0.26
-      },
-      "guardedStretch": {
-        "start": 9,
-        "end": 15
       }
     },
     "enemyDef": {
@@ -355,7 +359,7 @@
     "interaction": null
   },
   "woundUp": {
-    "tick": 229,
+    "tick": 231,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -397,12 +401,12 @@
     },
     "stickMan": {
       "feet": {
-        "x": 9.736666666666727,
+        "x": 9.773333333333394,
         "y": 0
       },
       "facing": 1,
       "action": "walking",
-      "distanceWalked": 7.736666666666727,
+      "distanceWalked": 7.773333333333394,
       "verticalSpeed": 0,
       "horizontalSpeed": 2.2,
       "isFallingOffEdge": false,
@@ -425,26 +429,27 @@
         "height": 1.2,
         "floatHeight": 0.1,
         "facing": -1,
+        "guardedStretch": {
+          "start": 9,
+          "end": 15
+        },
+        "kind": "clubEnemy",
         "action": "windingUp",
-        "progress": 0.2619047619047619,
+        "progress": 0.2857142857142857,
         "club": {
           "shoulder": {
             "x": 10.529999999999994,
             "y": -0.85
           },
           "grip": {
-            "x": 10.487176834582721,
-            "y": -1.3983303534400089
+            "x": 10.506783206445261,
+            "y": -1.3995097637868112
           },
           "tip": {
-            "x": 10.413209548861978,
-            "y": -2.345446418472751
+            "x": 10.466681472123453,
+            "y": -2.3486629921458486
           },
           "thickness": 0.26
-        },
-        "guardedStretch": {
-          "start": 9,
-          "end": 15
         }
       }
     ],
@@ -458,26 +463,27 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "facing": -1,
+      "guardedStretch": {
+        "start": 9,
+        "end": 15
+      },
+      "kind": "clubEnemy",
       "action": "windingUp",
-      "progress": 0.2619047619047619,
+      "progress": 0.2857142857142857,
       "club": {
         "shoulder": {
           "x": 10.529999999999994,
           "y": -0.85
         },
         "grip": {
-          "x": 10.487176834582721,
-          "y": -1.3983303534400089
+          "x": 10.506783206445261,
+          "y": -1.3995097637868112
         },
         "tip": {
-          "x": 10.413209548861978,
-          "y": -2.345446418472751
+          "x": 10.466681472123453,
+          "y": -2.3486629921458486
         },
         "thickness": 0.26
-      },
-      "guardedStretch": {
-        "start": 9,
-        "end": 15
       }
     },
     "enemyDef": {
@@ -520,7 +526,7 @@
     "interaction": null
   },
   "struck": {
-    "tick": 265,
+    "tick": 267,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -573,7 +579,7 @@
       "isFallingOffEdge": false,
       "walkDirectionAsked": 1,
       "isCarrying": false,
-      "struckFor": 0,
+      "struckFor": 0.016666666666666666,
       "struckDirection": -1
     },
     "stickManWidth": 0.65,
@@ -590,26 +596,27 @@
         "height": 1.2,
         "floatHeight": 0.1,
         "facing": -1,
+        "guardedStretch": {
+          "start": 9,
+          "end": 15
+        },
+        "kind": "clubEnemy",
         "action": "swinging",
-        "progress": 0.45454545454545453,
+        "progress": 0.5454545454545454,
         "club": {
           "shoulder": {
             "x": 10.529999999999994,
             "y": -0.85
           },
           "grip": {
-            "x": 10.303052326468237,
-            "y": -1.3509937659078435
+            "x": 10.168891214206258,
+            "y": -1.2648499063788903
           },
           "tip": {
-            "x": 9.91105179945884,
-            "y": -2.2163466342941183
+            "x": 9.54515785692617,
+            "y": -1.9814088355787915
           },
           "thickness": 0.26
-        },
-        "guardedStretch": {
-          "start": 9,
-          "end": 15
         }
       }
     ],
@@ -623,26 +630,27 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "facing": -1,
+      "guardedStretch": {
+        "start": 9,
+        "end": 15
+      },
+      "kind": "clubEnemy",
       "action": "swinging",
-      "progress": 0.45454545454545453,
+      "progress": 0.5454545454545454,
       "club": {
         "shoulder": {
           "x": 10.529999999999994,
           "y": -0.85
         },
         "grip": {
-          "x": 10.303052326468237,
-          "y": -1.3509937659078435
+          "x": 10.168891214206258,
+          "y": -1.2648499063788903
         },
         "tip": {
-          "x": 9.91105179945884,
-          "y": -2.2163466342941183
+          "x": 9.54515785692617,
+          "y": -1.9814088355787915
         },
         "thickness": 0.26
-      },
-      "guardedStretch": {
-        "start": 9,
-        "end": 15
       }
     },
     "enemyDef": {
@@ -685,7 +693,7 @@
     "interaction": null
   },
   "goingDown": {
-    "tick": 599,
+    "tick": 600,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -755,6 +763,11 @@
         "height": 1.2,
         "floatHeight": 0.1,
         "facing": -1,
+        "guardedStretch": {
+          "start": 9,
+          "end": 15
+        },
+        "kind": "clubEnemy",
         "action": "recovering",
         "progress": 0.016666666666666666,
         "club": {
@@ -771,10 +784,6 @@
             "y": -0.03844829966873731
           },
           "thickness": 0.26
-        },
-        "guardedStretch": {
-          "start": 9,
-          "end": 15
         }
       }
     ],
@@ -788,6 +797,11 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "facing": -1,
+      "guardedStretch": {
+        "start": 9,
+        "end": 15
+      },
+      "kind": "clubEnemy",
       "action": "recovering",
       "progress": 0.016666666666666666,
       "club": {
@@ -804,10 +818,6 @@
           "y": -0.03844829966873731
         },
         "thickness": 0.26
-      },
-      "guardedStretch": {
-        "start": 9,
-        "end": 15
       }
     },
     "enemyDef": {
@@ -850,7 +860,7 @@
     "interaction": null
   },
   "lying": {
-    "tick": 308,
+    "tick": 309,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -920,6 +930,11 @@
         "height": 1.2,
         "floatHeight": 0.1,
         "facing": -1,
+        "guardedStretch": {
+          "start": 9,
+          "end": 15
+        },
+        "kind": "clubEnemy",
         "action": "recovering",
         "progress": 0.30833333333333335,
         "club": {
@@ -936,10 +951,6 @@
             "y": -0.7363589922384026
           },
           "thickness": 0.26
-        },
-        "guardedStretch": {
-          "start": 9,
-          "end": 15
         }
       }
     ],
@@ -953,6 +964,11 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "facing": -1,
+      "guardedStretch": {
+        "start": 9,
+        "end": 15
+      },
+      "kind": "clubEnemy",
       "action": "recovering",
       "progress": 0.30833333333333335,
       "club": {
@@ -969,10 +985,6 @@
           "y": -0.7363589922384026
         },
         "thickness": 0.26
-      },
-      "guardedStretch": {
-        "start": 9,
-        "end": 15
       }
     },
     "enemyDef": {
@@ -1015,7 +1027,7 @@
     "interaction": null
   },
   "again": {
-    "tick": 343,
+    "tick": 344,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -1085,6 +1097,11 @@
         "height": 1.2,
         "floatHeight": 0.1,
         "facing": -1,
+        "guardedStretch": {
+          "start": 9,
+          "end": 15
+        },
+        "kind": "clubEnemy",
         "action": "waiting",
         "progress": 0,
         "club": {
@@ -1101,10 +1118,6 @@
             "y": -2.186811040092153
           },
           "thickness": 0.26
-        },
-        "guardedStretch": {
-          "start": 9,
-          "end": 15
         }
       }
     ],
@@ -1118,6 +1131,11 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "facing": -1,
+      "guardedStretch": {
+        "start": 9,
+        "end": 15
+      },
+      "kind": "clubEnemy",
       "action": "waiting",
       "progress": 0,
       "club": {
@@ -1134,10 +1152,6 @@
           "y": -2.186811040092153
         },
         "thickness": 0.26
-      },
-      "guardedStretch": {
-        "start": 9,
-        "end": 15
       }
     },
     "enemyDef": {
@@ -1203,17 +1217,17 @@
     {
       "name": "it moves along the floor inside the stretch it guards",
       "pass": true,
-      "details": "at 10.97, guards 9 to 15"
+      "details": "at 11.00, guards 9 to 15"
     },
     {
       "name": "it winds up before it swings: the club is on its way back from where it holds it, and the stick man is not hurt yet",
       "pass": true,
-      "details": "club end 0.68 m in front of its shoulder at rest, 0.12 m now, 26% through the wind-up; stick man walking"
+      "details": "club end 0.68 m in front of its shoulder at rest, 0.06 m now, 29% through the wind-up; stick man walking"
     },
     {
       "name": "the club strikes the stick man who stayed in its reach: struck down by the swing, knocked away from the enemy",
       "pass": true,
-      "details": "struck 0.72 m from its middle, 45% through the swing, the club 0.92 m above its top"
+      "details": "struck 0.72 m from its middle, 55% through the swing, the club 0.68 m above its top"
     },
     {
       "name": "struck down, neither action key would do anything",
@@ -1233,7 +1247,7 @@
     {
       "name": "the pause is long enough to see what happened and short enough to try again at once",
       "pass": true,
-      "details": "1.30 s from the blow to the new start"
+      "details": "1.28 s from the blow to the new start"
     },
     {
       "name": "walking in again is struck down again: the stick man goes over, away from the enemy",
