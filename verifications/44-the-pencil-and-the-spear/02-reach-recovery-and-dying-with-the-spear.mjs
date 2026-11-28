@@ -9,7 +9,6 @@ import { check, summarize, writeProof } from './lib.mjs';
 import {
   getItemId,
   openGame,
-  readGame,
   stepFrames,
   stepFramesUntil,
   takeScreenshot,
