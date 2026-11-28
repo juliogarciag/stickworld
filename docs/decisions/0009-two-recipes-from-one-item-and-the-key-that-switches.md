@@ -1,6 +1,6 @@
 # 0009 - Two recipes from one item: one is chosen, and a key switches the use of the item
 
-Status: accepted. Date: 2026-11-27.
+Status: accepted. Date: 2026-11-27. Supersedes one consequence of 0003 ("A list returns when two recipes are made from the same item"): no list returns. It also adds an optional `switchUse` to the `{ means, perform }` an answer returns; the rest of 0003 stands.
 
 ## Context
 
@@ -32,5 +32,7 @@ So J with the paper has two meanings for a stick man that knows both recipes, an
 - A recipe id in `chosenRecipe` may be made from an item the stick man does not hold; it is then ignored and the last learned recipe for the held item is made. Nothing has to keep the two in step.
 - A feature whose item has two uses of its own returns `switchUse` from its answer and needs nothing else: the command, the key and the "busy" rule are there.
 - A stick man that folds an airplane on the spear's level has spent its paper on the wrong thing. It is not stuck: a new sheet falls, picking it up takes the place of the airplane in the slot, and the sheet is for the spear again.
-- A stick man holding the spear that reads another letter with its one slot full loses the spear, and nothing gives it back. No level of the game can reach that yet; the first level after the spear's that has a letter has to settle it, with a rule about what a letter may replace.
+- A stick man holding the spear that reads another letter with its one slot full loses the spear, and nothing gives it back. The same goes for the sheet picked up from the floor and for what a level gives back when it starts again: each takes the place of what the slot held. No level of the game can reach that yet; the first level after the spear's that has a letter has to settle it, with a rule about what a letter may replace.
+- The spear is not thrust with both hands on an airplane carried overhead, or from a seat: J answers nothing then. No level puts both in the stick man's reach yet.
+- A level that starts again starts with no thrust under way, so a death can bring the next thrust sooner than a thrust costs. The stick man is back at the start of the level then.
 - Dev builds gain `window.__game.loadSnapshot(snapshot)` and `canSwitchItemUse()`: until a level follows level 3 (#45), a snapshot with both recipes known is the only way to see the choice in the app.

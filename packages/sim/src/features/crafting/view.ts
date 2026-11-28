@@ -25,13 +25,13 @@ export function getCrafting(handle: SimHandle): CraftingView {
     throw new TypeError('not a sim made by createSim or restoreSim');
   }
   const canMake = findCraftableRecipe(handle);
-  const other = findRecipeToSwitchTo(handle);
+  const next = findRecipeToSwitchTo(handle);
   return {
     knownRecipes: getKnownRecipes(handle).map((recipe) => ({
       defId: recipe.id,
       name: recipe.name,
     })),
     canMake: canMake ? { defId: canMake.id, name: canMake.name } : null,
-    couldMakeInstead: other ? { defId: other.id, name: other.name } : null,
+    couldMakeInstead: next ? { defId: next.id, name: next.name } : null,
   };
 }

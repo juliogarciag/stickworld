@@ -473,6 +473,17 @@ describe('the letter about the spear', () => {
 });
 
 describe('level 3 for the stick man that knows the spear too', () => {
+  it('gives the airplane on a retry in place of a spear in its one slot: what a level gives back takes the place of what it held', () => {
+    const sim = createSimOnLevel3WithPaper();
+    readLetter(sim);
+    sim.step([INTERACT]);
+    teachRecipe(sim, SPEAR_RECIPE_ID);
+    sim.step([USE_ITEM]);
+    expect(getItemSlots(sim)[0]?.itemDefId).toBe(SPEAR_ITEM_ID);
+    sim.startLevel(sim.level);
+    expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, isSelected: true }]);
+  });
+
   it('still folds the airplane with one press after its letter is read: the letter read last is what the paper is for', () => {
     const sim = createSimOnLevel3WithPaper();
     teachRecipe(sim, SPEAR_RECIPE_ID);

@@ -56,11 +56,16 @@ export const spearFeature: Feature = {
 
 /**
  * What using the held item does when it is the spear, for `features/item`: the stick man thrusts
- * it the way it faces. Undefined while a thrust is under way, the drawing back included.
+ * it the way it faces. Undefined while a thrust is under way, the drawing back included, and
+ * while its hands are on something else: what it carries over its head, or what it sits in.
  */
 export function getSpearUse(sim: Sim) {
   const thrust = sim.getStateOf(thrustSlice);
-  const canThrust = getSelectedItem(sim) === SPEAR_ITEM_ID && thrust.ticksSinceBegun === null;
+  const player = getPlayerBody(sim);
+  // Both hands on what it carries over its head, or on what it sits in, it has none for a thrust.
+  const hasHandFree = !player.isCarrying && !player.isSeated;
+  const canThrust =
+    getSelectedItem(sim) === SPEAR_ITEM_ID && thrust.ticksSinceBegun === null && hasHandFree;
   if (!canThrust) {
     return undefined;
   }

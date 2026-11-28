@@ -18,7 +18,7 @@ import { playerSlice, type PlayerState } from './state';
  * again after changing the stick man rather than keeping it.
  */
 export type PlayerBody = Readonly<
-  Pick<PlayerState, 'x' | 'y' | 'facing' | 'isOnFloor' | 'isSeated'>
+  Pick<PlayerState, 'x' | 'y' | 'facing' | 'isOnFloor' | 'isSeated' | 'isCarrying'>
 >;
 
 export function getPlayerBody(sim: Sim): PlayerBody {

@@ -129,6 +129,15 @@ describe('two recipes made from the same item', () => {
     expect(getCrafting(made).couldMakeInstead).toBeNull();
   });
 
+  it('switches and makes in one tick, in the order the two were pressed', () => {
+    const switchedFirst = createSimKnowingBoth();
+    switchedFirst.step([SWITCH_USE, USE_ITEM]);
+    expect(getItemSlots(switchedFirst)[0]?.itemDefId).toBe(AIRPLANE_ITEM_ID);
+    const madeFirst = createSimKnowingBoth();
+    madeFirst.step([USE_ITEM, SWITCH_USE]);
+    expect(getItemSlots(madeFirst)[0]?.itemDefId).toBe(SPEAR_ITEM_ID);
+  });
+
   it('makes a recipe learned again the chosen one', () => {
     const sim = createSimKnowingBoth();
     teachRecipe(sim, PAPER_AIRPLANE_RECIPE_ID);

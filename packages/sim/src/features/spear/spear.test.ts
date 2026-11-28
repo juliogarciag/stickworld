@@ -3,7 +3,8 @@ import { clubYard } from '../../content/levels/clubYard';
 import { STICK_MAN_WIDTH } from '../../content/tuning';
 import type { Command } from '../../core/commands';
 import { createSim, restoreSim } from '../../core/create';
-import type { SimHandle } from '../../core/sim';
+import { Sim, type SimHandle } from '../../core/sim';
+import { features } from '..';
 import { hashSnapshot } from '../../core/snapshot';
 import { SPEAR_RECIPE_ID } from '../crafting/defs';
 import { getCrafting } from '../crafting/view';
@@ -11,7 +12,8 @@ import { clubEnemyDef } from '../enemy/clubEnemy/defs';
 import { ENEMY } from '../enemy/defs';
 import { getEnemies } from '../enemy/view';
 import { getFlag } from '../flag/view';
-import { PAPER_ITEM_ID, SPEAR_ITEM_ID } from '../inventory/defs';
+import { AIRPLANE_ITEM_ID, PAPER_ITEM_ID, SPEAR_ITEM_ID } from '../inventory/defs';
+import { giveItem } from '../inventory/give';
 import { getItemSlots } from '../inventory/view';
 import { getItemUse } from '../item/view';
 import { findLetterPlacedIn } from '../letter';
@@ -130,6 +132,23 @@ describe('a thrust', () => {
     sim.step([STOP, USE]);
     stepFor(sim, THRUST_TICKS - 1);
     expect(getSpear(sim)!.tip.x).toBeCloseTo(getStickMan(sim).feet.x - SPEAR.reach);
+  });
+
+  it('is not made with both hands on an airplane over its head: no J is offered until the airplane is put down', () => {
+    const sim = new Sim({ features, start: { seed: 1, level: clubYard.id } });
+    giveItem(sim, AIRPLANE_ITEM_ID);
+    sim.step([SELECT_FIRST]);
+    sim.step([USE]);
+    // The slot the airplane left is still the selected one.
+    giveItem(sim, SPEAR_ITEM_ID);
+    expect(getItemUse(sim)).toBe('thrust');
+    sim.step([INTERACT]);
+    expect(getStickMan(sim).isCarrying).toBe(true);
+    expect(getItemUse(sim)).toBeNull();
+    sim.step([USE]);
+    expect(getSpear(sim)!.action).toBe('ready');
+    sim.step([INTERACT]);
+    expect(getItemUse(sim)).toBe('thrust');
   });
 
   it('costs a miss more than a moment: the stick man is without a thrust for longer than the enemy takes to cover the ground the spear outreaches its club by', () => {

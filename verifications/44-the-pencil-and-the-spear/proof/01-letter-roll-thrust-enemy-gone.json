@@ -1,10 +1,10 @@
 {
-  "reach": 2.0733333333333333,
+  "reach": 1.8866666666666667,
   "clubReach": 1.9550000000000003,
-  "spearHitsFrom": 2.473333333333333,
-  "thrustSeconds": 0.5,
+  "spearHitsFrom": 2.2866666666666666,
+  "thrustSeconds": 0.36666666666666664,
   "atFlag": {
-    "tick": 868,
+    "tick": 1313,
     "dt": 0.016666666666666666,
     "level": 900,
     "start": {
@@ -71,7 +71,7 @@
       "height": 2.2,
       "isReached": true,
       "upFor": 0,
-      "raised": 0.11111111111111112,
+      "raised": 0.16666666666666669,
       "isFinalFlag": false
     },
     "fallenItem": null
@@ -118,12 +118,12 @@
     {
       "name": "J thrusts: the point is out in front of the stick man, further than it is held ready, and then the spear is drawn back",
       "pass": true,
-      "details": "reach seen 2.07 m, ready at 1.30 m, 10 frames drawn"
+      "details": "reach seen 1.89 m, ready at 1.30 m, 5 frames drawn"
     },
     {
       "name": "a thrust costs time: no J is offered until the spear is drawn back",
       "pass": true,
-      "details": "0.50 s from the press to ready again"
+      "details": "0.37 s from the press to ready again"
     },
     {
       "name": "the spear is still in its hand after the thrust, and the enemy untouched",
@@ -132,17 +132,17 @@
     {
       "name": "the spear reaches the enemy from further away than its club reaches the stick man",
       "pass": true,
-      "details": "spear from 2.47 m, club from 1.96 m, middle to middle"
+      "details": "spear from 2.29 m, club from 1.96 m, middle to middle"
     },
     {
       "name": "it thrusts from outside the reach of the club",
       "pass": true,
-      "details": "2.01 m away, the enemy approaching"
+      "details": "1.95 m away, the enemy approaching"
     },
     {
       "name": "the thrust reaches the enemy: it is being rubbed out",
       "pass": true,
-      "details": "rubbed out 0.16666666666666666"
+      "details": "rubbed out 0.3"
     },
     {
       "name": "a moment later the enemy is gone",

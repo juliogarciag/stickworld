@@ -59,7 +59,10 @@ export function findItemUseSwitch(sim: Sim): (() => void) | undefined {
   return hasSwitch ? use.switchUse : undefined;
 }
 
-/** Every use an item has. No item has two yet, so the order decides nothing so far. */
+/**
+ * Every use an item has. No item is answered for by two of these yet, so the order decides
+ * nothing so far; the two things the paper is made into are one answer, crafting's.
+ */
 const ANSWERS = [getCraftingUse, getAirplaneItemUse, getSpearUse] as const;
 
 export type ItemUse = NonNullable<ReturnType<(typeof ANSWERS)[number]>>;

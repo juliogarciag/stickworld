@@ -84,11 +84,11 @@ export function getCraftingUse(sim: Sim) {
   if (!recipe) {
     return undefined;
   }
-  const other = findRecipeToSwitchTo(sim);
+  const next = findRecipeToSwitchTo(sim);
   return {
     means: 'craft' as const,
     perform: () => void replaceSelectedItem(sim, recipe.makes),
-    switchUse: other ? () => sim.setStateOf(chosenRecipeSlice, other.id) : undefined,
+    switchUse: next ? () => sim.setStateOf(chosenRecipeSlice, next.id) : undefined,
   };
 }
 
