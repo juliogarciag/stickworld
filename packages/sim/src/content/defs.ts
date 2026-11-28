@@ -1,3 +1,4 @@
+import { enemyDefs } from '../features/enemy/defs';
 import { flagDefs } from '../features/flag/defs';
 import { recipeDefs } from '../features/crafting/defs';
 import { itemDefs } from '../features/inventory/defs';
@@ -15,15 +16,22 @@ import { letterDefs } from '../features/letter/defs';
  *     200-299  inventory: the items the stick man can hold
  *     300-399  letter
  *     400-499  crafting: the recipes
+ *     500-599  enemy: the kinds of enemy
  *
- * The next free block is 500-599.
+ * The next free block is 600-699.
  */
 export interface Def {
   readonly id: number;
   readonly name: string;
 }
 
-export const defs: readonly Def[] = [...flagDefs, ...itemDefs, ...letterDefs, ...recipeDefs];
+export const defs: readonly Def[] = [
+  ...flagDefs,
+  ...itemDefs,
+  ...letterDefs,
+  ...recipeDefs,
+  ...enemyDefs,
+];
 
 assertUniqueIds(defs);
 

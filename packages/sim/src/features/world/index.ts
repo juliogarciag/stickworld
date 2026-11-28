@@ -3,6 +3,7 @@ import type { Sim } from '../../core/sim';
 import { getAirplaneInteraction } from '../airplane';
 import { getFallenItemInteraction, getLetterBeingRead, getLetterInteraction } from '../letter';
 import { isFlagReached } from '../flag';
+import { isPlayerStruck } from '../player/body';
 
 /**
  * Interacting with the world: one command, `'world/interact'`, whose meaning
@@ -28,7 +29,9 @@ export const worldFeature: Feature = {
  * there is nothing to interact with.
  */
 export function getInteractionNow(sim: Sim): Interaction | undefined {
-  if (isFlagReached(sim)) {
+  // Under a flag it has reached the stick man only cheers, and struck down it does nothing at all.
+  const canInteract = !isFlagReached(sim) && !isPlayerStruck(sim);
+  if (!canInteract) {
     return undefined;
   }
   for (const answer of ANSWERS) {

@@ -1,5 +1,6 @@
 import {
   getAirplane,
+  getEnemies,
   getFallenItem,
   getFlag,
   getLetter,
@@ -13,6 +14,7 @@ import { keepUntilChanged } from '../hud/unchanged';
 import { MOVE_KEY_NAMES } from '../input/playerKeys';
 import { easeAirplanesOverTime, buildAirplaneStrokes, getPivotHeight } from '../render/airplane';
 import { getWorldSeenBy } from '../render/cameraView';
+import { buildEnemyStrokes } from '../render/enemy';
 import { buildFlagStrokes } from '../render/flag';
 import { buildFloorStrokes } from '../render/floor';
 import { buildFallenPaperStrokes, buildLetterStrokes } from '../render/letter';
@@ -47,7 +49,7 @@ export interface SheetFrame {
  * One sheet of paper with a level drawn on it, in a scene of its own camera:
  * the paper, what is written on it (the level's name, its notes, the page
  * number), the floor line, the flag, the letter or the sheet of paper that
- * fell in its place, the airplane and the stick
+ * fell in its place, the airplane, the enemies and the stick
  * man, each as the sim it is shown says it is. The level being played is one
  * of these, and so is the sheet that is turned away when a level is finished.
  */
@@ -59,6 +61,7 @@ export class Sheet {
   private readonly flag: StrokeLayer;
   private readonly letter: StrokeLayer;
   private readonly airplane: StrokeLayer;
+  private readonly enemies: StrokeLayer;
   private readonly stickMan: StrokeLayer;
   private readonly poseFor = easePosesOverTime();
   private readonly airplaneShownFor = easeAirplanesOverTime();
@@ -73,6 +76,7 @@ export class Sheet {
     this.flag = createStrokeLayer(scene);
     this.letter = createStrokeLayer(scene);
     this.airplane = createStrokeLayer(scene);
+    this.enemies = createStrokeLayer(scene);
     this.stickMan = createStrokeLayer(scene);
   }
 
@@ -88,6 +92,7 @@ export class Sheet {
       this.flag,
       this.letter,
       this.airplane,
+      this.enemies,
       this.stickMan,
     ]) {
       layer.show(NOTHING);
@@ -141,6 +146,9 @@ export class Sheet {
       letter ? buildLetterStrokes(letter) : fallenItem ? buildFallenPaperStrokes(fallenItem) : [],
     );
     this.airplane.show(airplane ? buildAirplaneStrokes(airplane) : []);
+    this.enemies.show(
+      getEnemies(frame.sim).flatMap((enemy) => buildEnemyStrokes(enemy, frame.secondsOnSheet)),
+    );
     const pose = this.poseFor(stickMan, frame.seconds, level.floor);
     // Seated, the stick man tips with the airplane as it is drawn, about the point it is drawn
     // turning about: its middle.

@@ -12,7 +12,7 @@ export { hashSnapshot, type SimSnapshot } from './core/snapshot';
 export { getLevel } from './core/view';
 export { FIXED_DT, STICK_MAN_HEIGHT, STICK_MAN_WIDTH, TICK_RATE } from './content/tuning';
 export { defs, getDef, type Def } from './content/defs';
-export { getLevelById, levels } from './content/levels';
+export { getLevelById, levels, practiceLevels } from './content/levels';
 export type { FloorSegment, Level, Note, Placement, Point } from './content/levels/types';
 export type {
   JumpCommand,
@@ -61,3 +61,6 @@ export {
 export type { GameCommand, GamePlayAgainCommand } from './features/game/commands';
 export { getGame, type GameView } from './features/game/view';
 export { getNotes, type NoteView } from './features/note/view';
+export { CLUB_ENEMY_ID } from './features/enemy/defs';
+export type { EnemyAction } from './features/enemy/state';
+export { getEnemies, type EnemyView } from './features/enemy/view';

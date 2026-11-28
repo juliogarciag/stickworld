@@ -63,4 +63,9 @@ export interface Level {
   readonly flagGivesItem?: number;
   /** What is written on the sheet for the player. Most levels have none. */
   readonly notes?: readonly Note[];
+  /**
+   * The enemies that guard the level, each by the def id of its kind and the x of its post on a
+   * floor line: the middle of the stretch it guards (`features/enemy`). Most levels have none.
+   */
+  readonly enemies?: readonly Placement[];
 }

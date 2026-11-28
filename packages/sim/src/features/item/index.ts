@@ -4,6 +4,7 @@ import { getAirplaneItemUse } from '../airplane';
 import { getCraftingUse } from '../crafting';
 import { isReadingLetter } from '../letter';
 import { isFlagReached } from '../flag';
+import { isPlayerStruck } from '../player/body';
 
 /**
  * Using the held item: one command, `'item/use'`, whose meaning depends on
@@ -29,8 +30,8 @@ export const itemFeature: Feature = {
  */
 export function getItemUseNow(sim: Sim): ItemUse | undefined {
   // A letter the stick man reads fills the stick man's hands: it is put away by interacting, and
-  // until then no item is used.
-  const areHandsBusy = isFlagReached(sim) || isReadingLetter(sim);
+  // until then no item is used. Struck down, the stick man does nothing at all.
+  const areHandsBusy = isFlagReached(sim) || isReadingLetter(sim) || isPlayerStruck(sim);
   if (areHandsBusy) {
     return undefined;
   }

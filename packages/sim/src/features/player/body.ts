@@ -1,4 +1,8 @@
+import { STICK_MAN_HEIGHT, STICK_MAN_WIDTH } from '../../content/tuning';
+import { doesBlowTouchBox, type Blow, type Box } from '../../core/blow';
 import type { Sim } from '../../core/sim';
+import { isFlagReached } from '../flag';
+import { PLAYER } from './defs';
 import { playerSlice, type PlayerState } from './state';
 
 /**
@@ -89,4 +93,79 @@ export function startCarrying(sim: Sim): void {
 /** The stick man's hands are free again. */
 export function stopCarrying(sim: Sim): void {
   sim.getStateOf(playerSlice).isCarrying = false;
+}
+
+/** True from the tick a blow struck the stick man down until the level starts again. */
+export function isPlayerStruck(sim: Sim): boolean {
+  return sim.getStateOf(playerSlice).ticksSinceStruck !== null;
+}
+
+/**
+ * The stick man's outline for a blow: as wide as the stick man is and as tall, standing on its
+ * feet. Seated, the same box on the underside of its seat.
+ */
+export function getPlayerBox(sim: Sim): Box {
+  const player = sim.getStateOf(playerSlice);
+  return {
+    left: player.x - STICK_MAN_WIDTH / 2,
+    right: player.x + STICK_MAN_WIDTH / 2,
+    top: player.y - STICK_MAN_HEIGHT,
+    bottom: player.y,
+  };
+}
+
+/**
+ * Something strikes at the stick man: the one way anything hurts it (ADR 0008). True when `blow`
+ * touches the stick man and struck it down: it is knocked out of a seat and out of a jump, loses
+ * its speed, and from now on only falls and lies there until the level starts again
+ * (`PLAYER.struckPause`). False, and nothing happens, when the blow misses, when the stick man is
+ * struck down already, and under a flag it has reached: a finished level is not taken back.
+ */
+export function strikePlayerWith(sim: Sim, blow: Blow): boolean {
+  const player = sim.getStateOf(playerSlice);
+  const canBeStruck = player.ticksSinceStruck === null && !isFlagReached(sim);
+  const isStruckNow = canBeStruck && doesBlowTouchBox(blow, getPlayerBox(sim));
+  if (!isStruckNow) {
+    return false;
+  }
+  player.ticksSinceStruck = 0;
+  player.struckDirection = blow.direction;
+  player.isSeated = false;
+  player.seatedAtTick = null;
+  player.horizontalSpeed = 0;
+  // A rise ends there: the stick man only goes down from here.
+  player.verticalSpeed = Math.max(0, player.verticalSpeed);
+  player.distanceWalked = 0;
+  player.ticksSinceWalkedOff = null;
+  player.ticksSinceJumpAsked = null;
+  return true;
+}
+
+/**
+ * Something solid is at `box` (an enemy's body): the stick man is moved out of it sideways, to the
+ * side its middle is on, and stopped if it was drifting in. The stick man's outline is the one the
+ * end of a floor line pushes: a point at its feet, widening to its full width
+ * `PLAYER.fullWidthAbove` higher. So on the floor the box stops it half its width away, and in a
+ * jump its feet clear the top of the box and nothing happens. Nothing happens to the stick man in
+ * a seat either: what it sits in moves it.
+ */
+export function keepPlayerOutOfBox(sim: Sim, box: Box): void {
+  const player = sim.getStateOf(playerSlice);
+  const depthBelowTop = player.y - box.top;
+  const isLevelWithBox = depthBelowTop > 0 && player.y - STICK_MAN_HEIGHT < box.bottom;
+  const canBePushed = isLevelWithBox && !player.isSeated;
+  if (!canBePushed) {
+    return;
+  }
+  const reach = (STICK_MAN_WIDTH / 2) * Math.min(1, depthBelowTop / PLAYER.fullWidthAbove);
+  const side = player.x < (box.left + box.right) / 2 ? -1 : 1;
+  const clearX = side === -1 ? box.left - reach : box.right + reach;
+  const isInsideBox = (clearX - player.x) * side > 0;
+  if (!isInsideBox) {
+    return;
+  }
+  player.x = clearX;
+  if (player.horizontalSpeed * side < 0) {
+    player.horizontalSpeed = 0;
+  }
 }

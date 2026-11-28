@@ -3,7 +3,7 @@ import type { Level, Placement } from '../../content/levels/types';
 import { STICK_MAN_HEIGHT } from '../../content/tuning';
 import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
-import { getPlayerBody } from '../player/body';
+import { getPlayerBody, isPlayerStruck } from '../player/body';
 import { FLAG_DEF_ID, flagDef, LEVEL_END } from './defs';
 import { flagSlice } from './state';
 
@@ -21,9 +21,10 @@ export const flagFeature: Feature = {
       const placed = findFlagPlacedIn(sim.levelDef);
       const { x, y, isSeated } = getPlayerBody(sim);
       // A flag is reached on the stick man's own feet: flying past it in the airplane does not
-      // count.
+      // count, and neither does being struck down next to it.
+      const isOnOwnFeet = !isSeated && !isPlayerStruck(sim);
       const hasReachedFlag =
-        placed !== undefined && !isSeated && isTouchingFlag({ feet: { x, y }, placed });
+        placed !== undefined && isOnOwnFeet && isTouchingFlag({ feet: { x, y }, placed });
       if (hasReachedFlag) {
         flag.reachedAtTick = sim.tick;
       }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { levels } from '../content/levels';
+import { levels, practiceLevels } from '../content/levels';
 import { features } from '../features';
 import type { Command } from './commands';
 import type { Feature } from './feature';
@@ -8,7 +8,7 @@ import { defineSlice } from './slice';
 import { hashSnapshot } from './snapshot';
 
 describe('determinism', () => {
-  it.each(levels.map((level) => [level.id]))(
+  it.each([...levels, ...practiceLevels].map((level) => [level.id]))(
     'the registered features replay level %i identically from the same seed and commands',
     (level) => {
       const first = new Sim({ features, start: { seed: 7, level } });

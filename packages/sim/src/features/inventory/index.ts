@@ -1,5 +1,6 @@
 import type { Feature } from '../../core/feature';
 import { isFlagReached } from '../flag';
+import { isPlayerStruck } from '../player/body';
 import { giveItem } from './give';
 import { inventorySlice } from './state';
 
@@ -14,7 +15,9 @@ export const inventoryFeature: Feature = {
   slices: [inventorySlice],
 
   handleCommand(sim, command) {
-    if (command.type !== 'inventory/select') {
+    // Struck down, the stick man takes no commands.
+    const isHeard = command.type === 'inventory/select' && !isPlayerStruck(sim);
+    if (!isHeard) {
       return;
     }
     const { slot } = command as { slot?: unknown };

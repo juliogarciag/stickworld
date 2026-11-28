@@ -60,6 +60,11 @@ export const PLAYER = {
   /** How far below the level's lowest floor the stick man falls before the level starts again. */
   fallBelowFloor: 6,
   /**
+   * How long the stick man lies where a blow struck it down before the level starts again, in
+   * seconds: long enough to see what hit it, short enough to try again at once.
+   */
+  struckPause: 1.3,
+  /**
    * How far above the stick man's feet it is as wide as `STICK_MAN_WIDTH`, for the end of a floor
    * line the stick man drops past. Below it the stick man narrows to a point at the stick man's
    * feet, which is all that stands on the line, so the end pushes the stick man aside a little at a
