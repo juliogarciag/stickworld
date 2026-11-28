@@ -115,11 +115,11 @@ const CRAFT_WORDS: Readonly<Record<number, string>> = {
   [SPEAR_RECIPE_ID]: 'sharpen the pencil',
 };
 
-function getCraftWords(wouldMake: RecipeView | null): string {
-  if (wouldMake === null) {
-    return 'make it';
+function getCraftWords(recipe: RecipeView | null): string {
+  if (recipe === null) {
+    return 'use the item';
   }
-  return CRAFT_WORDS[wouldMake.defId] ?? `make a ${wouldMake.name}`;
+  return CRAFT_WORDS[recipe.defId] ?? `make a ${recipe.name}`;
 }
 
 /**

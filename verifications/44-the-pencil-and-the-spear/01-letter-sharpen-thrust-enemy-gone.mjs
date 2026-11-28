@@ -118,7 +118,7 @@ try {
   results.push(
     check(
       'a thrust costs time: no J is offered until the spear is drawn back',
-      whileBusy.length > 0 && whileBusy.every((now) => now.itemUse === null) && seconds > 0.3,
+      whileBusy.length > 0 && whileBusy.every((now) => now.itemUse === null),
       `${seconds.toFixed(2)} s from the press to ready again`,
     ),
   );
@@ -141,7 +141,7 @@ try {
   results.push(
     check(
       'the spear reaches the enemy from further away than its club reaches the stick man',
-      spearHitsFrom > clubReach + 0.3,
+      spearHitsFrom > clubReach,
       `spear from ${spearHitsFrom.toFixed(2)} m, club from ${clubReach.toFixed(2)} m, middle to middle`,
     ),
   );

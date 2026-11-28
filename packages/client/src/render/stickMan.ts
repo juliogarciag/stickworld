@@ -80,7 +80,7 @@ export interface StickManPose {
    * pencil, a spear: `render/heldItem.ts`), or null when the arm does what the rest of it does.
    * The arm is drawn as long as reaching there takes. Not read when seated or struck.
    */
-  readonly handAt: Point | null;
+  readonly handPosition: Point | null;
 }
 
 /**
@@ -116,7 +116,7 @@ export function getPose(stickMan: StickManView): StickManPose {
     carrying: stickMan.isCarrying ? 1 : 0,
     struck: stickMan.struckFor === null ? 0 : Math.min(1, stickMan.struckFor / STRUCK.fallSeconds),
     struckDirection: stickMan.struckDirection,
-    handAt: null,
+    handPosition: null,
   };
 }
 
@@ -569,9 +569,9 @@ function getSkeleton(pose: StickManPose): Skeleton {
       { x: feet.x + side * BODY.carrying.handOut, y: feet.y - STICK_MAN_HEIGHT },
     ];
     // The front arm holds what is in its hand, where that is.
-    const isHoldingArm = index === 1 && pose.handAt !== null && pose.action !== 'struck';
+    const isHoldingArm = index === 1 && pose.handPosition !== null && pose.action !== 'struck';
     const joints = isHoldingArm
-      ? buildArmBetween(shoulder, pose.handAt, facing)
+      ? buildArmBetween(shoulder, pose.handPosition, facing)
       : buildArmFrom(shoulder, arm, facing);
     return joints.map((joint, jointIndex) => movePartWay(joint, held[jointIndex]!, holdingUp));
   });

@@ -3,6 +3,7 @@ import {
   getItemSlots,
   getSpear,
   getStickMan,
+  PAPER_ITEM_ID,
   PENCIL_ITEM_ID,
   practiceLevels,
   SPEAR_ITEM_ID,
@@ -50,13 +51,14 @@ describe('the pencil in the hand of the stick man', () => {
     const pencil = getHeldItemOf(createSimWithPencil());
     const spear = getHeldItemOf(createSimWithSpear());
     expect(spear.isSharp).toBe(true);
-    const tipOf = (item: HeldItem) => ({
+    const getTipInPixels = (item: HeldItem) => ({
       x: convertToPixels(item.tip.x),
       y: convertToPixels(item.tip.y),
     });
     const hasPointAt = (item: HeldItem): boolean =>
       buildHeldItemStrokes(item)[0]!.points.some(
-        (point) => Math.hypot(point.x - tipOf(item).x, point.y - tipOf(item).y) < 1e-6,
+        (point) =>
+          Math.hypot(point.x - getTipInPixels(item).x, point.y - getTipInPixels(item).y) < 1e-6,
       );
     expect(hasPointAt(spear)).toBe(true);
     expect(hasPointAt(pencil)).toBe(false);
@@ -66,7 +68,7 @@ describe('the pencil in the hand of the stick man', () => {
   it('is not drawn for any other item, nor for an empty hand', () => {
     const stickMan = getStickMan(createSim({ level: YARD.id }));
     expect(getHeldItem({ stickMan, itemDefId: null, spear: undefined })).toBeUndefined();
-    expect(getHeldItem({ stickMan, itemDefId: 200, spear: undefined })).toBeUndefined();
+    expect(getHeldItem({ stickMan, itemDefId: PAPER_ITEM_ID, spear: undefined })).toBeUndefined();
   });
 });
 

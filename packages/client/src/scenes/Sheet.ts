@@ -172,7 +172,7 @@ export class Sheet {
     });
     this.heldItem.show(heldItem ? buildHeldItemStrokes(heldItem) : NOTHING);
     const eased = this.poseFor(stickMan, frame.seconds, level.floor);
-    const pose = { ...eased, handAt: heldItem?.hand ?? null };
+    const pose = { ...eased, handPosition: heldItem?.hand ?? null };
     // Seated, the stick man tips with the airplane as it is drawn, about the point it is drawn
     // turning about: its middle.
     this.stickMan.show(

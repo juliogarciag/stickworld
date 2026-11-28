@@ -17,6 +17,6 @@ Last run: 32 checks, 32 passed.
 
 `game.mjs` is what the two scripts share: the dev server on the yard, the page, reading the game, holding a key until something is true, and stepping the page's clock a frame at a time. `lib.mjs` is the template's.
 
-The look before this ticket: on `main` the yard has no letter and no item is drawn in the stick man's hand (`verifications/43-the-club-enemy/proof/` is that state); `01-the-yard.png` here is the same yard with the letter in it.
+Before and after: `00-before-on-main.png` is the yard on `main` (fbfd2a4) with the stick man standing where the letter now lies: no letter, an empty slot, nothing in its hand, no key offered. It was taken once by hand from a checkout of `main`, not by `run.sh`. `03-the-pencil-in-its-hand.png` and `04-the-spear-in-its-hand.png` are the same place after.
 
 Known in the proof: `02-reading-the-letter.png` shows the letter held up over the level's name, which is still on the sheet for its first seconds. The yard's letter is three metres from the start; level 4 (#45) should put its letter where the name is gone by the time it is read.

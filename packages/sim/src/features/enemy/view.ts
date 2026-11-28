@@ -25,9 +25,10 @@ export interface EnemyBaseView {
   /** The stretch of floor it guards: how far its middle goes to either side, in metres. */
   readonly guardedStretch: { readonly start: number; readonly end: number };
   /**
-   * How far along being rubbed out it is, from 0, struck this tick, towards 1, or null while
-   * nothing has struck it. Being rubbed out it is still where it was struck, doing what it was
-   * doing, harmless and in nobody's way; rubbed out, it is no longer among the enemies.
+   * How far along being rubbed out it is, from just over 0 on the tick it was struck towards 1,
+   * or null while nothing has struck it. Being rubbed out it is still where it was struck, doing
+   * what it was doing, harmless and in nobody's way; rubbed out, it is no longer among the
+   * enemies.
    */
   readonly rubbedOutProgress: number | null;
 }

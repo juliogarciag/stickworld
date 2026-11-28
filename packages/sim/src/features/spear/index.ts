@@ -27,14 +27,18 @@ export const spearFeature: Feature = {
       return;
     }
     // Struck down, the stick man thrusts at nothing.
-    const canGoOn = getSelectedItem(sim) === SPEAR_ITEM_ID && !isPlayerStruck(sim);
-    if (!canGoOn) {
+    if (isPlayerStruck(sim)) {
       thrust.ticksSinceBegun = null;
       return;
     }
     thrust.ticksSinceBegun += 1;
     const ticks = countThrustTicks(sim.dt);
-    if (thrust.ticksSinceBegun <= ticks.goingOut) {
+    // A thrust begun goes on to its end whatever the stick man does next, a letter picked up or
+    // a flag reached included. Putting the spear out of its hand only takes the point away: the
+    // time the thrust costs runs on, so that nothing gets the next thrust sooner.
+    const isStriking =
+      thrust.ticksSinceBegun <= ticks.goingOut && getSelectedItem(sim) === SPEAR_ITEM_ID;
+    if (isStriking) {
       // Only what is in front of the stick man strikes: the shaft behind its hand does not.
       const spear = getSpearLine(sim);
       strikeEnemiesWith(sim, {

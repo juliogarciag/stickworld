@@ -96,6 +96,42 @@ describe('a thrust', () => {
     expect(getSpear(sim)!.action).toBe('thrusting');
   });
 
+  it('is not had sooner by putting the spear out of its hand and taking it up again: the drawing back runs on, and the point strikes nothing meanwhile', () => {
+    const sim = createSimWithSpear();
+    sim.step([USE]);
+    sim.step([SELECT_FIRST]);
+    expect(getSpear(sim)).toBeUndefined();
+    expect(getItemUse(sim)).toBeNull();
+    sim.step([SELECT_FIRST, USE]);
+    expect(getSpear(sim)!.action).toBe('thrusting');
+    stepUntil(sim, () => getSpear(sim)!.action === 'recovering');
+    sim.step([SELECT_FIRST]);
+    sim.step([SELECT_FIRST, USE]);
+    expect(getSpear(sim)!.action).toBe('recovering');
+    stepUntil(sim, () => getSpear(sim)!.action === 'ready');
+    expect(sim.tick - TICK_OF_FIRST_PRESS).toBe(THRUST_TICKS + RECOVER_TICKS);
+  });
+
+  it('strikes nothing while the spear is out of its hand', () => {
+    const sim = createSimWithSpear();
+    standInFrontOfEnemy(sim, SPEAR_HITS_FROM - 0.1);
+    sim.step([USE, SELECT_FIRST]);
+    stepFor(sim, THRUST_TICKS + RECOVER_TICKS);
+    expect(getEnemies(sim)[0]!.rubbedOutProgress).toBeNull();
+  });
+
+  it('goes to the left as well as to the right: the enemy behind which the stick man has got is rubbed out by a thrust back at it', () => {
+    const sim = createSimWithSpear();
+    standInFrontOfEnemy(sim, SPEAR_HITS_FROM - 0.1);
+    sim.step([USE]);
+    stepUntil(sim, () => getEnemies(sim).length === 0);
+    stepUntil(sim, () => getSpear(sim)!.action === 'ready');
+    sim.step([WALK_LEFT]);
+    sim.step([STOP, USE]);
+    stepFor(sim, THRUST_TICKS - 1);
+    expect(getSpear(sim)!.tip.x).toBeCloseTo(getStickMan(sim).feet.x - SPEAR.reach);
+  });
+
   it('costs a miss more than a moment: the stick man is without a thrust for longer than the enemy takes to cover the ground the spear outreaches its club by', () => {
     const secondsToCloseIn = SPEAR_OUTREACHES_CLUB_BY / clubEnemyDef.speed;
     expect(SPEAR.thrustSeconds + SPEAR.recoverSeconds).toBeGreaterThan(secondsToCloseIn);
@@ -281,6 +317,7 @@ const WALK_LEFT: Command = { type: 'player/walk', direction: -1 };
 const STOP: Command = { type: 'player/walk', direction: 0 };
 const USE: Command = { type: 'item/use' };
 const INTERACT: Command = { type: 'world/interact' };
+const SELECT_FIRST: Command = { type: 'inventory/select', slot: 1 };
 
 const LETTER_X = findLetterPlacedIn(clubYard)!.position.x;
 const TICKS = Math.round(1 / createSim({ level: clubYard.id }).dt);
