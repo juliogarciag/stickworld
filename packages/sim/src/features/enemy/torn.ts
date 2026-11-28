@@ -2,7 +2,7 @@ import { ENEMY } from './defs';
 
 /**
  * What becomes of an enemy that was struck: it is `tearing` in two, the halves fall and are
- * `lying` there for a moment, and then they are `leaving` the sheet as scraps of paper. After
+ * `lying` there for a moment, and then they are `leaving`: they fall off the sheet. After
  * that it is gone.
  */
 export type TornAction = 'tearing' | 'lying' | 'leaving';

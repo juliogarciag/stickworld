@@ -19,7 +19,7 @@ import { isTornAndGone } from './torn';
  * kind is a folder next to it and a line in `update` here. An enemy that is
  * struck (`strikeEnemiesWith`) is torn in two: it stops where it is, is no
  * longer solid and hurts nobody, its halves fall, lie there for a moment
- * and leave the sheet as scraps, and then it is gone (`torn.ts`).
+ * and fall off the sheet, and then it is gone (`torn.ts`).
  */
 export const enemyFeature: Feature = {
   name: 'enemy',

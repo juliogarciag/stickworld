@@ -188,7 +188,7 @@ try {
     wasStruck ||= now.stickMan.action === 'struck';
     return now.enemies.length === 0;
   });
-  results.push(check('its halves lie, leave the sheet, and then the enemy is gone', gone.enemies.length === 0));
+  results.push(check('its halves lie, fall off the sheet, and then the enemy is gone', gone.enemies.length === 0));
   await page.waitForTimeout(700);
   await takeScreenshot(page, '06-the-enemy-gone.png');
 

@@ -26,9 +26,9 @@ export interface EnemyBaseView {
   readonly guardedStretch: { readonly start: number; readonly end: number };
   /**
    * How far along being torn it is (`tearing` in two, its halves `lying` where they fell, then
-   * `leaving` the sheet as scraps, each from just over 0 towards 1), or null while nothing has
+   * `leaving` the sheet, each from just over 0 towards 1), or null while nothing has
    * struck it. Torn, it is still where it was struck, doing what it was doing, harmless and in
-   * nobody's way; once the scraps have left, it is no longer among the enemies.
+   * nobody's way; once they have fallen off the sheet, it is no longer among the enemies.
    */
   readonly torn: Torn | null;
 }

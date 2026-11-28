@@ -42,8 +42,9 @@ export const ENEMY = {
   /** How long the halves lie where they fell, in seconds: long enough to see what happened. */
   lieSeconds: 0.8,
   /**
-   * How long they take to leave the sheet as scraps of paper, in seconds. Then the enemy is gone
-   * from the level: nothing of it stays, however many there were.
+   * How long they take to fall off the sheet, in seconds: down past the floor line and out of
+   * view, one after the other. Then the enemy is gone from the level: nothing of it stays, however
+   * many there were.
    */
   leaveSeconds: 2,
 } as const;

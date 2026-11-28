@@ -1,4 +1,3 @@
-import { clubRow } from './clubRow';
 import { clubYard } from './clubYard';
 import { level1 } from './level1';
 import { level2 } from './level2';
@@ -16,7 +15,7 @@ export const levels: readonly Level[] = [level1, level2, level3];
  * a place to try something whose own level does not exist yet, reached only by its id
  * (`VITE_LEVEL=<id>`, `loadLevel(<id>)` in a dev build, `createSim({ level })` in a test).
  */
-export const practiceLevels: readonly Level[] = [clubYard, clubRow];
+export const practiceLevels: readonly Level[] = [clubYard];
 
 /**
  * The level with this id, of the game or for practice. Throws for an id no level has: asking for a

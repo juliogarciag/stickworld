@@ -1,7 +1,7 @@
 /**
  * The tear on its own, in real time and recorded: the stick man thrusts, the enemy is torn in two,
- * and the stick man walks on through its halves while they still lie there. Then the scraps leave
- * the sheet and nothing of the enemy is left, on the sheet or in the game.
+ * and the stick man walks on through its halves while they still lie there. Then the halves fall
+ * off the sheet and nothing of the enemy is left, on the sheet or in the game.
  */
 import { check, summarize, writeProof } from './lib.mjs';
 import { holdKeyUntil, openGame, readGame, takeScreenshot, waitForGame } from './game.mjs';

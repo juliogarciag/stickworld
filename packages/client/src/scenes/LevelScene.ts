@@ -1,21 +1,12 @@
-import {
-  getEnemies,
-  getLevel,
-  getSpear,
-  getStickMan,
-  type SimHandle,
-  type SimSnapshot,
-} from '@stickworld/sim';
+import { getLevel, getStickMan, type SimHandle } from '@stickworld/sim';
 import Phaser from 'phaser';
 import { sendActionCommands } from '../input/actionKeys';
 import { sendGameCommands } from '../input/gameKeys';
 import { sendItemSlotCommands } from '../input/itemSlotKeys';
 import { createKeysToCommands, type HeldKeys } from '../input/playerCommands';
 import { watchPlayerKeys } from '../input/playerKeys';
-import { watchTryoutKeys } from '../input/tryoutKeys';
 import { getFrameSeconds } from '../loop/frameSeconds';
 import type { GameLoop } from '../loop/GameLoop';
-import { clearTornRemains, selectNextRemainsWay } from '../render/tornRemains';
 import { followStickManWith } from '../render/levelCamera';
 import type { PageTurn } from '../render/pageTurn';
 import { PAPER_COLOUR } from '../render/paper';
@@ -37,11 +28,6 @@ export class LevelScene extends Phaser.Scene {
    * another sim.
    */
   private onTop: { sim: SimHandle; level: number; seconds: number } | undefined;
-  /**
-   * TRYOUT (#44): the game as it was when the stick man first stood with the spear in its hand
-   * and the enemy at its post, on the level it was: where R goes back to.
-   */
-  private withSpear: { level: number; snapshot: SimSnapshot } | undefined;
 
   constructor(
     private readonly loop: GameLoop,
@@ -59,37 +45,6 @@ export class LevelScene extends Phaser.Scene {
     sendActionCommands(this, queue);
     sendGameCommands(this, queue);
     this.follow = followStickManWith(this.cameras.main);
-    if (import.meta.env.DEV) {
-      watchTryoutKeys(this, {
-        selectNext: selectNextRemainsWay,
-        playAgain: () => this.playAgainWithSpear(),
-        clear: clearTornRemains,
-      });
-    }
-  }
-
-  /** TRYOUT (#44): back to the stick man with the spear, or to the start of the level. */
-  private playAgainWithSpear(): void {
-    const saved = this.withSpear;
-    const isSavedHere = saved !== undefined && saved.level === this.loop.sim.level;
-    if (isSavedHere) {
-      this.loop.playSnapshot(saved.snapshot);
-    } else {
-      this.loop.playLevel(this.loop.sim.level);
-    }
-  }
-
-  /** TRYOUT (#44): keeps the first moment the stick man has the spear and nothing has happened. */
-  private keepMomentWithSpear(sim: SimHandle): void {
-    const isKept = this.withSpear?.level === sim.level;
-    const isMoment =
-      getSpear(sim)?.action === 'ready' &&
-      getStickMan(sim).action === 'standing' &&
-      getEnemies(sim).some((enemy) => enemy.torn === null);
-    const shouldKeep = isMoment && !isKept;
-    if (shouldKeep) {
-      this.withSpear = { level: sim.level, snapshot: sim.takeSnapshot() };
-    }
   }
 
   override update(_time: number, deltaMs: number): void {
@@ -113,9 +68,6 @@ export class LevelScene extends Phaser.Scene {
     }
 
     const { sim } = this.loop;
-    if (import.meta.env.DEV) {
-      this.keepMomentWithSpear(sim);
-    }
     const previous = this.onTop;
     const isSheetOnTop =
       previous !== undefined && previous.sim === sim && previous.level === sim.level;

@@ -58,27 +58,21 @@ describe('the club enemy torn in two', () => {
     expect(lain.right - lain.left).toBeGreaterThan(whole.right - whole.left);
   });
 
-  it('leaves the sheet away from the stick man and upwards, and is out of the widest view before the sim has it gone', () => {
+  it('falls off the sheet: down through the floor line and on, and is below the widest view before the sim has it gone', () => {
     const leaving = recordTornEnemy().filter((enemy) => enemy.torn!.action === 'leaving');
-    const stoodAt = convertToPixels(leaving[0]!.position.x);
-    const floor = convertToPixels(leaving[0]!.position.y);
+    const floor = convertToPixels(leaving[0]!.position.y + leaving[0]!.floatHeight);
     const last = getBounds(buildTornClubEnemyStrokes(leaving.at(-1)!));
-    // The stick man came from the left: away is to the right. The widest view is 30 m across.
-    expect(last.left - stoodAt).toBeGreaterThan(convertToPixels(WIDEST_VIEW));
-    expect(floor - last.bottom).toBeGreaterThan(convertToPixels(4));
-    // Taken together they go that way and on once the wind has them: a scrap turns over, the lot
-    // of them does not come back.
-    const middles = leaving.map((enemy) => {
-      const points = buildTornClubEnemyStrokes(enemy).flatMap((stroke) => stroke.points);
-      return points.reduce((sum, point) => sum + point.x, 0) / points.length;
-    });
-    const everyTenth = middles.filter(
-      (_, index) => index % 10 === 0 && index >= middles.length / 4,
-    );
+    expect(last.top - floor).toBeGreaterThan(convertToPixels(DEEPEST_VIEW));
+    // It only ever goes down: no scrap comes back up.
+    const tops = leaving.map((enemy) => getBounds(buildTornClubEnemyStrokes(enemy)).top);
+    const everyTenth = tops.filter((_, index) => index % 10 === 0 && index >= tops.length / 4);
     expect(everyTenth).toEqual([...everyTenth].sort((one, other) => one - other));
+    // It does not go far aside: it falls where it lay.
+    const stoodAt = convertToPixels(leaving[0]!.position.x);
+    expect(Math.abs((last.left + last.right) / 2 - stoodAt)).toBeLessThan(convertToPixels(4));
   });
 
-  it('is picked up a scrap at a time: early in the leaving something has moved and something still lies there', () => {
+  it('goes a scrap at a time: early in the leaving something has moved and something still lies there', () => {
     const torn = recordTornEnemy();
     const lying = buildTornClubEnemyStrokes(torn.find((enemy) => enemy.torn!.action === 'lying')!);
     const early = torn.find(
@@ -144,8 +138,11 @@ describe('cutting a stroke at a level line', () => {
 const YARD = practiceLevels[0]!;
 const USE: Command = { type: 'item/use' };
 const INTERACT: Command = { type: 'world/interact' };
-/** The most metres across the level's camera ever shows (`FRAMING.mostMetresAcross`), and more. */
-const WIDEST_VIEW = 15;
+/**
+ * More than the camera ever shows below the floor line, in metres: its widest view is 21 m across
+ * (`FRAMING.mostMetresAcross`), about 12 m tall, centred near the stick man.
+ */
+const DEEPEST_VIEW = 9;
 
 /** The enemy of the yard on every tick from the thrust that tears it until it is gone. */
 function recordTornEnemy(): ClubEnemyView[] {
