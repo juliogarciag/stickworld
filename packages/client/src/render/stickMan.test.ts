@@ -572,11 +572,28 @@ describe('the stick man struck down', () => {
     const down = getSkeleton(
       getPose({ ...ON_FLOOR, action: 'struck', struckFor: STRUCK.fallSeconds }),
     );
-    const joints = [down.neck, down.hip, ...down.arms.flat(), ...down.legs.flat()];
-    for (const joint of joints) {
-      expect(ON_FLOOR.feet.y - joint.y).toBeLessThan(STICK_MAN_HEIGHT * 0.2);
+    // Its body lies along the floor; a knee and an arm are up off it, no higher than a knee is.
+    for (const joint of [down.neck, down.hip]) {
+      expect(ON_FLOOR.feet.y - joint.y).toBeCloseTo(STRUCK.lyingAboveFloor, 6);
     }
+    for (const joint of [...down.arms.flat(), ...down.legs.flat()]) {
+      expect(ON_FLOOR.feet.y - joint.y).toBeLessThan(STICK_MAN_HEIGHT * 0.35);
+    }
+    const highestLimb = Math.min(...[...down.arms, ...down.legs].flat().map((joint) => joint.y));
+    expect(ON_FLOOR.feet.y - highestLimb).toBeGreaterThan(STICK_MAN_HEIGHT * 0.15);
     expect(Math.abs(down.head.x - ON_FLOOR.feet.x)).toBeGreaterThan(STICK_MAN_HEIGHT * 0.7);
+  });
+
+  it('has a knee and an arm up off the floor whichever way it faced as it fell', () => {
+    for (const facing of [1, -1] as const) {
+      for (const struckDirection of [1, -1] as const) {
+        const down = getSkeleton(
+          getPose({ ...ON_FLOOR, facing, action: 'struck', struckFor: 1, struckDirection }),
+        );
+        const knee = down.legs[0]![1]!;
+        expect(ON_FLOOR.feet.y - knee.y).toBeGreaterThan(STICK_MAN_HEIGHT * 0.15);
+      }
+    }
   });
 
   it('goes over the way the blow knocked it', () => {

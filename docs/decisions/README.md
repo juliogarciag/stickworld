@@ -9,3 +9,4 @@ One file per decision, numbered, never edited after the fact (write a new one th
 - [0005 - A level is a sheet: notes in its data, a page turned between two, a camera that looks ahead, a game that can be played again](0005-a-level-is-a-sheet.md)
 - [0006 - How he moves is sim state a dev build can tune while the game runs, and letting go of the jump is a command](0006-movement-tuning-is-sim-state.md)
 - [0007 - A feature's state is its own, every slice says whether it carries, and a level starts between two ticks](0007-a-features-state-is-its-own-and-a-level-starts-between-two-ticks.md)
+- [0008 - How things hurt the stick man and how it hurts them: the one who is struck owns the hit test](0008-how-things-hurt-the-stick-man-and-how-it-hurts-them.md)

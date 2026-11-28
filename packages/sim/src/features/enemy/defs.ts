@@ -100,7 +100,7 @@ export const clubEnemyDef: EnemyDef = {
     shoulderHeight: 0.75,
     armLength: 0.55,
     length: 0.95,
-    thickness: 0.2,
+    thickness: 0.26,
     restAngle: 1.1,
     raisedAngle: 2.6,
     downAngle: -0.6,

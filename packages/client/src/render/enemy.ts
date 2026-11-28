@@ -21,15 +21,15 @@ const LOOK = {
   sideRise: 0.05,
   /** Where its eyes are on its face: how far apart, how high, and how big. */
   eyeSpacing: 0.19,
-  eyeHeight: 0.66,
+  eyeHeight: 0.84,
   eyeRadius: 0.065,
   /** A brow over each eye while it means to strike: how long, and how far it slants. */
   browLength: 0.2,
   browSlant: 0.09,
-  browAbove: 0.13,
+  browAbove: 0.1,
   /** Its mouth: how wide, how high on its face, how many waves and how deep. */
   mouthWidth: 0.5,
-  mouthHeight: 0.28,
+  mouthHeight: 0.36,
   mouthWaves: 3,
   mouthDepth: 0.035,
   /** The hand at its back and the hand on the club, in metres. */
