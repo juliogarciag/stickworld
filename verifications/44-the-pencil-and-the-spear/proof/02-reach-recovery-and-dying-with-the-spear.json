@@ -1,12 +1,68 @@
 {
+  "reach": 2.1000000000000005,
+  "clubReach": 1.9550000000000003,
+  "distance": 2.0866666666666367,
+  "framesOut": 5,
+  "framesBack": 29,
   "results": [
     {
       "name": "dev server up, started by this run",
       "pass": true
     },
     {
-      "name": "run completed (clock.pauseAt: Error: Cannot fast-forward to the past\n    at ClockController._innerFastForwardTo (<anonymous>:207:13)\n    at ClockController.pauseAt (<anonymous>:133:16)\n    at async <anonymous>:381:23)",
-      "pass": false
+      "name": "the spear is in its hand, ready",
+      "pass": true
+    },
+    {
+      "name": "the point goes out, further frame after frame, and is level at the height of its chest",
+      "pass": true,
+      "details": "5 frames out, reach 2.10 m"
+    },
+    {
+      "name": "drawing it back takes several times longer than the thrust, and the press in the middle of it changed nothing",
+      "pass": true,
+      "details": "5 frames out, 29 frames back"
+    },
+    {
+      "name": "no J is offered from the press until the spear is ready again, and then it is",
+      "pass": true
+    },
+    {
+      "name": "four pictures of the thrust were taken",
+      "pass": true,
+      "details": "4 with the one before it"
+    },
+    {
+      "name": "standing just outside the reach of the club for four seconds, the stick man is not struck and the enemy does not swing",
+      "pass": true,
+      "details": "2.09 m away; the club reaches 1.96 m, the spear 2.50 m"
+    },
+    {
+      "name": "the thrust from there rubs the enemy out: more and more, frame after frame, standing where it was struck, and then it is gone",
+      "pass": true,
+      "details": "29 frames, 3 pictures"
+    },
+    {
+      "name": "the stick man was not struck",
+      "pass": true
+    },
+    {
+      "name": "after a fall the level starts again with the spear in its hand, no letter to read, and the enemy back at its post",
+      "pass": true,
+      "details": "slot {\"itemDefId\":202,\"isSelected\":true}, enemy at 12"
+    },
+    {
+      "name": "the spear is no shield: walking into the swing without thrusting, the stick man is struck down",
+      "pass": true
+    },
+    {
+      "name": "after the club the level starts again with the spear in its hand, too",
+      "pass": true
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
     }
   ]
 }

@@ -59,7 +59,7 @@ export async function openGame(port, results, options = {}) {
   if (options.steppedClock) {
     // An installed clock still runs by itself until it is paused: from here on only `stepFrames`
     // moves it.
-    await page.clock.pauseAt(await page.evaluate(() => window.Date.now() + 100));
+    await page.clock.pauseAt(await page.evaluate(() => window.Date.now() + 2000));
   }
   return {
     page,
