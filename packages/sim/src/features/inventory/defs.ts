@@ -22,7 +22,7 @@ export const PENCIL_ITEM_ID = 202;
 
 /**
  * The spear the stick man sharpens the pencil into (the `crafting` feature's recipe). Using it is
- * a thrust (the `spear` feature); it never leaves the stick man's slot.
+ * a thrust (the `spear` feature), which never loses it.
  */
 export const SPEAR_ITEM_ID = 203;
 

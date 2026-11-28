@@ -13,9 +13,9 @@ import { thrustSlice } from './state';
  * straight out in front of the stick man, further than a club reaches, and
  * what it touches on the way out is struck (`strikeEnemiesWith`, ADR 0008).
  * Then the stick man draws it back, and until it has, it cannot thrust again:
- * a thrust that misses costs that time. The spear never leaves the stick
- * man's hand, so it is never lost by using it. The stick man walks and jumps
- * as it likes meanwhile; the thrust keeps the way it began.
+ * a thrust that misses costs that time. Using the spear never loses it: it
+ * is not thrown and not put down. The stick man walks and jumps as it likes
+ * meanwhile; the thrust keeps the way it began.
  */
 export const spearFeature: Feature = {
   name: 'spear',
