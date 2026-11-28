@@ -142,12 +142,15 @@ export function strikePlayerWith(sim: Sim, blow: Blow): boolean {
 }
 
 /**
- * Something solid is at `box` (an enemy's body): the stick man is moved out of it sideways, to the
- * side its middle is on, and stopped if it was drifting in. The stick man's outline is the one the
- * end of a floor line pushes: a point at its feet, widening to its full width
- * `PLAYER.fullWidthAbove` higher. So on the floor the box stops it half its width away, and in a
- * jump its feet clear the top of the box and nothing happens. Nothing happens to the stick man in
- * a seat either: what it sits in moves it.
+ * If the stick man overlaps `box`, slides it sideways until it is just outside it: to the side its
+ * middle is on, and stopped if it was drifting in. Called every tick with a thing's body (an
+ * enemy's), that is what stops the stick man from passing through the thing: it can never end a
+ * tick inside it. It never hurts.
+ *
+ * The stick man's outline is the one the end of a floor line pushes: a point at its feet, widening
+ * to its full width `PLAYER.fullWidthAbove` higher. So on the floor the box stops it half its
+ * width away, and in a jump its feet clear the top of the box and nothing happens. Nothing happens
+ * to the stick man in a seat either: what it sits in moves it.
  */
 export function keepPlayerOutOfBox(sim: Sim, box: Box): void {
   const player = sim.getStateOf(playerSlice);
