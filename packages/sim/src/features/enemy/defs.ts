@@ -18,6 +18,11 @@ export interface EnemyDef extends Def {
   readonly floatHeight: number;
   /** How far to either side it sees the stick man, in metres from its middle. */
   readonly sightDistance: number;
+  /**
+   * How far above or below its underside the stick man's feet may be for it to see the stick man,
+   * in metres: more than a jump, less than a fall down a gap or a flight high overhead.
+   */
+  readonly sightHeight: number;
   /** How fast it moves along the floor towards the stick man, in metres per second. */
   readonly speed: number;
   /**
@@ -90,6 +95,7 @@ export const clubEnemyDef: EnemyDef = {
   height: 1.2,
   floatHeight: 0.1,
   sightDistance: 5,
+  sightHeight: 3,
   speed: 1.4,
   guardedStretch: 3,
   swingDistance: 1.2,

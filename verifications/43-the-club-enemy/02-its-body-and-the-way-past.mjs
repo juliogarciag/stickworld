@@ -37,7 +37,8 @@ try {
   await page.keyboard.down('ArrowLeft');
   const swinging = await takePictureWhen(page, '06-the-swing-at-nothing.png', () => {
     const enemy = window.__game.getEnemies()[0];
-    return enemy.action === 'swinging' && enemy.progress > 0.3;
+    // Where the club is highest: a third of the way through, straight up.
+    return enemy.action === 'swinging' && enemy.progress > 0.25 && enemy.progress < 0.45;
   });
   await waitUntil(page, () => window.__game.getEnemies()[0].action === 'recovering');
   await page.keyboard.up('ArrowLeft');
@@ -46,8 +47,10 @@ try {
   results.push(
     check(
       'the swing takes the club from behind it over the top: higher than the stick man jumps',
-      swinging.enemy.action === 'swinging' && swinging.enemy.club.tip.y < topOfBody,
-      `club end ${(-swinging.enemy.club.tip.y).toFixed(2)} m above the floor, ${Math.round(swinging.enemy.progress * 100)}% through the swing`,
+      swinging.enemy.action === 'swinging' &&
+        swinging.enemy.club.tip.y < topOfBody &&
+        -swinging.enemy.club.tip.y > swinging.jumpHeight,
+      `club end ${(-swinging.enemy.club.tip.y).toFixed(2)} m above the floor, the jump is ${swinging.jumpHeight} m, ${Math.round(swinging.enemy.progress * 100)}% through the swing`,
     ),
     check(
       'walking away when the club goes back gets the stick man out of its reach: the swing hits nothing',

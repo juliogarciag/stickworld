@@ -30,8 +30,9 @@ export interface Blow {
 }
 
 /**
- * True when `blow` touches `box`. The blow's thickness is added to the box on every side, so a
- * corner is touched from a hair further than a round end would reach: at most 0.2 of the thickness.
+ * True when `blow` touches `box`. Half the blow's thickness is added to the box on every side, so
+ * a corner is touched from a hair further than a round end would reach: about a fifth of the
+ * thickness at most. The blow reaches half its thickness past each of its ends, too.
  */
 export function doesBlowTouchBox(blow: Blow, box: Box): boolean {
   const margin = blow.thickness / 2;

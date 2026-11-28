@@ -7,8 +7,9 @@ import { convertToPixels } from './units';
  * The club enemy as pencil strokes: a box seen a little from the side, with a peaked top, two
  * scribbled eyes and a wavy mouth on the face it turns to the stick man, a small round hand at its
  * back, and an arm that holds a wide, dotted club. Where it is, which way it looks and where its
- * arm and club are come from the sim, which tests the club exactly where it is drawn; everything
- * else here is how it looks, and view detail only.
+ * arm and club are come from the sim: the club is drawn along the line the sim tests, as thick at
+ * its end as the sim has it (the sim's test reaches half that thickness past the end, too).
+ * Everything else here is how it looks, and view detail only.
  */
 
 /** Its shape, as shares of its body's width and height unless said otherwise. */
@@ -19,6 +20,10 @@ const LOOK = {
   peakHeight: 0.13,
   /** How much higher the far edge of its side is drawn: what makes the box look deep. */
   sideRise: 0.05,
+  /** How much of that rise the top of the far edge has. */
+  sideRiseAtTop: 0.4,
+  /** How far behind the middle of its face the peak is, as a share of its width. */
+  peakBehind: 0.1,
   /** Where its eyes are on its face: how far apart, how high, and how big. */
   eyeSpacing: 0.19,
   eyeHeight: 0.84,
@@ -34,10 +39,16 @@ const LOOK = {
   mouthDepth: 0.035,
   /** The hand at its back and the hand on the club, in metres. */
   handRadius: 0.07,
-  /** How far behind its body the hand at its back is, in metres. */
+  /** How far behind its body the hand at its back is, in metres, and how high up its body. */
   backHandBehind: 0.1,
+  backHandHeight: 0.45,
   /** How wide the club is where the hand holds it, as a share of how thick it is at its end. */
   clubWidthAtGrip: 0.45,
+  /** The rounded end of the club: how far from the end it starts to narrow, and to how much. */
+  clubEndLength: 0.6,
+  clubEndWidth: 0.5,
+  /** How far from the middle of the club its dots are, as a share of its half width there. */
+  dotAside: 0.4,
   /** How many dots the club has along it. */
   clubDots: 5,
   /** How long a dot is, in metres. */
@@ -45,10 +56,15 @@ const LOOK = {
   /** It floats: how far it bobs up and down, in metres, and how many times a second. */
   bobHeight: 0.015,
   bobsPerSecond: 0.55,
+  /** A scribbled eye: how many times the pencil goes round, and how far in it ends up. */
+  scribbleTurns: 2.25,
+  scribbleInward: 0.75,
+  /** The pencil for its eyes, brows, mouth and dots, as a share of the usual thickness. */
+  finePencil: 0.75,
 } as const;
 
 /** The pencil for its eyes, brows, mouth and the dots of its club: a finer line. */
-const FINE = PENCIL.thickness * 0.75;
+const FINE = PENCIL.thickness * LOOK.finePencil;
 
 /**
  * The strokes that draw `enemy`, in world pixels. `seconds` is the view's own clock, for the way it
@@ -62,10 +78,13 @@ export function buildEnemyStrokes(enemy: EnemyView, seconds: number): Stroke[] {
     : 0;
   const lift = (point: Point): Point => ({ x: point.x, y: point.y + bob });
   const isAboutToStrike = enemy.action === 'windingUp' || enemy.action === 'swinging';
+  // The brows come and go: they are last, so that no other line's place in the list changes with
+  // them. A stroke's wobble comes from its place.
   return [
     ...buildBodyLines(enemy),
-    ...buildFaceLines(enemy, isAboutToStrike),
+    ...buildFaceLines(enemy),
     ...buildArmAndClubLines(enemy),
+    ...(isAboutToStrike ? buildBrowLines(enemy) : []),
   ].map((line) => ({
     points: line.points.map(lift).map(convertPointToPixels),
     thickness: line.isFine ? FINE : PENCIL.thickness,
@@ -104,11 +123,19 @@ function buildBodyLines(enemy: EnemyView): Line[] {
   const face = getFace(enemy);
   const farEdge = -enemy.width / 2;
   const rise = enemy.height * LOOK.sideRise;
-  const peak = getBodyPoint(enemy, (face.back + face.front) / 2 - enemy.width * 0.1, enemy.height);
+  const peak = getBodyPoint(
+    enemy,
+    (face.back + face.front) / 2 - enemy.width * LOOK.peakBehind,
+    enemy.height,
+  );
   const faceTopFront = getBodyPoint(enemy, face.front, face.top);
   const faceTopBack = getBodyPoint(enemy, face.back, face.top);
-  const sideTop = getBodyPoint(enemy, farEdge, face.top + rise * 0.4);
-  const backHand = getBodyPoint(enemy, farEdge - LOOK.backHandBehind, enemy.height * 0.45);
+  const sideTop = getBodyPoint(enemy, farEdge, face.top + rise * LOOK.sideRiseAtTop);
+  const backHand = getBodyPoint(
+    enemy,
+    farEdge - LOOK.backHandBehind,
+    enemy.height * LOOK.backHandHeight,
+  );
   return [
     {
       points: [
@@ -127,35 +154,43 @@ function buildBodyLines(enemy: EnemyView): Line[] {
   ];
 }
 
-/** Two scribbled eyes and a wavy mouth, and a brow over each eye while it means to strike. */
-function buildFaceLines(enemy: EnemyView, isAboutToStrike: boolean): Line[] {
+/** Where its eyes are: how far forward of its middle each is, and how high up its body. */
+function getEyes(enemy: EnemyView): { forward: readonly [number, number]; up: number } {
   const face = getFace(enemy);
   const middle = (face.back + face.front) / 2;
-  const eyeUp = face.top * LOOK.eyeHeight;
-  const lines: Line[] = [];
-  for (const side of [-1, 1]) {
-    const eyeForward = middle + side * enemy.width * LOOK.eyeSpacing;
-    lines.push({
-      points: buildScribbleAround(
-        getBodyPoint(enemy, eyeForward, eyeUp),
-        enemy.width * LOOK.eyeRadius,
-      ),
+  const spacing = enemy.width * LOOK.eyeSpacing;
+  return { forward: [middle - spacing, middle + spacing], up: face.top * LOOK.eyeHeight };
+}
+
+/** A brow over each eye, each coming down towards the middle of its face: a frown. */
+function buildBrowLines(enemy: EnemyView): Line[] {
+  const eyes = getEyes(enemy);
+  const browUp = eyes.up + enemy.height * LOOK.browAbove;
+  const half = (enemy.width * LOOK.browLength) / 2;
+  return eyes.forward.map((eyeForward, index) => {
+    const slant = enemy.height * LOOK.browSlant * (index === 0 ? -1 : 1);
+    return {
+      points: [
+        getBodyPoint(enemy, eyeForward - half, browUp - slant / 2),
+        getBodyPoint(enemy, eyeForward + half, browUp + slant / 2),
+      ],
       isFine: true,
-    });
-    if (isAboutToStrike) {
-      // Each brow comes down towards the middle of its face: a frown.
-      const browUp = eyeUp + enemy.height * LOOK.browAbove;
-      const half = (enemy.width * LOOK.browLength) / 2;
-      const slant = enemy.height * LOOK.browSlant * side;
-      lines.push({
-        points: [
-          getBodyPoint(enemy, eyeForward - half, browUp - slant / 2),
-          getBodyPoint(enemy, eyeForward + half, browUp + slant / 2),
-        ],
-        isFine: true,
-      });
-    }
-  }
+    };
+  });
+}
+
+/** Two scribbled eyes and a wavy mouth. */
+function buildFaceLines(enemy: EnemyView): Line[] {
+  const face = getFace(enemy);
+  const middle = (face.back + face.front) / 2;
+  const eyes = getEyes(enemy);
+  const lines: Line[] = eyes.forward.map((eyeForward) => ({
+    points: buildScribbleAround(
+      getBodyPoint(enemy, eyeForward, eyes.up),
+      enemy.width * LOOK.eyeRadius,
+    ),
+    isFine: true,
+  }));
   const mouthUp = face.top * LOOK.mouthHeight;
   const mouthStart = middle - (enemy.width * LOOK.mouthWidth) / 2;
   const corners = LOOK.mouthWaves * 2;
@@ -187,12 +222,13 @@ function buildArmAndClubLines(enemy: EnemyView): Line[] {
   });
   const halfAtEnd = thickness / 2;
   const halfAtGrip = halfAtEnd * LOOK.clubWidthAtGrip;
-  // The rounded end is drawn inside the club's length: the sim's club ends at `tip`.
-  const shoulderOfEnd = length - halfAtEnd * 0.6;
+  // The rounded end is drawn inside the club's length, which ends at the sim's `tip`.
+  const endStart = length - halfAtEnd * LOOK.clubEndLength;
   const dots: Line[] = Array.from({ length: LOOK.clubDots }, (_, dot) => {
-    const share = (dot + 1) / (LOOK.clubDots + 1);
-    const aside = (dot % 2 === 0 ? 1 : -1) * (halfAtGrip + (halfAtEnd - halfAtGrip) * share) * 0.4;
-    const distance = length * share;
+    const progress = (dot + 1) / (LOOK.clubDots + 1);
+    const aside =
+      (dot % 2 === 0 ? 1 : -1) * (halfAtGrip + (halfAtEnd - halfAtGrip) * progress) * LOOK.dotAside;
+    const distance = length * progress;
     return {
       points: [getClubPoint(distance, aside), getClubPoint(distance + LOOK.dotLength, aside)],
       isFine: true,
@@ -204,10 +240,10 @@ function buildArmAndClubLines(enemy: EnemyView): Line[] {
     {
       points: [
         getClubPoint(0, halfAtGrip),
-        getClubPoint(shoulderOfEnd, halfAtEnd),
-        getClubPoint(length, halfAtEnd * 0.5),
-        getClubPoint(length, -halfAtEnd * 0.5),
-        getClubPoint(shoulderOfEnd, -halfAtEnd),
+        getClubPoint(endStart, halfAtEnd),
+        getClubPoint(length, halfAtEnd * LOOK.clubEndWidth),
+        getClubPoint(length, -halfAtEnd * LOOK.clubEndWidth),
+        getClubPoint(endStart, -halfAtEnd),
         getClubPoint(0, -halfAtGrip),
       ],
       isClosed: true,
@@ -230,8 +266,8 @@ const SCRIBBLE_CORNERS = 14;
 /** A scribble: the pencil going round and round on the spot, closing in on the middle. */
 function buildScribbleAround(centre: Point, radius: number): Point[] {
   return Array.from({ length: SCRIBBLE_CORNERS }, (_, corner) => {
-    const angle = (corner / SCRIBBLE_CORNERS) * Math.PI * 4.5;
-    const distance = radius * (1 - (0.75 * corner) / SCRIBBLE_CORNERS);
+    const angle = (corner / SCRIBBLE_CORNERS) * Math.PI * 2 * LOOK.scribbleTurns;
+    const distance = radius * (1 - (LOOK.scribbleInward * corner) / SCRIBBLE_CORNERS);
     return { x: centre.x + Math.cos(angle) * distance, y: centre.y + Math.sin(angle) * distance };
   });
 }

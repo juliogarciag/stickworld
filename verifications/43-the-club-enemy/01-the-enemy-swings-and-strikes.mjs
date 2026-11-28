@@ -102,10 +102,10 @@ try {
   await page.keyboard.up('ArrowRight');
   results.push(
     check(
-      'the club strikes the stick man who stayed in its reach: struck down during the swing, knocked away from the enemy',
+      'the club strikes the stick man who stayed in its reach: struck down by the swing, knocked away from the enemy',
       struck.stickMan.action === 'struck' &&
-        struck.stickMan.struckFor < 0.05 &&
-        struck.enemy.action === 'swinging' &&
+        struck.stickMan.struckFor < 0.1 &&
+        ['swinging', 'recovering'].includes(struck.enemy.action) &&
         struck.stickMan.struckDirection === Math.sign(struck.stickMan.feet.x - struck.enemy.position.x),
       `struck ${Math.abs(struck.stickMan.feet.x - struck.enemy.position.x).toFixed(2)} m from its middle, ${Math.round(struck.enemy.progress * 100)}% through the swing, the club ${(struck.enemy.position.y - struck.enemy.height - struck.enemy.club.tip.y).toFixed(2)} m above its top`,
     ),

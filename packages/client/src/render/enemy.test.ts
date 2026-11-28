@@ -43,8 +43,9 @@ describe('the club enemy as it is drawn', () => {
   it('draws its arm from the shoulder to the hand and its club from the hand to its end, where the sim has them', () => {
     for (const enemy of [WAITING, getEnemyDoing('windingUp'), getEnemyDoing('swinging')]) {
       const strokes = buildEnemyStrokes(enemy, 0);
-      const arm = strokes[strokes.length - LOOK.clubDots - 3]!;
-      const club = strokes[strokes.length - LOOK.clubDots - 1]!;
+      // After the six lines of its body and the three of its face: the arm, the hand, the club.
+      const arm = strokes[9]!;
+      const club = strokes[11]!;
       expect(arm.points).toEqual([enemy.club.shoulder, enemy.club.grip].map(convertPointToPixels));
       expect(club.isClosed).toBe(true);
       const tip = convertPointToPixels(enemy.club.tip);
@@ -61,7 +62,9 @@ describe('the club enemy as it is drawn', () => {
     }
   });
 
-  it('frowns only while it means to strike: winding up and swinging', () => {
+  it('frowns only while it means to strike, winding up and swinging, and the brows are the last lines: no other line changes its place', () => {
+    const frowning = buildEnemyStrokes({ ...WAITING, action: 'windingUp' }, 0);
+    expect(frowning.slice(0, -2)).toEqual(buildEnemyStrokes(WAITING, 0));
     const count = buildEnemyStrokes(WAITING, 0).length;
     expect(buildEnemyStrokes(getEnemyDoing('windingUp'), 0)).toHaveLength(count + 2);
     expect(buildEnemyStrokes(getEnemyDoing('swinging'), 0)).toHaveLength(count + 2);

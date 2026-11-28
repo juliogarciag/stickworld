@@ -1,6 +1,6 @@
 {
   "swinging": {
-    "tick": 262,
+    "tick": 260,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -42,12 +42,12 @@
     },
     "stickMan": {
       "feet": {
-        "x": 7.756666666666705,
+        "x": 7.720000000000038,
         "y": 0
       },
       "facing": -1,
       "action": "walking",
-      "distanceWalked": 1.576666666666684,
+      "distanceWalked": 1.613333333333351,
       "verticalSpeed": 0,
       "horizontalSpeed": -2.2,
       "isFallingOffEdge": false,
@@ -58,6 +58,7 @@
     },
     "stickManWidth": 0.65,
     "stickManHeight": 1.8,
+    "jumpHeight": 2,
     "enemies": [
       {
         "defId": 500,
@@ -70,19 +71,19 @@
         "floatHeight": 0.1,
         "facing": -1,
         "action": "swinging",
-        "progress": 0.36363636363636365,
+        "progress": 0.2727272727272727,
         "club": {
           "shoulder": {
             "x": 10.529999999999994,
             "y": -0.85
           },
           "grip": {
-            "x": 10.456284522135201,
-            "y": -1.3950376393637098
+            "x": 10.61571124716094,
+            "y": -1.393280389955422
           },
           "tip": {
-            "x": 10.328957787641468,
-            "y": -2.3364662891737535
+            "x": 10.763757946802572,
+            "y": -2.3316737907875145
           },
           "thickness": 0.26
         },
@@ -103,19 +104,19 @@
       "floatHeight": 0.1,
       "facing": -1,
       "action": "swinging",
-      "progress": 0.36363636363636365,
+      "progress": 0.2727272727272727,
       "club": {
         "shoulder": {
           "x": 10.529999999999994,
           "y": -0.85
         },
         "grip": {
-          "x": 10.456284522135201,
-          "y": -1.3950376393637098
+          "x": 10.61571124716094,
+          "y": -1.393280389955422
         },
         "tip": {
-          "x": 10.328957787641468,
-          "y": -2.3364662891737535
+          "x": 10.763757946802572,
+          "y": -2.3316737907875145
         },
         "thickness": 0.26
       },
@@ -131,6 +132,7 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "sightDistance": 5,
+      "sightHeight": 3,
       "speed": 1.4,
       "guardedStretch": 3,
       "swingDistance": 1.2,
@@ -163,7 +165,7 @@
     "interaction": null
   },
   "baited": {
-    "tick": 277,
+    "tick": 274,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -221,6 +223,7 @@
     },
     "stickManWidth": 0.65,
     "stickManHeight": 1.8,
+    "jumpHeight": 2,
     "enemies": [
       {
         "defId": 500,
@@ -233,19 +236,19 @@
         "floatHeight": 0.1,
         "facing": -1,
         "action": "recovering",
-        "progress": 0.06666666666666667,
+        "progress": 0.05,
         "club": {
           "shoulder": {
             "x": 10.529999999999994,
             "y": -0.85
           },
           "grip": {
-            "x": 10.043856811248489,
-            "y": -0.5927748067732912
+            "x": 10.051339002736057,
+            "y": -0.5791058330301402
           },
           "tip": {
-            "x": 9.204154939768614,
-            "y": -0.14847674574533953
+            "x": 9.224560916552896,
+            "y": -0.11119772644583714
           },
           "thickness": 0.26
         },
@@ -266,19 +269,19 @@
       "floatHeight": 0.1,
       "facing": -1,
       "action": "recovering",
-      "progress": 0.06666666666666667,
+      "progress": 0.05,
       "club": {
         "shoulder": {
           "x": 10.529999999999994,
           "y": -0.85
         },
         "grip": {
-          "x": 10.043856811248489,
-          "y": -0.5927748067732912
+          "x": 10.051339002736057,
+          "y": -0.5791058330301402
         },
         "tip": {
-          "x": 9.204154939768614,
-          "y": -0.14847674574533953
+          "x": 9.224560916552896,
+          "y": -0.11119772644583714
         },
         "thickness": 0.26
       },
@@ -294,6 +297,7 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "sightDistance": 5,
+      "sightHeight": 3,
       "speed": 1.4,
       "guardedStretch": 3,
       "swingDistance": 1.2,
@@ -326,7 +330,7 @@
     "interaction": null
   },
   "against": {
-    "tick": 360,
+    "tick": 357,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -384,6 +388,7 @@
     },
     "stickManWidth": 0.65,
     "stickManHeight": 1.8,
+    "jumpHeight": 2,
     "enemies": [
       {
         "defId": 500,
@@ -396,19 +401,19 @@
         "floatHeight": 0.1,
         "facing": -1,
         "action": "recovering",
-        "progress": 0.7583333333333333,
+        "progress": 0.7416666666666667,
         "club": {
           "shoulder": {
             "x": 10.529999999999994,
             "y": -0.85
           },
           "grip": {
-            "x": 10.105523092863391,
-            "y": -1.1997418409452085
+            "x": 10.09578543540097,
+            "y": -1.18757623122797
           },
           "tip": {
-            "x": 9.372335707809258,
-            "y": -1.8038413843960233
+            "x": 9.345778460184473,
+            "y": -1.7706624488035545
           },
           "thickness": 0.26
         },
@@ -429,19 +434,19 @@
       "floatHeight": 0.1,
       "facing": -1,
       "action": "recovering",
-      "progress": 0.7583333333333333,
+      "progress": 0.7416666666666667,
       "club": {
         "shoulder": {
           "x": 10.529999999999994,
           "y": -0.85
         },
         "grip": {
-          "x": 10.105523092863391,
-          "y": -1.1997418409452085
+          "x": 10.09578543540097,
+          "y": -1.18757623122797
         },
         "tip": {
-          "x": 9.372335707809258,
-          "y": -1.8038413843960233
+          "x": 9.345778460184473,
+          "y": -1.7706624488035545
         },
         "thickness": 0.26
       },
@@ -457,6 +462,7 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "sightDistance": 5,
+      "sightHeight": 3,
       "speed": 1.4,
       "guardedStretch": 3,
       "swingDistance": 1.2,
@@ -489,7 +495,7 @@
     "interaction": null
   },
   "caught": {
-    "tick": 244,
+    "tick": 243,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -547,6 +553,7 @@
     },
     "stickManWidth": 0.65,
     "stickManHeight": 1.8,
+    "jumpHeight": 2,
     "enemies": [
       {
         "defId": 500,
@@ -620,6 +627,7 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "sightDistance": 5,
+      "sightHeight": 3,
       "speed": 1.4,
       "guardedStretch": 3,
       "swingDistance": 1.2,
@@ -652,7 +660,7 @@
     "interaction": null
   },
   "fallen": {
-    "tick": 300,
+    "tick": 298,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -705,11 +713,12 @@
       "isFallingOffEdge": false,
       "walkDirectionAsked": 0,
       "isCarrying": false,
-      "struckFor": 0.9333333333333333,
+      "struckFor": 0.9166666666666666,
       "struckDirection": 1
     },
     "stickManWidth": 0.65,
     "stickManHeight": 1.8,
+    "jumpHeight": 2,
     "enemies": [
       {
         "defId": 500,
@@ -722,19 +731,19 @@
         "floatHeight": 0.1,
         "facing": -1,
         "action": "recovering",
-        "progress": 0.38333333333333336,
+        "progress": 0.375,
         "club": {
           "shoulder": {
             "x": 10.529999999999994,
             "y": -0.85
           },
           "grip": {
-            "x": 9.9807339339341,
-            "y": -0.8784040255685263
+            "x": 9.980386673433514,
+            "y": -0.8706201663555032
           },
           "tip": {
-            "x": 9.032001638002102,
-            "y": -0.927465524277799
+            "x": 9.031054563909596,
+            "y": -0.9062368173331905
           },
           "thickness": 0.26
         },
@@ -755,19 +764,19 @@
       "floatHeight": 0.1,
       "facing": -1,
       "action": "recovering",
-      "progress": 0.38333333333333336,
+      "progress": 0.375,
       "club": {
         "shoulder": {
           "x": 10.529999999999994,
           "y": -0.85
         },
         "grip": {
-          "x": 9.9807339339341,
-          "y": -0.8784040255685263
+          "x": 9.980386673433514,
+          "y": -0.8706201663555032
         },
         "tip": {
-          "x": 9.032001638002102,
-          "y": -0.927465524277799
+          "x": 9.031054563909596,
+          "y": -0.9062368173331905
         },
         "thickness": 0.26
       },
@@ -783,6 +792,7 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "sightDistance": 5,
+      "sightHeight": 3,
       "speed": 1.4,
       "guardedStretch": 3,
       "swingDistance": 1.2,
@@ -862,7 +872,7 @@
       },
       "facing": 1,
       "action": "jumping",
-      "distanceWalked": 2.053333333333356,
+      "distanceWalked": 2.12666666666669,
       "verticalSpeed": 0.05572809000083889,
       "horizontalSpeed": 2.2,
       "isFallingOffEdge": false,
@@ -873,6 +883,7 @@
     },
     "stickManWidth": 0.65,
     "stickManHeight": 1.8,
+    "jumpHeight": 2,
     "enemies": [
       {
         "defId": 500,
@@ -885,19 +896,19 @@
         "floatHeight": 0.1,
         "facing": -1,
         "action": "recovering",
-        "progress": 0.7166666666666667,
+        "progress": 0.7333333333333333,
         "club": {
           "shoulder": {
             "x": 10.529999999999994,
             "y": -0.85
           },
           "grip": {
-            "x": 10.081834855230921,
-            "y": -1.1688228395427727
+            "x": 10.091046836918162,
+            "y": -1.1813911897145954
           },
           "tip": {
-            "x": 9.307731423357069,
-            "y": -1.7195168351166528
+            "x": 9.332855009776816,
+            "y": -1.7537941537670783
           },
           "thickness": 0.26
         },
@@ -918,19 +929,19 @@
       "floatHeight": 0.1,
       "facing": -1,
       "action": "recovering",
-      "progress": 0.7166666666666667,
+      "progress": 0.7333333333333333,
       "club": {
         "shoulder": {
           "x": 10.529999999999994,
           "y": -0.85
         },
         "grip": {
-          "x": 10.081834855230921,
-          "y": -1.1688228395427727
+          "x": 10.091046836918162,
+          "y": -1.1813911897145954
         },
         "tip": {
-          "x": 9.307731423357069,
-          "y": -1.7195168351166528
+          "x": 9.332855009776816,
+          "y": -1.7537941537670783
         },
         "thickness": 0.26
       },
@@ -946,6 +957,7 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "sightDistance": 5,
+      "sightHeight": 3,
       "speed": 1.4,
       "guardedStretch": 3,
       "swingDistance": 1.2,
@@ -978,7 +990,7 @@
     "interaction": null
   },
   "landed": {
-    "tick": 380,
+    "tick": 370,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -1020,12 +1032,12 @@
     },
     "stickMan": {
       "feet": {
-        "x": 11.936666666666751,
+        "x": 11.57000000000008,
         "y": 0
       },
       "facing": 1,
       "action": "walking",
-      "distanceWalked": 0.40333333333333776,
+      "distanceWalked": 0.03666666666666707,
       "verticalSpeed": 0,
       "horizontalSpeed": 2.2,
       "isFallingOffEdge": false,
@@ -1036,31 +1048,32 @@
     },
     "stickManWidth": 0.65,
     "stickManHeight": 1.8,
+    "jumpHeight": 2,
     "enemies": [
       {
         "defId": 500,
         "position": {
-          "x": 10.623333333333328,
+          "x": 10.529999999999994,
           "y": -0.1
         },
         "width": 0.8,
         "height": 1.2,
         "floatHeight": 0.1,
-        "facing": 1,
-        "action": "approaching",
-        "progress": 0,
+        "facing": -1,
+        "action": "recovering",
+        "progress": 0.9666666666666667,
         "club": {
           "shoulder": {
-            "x": 10.623333333333328,
+            "x": 10.529999999999994,
             "y": -0.85
           },
           "grip": {
-            "x": 10.872811200117395,
-            "y": -1.3401640480337895
+            "x": 10.253161476793352,
+            "y": -1.3252477586151938
           },
           "tip": {
-            "x": 11.303727515471694,
-            "y": -2.186811040092153
+            "x": 9.77498584580006,
+            "y": -2.14613025076871
           },
           "thickness": 0.26
         },
@@ -1073,27 +1086,27 @@
     "enemy": {
       "defId": 500,
       "position": {
-        "x": 10.623333333333328,
+        "x": 10.529999999999994,
         "y": -0.1
       },
       "width": 0.8,
       "height": 1.2,
       "floatHeight": 0.1,
-      "facing": 1,
-      "action": "approaching",
-      "progress": 0,
+      "facing": -1,
+      "action": "recovering",
+      "progress": 0.9666666666666667,
       "club": {
         "shoulder": {
-          "x": 10.623333333333328,
+          "x": 10.529999999999994,
           "y": -0.85
         },
         "grip": {
-          "x": 10.872811200117395,
-          "y": -1.3401640480337895
+          "x": 10.253161476793352,
+          "y": -1.3252477586151938
         },
         "tip": {
-          "x": 11.303727515471694,
-          "y": -2.186811040092153
+          "x": 9.77498584580006,
+          "y": -2.14613025076871
         },
         "thickness": 0.26
       },
@@ -1109,6 +1122,7 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "sightDistance": 5,
+      "sightHeight": 3,
       "speed": 1.4,
       "guardedStretch": 3,
       "swingDistance": 1.2,
@@ -1141,7 +1155,7 @@
     "interaction": null
   },
   "atFlag": {
-    "tick": 645,
+    "tick": 641,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -1199,6 +1213,7 @@
     },
     "stickManWidth": 0.65,
     "stickManHeight": 1.8,
+    "jumpHeight": 2,
     "enemies": [
       {
         "defId": 500,
@@ -1272,6 +1287,7 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "sightDistance": 5,
+      "sightHeight": 3,
       "speed": 1.4,
       "guardedStretch": 3,
       "swingDistance": 1.2,
@@ -1296,7 +1312,7 @@
       },
       "height": 2.2,
       "isReached": true,
-      "upFor": 0.3666666666666667,
+      "upFor": 0.30000000000000004,
       "raised": 1,
       "isFinalFlag": false
     },
@@ -1304,7 +1320,7 @@
     "interaction": null
   },
   "later": {
-    "tick": 754,
+    "tick": 742,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -1362,6 +1378,7 @@
     },
     "stickManWidth": 0.65,
     "stickManHeight": 1.8,
+    "jumpHeight": 2,
     "enemies": [
       {
         "defId": 500,
@@ -1435,6 +1452,7 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "sightDistance": 5,
+      "sightHeight": 3,
       "speed": 1.4,
       "guardedStretch": 3,
       "swingDistance": 1.2,
@@ -1459,7 +1477,7 @@
       },
       "height": 2.2,
       "isReached": true,
-      "upFor": 2.183333333333333,
+      "upFor": 1.9833333333333334,
       "raised": 1,
       "isFinalFlag": false
     },
@@ -1470,7 +1488,7 @@
     {
       "name": "the swing takes the club from behind it over the top: higher than the stick man jumps",
       "pass": true,
-      "details": "club end 2.34 m above the floor, 36% through the swing"
+      "details": "club end 2.33 m above the floor, the jump is 2 m, 27% through the swing"
     },
     {
       "name": "walking away when the club goes back gets the stick man out of its reach: the swing hits nothing",
@@ -1505,7 +1523,7 @@
     {
       "name": "it lands on the far side",
       "pass": true,
-      "details": "landed 1.41 m past its middle"
+      "details": "landed 1.04 m past its middle"
     },
     {
       "name": "and walks on out of its reach to the flag it guards",

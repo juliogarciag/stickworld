@@ -5,8 +5,9 @@ import type { Level } from './types';
 /**
  * A yard to try the club enemy in, before the level it is for exists (#45): one floor line, the
  * enemy at its post in the middle of the stretch it guards, and a flag behind it. It is not part
- * of the game (`practiceLevels`): its flag leads nowhere. Walking into the enemy's reach gets the
- * stick man struck down; the way to the flag is to make it swing at nothing and jump over it
+ * of the game (`practiceLevels`): its flag leads nowhere, so the stick man who reaches it cheers
+ * under it, deaf to the keys, until the level is loaded again. Walking into the enemy's reach gets
+ * the stick man struck down; the way to the flag is to make it swing at nothing and jump over it
  * while it lifts its club (`clubYard.test.ts`).
  */
 export const clubYard: Level = {

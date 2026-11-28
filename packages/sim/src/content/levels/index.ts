@@ -25,7 +25,7 @@ export function getLevelById(id: number): Level {
   const level = [...levels, ...practiceLevels].find((candidate) => candidate.id === id);
   if (!level) {
     throw new RangeError(
-      `no level ${id}; the levels are ${levels.map((candidate) => candidate.id).join(', ')}`,
+      `no level ${id}; the levels are ${[...levels, ...practiceLevels].map((candidate) => candidate.id).join(', ')}`,
     );
   }
   return level;

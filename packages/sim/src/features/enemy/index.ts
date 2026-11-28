@@ -29,7 +29,7 @@ export const enemyFeature: Feature = {
   slices: [enemiesSlice],
 
   init(sim) {
-    const { floor, enemies } = sim.levelDef;
+    const { floor, enemies, start } = sim.levelDef;
     const placed: EnemyState[] = [];
     for (const placement of enemies ?? []) {
       const def = findEnemyDef(placement.defId);
@@ -41,7 +41,8 @@ export const enemyFeature: Feature = {
         defId: def.id,
         x: placement.position.x,
         y: floorHeight - def.floatHeight,
-        facing: -1,
+        // It looks the way the stick man will come from.
+        facing: placement.position.x < start.x ? 1 : -1,
         action: 'waiting',
         ticksInAction: 0,
         postX: placement.position.x,
@@ -64,8 +65,11 @@ export const enemyFeature: Feature = {
   },
 };
 
-/** The enemy's body: what the stick man cannot walk through. */
-export function getEnemyBox(enemy: EnemyState, def: EnemyDef): Box {
+/**
+ * The enemy's body: what the stick man cannot walk through, and the outline a blow at it is tested
+ * against (ADR 0008).
+ */
+function getEnemyBox(enemy: EnemyState, def: EnemyDef): Box {
   return {
     left: enemy.x - def.width / 2,
     right: enemy.x + def.width / 2,
@@ -108,7 +112,7 @@ export function getClub(
   enemy: EnemyState,
   def: EnemyDef,
   progress: number,
-): { shoulder: Point; grip: Point; tip: Point; angle: number } {
+): { shoulder: Point; grip: Point; tip: Point } {
   const angle = getClubAngle(enemy.action, def, progress);
   const shoulder = { x: enemy.x, y: enemy.y - def.club.shoulderHeight };
   const getPointAlongArm = (distance: number): Point => ({
@@ -119,7 +123,6 @@ export function getClub(
     shoulder,
     grip: getPointAlongArm(def.club.armLength),
     tip: getPointAlongArm(def.club.armLength + def.club.length),
-    angle,
   };
 }
 
@@ -156,8 +159,9 @@ function watchForPlayer(sim: Sim, enemy: EnemyState, def: EnemyDef): void {
   const player = getPlayerBody(sim);
   const distance = player.x - enemy.x;
   // The stick man it has struck down, and one under a flag it has reached, are left alone.
-  const canSeePlayer =
-    Math.abs(distance) <= def.sightDistance && !isPlayerStruck(sim) && !isFlagReached(sim);
+  const isInSight =
+    Math.abs(distance) <= def.sightDistance && Math.abs(player.y - enemy.y) <= def.sightHeight;
+  const canSeePlayer = isInSight && !isPlayerStruck(sim) && !isFlagReached(sim);
   if (!canSeePlayer) {
     beginActionIfNew(enemy, 'waiting');
     return;

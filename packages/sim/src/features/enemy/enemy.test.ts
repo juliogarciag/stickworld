@@ -212,7 +212,9 @@ describe("the club enemy's body", () => {
     expect(getStickMan(sim).feet.x).toBeGreaterThan(enemyX + clubEnemyDef.guardedStretch);
   });
 
-  it.each(JUMPS_OVER.map((jumpFrom) => [jumpFrom]))(
+  // Every distance in front of its middle that a jump has to clear it from: from right up against
+  // its body to a long step back.
+  it.each([[clubEnemyDef.width / 2 + STICK_MAN_WIDTH / 2], [0.8], [1], [1.2], [1.4]])(
     'is cleared by a jump from %f m in front of its middle, right up against it included',
     (jumpFrom) => {
       const sim = createSim({ level: clubYard.id });
@@ -287,6 +289,26 @@ describe('getting past the club enemy without making it swing first', () => {
   });
 });
 
+describe('the club enemy from its other side', () => {
+  it('turns round for the stick man that got past it and comes back, and strikes it the other way', () => {
+    const sim = createSim({ level: clubYard.id });
+    makeEnemySwing(sim);
+    jumpOverFrom(sim, getEnemy(sim).position.x - JUMP_FROM);
+    stepUntil(sim, () => getStickMan(sim).feet.x > POST.x + clubEnemyDef.sightDistance + 2);
+    stepFor(sim, 1, [WALK_LEFT]);
+    stepUntil(sim, () => getStickMan(sim).action === 'struck');
+    expect(getEnemy(sim).facing).toBe(1);
+    expect(getStickMan(sim).struckDirection).toBe(1);
+    expect(getStickMan(sim).feet.x).toBeGreaterThan(getEnemy(sim).position.x);
+    expect(getEnemy(sim).position.x).toBeLessThanOrEqual(getEnemy(sim).guardedStretch.end);
+  });
+
+  it('does not see the stick man far above it or far below it: only one about level with it', () => {
+    expect(clubEnemyDef.sightHeight).toBeGreaterThan(PLAYER.jumpHeight);
+    expect(clubEnemyDef.sightHeight).toBeLessThan(PLAYER.fallBelowFloor);
+  });
+});
+
 describe('the club enemy and the rest of the game', () => {
   it('leaves the stick man alone under the flag the stick man has reached', () => {
     const sim = createSim({ level: clubYard.id });
@@ -354,12 +376,6 @@ const TICKS = Math.round(1 / createSim({ level: clubYard.id }).dt);
 const RUN_UP_TICKS = Math.round(((POST.x - clubYard.start.x + 2) / PLAYER.walkSpeed) * TICKS);
 /** How far in front of the enemy's middle a jump over it starts in these tests, in metres. */
 const JUMP_FROM = 1;
-/**
- * Every distance in front of its middle that a jump has to clear it from: from right up against
- * its body to a long step back.
- */
-const JUMPS_OVER = [clubEnemyDef.width / 2 + STICK_MAN_WIDTH / 2, 0.8, 1, 1.2, 1.4];
-
 function getEnemy(sim: SimHandle): EnemyView {
   return getEnemies(sim)[0]!;
 }

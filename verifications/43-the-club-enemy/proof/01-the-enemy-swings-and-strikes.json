@@ -6,6 +6,7 @@
     "height": 1.2,
     "floatHeight": 0.1,
     "sightDistance": 5,
+    "sightHeight": 3,
     "speed": 1.4,
     "guardedStretch": 3,
     "swingDistance": 1.2,
@@ -24,7 +25,7 @@
     }
   },
   "start": {
-    "tick": 15,
+    "tick": 17,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -82,6 +83,7 @@
     },
     "stickManWidth": 0.65,
     "stickManHeight": 1.8,
+    "jumpHeight": 2,
     "enemies": [
       {
         "defId": 500,
@@ -155,6 +157,7 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "sightDistance": 5,
+      "sightHeight": 3,
       "speed": 1.4,
       "guardedStretch": 3,
       "swingDistance": 1.2,
@@ -187,7 +190,7 @@
     "interaction": null
   },
   "seen": {
-    "tick": 153,
+    "tick": 155,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -245,6 +248,7 @@
     },
     "stickManWidth": 0.65,
     "stickManHeight": 1.8,
+    "jumpHeight": 2,
     "enemies": [
       {
         "defId": 500,
@@ -318,6 +322,7 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "sightDistance": 5,
+      "sightHeight": 3,
       "speed": 1.4,
       "guardedStretch": 3,
       "swingDistance": 1.2,
@@ -350,7 +355,7 @@
     "interaction": null
   },
   "woundUp": {
-    "tick": 227,
+    "tick": 229,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -408,6 +413,7 @@
     },
     "stickManWidth": 0.65,
     "stickManHeight": 1.8,
+    "jumpHeight": 2,
     "enemies": [
       {
         "defId": 500,
@@ -481,6 +487,7 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "sightDistance": 5,
+      "sightHeight": 3,
       "speed": 1.4,
       "guardedStretch": 3,
       "swingDistance": 1.2,
@@ -513,7 +520,7 @@
     "interaction": null
   },
   "struck": {
-    "tick": 263,
+    "tick": 265,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -571,6 +578,7 @@
     },
     "stickManWidth": 0.65,
     "stickManHeight": 1.8,
+    "jumpHeight": 2,
     "enemies": [
       {
         "defId": 500,
@@ -644,6 +652,7 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "sightDistance": 5,
+      "sightHeight": 3,
       "speed": 1.4,
       "guardedStretch": 3,
       "swingDistance": 1.2,
@@ -676,7 +685,7 @@
     "interaction": null
   },
   "goingDown": {
-    "tick": 597,
+    "tick": 599,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -734,6 +743,7 @@
     },
     "stickManWidth": 0.65,
     "stickManHeight": 1.8,
+    "jumpHeight": 2,
     "enemies": [
       {
         "defId": 500,
@@ -807,6 +817,7 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "sightDistance": 5,
+      "sightHeight": 3,
       "speed": 1.4,
       "guardedStretch": 3,
       "swingDistance": 1.2,
@@ -839,7 +850,7 @@
     "interaction": null
   },
   "lying": {
-    "tick": 306,
+    "tick": 308,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -897,6 +908,7 @@
     },
     "stickManWidth": 0.65,
     "stickManHeight": 1.8,
+    "jumpHeight": 2,
     "enemies": [
       {
         "defId": 500,
@@ -970,6 +982,7 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "sightDistance": 5,
+      "sightHeight": 3,
       "speed": 1.4,
       "guardedStretch": 3,
       "swingDistance": 1.2,
@@ -1002,7 +1015,7 @@
     "interaction": null
   },
   "again": {
-    "tick": 341,
+    "tick": 343,
     "dt": 0.016666666666666666,
     "level": {
       "id": 900,
@@ -1060,6 +1073,7 @@
     },
     "stickManWidth": 0.65,
     "stickManHeight": 1.8,
+    "jumpHeight": 2,
     "enemies": [
       {
         "defId": 500,
@@ -1133,6 +1147,7 @@
       "height": 1.2,
       "floatHeight": 0.1,
       "sightDistance": 5,
+      "sightHeight": 3,
       "speed": 1.4,
       "guardedStretch": 3,
       "swingDistance": 1.2,
@@ -1188,7 +1203,7 @@
     {
       "name": "it moves along the floor inside the stretch it guards",
       "pass": true,
-      "details": "at 11.00, guards 9 to 15"
+      "details": "at 10.97, guards 9 to 15"
     },
     {
       "name": "it winds up before it swings: the club is on its way back from where it holds it, and the stick man is not hurt yet",
@@ -1196,7 +1211,7 @@
       "details": "club end 0.68 m in front of its shoulder at rest, 0.12 m now, 26% through the wind-up; stick man walking"
     },
     {
-      "name": "the club strikes the stick man who stayed in its reach: struck down during the swing, knocked away from the enemy",
+      "name": "the club strikes the stick man who stayed in its reach: struck down by the swing, knocked away from the enemy",
       "pass": true,
       "details": "struck 0.72 m from its middle, 45% through the swing, the club 0.92 m above its top"
     },

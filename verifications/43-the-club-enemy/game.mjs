@@ -74,6 +74,7 @@ export function readGame(page) {
       stickMan: api.getStickMan(),
       stickManWidth: api.stickManWidth,
       stickManHeight: api.stickManHeight,
+      jumpHeight: api.getMovementTuning().jumpHeight,
       enemies: api.getEnemies(),
       enemy,
       enemyDef: enemy && api.defs.find((def) => def.id === enemy.defId),
