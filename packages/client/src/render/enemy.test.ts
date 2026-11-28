@@ -89,6 +89,16 @@ describe('the club enemy as it is drawn', () => {
     );
   });
 
+  it('is drawn still, where the sim has it, on a sheet whose clock is endless: the one being turned away', () => {
+    const strokes = buildEnemyStrokes(WAITING, Infinity);
+    expect(strokes).toEqual(buildEnemyStrokes(WAITING, 0));
+    for (const stroke of strokes) {
+      for (const point of stroke.points) {
+        expect(Number.isFinite(point.x) && Number.isFinite(point.y)).toBe(true);
+      }
+    }
+  });
+
   it('bobs a little as it floats, by the clock of the view, club and all', () => {
     const quarterOfBob = 1 / LOOK.bobsPerSecond / 4;
     const still = buildEnemyStrokes(WAITING, 0);

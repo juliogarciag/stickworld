@@ -11,6 +11,8 @@ import { getItemUse } from '../item/view';
 import { PLAYER } from '../player/defs';
 import { getStickMan } from '../player/view';
 import { clubEnemyDef } from './defs';
+import { getGuardedStretch } from './index';
+import type { EnemyState } from './state';
 import { getEnemies, type EnemyView } from './view';
 
 describe('the club enemy at its post', () => {
@@ -100,10 +102,24 @@ describe('the club enemy that sees the stick man', () => {
     expect(getStickMan(sim).action).toBe('standing');
   });
 
-  it('does not leave its floor line: a post near the end of a line guards only as far as the line goes', () => {
-    const stretch = getEnemy(createSim({ level: clubYard.id })).guardedStretch;
-    const floorEnd = clubYard.floor[0]!.end.x;
-    expect(stretch.end).toBeLessThanOrEqual(floorEnd - clubEnemyDef.width / 2);
+  it('does not leave its floor line: a post near the end of a line guards only as far as the line goes, less half its body', () => {
+    const post = 12;
+    const enemy = { ...WAITING_STATE, x: post, postX: post };
+    const lineEndsNearPost = [{ start: { x: 0, y: 0 }, end: { x: post + 1, y: 0 } }];
+    expect(getGuardedStretch(lineEndsNearPost, enemy, clubEnemyDef)).toEqual({
+      start: post - clubEnemyDef.guardedStretch,
+      end: post + 1 - clubEnemyDef.width / 2,
+    });
+    const lineStartsNearPost = [{ start: { x: post - 1, y: 0 }, end: { x: 40, y: 0 } }];
+    expect(getGuardedStretch(lineStartsNearPost, enemy, clubEnemyDef)).toEqual({
+      start: post - 1 + clubEnemyDef.width / 2,
+      end: post + clubEnemyDef.guardedStretch,
+    });
+    // A gap between its post and the stick man: the next line is not its to guard.
+    const twoLines = [...lineEndsNearPost, { start: { x: post + 3, y: 0 }, end: { x: 40, y: 0 } }];
+    expect(getGuardedStretch(twoLines, enemy, clubEnemyDef).end).toBe(
+      post + 1 - clubEnemyDef.width / 2,
+    );
   });
 });
 
@@ -323,6 +339,16 @@ const USE: Command = { type: 'item/use' };
 const INTERACT: Command = { type: 'world/interact' };
 const SELECT_FIRST: Command = { type: 'inventory/select', slot: 1 };
 const POST = clubYard.enemies![0]!.position;
+/** An enemy's state as a level starts it, for the rules that are plain functions of it. */
+const WAITING_STATE: EnemyState = {
+  defId: clubEnemyDef.id,
+  x: POST.x,
+  y: -clubEnemyDef.floatHeight,
+  facing: -1,
+  action: 'waiting',
+  ticksInAction: 0,
+  postX: POST.x,
+};
 const TICKS = Math.round(1 / createSim({ level: clubYard.id }).dt);
 /** Ticks from the start of the yard to well past the enemy at a walk. */
 const RUN_UP_TICKS = Math.round(((POST.x - clubYard.start.x + 2) / PLAYER.walkSpeed) * TICKS);

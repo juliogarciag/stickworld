@@ -8,6 +8,7 @@ import { Sim } from '../../core/sim';
 import { features } from '..';
 import { AIRPLANE } from '../airplane/defs';
 import { getAirplane } from '../airplane/view';
+import { flagDef } from '../flag/defs';
 import { getFlag } from '../flag/view';
 import { AIRPLANE_ITEM_ID, PAPER_ITEM_ID } from '../inventory/defs';
 import { giveItem } from '../inventory/give';
@@ -141,16 +142,26 @@ describe('the stick man struck down', () => {
     expect(getStickMan(sim)).toMatchObject({ action: 'standing', feet: getLevelById(2).start });
   });
 
-  it('does not reach a flag it is struck down next to', () => {
-    const sim = createSimOn(1);
-    const flag = getFlag(sim)!;
-    walkUntil(sim, () => getStickMan(sim).feet.x > flag.position.x - 0.6);
-    expect(flag.isReached).toBe(false);
-    strikePlayerWith(sim, makeBlowAcross(sim, { direction: 1 }));
-    // Knocked no further: it lies short of the flag. Put right next to it, it still does not
-    // reach it.
-    stepFor(sim, 30);
-    expect(getFlag(sim)!.isReached).toBe(false);
+  it('does not reach a flag it is struck down next to, though the stick man on its feet in the same place does', () => {
+    const struck = createSimJustShortOfFlag();
+    strikePlayerWith(struck, makeBlowAcross(struck, { direction: 1 }));
+    const onFeet = createSimJustShortOfFlag();
+    for (const sim of [struck, onFeet]) {
+      // Something solid behind the stick man moves it to well within the flag's reach.
+      const flagX = getFlag(sim)!.position.x;
+      const box: Box = {
+        left: flagX - 3,
+        right: flagX - 0.2 - STICK_MAN_WIDTH / 2,
+        top: -1,
+        bottom: 0,
+      };
+      keepPlayerOutOfBox(sim, box);
+      expect(flagX - getPlayerBody(sim).x).toBeCloseTo(0.2, 9);
+      expect(flagDef.reach).toBeGreaterThan(0.2);
+      stepFor(sim, 5);
+    }
+    expect(getFlag(struck)!.isReached).toBe(false);
+    expect(getFlag(onFeet)!.isReached).toBe(true);
   });
 
   it('does nothing with either action key, and selects no slot', () => {
@@ -278,6 +289,16 @@ function walkUntil(sim: Sim, isDone: () => boolean): void {
       throw new Error('never got there');
     }
   }
+}
+
+/** On level 1, standing still a little further from the flag than it is reached from. */
+function createSimJustShortOfFlag(): Sim {
+  const sim = createSimOn(1);
+  const flagX = getFlag(sim)!.position.x;
+  walkUntil(sim, () => getPlayerBody(sim).x > flagX - flagDef.reach - 0.2);
+  sim.step([STOP]);
+  expect(getFlag(sim)!.isReached).toBe(false);
+  return sim;
 }
 
 /** A blow through the middle of the stick man where it is now, from one side to the other. */

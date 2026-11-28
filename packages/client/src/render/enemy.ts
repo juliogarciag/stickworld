@@ -55,7 +55,11 @@ const FINE = PENCIL.thickness * 0.75;
  * bobs as it floats.
  */
 export function buildEnemyStrokes(enemy: EnemyView, seconds: number): Stroke[] {
-  const bob = LOOK.bobHeight * Math.sin(seconds * LOOK.bobsPerSecond * Math.PI * 2);
+  // A sheet that is being turned away has no clock of its own (its time is endless): the enemy on
+  // it is still.
+  const bob = Number.isFinite(seconds)
+    ? LOOK.bobHeight * Math.sin(seconds * LOOK.bobsPerSecond * Math.PI * 2)
+    : 0;
   const lift = (point: Point): Point => ({ x: point.x, y: point.y + bob });
   const isAboutToStrike = enemy.action === 'windingUp' || enemy.action === 'swinging';
   return [
