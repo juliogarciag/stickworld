@@ -64,6 +64,18 @@ describe('GameLoop', () => {
     expect(loop.takeFinishedLevel()).toBeUndefined();
   });
 
+  it('plays on from a snapshot: the sim is as the one it was taken from, and what was waiting is dropped', () => {
+    const loop = new GameLoop(createSim({ level: 1 }));
+    loop.advanceBy(FIXED_DT * 5);
+    const snapshot = loop.sim.takeSnapshot();
+    loop.advanceBy(FIXED_DT * 5);
+    loop.queueCommand(makeFakeCommand('dropped'));
+    loop.playSnapshot(snapshot);
+    expect(loop.sim.takeSnapshot()).toEqual(snapshot);
+    loop.advanceBy(FIXED_DT);
+    expect(loop.sim.tick).toBe(6);
+  });
+
   it('starts a level over from tick 0', () => {
     const loop = new GameLoop(createSim({ level: 1 }));
     loop.advanceBy(FIXED_DT * 5);

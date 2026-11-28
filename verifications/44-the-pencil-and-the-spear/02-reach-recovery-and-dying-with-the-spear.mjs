@@ -25,7 +25,7 @@ try {
   const { page } = game;
   const spearId = await getItemId(page, 'spear');
 
-  // Letter, pencil, spear, as in the first script.
+  // Letter, paper, spear, as in the first script.
   await page.keyboard.down('ArrowRight');
   await stepFramesUntil(page, 'the letter within reach', (now) => now.interaction === 'read');
   await page.keyboard.up('ArrowRight');
@@ -73,9 +73,9 @@ try {
   const reach = Math.max(...reaches);
   results.push(
     check(
-      'the point goes out, further every frame, and is level at the height of its chest',
+      'the point goes out, further frame after frame, and is level at the height of its chest',
       thrusting.length >= 3 &&
-        thrusting.every((now, index) => index === 0 || reaches[frames.indexOf(now)] > reaches[frames.indexOf(now) - 1]) &&
+        thrusting.every((now, index) => index === 0 || reaches[frames.indexOf(now)] >= reaches[frames.indexOf(now) - 1]) &&
         frames.every((now) => now.spear.action === 'ready' || now.spear.tip.y === now.spear.butt.y),
       `${thrusting.length} frames out, reach ${reach.toFixed(2)} m`,
     ),

@@ -1,0 +1,14 @@
+PASS  dev server up, started by this run
+PASS  knowing only the spear, there is nothing to switch to and no key for it
+PASS  L does nothing then
+PASS  knowing the airplane too, the paper is for the spear by default: the letter read last  (J: spear, L: paper airplane)
+PASS  L switches: J would fold the airplane, and L would switch back to the spear
+PASS  L again switches back
+PASS  J without ever switching makes the spear, and then there is nothing to switch
+PASS  L and then J folds the airplane instead
+PASS  with the paper spent on an airplane in the yard, a new sheet falls where the stick man stands
+PASS  K picks it up in place of the airplane (one slot), and it is for the spear again  (slot {"itemDefId":200,"isSelected":true}, J: spear)
+PASS  J then rolls the spear
+PASS  no page errors
+
+ALL 12 CHECKS PASSED

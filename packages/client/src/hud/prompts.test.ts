@@ -54,11 +54,28 @@ describe('getPromptsFor', () => {
     ).toEqual([{ key: 'J', words: 'fold a paper airplane' }]);
   });
 
-  it('says what is done to the pencil to make the spear of it, and makes by name what it has no words for', () => {
-    const getCraftWords = (wouldMake: RecipeView | null): string =>
-      getPromptsFor({ ...KEYS, itemUse: 'craft', wouldMake, interaction: null })[0]!.words;
-    expect(getCraftWords({ defId: SPEAR_RECIPE_ID, name: 'spear' })).toBe('sharpen the pencil');
+  it('says what is done to the paper to make each thing of it, and makes by name what it has no words for', () => {
+    const getCraftWords = (recipe: RecipeView | null): string =>
+      getPromptsFor({ ...KEYS, itemUse: 'craft', wouldMake: recipe, interaction: null })[0]!.words;
+    expect(getCraftWords(AIRPLANE_RECIPE)).toBe('fold a paper airplane');
+    expect(getCraftWords(SPEAR_RECIPE)).toBe('roll a spear');
     expect(getCraftWords({ defId: 499, name: 'paper boat' })).toBe('make a paper boat');
+  });
+
+  it('shows the key that switches under the item key, with what would be made instead, only while there is something to switch to', () => {
+    const making = {
+      ...KEYS,
+      itemUse: 'craft',
+      wouldMake: SPEAR_RECIPE,
+      interaction: null,
+    } as const;
+    expect(
+      getPromptsFor({ ...making, canSwitchItemUse: true, couldMakeInstead: AIRPLANE_RECIPE }),
+    ).toEqual([
+      { key: 'J', words: 'roll a spear' },
+      { key: 'L', words: 'fold a paper airplane instead' },
+    ]);
+    expect(getPromptsFor(making)).toEqual([{ key: 'J', words: 'roll a spear' }]);
   });
 
   it('says the spear is thrust, and shows no key for it while it cannot be', () => {
@@ -192,12 +209,16 @@ describe('keepWhileUnchanged', () => {
 
 const KEYS = {
   useItemKey: 'J',
+  canSwitchItemUse: false,
+  couldMakeInstead: null,
+  switchItemUseKey: 'L',
   interactKey: 'K',
   wouldMake: null,
   isSeated: false,
   flightKeys: { climb: '↑', dive: '↓', jumpOut: 'SPACE' },
   flyingHint: null,
 } as const;
+const SPEAR_RECIPE = { defId: SPEAR_RECIPE_ID, name: 'spear' };
 const AIRPLANE_RECIPE = { defId: PAPER_AIRPLANE_RECIPE_ID, name: 'paper airplane' };
 const CAMERA_SEES = { x: 40, y: -20, width: 1920, height: 1080 };
 const WRITING = { position: { x: 0, y: 0 }, letterHeight: 28 };

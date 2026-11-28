@@ -3,8 +3,6 @@ import {
   getItemSlots,
   getSpear,
   getStickMan,
-  PAPER_ITEM_ID,
-  PENCIL_ITEM_ID,
   practiceLevels,
   SPEAR_ITEM_ID,
   STICK_MAN_HEIGHT,
@@ -12,63 +10,56 @@ import {
   type SimHandle,
 } from '@stickworld/sim';
 import { describe, expect, it } from 'vitest';
-import { __testing__, buildHeldItemStrokes, getHeldItem, type HeldItem } from './heldItem';
+import { __testing__, buildHeldSpearStrokes, getHeldSpear, type HeldSpear } from './heldItem';
 import { convertToPixels } from './units';
 
-const { SHAFT } = __testing__;
+const { ROLL } = __testing__;
 
-describe('the pencil in the hand of the stick man', () => {
-  it('is held upright at its side like a staff: its blunt end off the floor, its other end at the top of its head, its hand on it', () => {
-    const pencil = getHeldItemOf(createSimWithPencil());
-    expect(pencil.isSharp).toBe(false);
-    const feet = YARD.start;
-    expect(pencil.butt.y).toBeLessThan(feet.y);
-    expect(pencil.butt.y).toBeGreaterThan(feet.y - 0.4);
-    expect(feet.y - pencil.tip.y).toBeGreaterThan(STICK_MAN_HEIGHT - 0.1);
-    expect(measureDistanceToLine(pencil.hand!, pencil)).toBeCloseTo(0, 9);
-    expect(measureLength(pencil)).toBeCloseTo(SHAFT.length, 9);
+describe('the spear in the hand of the stick man', () => {
+  it('is held upright at its side like a staff: its wide end off the floor, its point at the top of its head, its hand on it', () => {
+    const sim = createSimWithSpear();
+    const spear = getHeldSpearOf(sim)!;
+    const { feet } = getStickMan(sim);
+    expect(spear.butt.y).toBeLessThan(feet.y);
+    expect(spear.butt.y).toBeGreaterThan(feet.y - 0.4);
+    expect(feet.y - spear.tip.y).toBeGreaterThan(STICK_MAN_HEIGHT - 0.1);
+    expect(measureDistanceToLine(spear.hand!, spear)).toBeCloseTo(0, 9);
+    expect(measureLength(spear)).toBeCloseTo(measureLength(getSpear(sim)!), 9);
   });
 
   it('is on the side the stick man faces', () => {
-    const sim = createSimWithPencil();
-    const facingRight = getHeldItemOf(sim);
-    expect(facingRight.hand!.x).toBeGreaterThan(getStickMan(sim).feet.x);
+    const sim = createSimWithSpear();
+    expect(getHeldSpearOf(sim)!.hand!.x).toBeGreaterThan(getStickMan(sim).feet.x);
     sim.step([{ type: 'player/walk', direction: -1 }]);
     sim.step([{ type: 'player/walk', direction: 0 }]);
-    const facingLeft = getHeldItemOf(sim);
+    const facingLeft = getHeldSpearOf(sim)!;
     expect(facingLeft.hand!.x).toBeLessThan(getStickMan(sim).feet.x);
     expect(facingLeft.tip.x).toBeLessThan(facingLeft.butt.x);
   });
 
-  it('is as long and as thick as the spear the sim makes of it', () => {
-    const pencil = getHeldItemOf(createSimWithPencil());
-    const spear = getHeldItemOf(createSimWithSpear());
-    expect(measureLength(pencil)).toBeCloseTo(measureLength(spear), 9);
-    expect(pencil.width).toBe(spear.width);
+  it('is drawn as a roll of paper: wide at the end it is held by, a point where the sim has its point, the edge of the sheet winding round it', () => {
+    const spear = getHeldSpearOf(createSimWithSpear())!;
+    const [outline, ...windings] = buildHeldSpearStrokes(spear);
+    const tip = { x: convertToPixels(spear.tip.x), y: convertToPixels(spear.tip.y) };
+    const butt = { x: convertToPixels(spear.butt.x), y: convertToPixels(spear.butt.y) };
+    expect(outline!.isClosed).toBe(true);
+    expect(outline!.points).toHaveLength(3);
+    expect(outline!.points[1]!.x).toBeCloseTo(tip.x, 6);
+    expect(outline!.points[1]!.y).toBeCloseTo(tip.y, 6);
+    const [oneCorner, , otherCorner] = outline!.points;
+    expect(Math.hypot(oneCorner!.x - otherCorner!.x, oneCorner!.y - otherCorner!.y)).toBeCloseTo(
+      convertToPixels(ROLL.width),
+      6,
+    );
+    expect((oneCorner!.x + otherCorner!.x) / 2).toBeCloseTo(butt.x, 6);
+    expect(windings).toHaveLength(ROLL.windings.length);
   });
 
-  it('is drawn with flat ends, and the spear with a point at the end the sim has its point', () => {
-    const pencil = getHeldItemOf(createSimWithPencil());
-    const spear = getHeldItemOf(createSimWithSpear());
-    expect(spear.isSharp).toBe(true);
-    const getTipInPixels = (item: HeldItem) => ({
-      x: convertToPixels(item.tip.x),
-      y: convertToPixels(item.tip.y),
-    });
-    const hasPointAt = (item: HeldItem): boolean =>
-      buildHeldItemStrokes(item)[0]!.points.some(
-        (point) =>
-          Math.hypot(point.x - getTipInPixels(item).x, point.y - getTipInPixels(item).y) < 1e-6,
-      );
-    expect(hasPointAt(spear)).toBe(true);
-    expect(hasPointAt(pencil)).toBe(false);
-    expect(buildHeldItemStrokes(spear).length).toBeGreaterThan(buildHeldItemStrokes(pencil).length);
-  });
-
-  it('is not drawn for any other item, nor for an empty hand', () => {
-    const stickMan = getStickMan(createSim({ level: YARD.id }));
-    expect(getHeldItem({ stickMan, itemDefId: null, spear: undefined })).toBeUndefined();
-    expect(getHeldItem({ stickMan, itemDefId: PAPER_ITEM_ID, spear: undefined })).toBeUndefined();
+  it('is not drawn for the paper it is made of, nor for an empty hand', () => {
+    const sim = createSimWithPaper();
+    expect(getSpear(sim)).toBeUndefined();
+    expect(getHeldSpearOf(sim)).toBeUndefined();
+    expect(getHeldSpearOf(createSim({ level: YARD.id }))).toBeUndefined();
   });
 });
 
@@ -78,7 +69,7 @@ describe('the spear in a thrust', () => {
     sim.step([USE]);
     while (getSpear(sim)!.action === 'thrusting') {
       const spear = getSpear(sim)!;
-      const drawn = getHeldItemOf(sim);
+      const drawn = getHeldSpearOf(sim)!;
       expect(drawn.tip.x).toBeCloseTo(spear.tip.x, 9);
       expect(drawn.tip.y).toBeCloseTo(spear.tip.y, 9);
       expect(drawn.butt.x).toBeCloseTo(spear.butt.x, 9);
@@ -90,48 +81,52 @@ describe('the spear in a thrust', () => {
 
   it('comes upright again as it is drawn back, never longer or shorter than it is, and ends as it is held at rest', () => {
     const sim = createSimWithSpear();
-    const atRest = getHeldItemOf(sim);
+    const atRest = getHeldSpearOf(sim)!;
     sim.step([USE]);
     while (getSpear(sim)!.action !== 'recovering') {
       sim.step();
     }
     const rises: number[] = [];
     while (getSpear(sim)!.action === 'recovering') {
-      const drawn = getHeldItemOf(sim);
-      expect(measureLength(drawn)).toBeCloseTo(SHAFT.length, 9);
+      const drawn = getHeldSpearOf(sim)!;
+      expect(measureLength(drawn)).toBeCloseTo(measureLength(atRest), 9);
       rises.push(drawn.butt.y - drawn.tip.y);
       sim.step();
     }
     expect(rises[0]).toBeCloseTo(0, 9);
     expect(rises).toEqual([...rises].sort((one, other) => one - other));
-    expect(getHeldItemOf(sim)).toEqual(atRest);
+    expect(getHeldSpearOf(sim)).toEqual(atRest);
   });
 
-  it('lies on the floor once the stick man is struck down, off its hand', () => {
+  it('lies on the floor once the stick man is struck down, off its hand, its lower edge on the line', () => {
     const sim = createSimWithSpear();
     sim.step([{ type: 'player/walk', direction: 1 }]);
     while (getStickMan(sim).action !== 'struck') {
       sim.step();
     }
-    const lying = getHeldItemOf(sim);
+    const lying = getHeldSpearOf(sim)!;
     expect(lying.hand).toBeNull();
     expect(lying.butt.y).toBe(lying.tip.y);
-    expect(lying.butt.y).toBeLessThan(getStickMan(sim).feet.y);
-    expect(getStickMan(sim).feet.y - lying.butt.y).toBeLessThan(0.2);
+    const floor = convertToPixels(getStickMan(sim).feet.y);
+    const lowest = Math.max(
+      ...buildHeldSpearStrokes(lying).flatMap((stroke) => stroke.points.map((point) => point.y)),
+    );
+    expect(lowest).toBeLessThan(floor);
+    expect(floor - lowest).toBeLessThan(convertToPixels(0.1));
   });
 });
 
 // ---- Helpers ----
 
-const YARD = practiceLevels.find((level) => level.id === 900)!;
+const YARD = practiceLevels[0]!;
 const USE: Command = { type: 'item/use' };
 const INTERACT: Command = { type: 'world/interact' };
 
-/** A sim in the yard with the letter read and put away: the pencil is in the stick man's hand. */
-function createSimWithPencil(): SimHandle {
+/** A sim in the yard with the letter read and put away: the paper is in the stick man's hand. */
+function createSimWithPaper(): SimHandle {
   const sim = createSim({ level: YARD.id });
   sim.step([{ type: 'player/walk', direction: 1 }]);
-  while (getItemSlots(sim)[0]!.itemDefId !== PENCIL_ITEM_ID) {
+  while (getItemSlots(sim)[0]!.itemDefId === null) {
     sim.step([INTERACT]);
   }
   sim.step([{ type: 'player/walk', direction: 0 }, INTERACT]);
@@ -139,30 +134,25 @@ function createSimWithPencil(): SimHandle {
 }
 
 function createSimWithSpear(): SimHandle {
-  const sim = createSimWithPencil();
+  const sim = createSimWithPaper();
   sim.step([USE]);
   expect(getItemSlots(sim)[0]!.itemDefId).toBe(SPEAR_ITEM_ID);
   return sim;
 }
 
-function getHeldItemOf(sim: SimHandle): HeldItem {
-  return getHeldItem({
-    stickMan: getStickMan(sim),
-    itemDefId: getItemSlots(sim).find((slot) => slot.isSelected)?.itemDefId ?? null,
-    spear: getSpear(sim),
-  })!;
+function getHeldSpearOf(sim: SimHandle): HeldSpear | undefined {
+  return getHeldSpear(getStickMan(sim), getSpear(sim));
 }
 
-function measureLength(item: HeldItem): number {
-  return Math.hypot(item.tip.x - item.butt.x, item.tip.y - item.butt.y);
+function measureLength(line: { butt: { x: number; y: number }; tip: { x: number; y: number } }) {
+  return Math.hypot(line.tip.x - line.butt.x, line.tip.y - line.butt.y);
 }
 
-/** How far `point` is from the line through the ends of `item`. */
-function measureDistanceToLine(point: { x: number; y: number }, item: HeldItem): number {
-  const length = measureLength(item);
+/** How far `point` is from the line through the ends of `spear`. */
+function measureDistanceToLine(point: { x: number; y: number }, spear: HeldSpear): number {
   return Math.abs(
-    ((item.tip.x - item.butt.x) * (point.y - item.butt.y) -
-      (item.tip.y - item.butt.y) * (point.x - item.butt.x)) /
-      length,
+    ((spear.tip.x - spear.butt.x) * (point.y - spear.butt.y) -
+      (spear.tip.y - spear.butt.y) * (point.x - spear.butt.x)) /
+      measureLength(spear),
   );
 }

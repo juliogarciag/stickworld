@@ -76,8 +76,8 @@ export interface StickManPose {
   /** Which way it is knocked over: 1 to the right, -1 to the left. Only read when struck. */
   readonly struckDirection: 1 | -1;
   /**
-   * Where the hand of its front arm is, in metres, when what it holds in that hand says so (a
-   * pencil, a spear: `render/heldItem.ts`), or null when the arm does what the rest of it does.
+   * Where the hand of its front arm is, in metres, when what it holds in that hand says so (the
+   * spear: `render/heldItem.ts`), or null when the arm does what the rest of it does.
    * The arm is drawn as long as reaching there takes. Not read when seated or struck.
    */
   readonly handPosition: Point | null;

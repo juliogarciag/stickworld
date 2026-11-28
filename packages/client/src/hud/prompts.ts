@@ -38,6 +38,13 @@ export interface PromptInput {
   /** The recipe using the held item would make, or null when it would make nothing. */
   readonly wouldMake: RecipeView | null;
   readonly useItemKey: string;
+  /**
+   * True while switching the use of the held item would do something (`canSwitchItemUse`), the
+   * recipe it would then make, and the name of the key that switches.
+   */
+  readonly canSwitchItemUse: boolean;
+  readonly couldMakeInstead: RecipeView | null;
+  readonly switchItemUseKey: string;
   /** What interacting with the world would do, and the name of the key that does it. */
   readonly interaction: InteractionMeaning | null;
   readonly interactKey: string;
@@ -53,7 +60,8 @@ export interface PromptInput {
 
 /**
  * The prompts to show: first what the stick man has still to be told, in words alone; then the item
- * key and the interact key, each only when it would do something; then the keys that fly the
+ * key, the key that switches what the item is made into, and the interact key, each only when it
+ * would do something; then the keys that fly the
  * airplane while the stick man is seated in it.
  */
 export function getPromptsFor(input: PromptInput): Prompt[] {
@@ -62,6 +70,14 @@ export function getPromptsFor(input: PromptInput): Prompt[] {
     ...(input.itemUse === null
       ? []
       : [{ key: input.useItemKey, words: ITEM_USE_WORDS[input.itemUse](input.wouldMake) }]),
+    ...(input.canSwitchItemUse
+      ? [
+          {
+            key: input.switchItemUseKey,
+            words: `${getCraftWords(input.couldMakeInstead)} instead`,
+          },
+        ]
+      : []),
     ...(input.interaction === null
       ? []
       : [{ key: input.interactKey, words: INTERACTION_WORDS[input.interaction] }]),
@@ -107,12 +123,12 @@ export function buildPromptStrokes(prompts: readonly Prompt[], seen: Rectangle):
 
 /**
  * The HUD's own words for making each recipe, by its def id: what is done to the item it is made
- * from is not the same for each. A recipe with no words here is made, and named as the sim names
- * it.
+ * from is not the same for each. The paper is folded into an airplane and rolled into a spear. A
+ * recipe with no words here is made, and named as the sim names it.
  */
 const CRAFT_WORDS: Readonly<Record<number, string>> = {
   [PAPER_AIRPLANE_RECIPE_ID]: 'fold a paper airplane',
-  [SPEAR_RECIPE_ID]: 'sharpen the pencil',
+  [SPEAR_RECIPE_ID]: 'roll a spear',
 };
 
 function getCraftWords(recipe: RecipeView | null): string {

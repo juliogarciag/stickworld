@@ -1,4 +1,4 @@
-import { PAPER_ITEM_ID, PENCIL_ITEM_ID, SPEAR_ITEM_ID, type ItemSlot } from '@stickworld/sim';
+import { PAPER_ITEM_ID, SPEAR_ITEM_ID, type ItemSlot } from '@stickworld/sim';
 import { describe, expect, it } from 'vitest';
 import type { Stroke } from '../render/strokes';
 import { getItemSlotBox, buildItemSlotStrokes } from './itemSlots';
@@ -31,39 +31,21 @@ describe('buildItemSlotStrokes', () => {
     }
   });
 
-  it.each([
-    ['the pencil', PENCIL_ITEM_ID],
-    ['the spear', SPEAR_ITEM_ID],
-  ])(
-    'draws %s inside the box of the slot that holds it, with a drawing of its own',
-    (_name, id) => {
-      const empty = buildItemSlotStrokes([EMPTY_SLOT], CAMERA_SEES);
-      const drawn = buildItemSlotStrokes([{ ...EMPTY_SLOT, itemDefId: id }], CAMERA_SEES);
-      const unknown = buildItemSlotStrokes([{ ...EMPTY_SLOT, itemDefId: 987654 }], CAMERA_SEES);
-      const item = drawn.slice(empty.length);
-      expect(item.length).toBeGreaterThan(0);
-      expect(item).not.toEqual(unknown.slice(empty.length));
-      const box = getItemSlotBox(1, CAMERA_SEES);
-      for (const point of getPoints(item)) {
-        expect(point.x).toBeGreaterThan(box.x);
-        expect(point.x).toBeLessThan(box.x + box.width);
-        expect(point.y).toBeGreaterThan(box.y);
-        expect(point.y).toBeLessThan(box.y + box.height);
-      }
-    },
-  );
-
-  it('draws the spear as the pencil with a point: the same shaft, and one end further out', () => {
-    const getDrawing = (itemDefId: number) =>
-      getPoints(buildItemSlotStrokes([{ ...EMPTY_SLOT, itemDefId }], CAMERA_SEES).slice(1));
-    const pencil = getDrawing(PENCIL_ITEM_ID);
-    const spear = getDrawing(SPEAR_ITEM_ID);
-    expect(Math.min(...spear.map((point) => point.y))).toBeLessThan(
-      Math.min(...pencil.map((point) => point.y)),
-    );
-    expect(Math.max(...spear.map((point) => point.y))).toBe(
-      Math.max(...pencil.map((point) => point.y)),
-    );
+  it('draws the spear inside the box of the slot that holds it, with a drawing of its own that comes to a point', () => {
+    const empty = buildItemSlotStrokes([EMPTY_SLOT], CAMERA_SEES);
+    const getItemStrokes = (itemDefId: number) =>
+      buildItemSlotStrokes([{ ...EMPTY_SLOT, itemDefId }], CAMERA_SEES).slice(empty.length);
+    const spear = getItemStrokes(SPEAR_ITEM_ID);
+    expect(spear.length).toBeGreaterThan(0);
+    expect(spear).not.toEqual(getItemStrokes(987654));
+    expect(spear).not.toEqual(getItemStrokes(PAPER_ITEM_ID));
+    const box = getItemSlotBox(1, CAMERA_SEES);
+    for (const point of getPoints(spear)) {
+      expect(point.x).toBeGreaterThan(box.x);
+      expect(point.x).toBeLessThan(box.x + box.width);
+      expect(point.y).toBeGreaterThan(box.y);
+      expect(point.y).toBeLessThan(box.y + box.height);
+    }
   });
 
   it('shows an item it has no drawing for, so a held item never looks like an empty slot', () => {

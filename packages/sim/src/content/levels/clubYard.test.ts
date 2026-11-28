@@ -5,7 +5,7 @@ import type { SimHandle } from '../../core/sim';
 import { clubEnemyDef } from '../../features/enemy/clubEnemy/defs';
 import { getEnemies } from '../../features/enemy/view';
 import { getFlag } from '../../features/flag/view';
-import { PENCIL_ITEM_ID, SPEAR_ITEM_ID } from '../../features/inventory/defs';
+import { PAPER_ITEM_ID, SPEAR_ITEM_ID } from '../../features/inventory/defs';
 import { getItemSlots } from '../../features/inventory/view';
 import { getStickMan } from '../../features/player/view';
 import { SPEAR } from '../../features/spear/defs';
@@ -22,12 +22,12 @@ describe('the yard with a club in it', () => {
     expect(getStickMan(sim).action).toBe('cheering');
   });
 
-  it('is finished with the spear: the stick man reads the letter, sharpens the pencil, thrusts at the enemy that comes for it and walks on to the flag', () => {
+  it('is finished with the spear: the stick man reads the letter, rolls the paper, thrusts at the enemy that comes for it and walks on to the flag', () => {
     const sim = createSim({ level: clubYard.id });
     sim.step([WALK_RIGHT]);
     stepUntil(sim, () => getInteraction(sim) === 'read');
     sim.step([STOP, INTERACT]);
-    expect(getItemSlots(sim)[0]!.itemDefId).toBe(PENCIL_ITEM_ID);
+    expect(getItemSlots(sim)[0]!.itemDefId).toBe(PAPER_ITEM_ID);
     sim.step([INTERACT]);
     sim.step([USE]);
     expect(getItemSlots(sim)[0]!.itemDefId).toBe(SPEAR_ITEM_ID);
@@ -45,7 +45,7 @@ describe('the yard with a club in it', () => {
     expect(getStickMan(sim).action).toBe('cheering');
   });
 
-  it('is not finished with the pencil: unsharpened it does nothing to the enemy, and the stick man is struck down', () => {
+  it('is not finished with the paper: unrolled it does nothing to the enemy, and the stick man is struck down', () => {
     const sim = createSim({ level: clubYard.id });
     sim.step([WALK_RIGHT]);
     stepUntil(sim, () => getInteraction(sim) === 'read');

@@ -3,7 +3,6 @@ import {
   getEnemies,
   getFallenItem,
   getFlag,
-  getItemSlots,
   getLetter,
   getLevel,
   getNotes,
@@ -19,7 +18,7 @@ import { getWorldSeenBy } from '../render/cameraView';
 import { buildClubEnemyStrokes } from '../render/clubEnemy';
 import { buildFlagStrokes } from '../render/flag';
 import { buildFloorStrokes } from '../render/floor';
-import { buildHeldItemStrokes, getHeldItem } from '../render/heldItem';
+import { buildHeldSpearStrokes, getHeldSpear } from '../render/heldItem';
 import { buildFallenPaperStrokes, buildLetterStrokes } from '../render/letter';
 import { getZoomAtRest } from '../render/levelCamera';
 import { areNotesStill, buildNoteStrokes } from '../render/notes';
@@ -164,15 +163,11 @@ export class Sheet {
         ),
       ),
     );
-    // The pencil or the spear in its hand, under the stick man's own lines: its hand is on it.
-    const heldItem = getHeldItem({
-      stickMan,
-      itemDefId: getItemSlots(frame.sim).find((slot) => slot.isSelected)?.itemDefId ?? null,
-      spear: getSpear(frame.sim),
-    });
-    this.heldItem.show(heldItem ? buildHeldItemStrokes(heldItem) : NOTHING);
+    // The spear in its hand, under the stick man's own lines: its hand is on it.
+    const heldSpear = getHeldSpear(stickMan, getSpear(frame.sim));
+    this.heldItem.show(heldSpear ? buildHeldSpearStrokes(heldSpear) : NOTHING);
     const eased = this.poseFor(stickMan, frame.seconds, level.floor);
-    const pose = { ...eased, handPosition: heldItem?.hand ?? null };
+    const pose = { ...eased, handPosition: heldSpear?.hand ?? null };
     // Seated, the stick man tips with the airplane as it is drawn, about the point it is drawn
     // turning about: its middle.
     this.stickMan.show(

@@ -31,16 +31,11 @@ export {
 } from './features/player/defs';
 export { getFlag, type FlagView } from './features/flag/view';
 export type { InventoryCommand, InventorySelectCommand } from './features/inventory/commands';
-export {
-  AIRPLANE_ITEM_ID,
-  PAPER_ITEM_ID,
-  PENCIL_ITEM_ID,
-  SPEAR_ITEM_ID,
-} from './features/inventory/defs';
+export { AIRPLANE_ITEM_ID, PAPER_ITEM_ID, SPEAR_ITEM_ID } from './features/inventory/defs';
 export { getItemSlots, type ItemSlot } from './features/inventory/view';
-export type { ItemCommand, ItemUseCommand } from './features/item/commands';
+export type { ItemCommand, ItemSwitchUseCommand, ItemUseCommand } from './features/item/commands';
 export type { ItemUseMeaning } from './features/item';
-export { getItemUse } from './features/item/view';
+export { canSwitchItemUse, getItemUse } from './features/item/view';
 export type { WorldCommand, WorldInteractCommand } from './features/world/commands';
 export type { InteractionMeaning } from './features/world';
 export { getInteraction } from './features/world/view';

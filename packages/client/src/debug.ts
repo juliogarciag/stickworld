@@ -21,6 +21,7 @@ import type {
   StickManView,
 } from '@stickworld/sim';
 import {
+  canSwitchItemUse,
   getAirplane,
   getCrafting,
   defs,
@@ -151,12 +152,19 @@ export interface GameDebugApi {
   getMovementTuning(): MovementTuning;
   /** What using the held item would do right now, or null. */
   getItemUse(): ItemUseMeaning | null;
+  /** True while switching the use of the held item would do something right now. */
+  canSwitchItemUse(): boolean;
   /** What interacting with the world would do right now, or null. */
   getInteraction(): InteractionMeaning | null;
   /** Queues a command for the next earned tick, through the same path as keyboard input. */
   queueCommand(command: Command): void;
   /** Plays level `level` from its start. */
   loadLevel(level: number): void;
+  /**
+   * Plays on from `snapshot` (one `takeSnapshot()` gave, as it was or changed): how a check starts
+   * with what a stick man that came through earlier levels knows and holds.
+   */
+  loadSnapshot(snapshot: SimSnapshot): void;
 }
 
 /**
@@ -269,8 +277,10 @@ export function exposeDebugApi(sources: {
     getFlyingHint: () => getFlyingHint(sources.loop.sim),
     getMovementTuning: () => getMovementTuning(sources.loop.sim),
     getItemUse: () => getItemUse(sources.loop.sim),
+    canSwitchItemUse: () => canSwitchItemUse(sources.loop.sim),
     getInteraction: () => getInteraction(sources.loop.sim),
     queueCommand: (command) => sources.loop.queueCommand(command),
     loadLevel: (level) => sources.loop.playLevel(level),
+    loadSnapshot: (snapshot) => sources.loop.playSnapshot(snapshot),
   };
 }

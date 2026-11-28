@@ -1,9 +1,10 @@
 import type { Def } from '../../content/defs';
-import { AIRPLANE_ITEM_ID, PAPER_ITEM_ID, PENCIL_ITEM_ID, SPEAR_ITEM_ID } from '../inventory/defs';
+import { AIRPLANE_ITEM_ID, PAPER_ITEM_ID, SPEAR_ITEM_ID } from '../inventory/defs';
 
 /**
  * The recipes: what an item the stick man holds can be made into. Ids 400-499 are this
- * feature's block in content/defs.ts. A new recipe is a new entry here.
+ * feature's block in content/defs.ts. A new recipe is a new entry here. Two recipes may be made
+ * from the same item: the stick man makes the one it has chosen (`chosenRecipeSlice`).
  */
 export interface RecipeDef extends Def {
   /** The def id of the item the recipe uses up. */
@@ -15,7 +16,7 @@ export interface RecipeDef extends Def {
 /** The paper folded into a paper airplane. Level 3's letter teaches it. */
 export const PAPER_AIRPLANE_RECIPE_ID = 400;
 
-/** The pencil sharpened into a spear. The letter about the spear teaches it. */
+/** The paper rolled tight into a spear. The letter about the spear teaches it. */
 export const SPEAR_RECIPE_ID = 401;
 
 export const recipeDefs: readonly RecipeDef[] = [
@@ -28,7 +29,7 @@ export const recipeDefs: readonly RecipeDef[] = [
   {
     id: SPEAR_RECIPE_ID,
     name: 'spear',
-    madeFrom: PENCIL_ITEM_ID,
+    madeFrom: PAPER_ITEM_ID,
     makes: SPEAR_ITEM_ID,
   },
 ];

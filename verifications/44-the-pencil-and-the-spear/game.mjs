@@ -94,6 +94,7 @@ export function readGame(page) {
       letter: api.getLetter() ?? null,
       crafting: api.getCrafting(),
       itemUse: api.getItemUse(),
+      canSwitchItemUse: api.canSwitchItemUse(),
       interaction: api.getInteraction(),
       spear: api.getSpear() ?? null,
       enemies: api.getEnemies(),
@@ -101,6 +102,25 @@ export function readGame(page) {
       fallenItem: api.getFallenItem() ?? null,
     };
   });
+}
+
+/**
+ * Plays on as a stick man that came through level 3 would: from the game as it is right now, with
+ * the recipes named `recipeNames` known before the ones it knows already.
+ */
+export function playOnKnowingAlso(page, recipeNames) {
+  return page.evaluate((names) => {
+    const api = window.__game;
+    const snapshot = api.takeSnapshot();
+    const earlier = api.defs
+      .filter((def) => 'madeFrom' in def && names.includes(def.name))
+      .map((def) => def.id);
+    const known = snapshot.slices.knownRecipes.filter((id) => !earlier.includes(id));
+    api.loadSnapshot({
+      ...snapshot,
+      slices: { ...snapshot.slices, knownRecipes: [...earlier, ...known] },
+    });
+  }, recipeNames);
 }
 
 /** The def id of the item called `name`, from the game's own defs. */

@@ -2,10 +2,10 @@ import type { Level, Placement } from '../../content/levels/types';
 import type { Feature } from '../../core/feature';
 import type { Sim } from '../../core/sim';
 import { hasAirplane } from '../airplane';
-import { teachRecipe } from '../crafting';
+import { selectRecipe, teachRecipe } from '../crafting';
 import { getRecipeDef } from '../crafting/defs';
 import { AIRPLANE_ITEM_ID } from '../inventory/defs';
-import { giveItem, giveItemInHand } from '../inventory/give';
+import { giveItemInHand } from '../inventory/give';
 import { isHoldingItem, selectItem } from '../inventory/held';
 import { isFlagReached } from '../flag';
 import { getPlayerBody, isPlayerStruck } from '../player/body';
@@ -36,16 +36,17 @@ export const letterFeature: Feature = {
     const hasReadLetter = sim.getStateOf(lettersReadSlice).includes(def.id);
     // A letter the stick man has read before does not lie there again when the level starts again.
     sim.getStateOf(letterSlice).isInLevel = !hasReadLetter;
+    if (hasReadLetter) {
+      // What this level's letter taught is what the paper is for here.
+      selectRecipe(sim, def.teachesRecipe);
+    }
     const hasLostRecipeResult = hasReadLetter && !hasRecipeResult(sim, def);
     if (!hasLostRecipeResult) {
       return;
     }
     // The stick man has learned what it teaches and lost what the stick man made of it with the
     // level: the stick man starts again with that in the stick man's hand.
-    const made = getRecipeDef(def.teachesRecipe)?.makes ?? def.gives;
-    if (giveItem(sim, made)) {
-      selectItem(sim, made);
-    }
+    giveItemInHand(sim, getRecipeDef(def.teachesRecipe)?.makes ?? def.gives);
   },
 
   update(sim) {
@@ -166,10 +167,9 @@ export function getFallenItemInteraction(sim: Sim) {
   return {
     means: 'pickUp' as const,
     perform: () => {
-      if (!giveItem(sim, def.gives)) {
-        return;
-      }
-      selectItem(sim, def.gives);
+      giveItemInHand(sim, def.gives);
+      // It is given again for what this level's letter taught, whatever was made of the last.
+      selectRecipe(sim, def.teachesRecipe);
       fallen.isInLevel = false;
     },
   };

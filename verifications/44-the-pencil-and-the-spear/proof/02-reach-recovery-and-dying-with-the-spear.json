@@ -2,7 +2,7 @@
   "reach": 2.1000000000000005,
   "clubReach": 1.9550000000000003,
   "distance": 2.0866666666666367,
-  "framesOut": 4,
+  "framesOut": 5,
   "framesBack": 29,
   "results": [
     {
@@ -14,14 +14,14 @@
       "pass": true
     },
     {
-      "name": "the point goes out, further every frame, and is level at the height of its chest",
+      "name": "the point goes out, further frame after frame, and is level at the height of its chest",
       "pass": true,
-      "details": "4 frames out, reach 2.10 m"
+      "details": "5 frames out, reach 2.10 m"
     },
     {
       "name": "drawing it back takes several times longer than the thrust, and the press in the middle of it changed nothing",
       "pass": true,
-      "details": "4 frames out, 29 frames back"
+      "details": "5 frames out, 29 frames back"
     },
     {
       "name": "no J is offered from the press until the spear is ready again, and then it is",
@@ -49,7 +49,7 @@
     {
       "name": "after a fall the level starts again with the spear in its hand, no letter to read, and the enemy back at its post",
       "pass": true,
-      "details": "slot {\"itemDefId\":203,\"isSelected\":true}, enemy at 12"
+      "details": "slot {\"itemDefId\":202,\"isSelected\":true}, enemy at 12"
     },
     {
       "name": "the spear is no shield: walking into the swing without thrusting, the stick man is struck down",

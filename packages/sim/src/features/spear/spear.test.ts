@@ -11,7 +11,7 @@ import { clubEnemyDef } from '../enemy/clubEnemy/defs';
 import { ENEMY } from '../enemy/defs';
 import { getEnemies } from '../enemy/view';
 import { getFlag } from '../flag/view';
-import { PENCIL_ITEM_ID, SPEAR_ITEM_ID } from '../inventory/defs';
+import { PAPER_ITEM_ID, SPEAR_ITEM_ID } from '../inventory/defs';
 import { getItemSlots } from '../inventory/view';
 import { getItemUse } from '../item/view';
 import { findLetterPlacedIn } from '../letter';
@@ -21,12 +21,12 @@ import { getStickMan } from '../player/view';
 import { SPEAR } from './defs';
 import { getSpear } from './view';
 
-describe('the pencil and the spear', () => {
-  it('is a pencil first: reading the letter puts it in the hand of the stick man, who can sharpen it and cannot thrust it', () => {
+describe('the paper and the spear', () => {
+  it('is a sheet of paper first: reading the letter puts it in the hand of the stick man, who can roll it and has nothing to thrust', () => {
     const sim = createSim({ level: clubYard.id });
     expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: null, isSelected: false }]);
     readLetter(sim);
-    expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: PENCIL_ITEM_ID, isSelected: true }]);
+    expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: PAPER_ITEM_ID, isSelected: true }]);
     expect(getCrafting(sim).canMake).toEqual({ defId: SPEAR_RECIPE_ID, name: 'spear' });
     // While the stick man reads, its hands are full.
     expect(getItemUse(sim)).toBeNull();
@@ -35,7 +35,7 @@ describe('the pencil and the spear', () => {
     expect(getSpear(sim)).toBeUndefined();
   });
 
-  it('is made of the pencil with one press, in the same slot, and the next press is a thrust', () => {
+  it('is made of the paper with one press, in the same slot, and the next press is a thrust', () => {
     const sim = createSim({ level: clubYard.id });
     readLetter(sim);
     sim.step([INTERACT]);
@@ -299,13 +299,13 @@ describe('dying with the spear', () => {
     expect(getItemSlots(sim)[0]).toMatchObject({ itemDefId: SPEAR_ITEM_ID, isSelected: true });
   });
 
-  it('keeps the pencil too: the stick man who dies before sharpening it has it in its hand again', () => {
+  it('keeps the paper too: the stick man who dies before rolling it has it in its hand again', () => {
     const sim = createSim({ level: clubYard.id });
     readLetter(sim);
     sim.step([WALK_RIGHT]);
     stepUntil(sim, () => getStickMan(sim).action === 'struck');
     stepUntil(sim, () => getStickMan(sim).action !== 'struck');
-    expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: PENCIL_ITEM_ID, isSelected: true }]);
+    expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: PAPER_ITEM_ID, isSelected: true }]);
     expect(getItemUse(sim)).toBe('craft');
   });
 });
@@ -381,7 +381,7 @@ function readLetter(sim: SimHandle): void {
 
 /**
  * A sim in the yard with the stick man standing by where the letter lay, the letter read and put
- * away and the pencil sharpened: the spear is in its hand, and the enemy has not seen it yet.
+ * away and the paper rolled: the spear is in its hand, and the enemy has not seen it yet.
  */
 function createSimWithSpear(): SimHandle {
   const sim = createSim({ level: clubYard.id });

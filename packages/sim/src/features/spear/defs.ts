@@ -1,6 +1,6 @@
 /**
  * The spear in the stick man's hand, and the thrust it makes with it. The item itself is
- * `SPEAR_ITEM_ID` (inventory), made of the pencil by a recipe (crafting). Metres and seconds.
+ * `SPEAR_ITEM_ID` (inventory), made of the paper by a recipe (crafting). Metres and seconds.
  * Change a number, never the logic.
  *
  * The numbers are tuned against the club enemy's (`features/enemy/clubEnemy/defs.ts`), and

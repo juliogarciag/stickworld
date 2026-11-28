@@ -1,6 +1,7 @@
+/* global window */
 /**
  * The ticket from start to end, played in real time with the keys a person presses: the stick man
- * walks to the letter and reads it, has the pencil in its hand, sharpens it, thrusts the spear at
+ * walks to the letter and reads it, has a sheet of paper in its hand, rolls it into the spear, thrusts the spear at
  * nothing once, then walks at the club enemy, thrusts from further away than the club reaches,
  * and walks on to the flag through where the enemy stood. Recorded as a video.
  */
@@ -17,14 +18,14 @@ import {
 
 /** Not the port of the dev server left running for the human (5244). */
 const PORT = 5944;
-const NAME = '01-letter-sharpen-thrust-enemy-gone';
+const NAME = '01-letter-roll-thrust-enemy-gone';
 const results = [];
 const report = {};
 let game;
 try {
   game = await openGame(PORT, results, { video: '01-the-whole-way.webm' });
   const { page } = game;
-  const pencilId = await getItemId(page, 'pencil');
+  const paperId = await getItemId(page, 'paper');
   const spearId = await getItemId(page, 'spear');
 
   const atStart = await readGame(page);
@@ -42,9 +43,9 @@ try {
   );
   results.push(
     check(
-      'the pencil and the spear are items the game knows by name',
-      pencilId !== null && spearId !== null,
-      `pencil ${pencilId}, spear ${spearId}`,
+      'the paper and the spear are items the game knows by name',
+      paperId !== null && spearId !== null,
+      `paper ${paperId}, spear ${spearId}`,
     ),
   );
   await takeScreenshot(page, '01-the-yard.png');
@@ -62,8 +63,8 @@ try {
   );
   results.push(
     check(
-      'reading it puts the pencil in the hand of the stick man',
-      reading.slots[0].itemDefId === pencilId && reading.slots[0].isSelected,
+      'reading it puts a sheet of paper in the hand of the stick man',
+      reading.slots[0].itemDefId === paperId && reading.slots[0].isSelected,
       JSON.stringify(reading.slots),
     ),
   );
@@ -73,25 +74,26 @@ try {
   await page.waitForTimeout(400);
   await takeScreenshot(page, '02-reading-the-letter.png');
 
-  // The pencil.
+  // The paper.
   await page.keyboard.press('KeyK');
-  const withPencil = await waitForGame(page, 'the letter put away', (now) => now.letter === null);
+  const withPaper = await waitForGame(page, 'the letter put away', (now) => now.letter === null);
   results.push(
     check(
-      'with the letter put away, J would sharpen the pencil into the spear',
-      withPencil.itemUse === 'craft' && withPencil.crafting.canMake?.name === 'spear' && withPencil.spear === null,
-      `J: ${withPencil.itemUse}, would make ${withPencil.crafting.canMake?.name}`,
+      'with the letter put away, J would roll the paper into the spear, and there is nothing to switch to',
+      withPaper.itemUse === 'craft' && withPaper.crafting.canMake?.name === 'spear' && withPaper.spear === null &&
+        withPaper.canSwitchItemUse === false,
+      `J: ${withPaper.itemUse}, would make ${withPaper.crafting.canMake?.name}`,
     ),
   );
   await page.waitForTimeout(300);
-  await takeScreenshot(page, '03-the-pencil-in-its-hand.png');
+  await takeScreenshot(page, '03-the-paper-in-its-hand.png');
 
   // The spear.
   await page.keyboard.press('KeyJ');
   const withSpear = await waitForGame(page, 'the spear in its hand', (now) => now.spear !== null);
   results.push(
     check(
-      'J sharpens it: the spear is in the same slot, in its hand, and J would now thrust it',
+      'J rolls it: the spear is in the same slot, in its hand, and J would now thrust it',
       withSpear.slots[0].itemDefId === spearId &&
         withSpear.slots[0].isSelected &&
         withSpear.itemUse === 'thrust' &&
@@ -103,14 +105,14 @@ try {
   await takeScreenshot(page, '04-the-spear-in-its-hand.png');
 
   // A thrust at nothing: how far it reaches, and what it costs.
-  await page.keyboard.press('KeyJ');
-  const thrust = await followThrust(page);
+  const thrust = await pressAndFollowThrust(page);
   const reach = Math.max(...thrust.map((now) => (now.spear.tip.x - now.stickMan.feet.x) * now.spear.direction));
+  const reachAtRest = (withSpear.spear.tip.x - withSpear.stickMan.feet.x) * withSpear.spear.direction;
   results.push(
     check(
-      'J thrusts: the point goes out in front of the stick man and the spear is drawn back',
-      thrust.some((now) => now.spear.action === 'thrusting') && thrust.some((now) => now.spear.action === 'recovering'),
-      `reach ${reach.toFixed(2)} m, seen ${thrust.length} times`,
+      'J thrusts: the point is out in front of the stick man, further than it is held ready, and then the spear is drawn back',
+      reach > reachAtRest && thrust.some((now) => now.spear.action === 'recovering'),
+      `reach seen ${reach.toFixed(2)} m, ready at ${reachAtRest.toFixed(2)} m, ${thrust.length} frames drawn`,
     ),
   );
   const seconds = (thrust.at(-1).tick - thrust[0].tick) * thrust[0].dt;
@@ -217,17 +219,40 @@ process.exit(summarize(results) ? 0 : 1);
 
 // ---- Helpers ----
 
-/** The game read as fast as it can be from a press of J until the spear is ready again. */
-async function followThrust(page) {
-  const seen = [];
-  const deadline = Date.now() + 5000;
-  while (Date.now() < deadline) {
-    const now = await readGame(page);
-    seen.push(now);
-    const isOver = now.spear?.action === 'ready' && seen.some((earlier) => earlier.spear.action !== 'ready');
-    if (isOver) {
-      return seen;
-    }
-  }
-  throw new Error('the thrust never ended');
+/**
+ * J is pressed and the thrust is followed from inside the page, once every frame it draws, from
+ * the press until the spear is ready again: a read from here would miss most of a tenth of a
+ * second.
+ */
+async function pressAndFollowThrust(page) {
+  const followed = page.evaluate(
+    () =>
+      new Promise((resolve, reject) => {
+        const api = window.__game;
+        const seen = [];
+        const startedAt = window.performance.now();
+        const look = () => {
+          seen.push({
+            tick: api.sim.tick,
+            dt: api.sim.dt,
+            spear: api.getSpear(),
+            stickMan: api.getStickMan(),
+            itemUse: api.getItemUse(),
+          });
+          const isOver =
+            seen.at(-1).spear.action === 'ready' &&
+            seen.some((earlier) => earlier.spear.action !== 'ready');
+          if (isOver) {
+            resolve(seen);
+          } else if (window.performance.now() - startedAt > 5000) {
+            reject(new Error('the thrust never ended'));
+          } else {
+            window.requestAnimationFrame(look);
+          }
+        };
+        window.requestAnimationFrame(look);
+      }),
+  );
+  await page.keyboard.press('KeyJ');
+  return followed;
 }

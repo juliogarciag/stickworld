@@ -1,6 +1,6 @@
 import type { Def } from '../../content/defs';
 import { PAPER_AIRPLANE_RECIPE_ID, SPEAR_RECIPE_ID } from '../crafting/defs';
-import { PAPER_ITEM_ID, PENCIL_ITEM_ID } from '../inventory/defs';
+import { PAPER_ITEM_ID } from '../inventory/defs';
 
 /**
  * Letters: what a level leaves on the floor for the stick man to read. Ids 300-399 are
@@ -28,7 +28,7 @@ export interface LetterDef extends Def {
 /** Level 3's letter: it teaches the paper airplane. */
 export const AIRPLANE_LETTER_ID = 300;
 
-/** The letter about the spear: it teaches sharpening the pencil it gives. */
+/** The letter about the spear: it teaches rolling the paper it gives into one. */
 export const SPEAR_LETTER_ID = 301;
 
 export const letterDefs: readonly LetterDef[] = [
@@ -42,9 +42,9 @@ export const letterDefs: readonly LetterDef[] = [
   {
     id: SPEAR_LETTER_ID,
     name: 'the letter about the spear',
-    text: 'A pencil reaches further than a club. Sharpen it into a spear and thrust it at what stands in the way.',
+    text: 'A sheet of paper rolled tight has a point. Roll it into a spear and thrust it at what stands in the way.',
     teachesRecipe: SPEAR_RECIPE_ID,
-    gives: PENCIL_ITEM_ID,
+    gives: PAPER_ITEM_ID,
   },
 ];
 

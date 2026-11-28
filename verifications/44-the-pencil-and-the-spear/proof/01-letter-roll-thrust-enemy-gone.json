@@ -1,10 +1,10 @@
 {
-  "reach": 2.1000000000000005,
+  "reach": 2.0733333333333333,
   "clubReach": 1.9550000000000003,
-  "spearHitsFrom": 2.5000000000000004,
-  "thrustSeconds": 0.55,
+  "spearHitsFrom": 2.473333333333333,
+  "thrustSeconds": 0.5,
   "atFlag": {
-    "tick": 835,
+    "tick": 868,
     "dt": 0.016666666666666666,
     "level": 900,
     "start": {
@@ -30,7 +30,7 @@
     "stickManWidth": 0.65,
     "slots": [
       {
-        "itemDefId": 203,
+        "itemDefId": 202,
         "isSelected": true
       }
     ],
@@ -42,9 +42,11 @@
           "name": "spear"
         }
       ],
-      "canMake": null
+      "canMake": null,
+      "couldMakeInstead": null
     },
     "itemUse": null,
+    "canSwitchItemUse": false,
     "interaction": null,
     "spear": {
       "action": "ready",
@@ -69,7 +71,7 @@
       "height": 2.2,
       "isReached": true,
       "upFor": 0,
-      "raised": 0.08333333333333334,
+      "raised": 0.11111111111111112,
       "isFinalFlag": false
     },
     "fallenItem": null
@@ -85,9 +87,9 @@
       "details": "level 900, slots [{\"itemDefId\":null,\"isSelected\":false}]"
     },
     {
-      "name": "the pencil and the spear are items the game knows by name",
+      "name": "the paper and the spear are items the game knows by name",
       "pass": true,
-      "details": "pencil 202, spear 203"
+      "details": "paper 200, spear 202"
     },
     {
       "name": "K by the letter reads it, and it teaches the spear",
@@ -95,33 +97,33 @@
       "details": "teaches spear"
     },
     {
-      "name": "reading it puts the pencil in the hand of the stick man",
+      "name": "reading it puts a sheet of paper in the hand of the stick man",
       "pass": true,
-      "details": "[{\"itemDefId\":202,\"isSelected\":true}]"
+      "details": "[{\"itemDefId\":200,\"isSelected\":true}]"
     },
     {
       "name": "while it reads, J does nothing and K puts the letter away",
       "pass": true
     },
     {
-      "name": "with the letter put away, J would sharpen the pencil into the spear",
+      "name": "with the letter put away, J would roll the paper into the spear, and there is nothing to switch to",
       "pass": true,
       "details": "J: craft, would make spear"
     },
     {
-      "name": "J sharpens it: the spear is in the same slot, in its hand, and J would now thrust it",
+      "name": "J rolls it: the spear is in the same slot, in its hand, and J would now thrust it",
       "pass": true,
-      "details": "slot {\"itemDefId\":203,\"isSelected\":true}, J: thrust"
+      "details": "slot {\"itemDefId\":202,\"isSelected\":true}, J: thrust"
     },
     {
-      "name": "J thrusts: the point goes out in front of the stick man and the spear is drawn back",
+      "name": "J thrusts: the point is out in front of the stick man, further than it is held ready, and then the spear is drawn back",
       "pass": true,
-      "details": "reach 2.10 m, seen 18 times"
+      "details": "reach seen 2.07 m, ready at 1.30 m, 10 frames drawn"
     },
     {
       "name": "a thrust costs time: no J is offered until the spear is drawn back",
       "pass": true,
-      "details": "0.55 s from the press to ready again"
+      "details": "0.50 s from the press to ready again"
     },
     {
       "name": "the spear is still in its hand after the thrust, and the enemy untouched",
@@ -130,17 +132,17 @@
     {
       "name": "the spear reaches the enemy from further away than its club reaches the stick man",
       "pass": true,
-      "details": "spear from 2.50 m, club from 1.96 m, middle to middle"
+      "details": "spear from 2.47 m, club from 1.96 m, middle to middle"
     },
     {
       "name": "it thrusts from outside the reach of the club",
       "pass": true,
-      "details": "2.13 m away, the enemy approaching"
+      "details": "2.01 m away, the enemy approaching"
     },
     {
       "name": "the thrust reaches the enemy: it is being rubbed out",
       "pass": true,
-      "details": "rubbed out 0.1"
+      "details": "rubbed out 0.16666666666666666"
     },
     {
       "name": "a moment later the enemy is gone",

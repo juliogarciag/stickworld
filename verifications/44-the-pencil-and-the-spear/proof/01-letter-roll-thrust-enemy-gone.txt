@@ -1,0 +1,21 @@
+PASS  dev server up, started by this run
+PASS  the yard starts with an empty hand, a letter on the floor and one enemy  (level 900, slots [{"itemDefId":null,"isSelected":false}])
+PASS  the paper and the spear are items the game knows by name  (paper 200, spear 202)
+PASS  K by the letter reads it, and it teaches the spear  (teaches spear)
+PASS  reading it puts a sheet of paper in the hand of the stick man  ([{"itemDefId":200,"isSelected":true}])
+PASS  while it reads, J does nothing and K puts the letter away
+PASS  with the letter put away, J would roll the paper into the spear, and there is nothing to switch to  (J: craft, would make spear)
+PASS  J rolls it: the spear is in the same slot, in its hand, and J would now thrust it  (slot {"itemDefId":202,"isSelected":true}, J: thrust)
+PASS  J thrusts: the point is out in front of the stick man, further than it is held ready, and then the spear is drawn back  (reach seen 2.07 m, ready at 1.30 m, 10 frames drawn)
+PASS  a thrust costs time: no J is offered until the spear is drawn back  (0.50 s from the press to ready again)
+PASS  the spear is still in its hand after the thrust, and the enemy untouched
+PASS  the spear reaches the enemy from further away than its club reaches the stick man  (spear from 2.47 m, club from 1.96 m, middle to middle)
+PASS  it thrusts from outside the reach of the club  (2.01 m away, the enemy approaching)
+PASS  the thrust reaches the enemy: it is being rubbed out  (rubbed out 0.16666666666666666)
+PASS  a moment later the enemy is gone
+PASS  the stick man walks on through where the enemy stood and reaches the flag  (at x 19.56)
+PASS  it was never struck on the way
+PASS  it still has the spear under the flag
+PASS  no page errors
+
+ALL 19 CHECKS PASSED

@@ -7,4 +7,13 @@ export interface ItemUseCommand {
   readonly type: 'item/use';
 }
 
-export type ItemCommand = ItemUseCommand;
+/**
+ * Switches what using the held item does, when it has more than one use: the paper is made into
+ * the next thing the stick man knows how to make of it. Nothing happens for an item with one use
+ * or none, and while its hands are busy.
+ */
+export interface ItemSwitchUseCommand {
+  readonly type: 'item/switchUse';
+}
+
+export type ItemCommand = ItemUseCommand | ItemSwitchUseCommand;
