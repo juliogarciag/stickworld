@@ -1,0 +1,211 @@
+import {
+  createSim,
+  getEnemies,
+  getStickMan,
+  practiceLevels,
+  type ClubEnemyView,
+  type Command,
+  type SimHandle,
+} from '@stickworld/sim';
+import { describe, expect, it } from 'vitest';
+import { buildClubEnemyStrokes } from './clubEnemy';
+import { __testing__ as levelCameraTesting } from './levelCamera';
+import type { Stroke } from './strokes';
+import { __testing__, buildTornClubEnemyStrokes } from './tornClubEnemy';
+import { convertToPixels } from './units';
+
+const { cutStroke } = __testing__;
+const { FRAMING } = levelCameraTesting;
+
+describe('the club enemy torn in two', () => {
+  it('is drawn where it stood on the tick it is struck: nothing has moved yet but the tear across its mouth', () => {
+    const [struck] = recordTornEnemy();
+    const whole = getBounds(buildClubEnemyStrokes({ ...struck!, torn: null }, Number.NaN));
+    const torn = getBounds(buildTornClubEnemyStrokes(struck!));
+    // Its lower half has begun to come down, by less than it floats above the floor.
+    // A tick of the tearing has gone by: within a few pixels.
+    expect(Math.abs(torn.left - whole.left)).toBeLessThan(10);
+    expect(Math.abs(torn.top - whole.top)).toBeLessThan(10);
+    expect(torn.bottom - whole.bottom).toBeLessThan(convertToPixels(struck!.floatHeight));
+  });
+
+  it('has the same strokes in the same order for as long as it is there, so that none wobbles anew', () => {
+    const counts = recordTornEnemy().map((enemy) => buildTornClubEnemyStrokes(enemy).length);
+    expect(new Set(counts).size).toBe(1);
+  });
+
+  it('comes down as it tears and puts nothing through the floor line, while it tears and while it lies', () => {
+    const onSheet = recordTornEnemy().filter((enemy) => enemy.torn!.action !== 'leaving');
+    const floor = convertToPixels(onSheet[0]!.position.y + onSheet[0]!.floatHeight);
+    for (const enemy of onSheet) {
+      expect(getBounds(buildTornClubEnemyStrokes(enemy)).bottom).toBeLessThanOrEqual(floor + 1e-6);
+    }
+    const tops = onSheet
+      .filter((enemy) => enemy.torn!.action === 'tearing')
+      .map((enemy) => getBounds(buildTornClubEnemyStrokes(enemy)).top);
+    expect(tops.at(-1)).toBeGreaterThan(tops[0]!);
+  });
+
+  it('lies still: every frame of the lying is the frame the tearing ended on', () => {
+    const lying = recordTornEnemy().filter((enemy) => enemy.torn!.action === 'lying');
+    const first = buildTornClubEnemyStrokes(lying[0]!);
+    expect(lying.length).toBeGreaterThan(10);
+    for (const enemy of lying) {
+      expect(buildTornClubEnemyStrokes(enemy)).toEqual(first);
+    }
+    // Lower than it stood, and wider: its upper half lies beside it, the club in front.
+    const whole = getBounds(buildClubEnemyStrokes({ ...lying[0]!, torn: null }, Number.NaN));
+    const lain = getBounds(first);
+    expect(lain.top).toBeGreaterThan(whole.top);
+    expect(lain.right - lain.left).toBeGreaterThan(whole.right - whole.left);
+  });
+
+  it('falls off the sheet: down through the floor line and on, and is below the widest view before the sim has it gone', () => {
+    const leaving = recordTornEnemy().filter((enemy) => enemy.torn!.action === 'leaving');
+    const floor = convertToPixels(leaving[0]!.position.y + leaving[0]!.floatHeight);
+    const last = getBounds(buildTornClubEnemyStrokes(leaving.at(-1)!));
+    expect(last.top - floor).toBeGreaterThan(convertToPixels(DEEPEST_VIEW));
+    // It only ever goes down: no scrap comes back up.
+    const tops = leaving.map((enemy) => getBounds(buildTornClubEnemyStrokes(enemy)).top);
+    const everyTenth = tops.filter((_, index) => index % 10 === 0 && index >= tops.length / 4);
+    expect(everyTenth).toEqual([...everyTenth].sort((one, other) => one - other));
+    // It does not go far aside: it falls where it lay.
+    const stoodAt = convertToPixels(leaving[0]!.position.x);
+    expect(Math.abs((last.left + last.right) / 2 - stoodAt)).toBeLessThan(convertToPixels(4));
+  });
+
+  it('goes a scrap at a time: early in the leaving something has moved and something still lies there', () => {
+    const torn = recordTornEnemy();
+    const lying = buildTornClubEnemyStrokes(torn.find((enemy) => enemy.torn!.action === 'lying')!);
+    const early = torn.find(
+      (enemy) => enemy.torn!.action === 'leaving' && enemy.torn!.progress > 0.1,
+    )!;
+    const strokes = buildTornClubEnemyStrokes(early);
+    const moved = strokes.filter((stroke, index) => !areSameStrokes(stroke, lying[index]!));
+    expect(moved.length).toBeGreaterThan(0);
+    expect(moved.length).toBeLessThan(strokes.length);
+  });
+});
+
+describe('the club enemy torn from behind', () => {
+  it('falls the way the blow knocked it, not the way it happened to face', () => {
+    const lying = recordTornEnemy().find((enemy) => enemy.torn!.action === 'lying')!;
+    const stoodAt = convertToPixels(lying.position.x);
+    // The highest thing lying there is its upper half, tipped over on the side it fell to.
+    const getHighestPointX = (direction: 1 | -1): number => {
+      const points = buildTornClubEnemyStrokes({
+        ...lying,
+        torn: { ...lying.torn!, direction },
+      }).flatMap((stroke) => stroke.points);
+      return points.reduce((highest, point) => (point.y < highest.y ? point : highest)).x;
+    };
+    expect(getHighestPointX(1)).toBeGreaterThan(stoodAt + convertToPixels(lying.width / 2));
+    expect(getHighestPointX(-1)).toBeLessThan(stoodAt - convertToPixels(lying.width / 2));
+  });
+});
+
+describe('cutting a stroke at a level line', () => {
+  it('keeps the part on the side asked for, ending on the line', () => {
+    const line: Stroke = {
+      points: [
+        { x: 0, y: 0 },
+        { x: 10, y: 10 },
+      ],
+      thickness: 2,
+    };
+    expect(cutStroke(line, 4, 'above')).toEqual([
+      {
+        points: [
+          { x: 0, y: 0 },
+          { x: 4, y: 4 },
+        ],
+        thickness: 2,
+      },
+    ]);
+    expect(cutStroke(line, 4, 'below')[0]!.points).toEqual([
+      { x: 4, y: 4 },
+      { x: 10, y: 10 },
+    ]);
+  });
+
+  it('cuts a loop open into the pieces on that side, and gives nothing for a stroke wholly on the other', () => {
+    const square: Stroke = {
+      points: [
+        { x: 0, y: 0 },
+        { x: 10, y: 0 },
+        { x: 10, y: 10 },
+        { x: 0, y: 10 },
+      ],
+      thickness: 2,
+      isClosed: true,
+    };
+    const below = cutStroke(square, 5, 'below');
+    expect(below).toHaveLength(1);
+    expect(below[0]!.points).toEqual([
+      { x: 10, y: 5 },
+      { x: 10, y: 10 },
+      { x: 0, y: 10 },
+      { x: 0, y: 5 },
+    ]);
+    expect(below[0]!.isClosed).toBeUndefined();
+    expect(cutStroke(square, 20, 'below')).toEqual([]);
+  });
+});
+
+// ---- Helpers ----
+
+const YARD = practiceLevels[0]!;
+const USE: Command = { type: 'item/use' };
+const INTERACT: Command = { type: 'world/interact' };
+/**
+ * More than the camera ever shows below the floor line, in metres: the floor line is
+ * `floorFromTop` of the way down its view, which is never more than `mostMetresAcross` wide, here
+ * taken in a window half as tall again as it is wide.
+ */
+const DEEPEST_VIEW = FRAMING.mostMetresAcross * 1.5 * (1 - FRAMING.floorFromTop);
+
+/** The enemy of the yard on every tick from the thrust that tears it until it is gone. */
+function recordTornEnemy(): ClubEnemyView[] {
+  const sim = createSimWithSpear();
+  sim.step([{ type: 'player/walk', direction: 1 }]);
+  while (getEnemies(sim)[0]!.position.x - getStickMan(sim).feet.x > 2.3) {
+    sim.step();
+  }
+  sim.step([{ type: 'player/walk', direction: 0 }, USE]);
+  const seen: ClubEnemyView[] = [];
+  for (let tick = 0; tick < 600 && getEnemies(sim).length > 0; tick += 1) {
+    const enemy = getEnemies(sim)[0]!;
+    if (enemy.torn) {
+      seen.push(enemy);
+    }
+    sim.step();
+  }
+  expect(getEnemies(sim)).toEqual([]);
+  return seen;
+}
+
+function createSimWithSpear(): SimHandle {
+  const sim = createSim({ level: YARD.id });
+  sim.step([{ type: 'player/walk', direction: 1 }]);
+  for (let tick = 0; tick < 600 && getStickMan(sim).feet.x < 4.8; tick += 1) {
+    sim.step();
+  }
+  sim.step([{ type: 'player/walk', direction: 0 }, INTERACT]);
+  sim.step([INTERACT]);
+  sim.step([USE]);
+  return sim;
+}
+
+function getBounds(strokes: readonly Stroke[]) {
+  const points = strokes.flatMap((stroke) => stroke.points);
+  return {
+    left: Math.min(...points.map((point) => point.x)),
+    right: Math.max(...points.map((point) => point.x)),
+    top: Math.min(...points.map((point) => point.y)),
+    bottom: Math.max(...points.map((point) => point.y)),
+  };
+}
+
+function areSameStrokes(one: Stroke, other: Stroke): boolean {
+  return JSON.stringify(one.points) === JSON.stringify(other.points);
+}

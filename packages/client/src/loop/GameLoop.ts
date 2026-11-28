@@ -1,4 +1,10 @@
-import { createSim, restoreSim, type Command, type SimHandle } from '@stickworld/sim';
+import {
+  createSim,
+  restoreSim,
+  type Command,
+  type SimHandle,
+  type SimSnapshot,
+} from '@stickworld/sim';
 import { MAX_FRAME_SECONDS } from './frameSeconds';
 import { takeWholeTicks } from './takeWholeTicks';
 
@@ -68,6 +74,18 @@ export class GameLoop {
    */
   playLevel(level: number): void {
     this.current = createSim({ level, seed: this.current.seed });
+    this.pendingCommands = [];
+    this.leftover = 0;
+    this.finishedLevel = undefined;
+  }
+
+  /**
+   * Throws the current sim away and plays on from `snapshot`, as the sim it was taken from would
+   * have. Dev tooling only: how a check starts in the middle of a game, with what a stick man
+   * that came through earlier levels knows and holds.
+   */
+  playSnapshot(snapshot: SimSnapshot): void {
+    this.current = restoreSim(snapshot);
     this.pendingCommands = [];
     this.leftover = 0;
     this.finishedLevel = undefined;

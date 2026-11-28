@@ -75,6 +75,12 @@ export interface StickManPose {
   readonly struck: number;
   /** Which way it is knocked over: 1 to the right, -1 to the left. Only read when struck. */
   readonly struckDirection: 1 | -1;
+  /**
+   * Where the hand of its front arm is, in metres, when what it holds in that hand says so (the
+   * spear: `render/heldItem.ts`), or null when the arm does what the rest of it does.
+   * The arm is drawn as long as reaching there takes. Not read when seated or struck.
+   */
+  readonly handPosition: Point | null;
 }
 
 /**
@@ -110,6 +116,7 @@ export function getPose(stickMan: StickManView): StickManPose {
     carrying: stickMan.isCarrying ? 1 : 0,
     struck: stickMan.struckFor === null ? 0 : Math.min(1, stickMan.struckFor / STRUCK.fallSeconds),
     struckDirection: stickMan.struckDirection,
+    handPosition: null,
   };
 }
 
@@ -561,9 +568,12 @@ function getSkeleton(pose: StickManPose): Skeleton {
       { x: feet.x + side * BODY.carrying.elbowOut, y: feet.y - BODY.carrying.elbowUp },
       { x: feet.x + side * BODY.carrying.handOut, y: feet.y - STICK_MAN_HEIGHT },
     ];
-    return buildArmFrom(shoulder, arm, facing).map((joint, jointIndex) =>
-      movePartWay(joint, held[jointIndex]!, holdingUp),
-    );
+    // The front arm holds what is in its hand, where that is.
+    const isHoldingArm = index === 1 && pose.handPosition !== null && pose.action !== 'struck';
+    const joints = isHoldingArm
+      ? buildArmBetween(shoulder, pose.handPosition, facing)
+      : buildArmFrom(shoulder, arm, facing);
+    return joints.map((joint, jointIndex) => movePartWay(joint, held[jointIndex]!, holdingUp));
   });
   const upright = {
     head,
@@ -839,6 +849,30 @@ function buildArmFrom(shoulder: Point, limb: Limb, facing: 1 | -1): Point[] {
     shoulder,
     elbow,
     stepFrom(elbow, { angle: limb.swing + limb.bend, length: BODY.forearm, facing }),
+  ];
+}
+
+/**
+ * Shoulder, elbow and hand of an arm whose hand is at `hand`: the elbow hangs below the line
+ * between the two, as far as the length of the arm leaves it, and behind it when the arm is
+ * straight up and down. An arm that has to reach further than it is long is drawn straight.
+ */
+function buildArmBetween(shoulder: Point, hand: Point, facing: 1 | -1): Point[] {
+  const reach = Math.hypot(hand.x - shoulder.x, hand.y - shoulder.y);
+  const middle = movePartWay(shoulder, hand, 0.5);
+  const sag = Math.sqrt(Math.max(0, BODY.upperArm * BODY.upperArm - (reach * reach) / 4));
+  const canBend = reach > 0 && sag > 0;
+  if (!canBend) {
+    return [shoulder, middle, hand];
+  }
+  // Across the line from shoulder to hand, on the side that is down the page, or behind.
+  const across = { x: -(hand.y - shoulder.y) / reach, y: (hand.x - shoulder.x) / reach };
+  const isAcrossDown = across.y > 0 || (across.y === 0 && across.x * facing < 0);
+  const side = isAcrossDown ? 1 : -1;
+  return [
+    shoulder,
+    { x: middle.x + across.x * sag * side, y: middle.y + across.y * sag * side },
+    hand,
   ];
 }
 

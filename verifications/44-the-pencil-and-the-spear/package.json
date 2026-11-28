@@ -1,0 +1,12 @@
+{
+  "name": "verification-44-the-pencil-and-the-spear",
+  "private": true,
+  "type": "module",
+  "description": "Verification scripts of ticket 44, the pencil and the spear. Not part of the workspace; install with: pnpm install --ignore-workspace",
+  "scripts": {
+    "verify": "bash run.sh"
+  },
+  "devDependencies": {
+    "playwright": "^1.50.0"
+  }
+}

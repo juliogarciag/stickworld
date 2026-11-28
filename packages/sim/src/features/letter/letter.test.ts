@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { levels } from '../../content/levels';
+import { clubYard } from '../../content/levels/clubYard';
 import { level3 } from '../../content/levels/level3';
 import { TICK_RATE } from '../../content/tuning';
 import type { Command } from '../../core/commands';
@@ -8,14 +9,17 @@ import { features } from '..';
 import { hasAirplane } from '../airplane';
 import { AIRPLANE } from '../airplane/defs';
 import { getAirplane } from '../airplane/view';
-import { getRecipeDef } from '../crafting/defs';
+import { teachRecipe } from '../crafting';
+import { getRecipeDef, PAPER_AIRPLANE_RECIPE_ID, SPEAR_RECIPE_ID } from '../crafting/defs';
 import { getCrafting } from '../crafting/view';
-import { AIRPLANE_ITEM_ID, isItemDefId, PAPER_ITEM_ID } from '../inventory/defs';
+import { AIRPLANE_ITEM_ID, isItemDefId, PAPER_ITEM_ID, SPEAR_ITEM_ID } from '../inventory/defs';
 import { giveItem } from '../inventory/give';
+import { replaceSelectedItem } from '../inventory/held';
 import { getItemSlots } from '../inventory/view';
+import { getItemUse } from '../item/view';
 import { getStickMan } from '../player/view';
 import { getInteraction } from '../world/view';
-import { LETTER, letterDefs } from './defs';
+import { LETTER, letterDefs, SPEAR_LETTER_ID } from './defs';
 import { findLetterPlacedIn } from './index';
 import { getFallenItem, getLetter } from './view';
 
@@ -39,11 +43,11 @@ describe('reading the letter', () => {
 
   it("teaches its recipe, gives nothing to the stick man who has the paper already, and puts that paper in the stick man's hand", () => {
     const sim = createSimOnLevel3WithPaper();
-    expect(getCrafting(sim)).toEqual({ knownRecipes: [], canMake: null });
+    expect(getCrafting(sim)).toMatchObject({ knownRecipes: [], canMake: null });
     expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: PAPER_ITEM_ID, isSelected: false }]);
     readLetter(sim);
     const taught = { defId: letterDefs[0]!.teachesRecipe, name: 'paper airplane' };
-    expect(getCrafting(sim)).toEqual({ knownRecipes: [taught], canMake: taught });
+    expect(getCrafting(sim)).toMatchObject({ knownRecipes: [taught], canMake: taught });
     expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: PAPER_ITEM_ID, isSelected: true }]);
   });
 
@@ -399,6 +403,114 @@ describe('every letter', () => {
   );
 });
 
+describe('the letter about the spear', () => {
+  it('teaches the spear, names it, and gives a sheet of paper as the letter about the airplane does', () => {
+    const sim = new Sim({ features, start: { seed: 1, level: clubYard.id } });
+    expect(getLetter(sim)).toMatchObject({ teaches: 'spear', isBeingRead: false });
+    expect(letterDefs.find((def) => def.id === SPEAR_LETTER_ID)!.gives).toBe(PAPER_ITEM_ID);
+    readSpearLetter(sim);
+    expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: PAPER_ITEM_ID, isSelected: true }]);
+  });
+
+  it('gives no second sheet to the stick man that has the paper: that one is in its hand, and is for the spear now', () => {
+    const sim = createSimKnowingAirplaneInYard(PAPER_ITEM_ID);
+    readSpearLetter(sim);
+    expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: PAPER_ITEM_ID, isSelected: true }]);
+    expect(getCrafting(sim).canMake?.name).toBe('spear');
+    expect(getCrafting(sim).couldMakeInstead?.name).toBe('paper airplane');
+  });
+
+  it('puts the paper in the hand of the stick man that holds a paper airplane in its only slot, in place of it', () => {
+    const sim = createSimKnowingAirplaneInYard(AIRPLANE_ITEM_ID);
+    readSpearLetter(sim);
+    expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: PAPER_ITEM_ID, isSelected: true }]);
+    sim.step([INTERACT]);
+    expect(getItemUse(sim)).toBe('craft');
+    // Nothing falls from the sky afterwards: the stick man has what the letter was for.
+    for (let tick = 0; tick < 5 * TICK_RATE; tick += 1) {
+      sim.step();
+    }
+    expect(getFallenItem(sim)).toBeUndefined();
+  });
+
+  it('gives the paper to the stick man that has an airplane on the floor: only the letter about the airplane counts an airplane as what it was for', () => {
+    const sim = createSimKnowingAirplaneInYard(AIRPLANE_ITEM_ID);
+    sim.step([{ type: 'inventory/select', slot: 1 }]);
+    sim.step([USE_ITEM]);
+    expect(hasAirplane(sim)).toBe(true);
+    expect(getItemSlots(sim)[0]?.itemDefId).toBeNull();
+    readSpearLetter(sim);
+    expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: PAPER_ITEM_ID, isSelected: true }]);
+  });
+
+  it('never leaves the stick man without a way on: the paper folded into an airplane instead, a new sheet falls, and picking it up takes the place of the airplane', () => {
+    const sim = createSimKnowingAirplaneInYard(PAPER_ITEM_ID);
+    readSpearLetter(sim);
+    sim.step([INTERACT]);
+    sim.step([SWITCH_USE]);
+    sim.step([USE_ITEM]);
+    expect(getItemSlots(sim)[0]).toMatchObject({ itemDefId: AIRPLANE_ITEM_ID, isSelected: true });
+    for (let tick = 0; tick < 10 * TICK_RATE && getInteraction(sim) !== 'pickUp'; tick += 1) {
+      sim.step();
+    }
+    expect(getFallenItem(sim)).toMatchObject({ itemDefId: PAPER_ITEM_ID, height: 0 });
+    sim.step([INTERACT]);
+    expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: PAPER_ITEM_ID, isSelected: true }]);
+    expect(getFallenItem(sim)).toBeUndefined();
+    sim.step([USE_ITEM]);
+    expect(getItemSlots(sim)[0]?.itemDefId).toBe(SPEAR_ITEM_ID);
+  });
+
+  it('gives the spear back, in its hand, to the stick man that dies holding an airplane it folded of the paper instead', () => {
+    const sim = createSimKnowingAirplaneInYard(PAPER_ITEM_ID);
+    readSpearLetter(sim);
+    sim.step([INTERACT]);
+    sim.step([SWITCH_USE]);
+    sim.step([USE_ITEM]);
+    sim.startLevel(sim.level);
+    expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: SPEAR_ITEM_ID, isSelected: true }]);
+  });
+});
+
+describe('level 3 for the stick man that knows the spear too', () => {
+  it('gives the airplane on a retry in place of a spear in its one slot: what a level gives back takes the place of what it held', () => {
+    const sim = createSimOnLevel3WithPaper();
+    readLetter(sim);
+    sim.step([INTERACT]);
+    teachRecipe(sim, SPEAR_RECIPE_ID);
+    sim.step([USE_ITEM]);
+    expect(getItemSlots(sim)[0]?.itemDefId).toBe(SPEAR_ITEM_ID);
+    sim.startLevel(sim.level);
+    expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, isSelected: true }]);
+  });
+
+  it('still folds the airplane with one press after its letter is read: the letter read last is what the paper is for', () => {
+    const sim = createSimOnLevel3WithPaper();
+    teachRecipe(sim, SPEAR_RECIPE_ID);
+    readLetter(sim);
+    sim.step([INTERACT]);
+    expect(getCrafting(sim).canMake?.name).toBe('paper airplane');
+    sim.step([USE_ITEM]);
+    expect(getItemSlots(sim)[0]?.itemDefId).toBe(AIRPLANE_ITEM_ID);
+  });
+
+  it('still gives the airplane on a retry, and the paper is for the airplane again whatever was chosen before', () => {
+    const sim = createSimOnLevel3WithPaper();
+    readLetter(sim);
+    sim.step([INTERACT]);
+    teachRecipe(sim, SPEAR_RECIPE_ID);
+    expect(getCrafting(sim).canMake?.name).toBe('spear');
+    // It loses the paper with the level: rolled into a spear, and the spear taken away.
+    sim.step([USE_ITEM]);
+    sim.step([{ type: 'inventory/select', slot: 1 }]);
+    replaceSelectedItem(sim, null);
+    sim.step([{ type: 'inventory/select', slot: 1 }]);
+    sim.startLevel(sim.level);
+    expect(getItemSlots(sim)).toEqual([{ slot: 1, itemDefId: AIRPLANE_ITEM_ID, isSelected: true }]);
+    expect(getItemUse(sim)).toBe('place');
+  });
+});
+
 // ---- Helpers ----
 
 const LETTER_AT = findLetterPlacedIn(level3)!.position;
@@ -406,6 +518,7 @@ const EDGE = level3.floor[0]!.end.x;
 
 const USE_ITEM: Command = { type: 'item/use' };
 const INTERACT: Command = { type: 'world/interact' };
+const SWITCH_USE: Command = { type: 'item/switchUse' };
 
 /**
  * Every way there is to lose the airplane and stay alive, each as what the stick man does from the
@@ -486,6 +599,23 @@ function createSimOnLevel3WithPaper(): Sim {
   const sim = new Sim({ features, start: { seed: 1, level: 3 } });
   giveItem(sim, PAPER_ITEM_ID);
   return sim;
+}
+
+/**
+ * A sim in the yard for the stick man that has been through level 3: it knows the airplane and
+ * holds `itemDefId` in its slot, not selected.
+ */
+function createSimKnowingAirplaneInYard(itemDefId: number): Sim {
+  const sim = new Sim({ features, start: { seed: 1, level: clubYard.id } });
+  teachRecipe(sim, PAPER_AIRPLANE_RECIPE_ID);
+  giveItem(sim, itemDefId);
+  return sim;
+}
+
+function readSpearLetter(sim: Sim): void {
+  walkTo(sim, findLetterPlacedIn(clubYard)!.position.x);
+  sim.step([INTERACT]);
+  expect(getLetter(sim)!.isBeingRead).toBe(true);
 }
 
 function readLetter(sim: Sim): void {

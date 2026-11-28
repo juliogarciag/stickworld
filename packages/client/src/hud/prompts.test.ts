@@ -1,3 +1,4 @@
+import { PAPER_AIRPLANE_RECIPE_ID, SPEAR_RECIPE_ID, type RecipeView } from '@stickworld/sim';
 import { describe, expect, it } from 'vitest';
 import { buildWriting } from './handwriting';
 import { getPromptsFor, buildPromptStrokes } from './prompts';
@@ -49,15 +50,46 @@ describe('getPromptsFor', () => {
 
   it('says what would be made, by the name the sim gives it', () => {
     expect(
-      getPromptsFor({ ...KEYS, itemUse: 'craft', wouldMake: 'paper airplane', interaction: null }),
+      getPromptsFor({ ...KEYS, itemUse: 'craft', wouldMake: AIRPLANE_RECIPE, interaction: null }),
     ).toEqual([{ key: 'J', words: 'fold a paper airplane' }]);
+  });
+
+  it('says what is done to the paper to make each thing of it, and makes by name what it has no words for', () => {
+    const getCraftWords = (recipe: RecipeView | null): string =>
+      getPromptsFor({ ...KEYS, itemUse: 'craft', wouldMake: recipe, interaction: null })[0]!.words;
+    expect(getCraftWords(AIRPLANE_RECIPE)).toBe('fold a paper airplane');
+    expect(getCraftWords(SPEAR_RECIPE)).toBe('roll a spear');
+    expect(getCraftWords({ defId: 499, name: 'paper boat' })).toBe('make a paper boat');
+  });
+
+  it('shows the key that switches under the item key, with what would be made instead, only while there is something to switch to', () => {
+    const making = {
+      ...KEYS,
+      itemUse: 'craft',
+      wouldMake: SPEAR_RECIPE,
+      interaction: null,
+    } as const;
+    expect(
+      getPromptsFor({ ...making, canSwitchItemUse: true, couldMakeInstead: AIRPLANE_RECIPE }),
+    ).toEqual([
+      { key: 'J', words: 'roll a spear' },
+      { key: 'L', words: 'fold a paper airplane instead' },
+    ]);
+    expect(getPromptsFor(making)).toEqual([{ key: 'J', words: 'roll a spear' }]);
+  });
+
+  it('says the spear is thrust, and shows no key for it while it cannot be', () => {
+    expect(getPromptsFor({ ...KEYS, itemUse: 'thrust', interaction: null })).toEqual([
+      { key: 'J', words: 'thrust the spear' },
+    ]);
+    expect(getPromptsFor({ ...KEYS, itemUse: null, interaction: null })).toEqual([]);
   });
 
   it('has words for everything a key can mean, and each names what it is done to', () => {
     const words = [
-      ...(['craft', 'place'] as const).map(
+      ...(['craft', 'place', 'thrust'] as const).map(
         (itemUse) =>
-          getPromptsFor({ ...KEYS, itemUse, wouldMake: 'paper airplane', interaction: null })[0]
+          getPromptsFor({ ...KEYS, itemUse, wouldMake: AIRPLANE_RECIPE, interaction: null })[0]
             ?.words,
       ),
       ...(['read', 'putLetterAway', 'lift', 'putDown', 'board', 'pickUp'] as const).map(
@@ -65,7 +97,7 @@ describe('getPromptsFor', () => {
       ),
     ];
     for (const prompt of words) {
-      expect(prompt).toMatch(/letter|airplane|paper/);
+      expect(prompt).toMatch(/letter|airplane|paper|spear/);
     }
   });
 });
@@ -177,11 +209,16 @@ describe('keepWhileUnchanged', () => {
 
 const KEYS = {
   useItemKey: 'J',
+  canSwitchItemUse: false,
+  couldMakeInstead: null,
+  switchItemUseKey: 'L',
   interactKey: 'K',
   wouldMake: null,
   isSeated: false,
   flightKeys: { climb: '↑', dive: '↓', jumpOut: 'SPACE' },
   flyingHint: null,
 } as const;
+const SPEAR_RECIPE = { defId: SPEAR_RECIPE_ID, name: 'spear' };
+const AIRPLANE_RECIPE = { defId: PAPER_AIRPLANE_RECIPE_ID, name: 'paper airplane' };
 const CAMERA_SEES = { x: 40, y: -20, width: 1920, height: 1080 };
 const WRITING = { position: { x: 0, y: 0 }, letterHeight: 28 };

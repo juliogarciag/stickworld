@@ -1,5 +1,5 @@
 import { Sim, type SimHandle } from '../../core/sim';
-import { getKnownRecipes, findCraftableRecipe } from './index';
+import { findCraftableRecipe, findRecipeToSwitchTo, getKnownRecipes } from './index';
 
 /** A recipe as a view names it. */
 export interface RecipeView {
@@ -13,6 +13,11 @@ export interface CraftingView {
   readonly knownRecipes: readonly RecipeView[];
   /** The recipe that using the held item would make right now, or null when it would make none. */
   readonly canMake: RecipeView | null;
+  /**
+   * The recipe that using the held item would make instead once its use is switched, or null when
+   * the stick man knows no second recipe made from that item.
+   */
+  readonly couldMakeInstead: RecipeView | null;
 }
 
 export function getCrafting(handle: SimHandle): CraftingView {
@@ -20,11 +25,13 @@ export function getCrafting(handle: SimHandle): CraftingView {
     throw new TypeError('not a sim made by createSim or restoreSim');
   }
   const canMake = findCraftableRecipe(handle);
+  const next = findRecipeToSwitchTo(handle);
   return {
     knownRecipes: getKnownRecipes(handle).map((recipe) => ({
       defId: recipe.id,
       name: recipe.name,
     })),
     canMake: canMake ? { defId: canMake.id, name: canMake.name } : null,
+    couldMakeInstead: next ? { defId: next.id, name: next.name } : null,
   };
 }

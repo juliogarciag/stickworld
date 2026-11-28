@@ -1,0 +1,95 @@
+{
+  "knowingBoth": {
+    "knownRecipes": [
+      {
+        "defId": 400,
+        "name": "paper airplane"
+      },
+      {
+        "defId": 401,
+        "name": "spear"
+      }
+    ],
+    "canMake": {
+      "defId": 401,
+      "name": "spear"
+    },
+    "couldMakeInstead": {
+      "defId": 400,
+      "name": "paper airplane"
+    }
+  },
+  "switched": {
+    "knownRecipes": [
+      {
+        "defId": 400,
+        "name": "paper airplane"
+      },
+      {
+        "defId": 401,
+        "name": "spear"
+      }
+    ],
+    "canMake": {
+      "defId": 400,
+      "name": "paper airplane"
+    },
+    "couldMakeInstead": {
+      "defId": 401,
+      "name": "spear"
+    }
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "knowing only the spear, there is nothing to switch to and no key for it",
+      "pass": true
+    },
+    {
+      "name": "L does nothing then",
+      "pass": true
+    },
+    {
+      "name": "knowing the airplane too, the paper is for the spear by default: the letter read last",
+      "pass": true,
+      "details": "J: spear, L: paper airplane"
+    },
+    {
+      "name": "L switches: J would fold the airplane, and L would switch back to the spear",
+      "pass": true
+    },
+    {
+      "name": "L again switches back",
+      "pass": true
+    },
+    {
+      "name": "J without ever switching makes the spear, and then there is nothing to switch",
+      "pass": true
+    },
+    {
+      "name": "L and then J folds the airplane instead",
+      "pass": true
+    },
+    {
+      "name": "with the paper spent on an airplane in the yard, a new sheet falls where the stick man stands",
+      "pass": true
+    },
+    {
+      "name": "K picks it up in place of the airplane (one slot), and it is for the spear again",
+      "pass": true,
+      "details": "slot {\"itemDefId\":200,\"isSelected\":true}, J: spear"
+    },
+    {
+      "name": "J then rolls the spear",
+      "pass": true
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

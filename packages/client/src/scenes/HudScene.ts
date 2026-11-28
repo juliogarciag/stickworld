@@ -1,4 +1,5 @@
 import {
+  canSwitchItemUse,
   getCrafting,
   getFlag,
   getFlyingHint,
@@ -80,8 +81,11 @@ export class HudScene extends Phaser.Scene {
 
     const prompts = getPromptsFor({
       itemUse: getItemUse(sim),
-      wouldMake: getCrafting(sim).canMake?.name ?? null,
+      wouldMake: getCrafting(sim).canMake,
       useItemKey: ACTION_KEY_NAMES.useItem,
+      canSwitchItemUse: canSwitchItemUse(sim),
+      couldMakeInstead: getCrafting(sim).couldMakeInstead,
+      switchItemUseKey: ACTION_KEY_NAMES.switchItemUse,
       interaction: getInteraction(sim),
       interactKey: ACTION_KEY_NAMES.interact,
       isSeated: getStickMan(sim).action === 'seated',

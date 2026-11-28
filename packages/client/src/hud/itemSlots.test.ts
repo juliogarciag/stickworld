@@ -1,4 +1,4 @@
-import { PAPER_ITEM_ID, type ItemSlot } from '@stickworld/sim';
+import { PAPER_ITEM_ID, SPEAR_ITEM_ID, type ItemSlot } from '@stickworld/sim';
 import { describe, expect, it } from 'vitest';
 import type { Stroke } from '../render/strokes';
 import { getItemSlotBox, buildItemSlotStrokes } from './itemSlots';
@@ -24,6 +24,23 @@ describe('buildItemSlotStrokes', () => {
     expect(paper.length).toBeGreaterThan(0);
     const box = getItemSlotBox(1, CAMERA_SEES);
     for (const point of getPoints(paper)) {
+      expect(point.x).toBeGreaterThan(box.x);
+      expect(point.x).toBeLessThan(box.x + box.width);
+      expect(point.y).toBeGreaterThan(box.y);
+      expect(point.y).toBeLessThan(box.y + box.height);
+    }
+  });
+
+  it('draws the spear inside the box of the slot that holds it, with a drawing of its own that comes to a point', () => {
+    const empty = buildItemSlotStrokes([EMPTY_SLOT], CAMERA_SEES);
+    const getItemStrokes = (itemDefId: number) =>
+      buildItemSlotStrokes([{ ...EMPTY_SLOT, itemDefId }], CAMERA_SEES).slice(empty.length);
+    const spear = getItemStrokes(SPEAR_ITEM_ID);
+    expect(spear.length).toBeGreaterThan(0);
+    expect(spear).not.toEqual(getItemStrokes(987654));
+    expect(spear).not.toEqual(getItemStrokes(PAPER_ITEM_ID));
+    const box = getItemSlotBox(1, CAMERA_SEES);
+    for (const point of getPoints(spear)) {
       expect(point.x).toBeGreaterThan(box.x);
       expect(point.x).toBeLessThan(box.x + box.width);
       expect(point.y).toBeGreaterThan(box.y);

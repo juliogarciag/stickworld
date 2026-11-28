@@ -4,6 +4,7 @@ import type {
   CraftingView,
   Def,
   EnemyView,
+  SpearView,
   FallenItemView,
   FlagView,
   FlyingHint,
@@ -20,6 +21,7 @@ import type {
   StickManView,
 } from '@stickworld/sim';
 import {
+  canSwitchItemUse,
   getAirplane,
   getCrafting,
   defs,
@@ -36,6 +38,7 @@ import {
   getLevel,
   getMovementTuning,
   getNotes,
+  getSpear,
   STICK_MAN_HEIGHT,
   STICK_MAN_WIDTH,
   getStickMan,
@@ -132,6 +135,12 @@ export interface GameDebugApi {
    */
   getEnemies(): EnemyView[];
   /**
+   * The spear in the stick man's hand as the sim has it right now: whether it is ready, thrusting
+   * or being drawn back, how far along, and where its point is. Undefined while the stick man
+   * holds something else or nothing.
+   */
+  getSpear(): SpearView | undefined;
+  /**
    * What the stick man has still to be told about flying the airplane the stick man has, as the sim
    * has it right now, or null.
    */
@@ -143,12 +152,19 @@ export interface GameDebugApi {
   getMovementTuning(): MovementTuning;
   /** What using the held item would do right now, or null. */
   getItemUse(): ItemUseMeaning | null;
+  /** True while switching the use of the held item would do something right now. */
+  canSwitchItemUse(): boolean;
   /** What interacting with the world would do right now, or null. */
   getInteraction(): InteractionMeaning | null;
   /** Queues a command for the next earned tick, through the same path as keyboard input. */
   queueCommand(command: Command): void;
   /** Plays level `level` from its start. */
   loadLevel(level: number): void;
+  /**
+   * Plays on from `snapshot` (one `takeSnapshot()` gave, as it was or changed): how a check starts
+   * with what a stick man that came through earlier levels knows and holds.
+   */
+  loadSnapshot(snapshot: SimSnapshot): void;
 }
 
 /**
@@ -257,11 +273,14 @@ export function exposeDebugApi(sources: {
     getCrafting: () => getCrafting(sources.loop.sim),
     getAirplane: () => getAirplane(sources.loop.sim),
     getEnemies: () => getEnemies(sources.loop.sim),
+    getSpear: () => getSpear(sources.loop.sim),
     getFlyingHint: () => getFlyingHint(sources.loop.sim),
     getMovementTuning: () => getMovementTuning(sources.loop.sim),
     getItemUse: () => getItemUse(sources.loop.sim),
+    canSwitchItemUse: () => canSwitchItemUse(sources.loop.sim),
     getInteraction: () => getInteraction(sources.loop.sim),
     queueCommand: (command) => sources.loop.queueCommand(command),
     loadLevel: (level) => sources.loop.playLevel(level),
+    loadSnapshot: (snapshot) => sources.loop.playSnapshot(snapshot),
   };
 }

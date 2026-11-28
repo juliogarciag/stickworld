@@ -1,4 +1,4 @@
-import { AIRPLANE_ITEM_ID, PAPER_ITEM_ID, type ItemSlot } from '@stickworld/sim';
+import { AIRPLANE_ITEM_ID, PAPER_ITEM_ID, SPEAR_ITEM_ID, type ItemSlot } from '@stickworld/sim';
 import type { Stroke, StrokePoint } from '../render/strokes';
 import { PENCIL } from '../render/strokes/pencil';
 
@@ -125,6 +125,24 @@ const ITEM_DRAWINGS: Readonly<Record<number, readonly UnitPath[]>> = {
     [
       { x: 0.84, y: 0.44 },
       { x: 0.26, y: 0.52 },
+    ],
+  ],
+  // The spear from corner to corner: a sheet rolled tight, wide at the lower end and coming to a
+  // point, with the edge of the sheet winding round it.
+  [SPEAR_ITEM_ID]: [
+    [
+      { x: 0.15, y: 0.75 },
+      { x: 0.84, y: 0.16 },
+      { x: 0.25, y: 0.85 },
+      { x: 0.15, y: 0.75 },
+    ],
+    [
+      { x: 0.27, y: 0.8 },
+      { x: 0.36, y: 0.56 },
+    ],
+    [
+      { x: 0.45, y: 0.61 },
+      { x: 0.53, y: 0.42 },
     ],
   ],
 };

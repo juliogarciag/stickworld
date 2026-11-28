@@ -1,0 +1,170 @@
+{
+  "reach": 2.1000000000000005,
+  "clubReach": 1.9550000000000003,
+  "spearHitsFrom": 2.5000000000000004,
+  "thrustSeconds": 0.5166666666666666,
+  "atFlag": {
+    "tick": 1041,
+    "dt": 0.016666666666666666,
+    "level": 900,
+    "start": {
+      "x": 2,
+      "y": 0
+    },
+    "stickMan": {
+      "feet": {
+        "x": 19.56333333333333,
+        "y": 0
+      },
+      "facing": 1,
+      "action": "cheering",
+      "distanceWalked": 11.47666666666662,
+      "verticalSpeed": 0,
+      "horizontalSpeed": 2.2,
+      "isFallingOffEdge": false,
+      "walkDirectionAsked": 1,
+      "isCarrying": false,
+      "struckFor": null,
+      "struckDirection": 1
+    },
+    "stickManWidth": 0.65,
+    "slots": [
+      {
+        "itemDefId": 202,
+        "isSelected": true
+      }
+    ],
+    "letter": null,
+    "crafting": {
+      "knownRecipes": [
+        {
+          "defId": 401,
+          "name": "spear"
+        }
+      ],
+      "canMake": null,
+      "couldMakeInstead": null
+    },
+    "itemUse": null,
+    "canSwitchItemUse": false,
+    "interaction": null,
+    "spear": {
+      "action": "ready",
+      "progress": 0,
+      "direction": 1,
+      "butt": {
+        "x": 19.16333333333333,
+        "y": -1.05
+      },
+      "tip": {
+        "x": 20.86333333333333,
+        "y": -1.05
+      },
+      "thickness": 0.08
+    },
+    "enemies": [],
+    "flag": {
+      "position": {
+        "x": 20,
+        "y": 0
+      },
+      "height": 2.2,
+      "isReached": true,
+      "upFor": 0,
+      "raised": 0.02777777777777778,
+      "isFinalFlag": false
+    },
+    "fallenItem": null
+  },
+  "results": [
+    {
+      "name": "dev server up, started by this run",
+      "pass": true
+    },
+    {
+      "name": "the yard starts with an empty hand, a letter on the floor and one enemy",
+      "pass": true,
+      "details": "level 900, slots [{\"itemDefId\":null,\"isSelected\":false}]"
+    },
+    {
+      "name": "the paper and the spear are items the game knows by name",
+      "pass": true,
+      "details": "paper 200, spear 202"
+    },
+    {
+      "name": "K by the letter reads it, and it teaches the spear",
+      "pass": true,
+      "details": "teaches spear"
+    },
+    {
+      "name": "reading it puts a sheet of paper in the hand of the stick man",
+      "pass": true,
+      "details": "[{\"itemDefId\":200,\"isSelected\":true}]"
+    },
+    {
+      "name": "while it reads, J does nothing and K puts the letter away",
+      "pass": true
+    },
+    {
+      "name": "with the letter put away, J would roll the paper into the spear, and there is nothing to switch to",
+      "pass": true,
+      "details": "J: craft, would make spear"
+    },
+    {
+      "name": "J rolls it: the spear is in the same slot, in its hand, and J would now thrust it",
+      "pass": true,
+      "details": "slot {\"itemDefId\":202,\"isSelected\":true}, J: thrust"
+    },
+    {
+      "name": "J thrusts: the point is out in front of the stick man, further than it is held ready, and then the spear is drawn back",
+      "pass": true,
+      "details": "reach seen 2.10 m, ready at 1.30 m, 17 frames drawn"
+    },
+    {
+      "name": "a thrust costs time: no J is offered until the spear is drawn back",
+      "pass": true,
+      "details": "0.52 s from the press to ready again"
+    },
+    {
+      "name": "the spear is still in its hand after the thrust, and the enemy untouched",
+      "pass": true
+    },
+    {
+      "name": "the spear reaches the enemy from further away than its club reaches the stick man",
+      "pass": true,
+      "details": "spear from 2.50 m, club from 1.96 m, middle to middle"
+    },
+    {
+      "name": "it thrusts from outside the reach of the club",
+      "pass": true,
+      "details": "2.14 m away, the enemy approaching"
+    },
+    {
+      "name": "the thrust reaches the enemy: it is torn in two",
+      "pass": true,
+      "details": "tearing"
+    },
+    {
+      "name": "its halves lie, fall off the sheet, and then the enemy is gone",
+      "pass": true
+    },
+    {
+      "name": "the stick man walks on through where the enemy stood and reaches the flag",
+      "pass": true,
+      "details": "at x 19.56"
+    },
+    {
+      "name": "it was never struck on the way",
+      "pass": true
+    },
+    {
+      "name": "it still has the spear under the flag",
+      "pass": true
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}
