@@ -45,7 +45,7 @@ export const ENEMY = {
    * How long they take to leave the sheet as scraps of paper, in seconds. Then the enemy is gone
    * from the level: nothing of it stays, however many there were.
    */
-  leaveSeconds: 0.9,
+  leaveSeconds: 2,
 } as const;
 
 export const enemyDefs: readonly EnemyDef[] = [clubEnemyDef];

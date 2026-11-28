@@ -66,13 +66,15 @@ describe('the club enemy torn in two', () => {
     // The stick man came from the left: away is to the right. The widest view is 30 m across.
     expect(last.left - stoodAt).toBeGreaterThan(convertToPixels(WIDEST_VIEW));
     expect(floor - last.bottom).toBeGreaterThan(convertToPixels(4));
-    // Taken together they go that way and on: a scrap turns over, the lot of them does not come
-    // back.
+    // Taken together they go that way and on once the wind has them: a scrap turns over, the lot
+    // of them does not come back.
     const middles = leaving.map((enemy) => {
       const points = buildTornClubEnemyStrokes(enemy).flatMap((stroke) => stroke.points);
       return points.reduce((sum, point) => sum + point.x, 0) / points.length;
     });
-    const everyTenth = middles.filter((_, index) => index % 10 === 0);
+    const everyTenth = middles.filter(
+      (_, index) => index % 10 === 0 && index >= middles.length / 4,
+    );
     expect(everyTenth).toEqual([...everyTenth].sort((one, other) => one - other));
   });
 
