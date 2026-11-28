@@ -9,11 +9,13 @@ import {
 } from '@stickworld/sim';
 import { describe, expect, it } from 'vitest';
 import { buildClubEnemyStrokes } from './clubEnemy';
+import { __testing__ as levelCameraTesting } from './levelCamera';
 import type { Stroke } from './strokes';
 import { __testing__, buildTornClubEnemyStrokes } from './tornClubEnemy';
 import { convertToPixels } from './units';
 
 const { cutStroke } = __testing__;
+const { FRAMING } = levelCameraTesting;
 
 describe('the club enemy torn in two', () => {
   it('is drawn where it stood on the tick it is struck: nothing has moved yet but the tear across its mouth', () => {
@@ -85,6 +87,23 @@ describe('the club enemy torn in two', () => {
   });
 });
 
+describe('the club enemy torn from behind', () => {
+  it('falls the way the blow knocked it, not the way it happened to face', () => {
+    const lying = recordTornEnemy().find((enemy) => enemy.torn!.action === 'lying')!;
+    const stoodAt = convertToPixels(lying.position.x);
+    // The highest thing lying there is its upper half, tipped over on the side it fell to.
+    const getHighestPointX = (direction: 1 | -1): number => {
+      const points = buildTornClubEnemyStrokes({
+        ...lying,
+        torn: { ...lying.torn!, direction },
+      }).flatMap((stroke) => stroke.points);
+      return points.reduce((highest, point) => (point.y < highest.y ? point : highest)).x;
+    };
+    expect(getHighestPointX(1)).toBeGreaterThan(stoodAt + convertToPixels(lying.width / 2));
+    expect(getHighestPointX(-1)).toBeLessThan(stoodAt - convertToPixels(lying.width / 2));
+  });
+});
+
 describe('cutting a stroke at a level line', () => {
   it('keeps the part on the side asked for, ending on the line', () => {
     const line: Stroke = {
@@ -139,10 +158,11 @@ const YARD = practiceLevels[0]!;
 const USE: Command = { type: 'item/use' };
 const INTERACT: Command = { type: 'world/interact' };
 /**
- * More than the camera ever shows below the floor line, in metres: its widest view is 21 m across
- * (`FRAMING.mostMetresAcross`), about 12 m tall, centred near the stick man.
+ * More than the camera ever shows below the floor line, in metres: the floor line is
+ * `floorFromTop` of the way down its view, which is never more than `mostMetresAcross` wide, here
+ * taken in a window half as tall again as it is wide.
  */
-const DEEPEST_VIEW = 9;
+const DEEPEST_VIEW = FRAMING.mostMetresAcross * 1.5 * (1 - FRAMING.floorFromTop);
 
 /** The enemy of the yard on every tick from the thrust that tears it until it is gone. */
 function recordTornEnemy(): ClubEnemyView[] {

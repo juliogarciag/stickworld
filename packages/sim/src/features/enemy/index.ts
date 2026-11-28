@@ -44,6 +44,7 @@ export const enemyFeature: Feature = {
         ticksInAction: 0,
         postX: placement.position.x,
         ticksSinceStruck: null,
+        struckDirection: 1,
       });
     }
     sim.setStateOf(enemiesSlice, placed);
@@ -96,6 +97,7 @@ export function strikeEnemiesWith(sim: Sim, blow: Blow): boolean {
       doesBlowTouchBox(blow, getEnemyBox(enemy, def));
     if (isStruckNow) {
       enemy.ticksSinceStruck = 0;
+      enemy.struckDirection = blow.direction;
       hasStruck = true;
     }
   }

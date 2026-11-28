@@ -371,6 +371,7 @@ const WAITING_STATE: EnemyState = {
   ticksInAction: 0,
   postX: POST.x,
   ticksSinceStruck: null,
+  struckDirection: 1,
 };
 const TICKS = Math.round(1 / createSim({ level: clubYard.id }).dt);
 /** Ticks from the start of the yard to well past the enemy at a walk. */

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { clubYard } from '../../content/levels/clubYard';
 import type { Blow } from '../../core/blow';
 import { Sim } from '../../core/sim';
+import { hashSnapshot } from '../../core/snapshot';
 import { features } from '..';
 import { getStickMan } from '../player/view';
 import { clubEnemyDef } from './clubEnemy/defs';
@@ -14,7 +15,7 @@ describe('striking at the enemies', () => {
     const sim = createSimInYard();
     expect(getEnemies(sim)[0]!.torn).toBeNull();
     expect(strikeEnemiesWith(sim, makeBlowEndingAt(POST.x - clubEnemyDef.width / 2))).toBe(true);
-    expect(getEnemies(sim)[0]!.torn).toEqual({ action: 'tearing', progress: 0 });
+    expect(getEnemies(sim)[0]!.torn).toEqual({ action: 'tearing', progress: 0, direction: 1 });
   });
 
   it('does nothing with a blow that stops short of it, passes over it or passes under it', () => {
@@ -68,7 +69,49 @@ describe('striking at the enemies', () => {
     expect(strikeEnemiesWith(sim, makeBlowEndingAt(POST.x))).toBe(false);
   });
 
-  it('leaves nothing behind however many are torn: the state holds no enemy once each has left the sheet', () => {
+  it('is knocked the way the blow goes, whichever way it faced', () => {
+    const sim = createSimInYard();
+    strikeEnemiesWith(sim, { ...makeBlowEndingAt(POST.x), direction: -1 });
+    expect(getEnemies(sim)[0]!.torn!.direction).toBe(-1);
+  });
+
+  it('continues from a snapshot taken in each part of being torn exactly as the sim it was taken from', () => {
+    const sim = createSimInYard();
+    strikeEnemiesWith(sim, makeBlowEndingAt(POST.x));
+    const seen = new Set<string>();
+    while (getEnemies(sim).length > 0) {
+      const action = getEnemies(sim)[0]!.torn!.action;
+      if (!seen.has(action)) {
+        seen.add(action);
+        const restored = new Sim({ features, snapshot: sim.takeSnapshot() });
+        const original = new Sim({ features, snapshot: sim.takeSnapshot() });
+        for (let tick = 0; tick < 240; tick += 1) {
+          restored.step();
+          original.step();
+        }
+        expect(getEnemies(restored)).toEqual([]);
+        expect(hashSnapshot(restored.takeSnapshot())).toBe(hashSnapshot(original.takeSnapshot()));
+      }
+      sim.step();
+    }
+    expect([...seen]).toEqual(['tearing', 'lying', 'leaving']);
+  });
+
+  it('is back at its post, whole, when the level starts again in any part of being torn', () => {
+    for (const ticks of [5, 50, 120]) {
+      const sim = createSimInYard();
+      strikeEnemiesWith(sim, makeBlowEndingAt(POST.x));
+      for (let tick = 0; tick < ticks; tick += 1) {
+        sim.step();
+      }
+      expect(getEnemies(sim)[0]!.torn).not.toBeNull();
+      sim.startLevel(sim.level);
+      expect(getEnemies(sim)).toHaveLength(1);
+      expect(getEnemies(sim)[0]).toMatchObject({ position: { x: POST.x }, torn: null });
+    }
+  });
+
+  it('leaves nothing behind: the state holds no enemy once its halves have left the sheet', () => {
     const sim = createSimInYard();
     strikeEnemiesWith(sim, makeBlowEndingAt(POST.x));
     const seconds = ENEMY.tearSeconds + ENEMY.lieSeconds + ENEMY.leaveSeconds;

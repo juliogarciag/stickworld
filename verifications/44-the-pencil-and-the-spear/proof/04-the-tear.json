@@ -4,7 +4,7 @@
     "lying",
     "leaving"
   ],
-  "secondsTorn": 3.25,
+  "secondsTorn": 3.2,
   "results": [
     {
       "name": "dev server up, started by this run",
@@ -13,7 +13,7 @@
     {
       "name": "the stick man walks through where the enemy stood while its halves are still on the sheet",
       "pass": true,
-      "details": "past it at x 11.20, the enemy lying"
+      "details": "past it at x 11.28, the enemy lying"
     },
     {
       "name": "it tore, its halves lay there, and they left, in that order",
@@ -23,7 +23,7 @@
     {
       "name": "nothing of it is left in the game afterwards, and the stick man was never struck",
       "pass": true,
-      "details": "gone 3.25 s after it was torn"
+      "details": "gone 3.20 s after it was torn"
     },
     {
       "name": "no page errors",

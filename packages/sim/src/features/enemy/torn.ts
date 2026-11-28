@@ -11,7 +11,12 @@ export type TornAction = 'tearing' | 'lying' | 'leaving';
 export interface Torn {
   readonly action: TornAction;
   readonly progress: number;
+  /** Which way the blow that tore it knocked it: 1 to the right, -1 to the left. */
+  readonly direction: 1 | -1;
 }
+
+/** Which part of being torn an enemy is at, and how much of that part is done. */
+export type TornProgress = Pick<Torn, 'action' | 'progress'>;
 
 /** How many ticks each part of being torn lasts, in order. */
 export function countTornTicks(dt: number): Readonly<Record<TornAction, number>> {
@@ -29,7 +34,7 @@ export function isTornAndGone(ticksSinceStruck: number, dt: number): boolean {
 }
 
 /** How far along being torn an enemy struck `ticksSinceStruck` ticks ago is. */
-export function getTorn(ticksSinceStruck: number, dt: number): Torn {
+export function getTornProgress(ticksSinceStruck: number, dt: number): TornProgress {
   const ticks = countTornTicks(dt);
   if (ticksSinceStruck < ticks.tearing) {
     return { action: 'tearing', progress: ticksSinceStruck / ticks.tearing };

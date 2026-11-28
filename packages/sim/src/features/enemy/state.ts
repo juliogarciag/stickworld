@@ -25,6 +25,10 @@ export interface EnemyState {
    * is gone.
    */
   ticksSinceStruck: number | null;
+  /**
+   * Which way the blow knocked it: 1 to the right, -1 to the left. Only read once it is struck.
+   */
+  struckDirection: 1 | -1;
 }
 
 /**

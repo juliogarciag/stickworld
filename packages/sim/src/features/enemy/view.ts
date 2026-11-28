@@ -4,7 +4,7 @@ import { findClubEnemyDef } from './clubEnemy/defs';
 import { getClubEnemyView, type ClubEnemyView } from './clubEnemy/view';
 import { getGuardedStretch } from './guard';
 import { enemiesSlice } from './state';
-import { getTorn, type Torn } from './torn';
+import { getTornProgress, type Torn } from './torn';
 
 /**
  * What a view needs of every enemy, whatever kind it is: where it is, how big its body is and
@@ -26,7 +26,7 @@ export interface EnemyBaseView {
   readonly guardedStretch: { readonly start: number; readonly end: number };
   /**
    * How far along being torn it is (`tearing` in two, its halves `lying` where they fell, then
-   * `leaving` the sheet, each from just over 0 towards 1), or null while nothing has
+   * `leaving` the sheet, each from 0 towards 1, and which way the blow knocked it), or null while nothing has
    * struck it. Torn, it is still where it was struck, doing what it was doing, harmless and in
    * nobody's way; once they have fallen off the sheet, it is no longer among the enemies.
    */
@@ -61,7 +61,13 @@ export function getEnemies(handle: SimHandle): EnemyView[] {
       floatHeight: def.floatHeight,
       facing: enemy.facing,
       guardedStretch: getGuardedStretch(handle.levelDef.floor, enemy, def),
-      torn: enemy.ticksSinceStruck === null ? null : getTorn(enemy.ticksSinceStruck, handle.dt),
+      torn:
+        enemy.ticksSinceStruck === null
+          ? null
+          : {
+              ...getTornProgress(enemy.ticksSinceStruck, handle.dt),
+              direction: enemy.struckDirection,
+            },
     };
     views.push(getClubEnemyView(handle, { enemy, def, base }));
   }

@@ -46,7 +46,9 @@ export function buildTornClubEnemyStrokes(enemy: ClubEnemyView): Stroke[] {
       strokes: parts.club,
       move: getClubMove(enemy, place, fallen),
       centre: {
-        x: place.middle - place.away * (place.width / 2 + convertToPixels(TEAR.clubAhead + 0.4)),
+        x:
+          place.middle -
+          place.away * (place.width / 2 + convertToPixels(TEAR.clubAhead + TEAR.clubMiddle)),
         y: place.floor,
       },
     },
@@ -77,6 +79,8 @@ const TEAR = {
   upperHalfAside: 0.3,
   /** How far in front of its body the club comes to lie, in metres. */
   clubAhead: 0.35,
+  /** How far along the lying club its middle is, in metres: what it turns about as it goes. */
+  clubMiddle: 0.4,
 } as const;
 
 /**
@@ -104,7 +108,7 @@ interface Place {
   readonly floor: number;
   readonly width: number;
   readonly height: number;
-  /** 1 when the stick man that struck it is to its left, -1 when to its right. */
+  /** The way the blow knocked it, as the sim has it: 1 to the right, -1 to the left. */
   readonly away: 1 | -1;
 }
 
@@ -115,7 +119,7 @@ function getPlace(enemy: ClubEnemyView): Place {
     floor: convertToPixels(enemy.position.y + enemy.floatHeight),
     width: convertToPixels(enemy.width),
     height: convertToPixels(enemy.height),
-    away: enemy.facing === 1 ? -1 : 1,
+    away: enemy.torn?.direction ?? (enemy.facing === 1 ? -1 : 1),
   };
 }
 
@@ -256,4 +260,4 @@ function turnAbout(point: StrokePoint, centre: StrokePoint, angle: number): Stro
   };
 }
 
-export const __testing__ = { FALL, TEAR, cutStroke };
+export const __testing__ = { cutStroke };
