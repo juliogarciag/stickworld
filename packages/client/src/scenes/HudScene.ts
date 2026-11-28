@@ -11,6 +11,7 @@ import {
   getStickMan,
 } from '@stickworld/sim';
 import Phaser from 'phaser';
+import { buildWriting } from '../hud/handwriting';
 import { buildItemSlotStrokes } from '../hud/itemSlots';
 import { buildPageEdgeStrokes } from '../hud/pageEdge';
 import { buildLetterSheetStrokes } from '../hud/panels';
@@ -20,8 +21,10 @@ import { keepUntilChanged } from '../hud/unchanged';
 import { ACTION_KEY_NAMES } from '../input/actionKeys';
 import { GAME_KEY_NAMES } from '../input/gameKeys';
 import { FLIGHT_KEY_NAMES } from '../input/playerKeys';
+import { TRYOUT_KEY_NAMES } from '../input/tryoutKeys';
 import type { GameLoop } from '../loop/GameLoop';
 import { getWorldSeenBy } from '../render/cameraView';
+import { ENEMY_DEATHS, ENEMY_DEATH_WORDS, getEnemyDeath } from '../render/enemyDeaths';
 import { getZoomAtRest } from '../render/levelCamera';
 import type { PageTurn } from '../render/pageTurn';
 import { createStrokeLayer, type Stroke, type StrokeLayer } from '../render/strokes';
@@ -43,6 +46,8 @@ export class HudScene extends Phaser.Scene {
   private prompts!: StrokeLayer;
   private endScreen!: StrokeLayer;
   private pageEdge!: StrokeLayer;
+  private tryout!: StrokeLayer;
+  private readonly getTryoutStrokes = keepUntilChanged<Stroke[]>();
   private readonly getHeldUpStrokes = keepUntilChanged<Stroke[]>();
   private readonly getPromptStrokes = keepUntilChanged<Stroke[]>();
   private readonly getEndScreenStrokes = keepUntilChanged<Stroke[]>();
@@ -61,6 +66,7 @@ export class HudScene extends Phaser.Scene {
     this.prompts = createStrokeLayer(this);
     this.endScreen = createStrokeLayer(this);
     this.pageEdge = createStrokeLayer(this);
+    this.tryout = createStrokeLayer(this);
     runEveryFrameAfterLevel(this, () => this.draw());
   }
 
@@ -95,6 +101,23 @@ export class HudScene extends Phaser.Scene {
     this.prompts.show(
       this.getPromptStrokes(JSON.stringify([prompts, seen]), () =>
         buildPromptStrokes(prompts, seen),
+      ),
+    );
+
+    // TRYOUT (#44, comes out before merge): which way the enemy dies is being tried, and the keys.
+    const death = getEnemyDeath();
+    const tryoutWords = import.meta.env.DEV
+      ? `tryout ${ENEMY_DEATHS.indexOf(death) + 1} of ${ENEMY_DEATHS.length}: ${ENEMY_DEATH_WORDS[death]}. ` +
+        `${TRYOUT_KEY_NAMES.nextEnemyDeath}: next. ${TRYOUT_KEY_NAMES.playAgain}: again.`
+      : '';
+    this.tryout.show(
+      this.getTryoutStrokes(JSON.stringify([tryoutWords, seen]), () =>
+        tryoutWords === ''
+          ? []
+          : buildWriting(tryoutWords, {
+              position: { x: seen.x + 56, y: seen.y + 56 },
+              letterHeight: 20,
+            }).strokes,
       ),
     );
 

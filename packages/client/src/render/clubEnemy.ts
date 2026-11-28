@@ -75,6 +75,30 @@ const LOOK = {
 const FINE = PENCIL.thickness * LOOK.finePencil;
 
 /**
+ * TRYOUT (#44, comes out before merge): the same drawing in its parts, still and without brows,
+ * for the ways an enemy may die that take it apart. In world pixels.
+ */
+export function buildClubEnemyParts(enemy: ClubEnemyView): {
+  body: Stroke[];
+  face: Stroke[];
+  arm: Stroke[];
+  club: Stroke[];
+} {
+  const convertLine = (line: Line): Stroke => ({
+    points: line.points.map(convertPointToPixels),
+    thickness: line.isFine ? FINE : PENCIL.thickness,
+    isClosed: line.isClosed,
+  });
+  const armAndClub = buildArmAndClubLines(enemy).map(convertLine);
+  return {
+    body: buildBodyLines(enemy).map(convertLine),
+    face: buildFaceLines(enemy).map(convertLine),
+    arm: armAndClub.slice(0, 2),
+    club: armAndClub.slice(2),
+  };
+}
+
+/**
  * The strokes that draw `enemy`, in world pixels. `seconds` is the view's own clock, for the way it
  * bobs as it floats.
  */
