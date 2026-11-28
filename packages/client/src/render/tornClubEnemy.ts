@@ -17,7 +17,11 @@ import { convertToPixels } from './units';
  * The strokes of `enemy`, which is torn, in world pixels. The same strokes in the same order for
  * as long as it is there, so that none of them wobbles anew as the halves move.
  */
-export function buildTornClubEnemyStrokes(enemy: ClubEnemyView): Stroke[] {
+export function buildTornClubEnemyStrokes(
+  enemy: ClubEnemyView,
+  // TRYOUT (#44): how the scraps leave and how far along, when the view says so and not the sim.
+  leavingAsked?: { manner: 'wind' | 'falling'; progress: number },
+): Stroke[] {
   const parts = buildClubEnemyParts(enemy);
   const place = getPlace(enemy);
   const whole = [...parts.body, ...parts.face, ...parts.arm];
@@ -50,9 +54,11 @@ export function buildTornClubEnemyStrokes(enemy: ClubEnemyView): Stroke[] {
       },
     },
   ];
-  const leaving = enemy.torn?.action === 'leaving' ? enemy.torn.progress : 0;
+  const leavingBySim = enemy.torn?.action === 'leaving' ? enemy.torn.progress : 0;
+  const leaving = leavingAsked?.progress ?? leavingBySim;
+  const getLeavingMove = leavingAsked?.manner === 'falling' ? getFallOffMove : getCarryOffMove;
   return scraps.flatMap((scrap, index) => {
-    const carryOff = getCarryOffMove({ place, centre: scrap.centre, index, leaving });
+    const carryOff = getLeavingMove({ place, centre: scrap.centre, index, leaving });
     return scrap.strokes.map((stroke) => ({
       ...stroke,
       points: stroke.points.map((point) => carryOff(scrap.move(point))),
@@ -204,6 +210,33 @@ function getCarryOffMove(scrap: {
       convertToPixels(WIND.flutter) * Math.sin(carried * WIND.flutters * Math.PI * 2) * carried,
   };
   const angle = away * WIND.turns * Math.PI * 2 * carried * (1 + scrap.index * 0.3);
+  return (point) => {
+    const turned = turnAbout(point, scrap.centre, angle);
+    return { x: turned.x + offset.x, y: turned.y + offset.y };
+  };
+}
+
+/**
+ * TRYOUT (#44): a scrap falls off the sheet: it tips over the floor line and tumbles down out of
+ * view, one after the other, faster as it goes, as things that fall in this game are lost.
+ */
+function getFallOffMove(scrap: {
+  place: Place;
+  centre: StrokePoint;
+  index: number;
+  leaving: number;
+}): (point: StrokePoint) => StrokePoint {
+  const delay = WIND.delay * scrap.index;
+  const fallen = Math.max(0, Math.min(1, (scrap.leaving - delay) / (1 - 2 * WIND.delay)));
+  if (fallen === 0) {
+    return (point) => point;
+  }
+  const { away } = scrap.place;
+  const offset = {
+    x: away * convertToPixels(1.2) * fallen,
+    y: convertToPixels(12) * fallen * fallen,
+  };
+  const angle = away * 1.3 * Math.PI * fallen * (1 + scrap.index * 0.4);
   return (point) => {
     const turned = turnAbout(point, scrap.centre, angle);
     return { x: turned.x + offset.x, y: turned.y + offset.y };

@@ -15,7 +15,6 @@ import { keepUntilChanged } from '../hud/unchanged';
 import { MOVE_KEY_NAMES } from '../input/playerKeys';
 import { easeAirplanesOverTime, buildAirplaneStrokes, getPivotHeight } from '../render/airplane';
 import { getWorldSeenBy } from '../render/cameraView';
-import { buildClubEnemyStrokes } from '../render/clubEnemy';
 import { buildFlagStrokes } from '../render/flag';
 import { buildFloorStrokes } from '../render/floor';
 import { buildHeldSpearStrokes, getHeldSpear } from '../render/heldItem';
@@ -30,7 +29,7 @@ import {
 } from '../render/sheetWords';
 import { easePosesOverTime, seatIn, buildStickManStrokes } from '../render/stickMan';
 import { createStrokeLayer, type Stroke, type StrokeLayer } from '../render/strokes';
-import { buildTornClubEnemyStrokes } from '../render/tornClubEnemy';
+import { createEnemiesDrawing } from '../render/tornRemains';
 
 /** The one empty list: a layer shown it again does not draw anew. */
 const NOTHING: readonly Stroke[] = [];
@@ -68,6 +67,7 @@ export class Sheet {
   private readonly heldItem: StrokeLayer;
   private readonly stickMan: StrokeLayer;
   private readonly poseFor = easePosesOverTime();
+  private readonly getEnemyStrokes = createEnemiesDrawing();
   private readonly airplaneShownFor = easeAirplanesOverTime();
   private readonly getWrittenStrokes = keepUntilChanged<readonly Stroke[]>();
   private readonly getPageNumberStrokes = keepUntilChanged<Stroke[]>();
@@ -153,13 +153,15 @@ export class Sheet {
     );
     this.airplane.show(airplane ? buildAirplaneStrokes(airplane) : []);
     // Every enemy is a club enemy so far. A second kind has its own drawing, picked here by the
-    // `kind` of each enemy. One the spear reached is drawn torn, as far along as the sim says.
+    // `kind` of each enemy. TRYOUT (#44): what is left of one that was torn is one of six ways.
     this.enemies.show(
-      getEnemies(frame.sim).flatMap((enemy) =>
-        enemy.torn
-          ? buildTornClubEnemyStrokes(enemy)
-          : buildClubEnemyStrokes(enemy, frame.secondsOnSheet),
-      ),
+      this.getEnemyStrokes({
+        enemies: getEnemies(frame.sim),
+        level: level.id,
+        seconds: frame.seconds,
+        secondsOnSheet: frame.secondsOnSheet,
+        seen: { left: seen.x, right: seen.x + seen.width },
+      }),
     );
     // The spear in its hand, under the stick man's own lines: its hand is on it.
     const heldSpear = getHeldSpear(stickMan, getSpear(frame.sim));

@@ -21,7 +21,7 @@ export const VIEWPORT = { width: 1280, height: 720 };
  * hands, so that a frame is drawn only when `stepFrames` says so.
  */
 export async function openGame(port, results, options = {}) {
-  const devServer = start('pnpm', ['dev'], { env: { PORT: String(port), VITE_LEVEL: String(YARD) } });
+  const devServer = start('pnpm', ['dev'], { env: { PORT: String(port), VITE_LEVEL: String(options.level ?? YARD) } });
   const ready =
     (await waitForPort(port)) &&
     (await waitFor("the dev server's ready line", {
